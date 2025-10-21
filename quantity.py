@@ -2,6 +2,7 @@
 import json
 import time
 import requests
+from pathlib import Path
 from typing import Optional, Dict
 
 # ── 외부 주입 ───────────────────────────────────────────────
@@ -43,7 +44,9 @@ def fetch_quantity_info(product_id: str,
                         item_id: str,
                         vendor_item_id: str,
                         cookie: Optional[str] = None,
-                        timeout: int = 60):
+                        timeout: int = 60,
+                        outdir: Optional[str] = ".",
+                        filename_prefix: str = "quantity_info"):
     referer = (
         f"https://www.coupang.com/vp/products/{product_id}"
         f"?itemId={item_id}&vendorItemId={vendor_item_id}"
@@ -62,8 +65,11 @@ def fetch_quantity_info(product_id: str,
         data = {"raw_text": resp.text}
         print("⚠️ JSON 파싱 실패, 원문 저장")
 
+    # 저장 경로
     ts = int(time.time() * 1000)
-    out = f"quantity_info_{product_id}_{ts}.json"
+    out_dir = Path(outdir or ".")
+    out_dir.mkdir(parents=True, exist_ok=True)
+    out = out_dir / f"{filename_prefix}_{product_id}_{ts}.json"
     with open(out, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
     print(f"saved → {out}")
