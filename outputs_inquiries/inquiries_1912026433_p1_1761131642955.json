@@ -1,0 +1,195 @@
+{
+  "success": {
+    "rCode": "RET0000",
+    "rRedirectCode": null,
+    "rRedirectUrl": null,
+    "rViewName": "page/product/productDetail/inquiryList/inquiryItemsMore",
+    "rMessage": "",
+    "rData": {
+      "webbuildNo": "20251022172536",
+      "isLogin": true,
+      "memberId": "120274279",
+      "trCid": null,
+      "trAid": null,
+      "navigation": {
+        "firstPageUnit": {
+          "displayPageNo": 1,
+          "isSelected": false,
+          "link": null
+        },
+        "previousPageUnit": {
+          "displayPageNo": 1,
+          "isSelected": false,
+          "link": null
+        },
+        "nextPageUnit": {
+          "displayPageNo": 11,
+          "isSelected": false,
+          "link": null
+        },
+        "lastPageUnit": {
+          "displayPageNo": 110,
+          "isSelected": false,
+          "link": null
+        },
+        "pageList": [
+          {
+            "displayPageNo": 1,
+            "isSelected": true,
+            "link": null
+          },
+          {
+            "displayPageNo": 2,
+            "isSelected": false,
+            "link": null
+          },
+          {
+            "displayPageNo": 3,
+            "isSelected": false,
+            "link": null
+          },
+          {
+            "displayPageNo": 4,
+            "isSelected": false,
+            "link": null
+          },
+          {
+            "displayPageNo": 5,
+            "isSelected": false,
+            "link": null
+          },
+          {
+            "displayPageNo": 6,
+            "isSelected": false,
+            "link": null
+          },
+          {
+            "displayPageNo": 7,
+            "isSelected": false,
+            "link": null
+          },
+          {
+            "displayPageNo": 8,
+            "isSelected": false,
+            "link": null
+          },
+          {
+            "displayPageNo": 9,
+            "isSelected": false,
+            "link": null
+          },
+          {
+            "displayPageNo": 10,
+            "isSelected": false,
+            "link": null
+          }
+        ],
+        "contents": [
+          {
+            "vendorItemId": 3009887928,
+            "inquiryId": 144283696,
+            "createdAt": "20251017105040",
+            "displayWriter": "",
+            "content": "라면 3봉 합이 15개인데 2개 개별 합10 개만 왔어요",
+            "comments": [
+              {
+                "inquiryCommentId": 137761132,
+                "inquiryId": 144283696,
+                "displayWriter": "주식회사 로뎀나무",
+                "content": "안녕하세요 고객님\n현재 구매건 확인되지않아 주문번호 기재하여주시면 확인후 답변드리겠습니다​\n문의주신 페이지는 오뚜기 오동통면 120g, 1개 860원 배송비(3000원) / 개당 수량으로 판매중이며 번들(5개)로 판매중이지 않습니다.\n참고부탁드립니다\n",
+                "createdAt": "20251017105436",
+                "author": false,
+                "formattedCreateDate": "2025/10/17 10:54:36"
+              }
+            ],
+            "authorMemberId": 128538815,
+            "serializedAttrName": "1개",
+            "vendorId": "A00070093",
+            "vendorName": "주식회사 로뎀나무",
+            "author": false,
+            "formattedCreateDate": "2025/10/17 10:50:40"
+          },
+          {
+            "vendorItemId": 3068100945,
+            "inquiryId": 143984925,
+            "createdAt": "20251012225132",
+            "displayWriter": "",
+            "content": "유통기한을  알고싶어요?오동통라면40개 유통기한을  알고싶어요?",
+            "comments": [
+              {
+                "inquiryCommentId": 137432498,
+                "inquiryId": 143984925,
+                "displayWriter": "[COUPANG]",
+                "content": "안녕하세요. 상품이 입고되는 순으로 발송하고 있어 상품마다 제조일자 또는 유통기한이 상이할 수 있습니다. 상품 수령 시 제품에 표기된 제조일자 및 유통기한을 참고해 주시기 바랍니다. 감사합니다.",
+                "createdAt": "20251013092243",
+                "author": false,
+                "formattedCreateDate": "2025/10/13 09:22:43"
+              }
+            ],
+            "authorMemberId": 154723789,
+            "serializedAttrName": "40개",
+            "vendorId": "A00010028",
+            "vendorName": "쿠팡",
+            "author": false,
+            "formattedCreateDate": "2025/10/12 22:51:32"
+          },
+          {
+            "vendorItemId": 3068100945,
+            "inquiryId": 143735510,
+            "createdAt": "20251005230341",
+            "displayWriter": "",
+            "content": "상품정보에 유통기한이 11월 15일 이후라고 써있는데 정확한 날짜를 알수 있나요? 한달정도 남은거면 여러개를 살수가 없겠네요?",
+            "comments": [
+              {
+                "inquiryCommentId": 137184883,
+                "inquiryId": 143735510,
+                "displayWriter": "[COUPANG]",
+                "content": "안녕하세요, 유통기한: 2025년 11월 15일 이거나 그 이후인 상품 안내되어 있으며, 입고된 순으로 순차적 발송되고 있어 상품마다 제조일자 유통기한이 상이할 수 있습니다. 상품 수령 시 제품에 표기된 제조일자 및 유통기한을 참고해 주시기 바랍니다. 감사합니다.",
+                "createdAt": "20251006092916",
+                "author": false,
+                "formattedCreateDate": "2025/10/06 09:29:16"
+              }
+            ],
+            "authorMemberId": 156134003,
+            "serializedAttrName": "40개",
+            "vendorId": "A00010028",
+            "vendorName": "쿠팡",
+            "author": false,
+            "formattedCreateDate": "2025/10/05 23:03:41"
+          },
+          {
+            "vendorItemId": 3059753032,
+            "inquiryId": 142746199,
+            "createdAt": "20250916175130",
+            "displayWriter": "",
+            "content": "배송이 멈춰있고 안오네요 \r\n누락되었나요? 너무 오랫동안 안오고있어요 ㅜㅜ",
+            "comments": [
+              {
+                "inquiryCommentId": 136240432,
+                "inquiryId": 142746199,
+                "displayWriter": "주식회사 로뎀나무",
+                "content": "안녕하세요 고객님\n현재 구매건 확인되지않아 주문번호 기재하여주시면 확인후 답변드리겠습니다​",
+                "createdAt": "20250917082024",
+                "author": false,
+                "formattedCreateDate": "2025/09/17 08:20:24"
+              }
+            ],
+            "authorMemberId": 215810,
+            "serializedAttrName": "2개",
+            "vendorId": "A00070093",
+            "vendorName": "주식회사 로뎀나무",
+            "author": false,
+            "formattedCreateDate": "2025/09/16 17:51:30"
+          }
+        ],
+        "currentPageIndex": 1,
+        "totalPageIndex": 110
+      },
+      "isPreview": true,
+      "keyword": "",
+      "searchInquiry": true,
+      "totalElements": 438
+    },
+    "rCookies": null
+  }
+}

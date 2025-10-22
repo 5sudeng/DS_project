@@ -1,0 +1,3320 @@
+[
+  {
+    "abFlags": {
+      "applyExtremeProminenceFreeDeliveryMessages": "A",
+      "ab54632": "B"
+    },
+    "appliedCoupon": null,
+    "benefitDisplayType": null,
+    "bundleOption": {
+      "optionDetails": null,
+      "options": [],
+      "viewType": null
+    },
+    "cashBackSummary": {
+      "basicCashBackList": [
+        {
+          "amount": 43,
+          "benefit": "쿠페이 머니 결제 시 1% 적립",
+          "expired": false,
+          "i18nAmount": {
+            "amount": "43",
+            "currency": "KRW",
+            "fractionDigits": 0,
+            "rawAmount": 43
+          },
+          "leftDays": null,
+          "rate": "1",
+          "type": "BASIC",
+          "validity": "월 최대 1만원"
+        }
+      ],
+      "basicRocketPayCashAmt": 43,
+      "basicRocketPayRate": "1",
+      "bookCashbackLimitScope": null,
+      "cashBackTitle": "캐시적립 혜택",
+      "cashIconUrl": "https://image.coupangcdn.com/image/badges/cashback/web/list-cash-icon@2x.png",
+      "cashWidgetIconUrl": "https://image.coupangcdn.com/image/badges/sdp/cashback/web/cash-icon@2x.png",
+      "clubMemberCashAmt": null,
+      "clubMemberRate": null,
+      "clubMemberRewardExpires": null,
+      "clubMemberRewardExpiryTime": null,
+      "clubMemberRewardLeftDays": null,
+      "couPayBankAmt": null,
+      "couPayBankExpires": true,
+      "couPayBankLeftDays": null,
+      "couPayBankRate": null,
+      "couPayMoneyAmt": null,
+      "couPayMoneyExpires": true,
+      "couPayMoneyLeftDays": null,
+      "couPayMoneyRate": null,
+      "extraCashBackList": [],
+      "finalCashBackAmt": 43,
+      "finalCashBackAmtIncludeRewardCashAmount": 43,
+      "giftRewardCashAmount": null,
+      "i18nBasicRocketPayCashAmt": {
+        "amount": "43",
+        "currency": "KRW",
+        "fractionDigits": 0,
+        "rawAmount": 43
+      },
+      "i18nClubMemberCashAmt": null,
+      "i18nCouPayBankAmt": null,
+      "i18nCouPayMoneyAmt": null,
+      "i18nFinalCashBackAmt": {
+        "amount": "43",
+        "currency": "KRW",
+        "fractionDigits": 0,
+        "rawAmount": 43
+      },
+      "i18nFinalCashBackAmtIncludeRewardCashAmount": {
+        "amount": "43",
+        "currency": "KRW",
+        "fractionDigits": 0,
+        "rawAmount": 43
+      },
+      "i18nRewardCashAmount": null,
+      "inBookCategory": null,
+      "luxuryItem": false,
+      "popupType": "BASIC",
+      "rewardCashAmount": null,
+      "targetedPromotionBanner": null
+    },
+    "delivery": {
+      "badgeUrl": "https://image.coupangcdn.com/image/mobile_app/v3/brandsdp/loyalty/pc/rocketwowBi16@2x.png",
+      "company": null,
+      "companyLabel": null,
+      "countDownMessage": null,
+      "countDownMillisecond": 2583220,
+      "delayMessage": null,
+      "deliveryExtraInfo": null,
+      "deliveryNotice": null,
+      "deliveryReminderMessage": null,
+      "descriptionBadge": null,
+      "descriptionIcon": null,
+      "descriptions": "<em class='prod-txt-onyx prod-txt-green-2'>내일(목) 10/23 새벽 7시 전 </em><em class='prod-txt-onyx  prod-txt-green-normal'>도착 보장</em>",
+      "extraDataMap": {
+        "decodeDescriptions": "내일(목) 10/23 새벽 7시 전 도착 보장"
+      },
+      "extremeDescriptions": null,
+      "hideQuestionMark": false,
+      "logistics": true,
+      "loyaltyButtonText": null,
+      "rocketWowQuestionMark": true,
+      "speedType": "OVERNIGHT",
+      "title": null,
+      "type": "ROCKET_DELIVERY"
+    },
+    "deliveryList": [
+      {
+        "badgeUrl": "https://image.coupangcdn.com/image/mobile_app/v3/brandsdp/loyalty/pc/rocketwowBi16@2x.png",
+        "company": null,
+        "companyLabel": null,
+        "countDownMessage": null,
+        "countDownMillisecond": 2583220,
+        "delayMessage": null,
+        "deliveryExtraInfo": null,
+        "deliveryNotice": null,
+        "deliveryReminderMessage": null,
+        "descriptionBadge": null,
+        "descriptionIcon": null,
+        "descriptions": "<em class='prod-txt-onyx prod-txt-green-2'>내일(목) 10/23 새벽 7시 전 </em><em class='prod-txt-onyx  prod-txt-green-normal'>도착 보장</em>",
+        "extraDataMap": {
+          "decodeDescriptions": "내일(목) 10/23 새벽 7시 전 도착 보장"
+        },
+        "extremeDescriptions": null,
+        "hideQuestionMark": false,
+        "logistics": true,
+        "loyaltyButtonText": null,
+        "rocketWowQuestionMark": true,
+        "speedType": "OVERNIGHT",
+        "title": null,
+        "type": "ROCKET_DELIVERY"
+      }
+    ],
+    "deliveryOptionList": null,
+    "freebieBenefit": null,
+    "freebieBenefitV2": null,
+    "freebiePromotions": null,
+    "moduleData": [
+      {
+        "abFlags": {
+          "displayTwoPricesWow": "A",
+          "sdpCartUpdateNewPmcPolicy": "false",
+          "deliveryFeeToggleShow": "false"
+        },
+        "detailPriceBundle": {
+          "finalPrice": {
+            "bestPriceInfo": {
+              "currency": "KRW",
+              "discountRateValid": false,
+              "doubleElevenPromoted": false,
+              "firstPurchase": false,
+              "goldbox": false,
+              "hasEligibilityConditions": false,
+              "lightning": false,
+              "lightningOrGoldbox": false,
+              "memberPrice": false,
+              "notExpired": true,
+              "percentageDiscount": false,
+              "price": 4260,
+              "priceType": "FINAL_PRICE",
+              "priceWithDeliveryFee": 4260,
+              "unitCCIDuration": 100,
+              "unitPrice": {
+                "amount": 100,
+                "extendedPrice": {
+                  "money": {
+                    "amount": 5325,
+                    "currency": "KRW"
+                  },
+                  "offset": 0
+                },
+                "priceEx": {
+                  "amount": 5325,
+                  "currency": "KRW"
+                },
+                "unit": "g"
+              },
+              "unitPriceAmount": 5325,
+              "unitPriceAmountWithDeliveryFee": 5325,
+              "unitPriceDescription": "(100g당 5,325원)",
+              "unitPriceDescriptionWithoutParenthesis": "100g당 5,325원",
+              "unitPriceIncludeDeliveryFeeDescription": "(100g당 5,325원)",
+              "unitPriceIncludeDeliveryFeeDescriptionWithoutParenthesis": "100g당 5,325원",
+              "unitPriceWithDeliveryFee": {
+                "amount": 100,
+                "extendedPrice": {
+                  "money": {
+                    "amount": 5325,
+                    "currency": "KRW"
+                  },
+                  "offset": 0
+                },
+                "unit": "g"
+              },
+              "valid": true
+            },
+            "displayDelivery": {
+              "benefitDescription": "무료배송 새벽도착",
+              "deliveryBadgeType": "ROCKET_WOW",
+              "rocketDeliveryType": "ROCKET_WOW"
+            },
+            "displayType": "FINAL",
+            "downloadCouponType": "NONE",
+            "downloadDiscountAmount": 0,
+            "instantDiscountAmount": 0,
+            "instantDiscountType": "NONE",
+            "memberPrice": false,
+            "otOrWot": false,
+            "price": 4260,
+            "priceWithDeliveryFee": 4260,
+            "realType": "SALES",
+            "unitPriceAmount": 5325,
+            "unitPriceAmountWithDeliveryFee": 5325,
+            "unitPriceDescription": "(100g당 5,325원)",
+            "unitPriceDescriptionWithoutParenthesis": "100g당 5,325원",
+            "unitPriceIncludeDeliveryFeeDescription": "(100g당 5,325원)"
+          },
+          "nonWowMemberPrice": {
+            "price": 4260,
+            "priceWithDeliveryFee": 4260
+          },
+          "wowMemberPrice": {
+            "price": 4260,
+            "priceWithDeliveryFee": 4260
+          }
+        },
+        "logging": {},
+        "normalCouponDiscount": false,
+        "normalInstantDiscount": false,
+        "priceLogData": {
+          "unitPrice": "(100g당 5,325원)",
+          "discountRate": "null",
+          "underThresholdCouponSavingAmount": "null",
+          "targetedCouponSavingAmount": "null",
+          "instantDiscountSavingAmount": "null",
+          "overThresholdCouponSavingAmount": "null",
+          "salesPrice": 4260,
+          "finalPrice": 4260,
+          "underThresholdCouponThreshold": "null",
+          "isBadDiscount": "false",
+          "isLoyaltyMember": true,
+          "wowUnderThresholdCouponThreshold": "null",
+          "anchorPrice": "null",
+          "ccidEligibleSavingAmount": "null",
+          "wowInstantDiscountSavingAmount": "null",
+          "wowUnderThresholdCouponSavingAmount": "null",
+          "wowCcidEligibleSavingAmount": "null",
+          "myCcidDiscountSavingAmount": "null",
+          "businessType": "1p",
+          "wowOverThresholdCouponSavingAmount": "null"
+        },
+        "priceWithDeliveryFee": false,
+        "targetedDiscount": false,
+        "viewType": "PRODUCT_DETAIL_PRICE_INFO",
+        "wowCouponDiscount": false,
+        "wowDiscountAndNormalOtAndNonWowMember": false,
+        "wowInstantDiscount": false
+      },
+      {
+        "attributeBasedTitle": "오뚜기옛날 자른미역, 80g, 1개",
+        "countryOfOrigin": "원산지: 상품 상세설명 참조",
+        "logging": {
+          "alwaysSentLiveLog": false,
+          "bypass": {
+            "exposureSchemas": [
+              {
+                "id": "11942",
+                "mandatory": {
+                  "logCategory": "impression",
+                  "logType": "impression",
+                  "pageName": "sdp",
+                  "eventName": "option_table_test_exposure",
+                  "domain": "sdp",
+                  "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                  "productId": 1008978,
+                  "itemId": 4242032,
+                  "vendorItemId": 92843978880,
+                  "abGroup": "B",
+                  "abTestId": "47980"
+                },
+                "version": "2"
+              }
+            ]
+          }
+        },
+        "title": "오뚜기옛날 자른미역 80g, 1개",
+        "viewType": "PRODUCT_DETAIL_PRODUCT_INFO"
+      },
+      {
+        "abFlags": {
+          "47980": "B"
+        },
+        "featureFlags": {
+          "option_table_pc_expand_1_and_2_attr": "B"
+        },
+        "viewType": "PRODUCT_WEB_DATA_AB_FLAGS"
+      },
+      {
+        "tabList": [
+          {
+            "attributeId": "7637",
+            "items": [
+              {
+                "action": {
+                  "event": {
+                    "url": "https://www.coupang.com/vp/products/1008978/items/4242032/vendoritems/92843978880/option-table?optionTableLandingVendorItemId=92843978880&landedItemId=4242032&landedVendorItemId=92843978880&withDeliveryFee=true&deliveryToggle=false&selectedValue=7652%3ANzY1Mnwx6rCc%2C7637%3ANzYzN3wyMGc&selectedShowPriceStatus=Default&sdp-st=H4sIAAAAAAAA_6tW8i8oyczPC0lMykkNSCxKzC1WsqpWyi_JKchUsjI0MLCwNLfQAfEzgXwTIxMjA2MjML8MyLc0sjAxBiqwsDCo1YGaFJyak5oMYoBNAxlWXIau0iU1J7MstagyJD89HdnaFBRxJau0xJziVLjJPpnFJTBDa2sB_6adfboAAAA"
+                  },
+                  "logging": {
+                    "alwaysSentLiveLog": false,
+                    "bypass": {
+                      "clickSchemas": [
+                        {
+                          "id": "10844",
+                          "mandatory": {
+                            "logCategory": "event",
+                            "logType": "click",
+                            "pageName": "sdp",
+                            "eventName": "click_sdp_option_comparison_table",
+                            "domain": "sdp",
+                            "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                            "productId": 1008978,
+                            "itemId": 4242032,
+                            "vendorItemId": 92843978880,
+                            "categoryId": "1266",
+                            "rocketWowType": "ROCKET_WOW_DAWN",
+                            "optionTableStyle": "sdp_standard",
+                            "clickArea": "attributeOption",
+                            "clickValue": "firstAttribute:20g",
+                            "isImage": false
+                          },
+                          "version": "12"
+                        }
+                      ]
+                    }
+                  }
+                },
+                "id": "NzYzN3wyMGc",
+                "invalid": false,
+                "selected": false,
+                "selectedValue": [
+                  "7652:NzY1Mnwx6rCc",
+                  "7637:NzYzN3wyMGc"
+                ],
+                "soldOut": false,
+                "valueName": "20g"
+              },
+              {
+                "action": {
+                  "event": {
+                    "url": "https://www.coupang.com/vp/products/1008978/items/4242032/vendoritems/92843978880/option-table?optionTableLandingVendorItemId=92843978880&landedItemId=4242032&landedVendorItemId=92843978880&withDeliveryFee=true&deliveryToggle=false&selectedValue=7652%3ANzY1Mnwx6rCc%2C7637%3ANzYzN3w1MGc&selectedShowPriceStatus=Default&sdp-st=H4sIAAAAAAAA_6tW8i8oyczPC0lMykkNSCxKzC1WsqpWyi_JKchUsjI0MLCwNLfQAfEzgXwTIxMjA2MjML8MyLc0sjAxBiqwsDCo1YGaFJyak5oMYoBNAxlWXIau0iU1J7MstagyJD89HdnaFBRxJau0xJziVLjJPpnFJTBDa2sB_6adfboAAAA"
+                  },
+                  "logging": {
+                    "alwaysSentLiveLog": false,
+                    "bypass": {
+                      "clickSchemas": [
+                        {
+                          "id": "10844",
+                          "mandatory": {
+                            "logCategory": "event",
+                            "logType": "click",
+                            "pageName": "sdp",
+                            "eventName": "click_sdp_option_comparison_table",
+                            "domain": "sdp",
+                            "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                            "productId": 1008978,
+                            "itemId": 4242032,
+                            "vendorItemId": 92843978880,
+                            "categoryId": "1266",
+                            "rocketWowType": "ROCKET_WOW_DAWN",
+                            "optionTableStyle": "sdp_standard",
+                            "clickArea": "attributeOption",
+                            "clickValue": "firstAttribute:50g",
+                            "isImage": false
+                          },
+                          "version": "12"
+                        }
+                      ]
+                    }
+                  }
+                },
+                "id": "NzYzN3w1MGc",
+                "invalid": false,
+                "selected": false,
+                "selectedValue": [
+                  "7652:NzY1Mnwx6rCc",
+                  "7637:NzYzN3w1MGc"
+                ],
+                "soldOut": false,
+                "valueName": "50g"
+              },
+              {
+                "action": {
+                  "event": {
+                    "url": "https://www.coupang.com/vp/products/1008978/items/4242032/vendoritems/92843978880/option-table?optionTableLandingVendorItemId=92843978880&landedItemId=4242032&landedVendorItemId=92843978880&withDeliveryFee=true&deliveryToggle=false&selectedValue=7652%3ANzY1Mnwx6rCc%2C7637%3ANzYzN3w4MGc&selectedShowPriceStatus=Default&sdp-st=H4sIAAAAAAAA_6tW8i8oyczPC0lMykkNSCxKzC1WsqpWyi_JKchUsjI0MLCwNLfQAfEzgXwTIxMjA2MjML8MyLc0sjAxBiqwsDCo1YGaFJyak5oMYoBNAxlWXIau0iU1J7MstagyJD89HdnaFBRxJau0xJziVLjJPpnFJTBDa2sB_6adfboAAAA"
+                  },
+                  "logging": {
+                    "alwaysSentLiveLog": false,
+                    "bypass": {
+                      "clickSchemas": [
+                        {
+                          "id": "10844",
+                          "mandatory": {
+                            "logCategory": "event",
+                            "logType": "click",
+                            "pageName": "sdp",
+                            "eventName": "click_sdp_option_comparison_table",
+                            "domain": "sdp",
+                            "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                            "productId": 1008978,
+                            "itemId": 4242032,
+                            "vendorItemId": 92843978880,
+                            "categoryId": "1266",
+                            "rocketWowType": "ROCKET_WOW_DAWN",
+                            "optionTableStyle": "sdp_standard",
+                            "clickArea": "attributeOption",
+                            "clickValue": "firstAttribute:80g",
+                            "isImage": false
+                          },
+                          "version": "12"
+                        }
+                      ]
+                    }
+                  }
+                },
+                "id": "NzYzN3w4MGc",
+                "invalid": false,
+                "selected": true,
+                "selectedValue": [
+                  "7652:NzY1Mnwx6rCc",
+                  "7637:NzYzN3w4MGc"
+                ],
+                "soldOut": false,
+                "valueName": "80g"
+              },
+              {
+                "action": {
+                  "event": {
+                    "url": "https://www.coupang.com/vp/products/1008978/items/4242032/vendoritems/92843978880/option-table?optionTableLandingVendorItemId=92843978880&landedItemId=4242032&landedVendorItemId=92843978880&withDeliveryFee=true&deliveryToggle=false&selectedValue=7652%3ANzY1Mnwx6rCc%2C7637%3ANzYzN3wxMjBn&selectedShowPriceStatus=Default&sdp-st=H4sIAAAAAAAA_6tW8i8oyczPC0lMykkNSCxKzC1WsqpWyi_JKchUsjI0MLCwNLfQAfEzgXwTIxMjA2MjML8MyLc0sjAxBiqwsDCo1YGaFJyak5oMYoBNAxlWXIau0iU1J7MstagyJD89HdnaFBRxJau0xJziVLjJPpnFJTBDa2sB_6adfboAAAA"
+                  },
+                  "logging": {
+                    "alwaysSentLiveLog": false,
+                    "bypass": {
+                      "clickSchemas": [
+                        {
+                          "id": "10844",
+                          "mandatory": {
+                            "logCategory": "event",
+                            "logType": "click",
+                            "pageName": "sdp",
+                            "eventName": "click_sdp_option_comparison_table",
+                            "domain": "sdp",
+                            "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                            "productId": 1008978,
+                            "itemId": 4242032,
+                            "vendorItemId": 92843978880,
+                            "categoryId": "1266",
+                            "rocketWowType": "ROCKET_WOW_DAWN",
+                            "optionTableStyle": "sdp_standard",
+                            "clickArea": "attributeOption",
+                            "clickValue": "firstAttribute:120g",
+                            "isImage": false
+                          },
+                          "version": "12"
+                        }
+                      ]
+                    }
+                  }
+                },
+                "id": "NzYzN3wxMjBn",
+                "invalid": false,
+                "selected": false,
+                "selectedValue": [
+                  "7652:NzY1Mnwx6rCc",
+                  "7637:NzYzN3wxMjBn"
+                ],
+                "soldOut": false,
+                "valueName": "120g"
+              },
+              {
+                "action": {
+                  "event": {
+                    "url": "https://www.coupang.com/vp/products/1008978/items/4242032/vendoritems/92843978880/option-table?optionTableLandingVendorItemId=92843978880&landedItemId=4242032&landedVendorItemId=92843978880&withDeliveryFee=true&deliveryToggle=false&selectedValue=7652%3ANzY1Mnwx6rCc%2C7637%3ANzYzN3wyNTBn&selectedShowPriceStatus=Default&sdp-st=H4sIAAAAAAAA_6tW8i8oyczPC0lMykkNSCxKzC1WsqpWyi_JKchUsjI0MLCwNLfQAfEzgXwTIxMjA2MjML8MyLc0sjAxBiqwsDCo1YGaFJyak5oMYoBNAxlWXIau0iU1J7MstagyJD89HdnaFBRxJau0xJziVLjJPpnFJTBDa2sB_6adfboAAAA"
+                  },
+                  "logging": {
+                    "alwaysSentLiveLog": false,
+                    "bypass": {
+                      "clickSchemas": [
+                        {
+                          "id": "10844",
+                          "mandatory": {
+                            "logCategory": "event",
+                            "logType": "click",
+                            "pageName": "sdp",
+                            "eventName": "click_sdp_option_comparison_table",
+                            "domain": "sdp",
+                            "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                            "productId": 1008978,
+                            "itemId": 4242032,
+                            "vendorItemId": 92843978880,
+                            "categoryId": "1266",
+                            "rocketWowType": "ROCKET_WOW_DAWN",
+                            "optionTableStyle": "sdp_standard",
+                            "clickArea": "attributeOption",
+                            "clickValue": "firstAttribute:250g",
+                            "isImage": false
+                          },
+                          "version": "12"
+                        }
+                      ]
+                    }
+                  }
+                },
+                "id": "NzYzN3wyNTBn",
+                "invalid": false,
+                "selected": false,
+                "selectedValue": [
+                  "7652:NzY1Mnwx6rCc",
+                  "7637:NzYzN3wyNTBn"
+                ],
+                "soldOut": false,
+                "valueName": "250g"
+              }
+            ],
+            "sizeAttribute": false,
+            "style": "TAB",
+            "title": "개당 중량 × 수량: ",
+            "valueName": "80g × 1개"
+          }
+        ],
+        "viewType": "PRODUCT_OPTION_TABLE_TAB_SELECTOR"
+      },
+      {
+        "data": {
+          "description": "배송비 포함",
+          "logging": {
+            "alwaysSentLiveLog": false,
+            "bypass": {
+              "clickSchemas": [
+                {
+                  "id": "10387",
+                  "mandatory": {
+                    "logCategory": "event",
+                    "logType": "click",
+                    "pageName": "sdp",
+                    "eventName": "sdp_unitprice_including_deliveryfee_toggle_click",
+                    "domain": "sdp",
+                    "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                    "productId": 1008978,
+                    "itemId": 4242032,
+                    "vendorItemId": 92843978880,
+                    "businessType": "Retail",
+                    "action": "on"
+                  },
+                  "version": "1"
+                }
+              ],
+              "exposureSchema": {
+                "id": "10386",
+                "mandatory": {
+                  "logCategory": "impression",
+                  "logType": "impression",
+                  "pageName": "sdp",
+                  "eventName": "sdp_unitprice_including_deliveryfee_toggle_impression",
+                  "domain": "sdp",
+                  "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                  "productId": 1008978,
+                  "itemId": 4242032,
+                  "vendorItemId": 92843978880,
+                  "businessType": "Retail"
+                },
+                "version": "1"
+              }
+            }
+          },
+          "title": "더 많은 옵션 보기",
+          "toggle": {
+            "action": {
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "10932",
+                      "mandatory": {
+                        "domain": "sdp",
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "option_list",
+                        "eventName": "sdp_option_list_deliveryfee_toggle_click",
+                        "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                        "productId": 1008978,
+                        "itemId": 4242032,
+                        "vendorItemId": 92843978880,
+                        "action": "on"
+                      },
+                      "version": "1"
+                    }
+                  ],
+                  "exposureSchema": {
+                    "id": "10931",
+                    "mandatory": {
+                      "domain": "sdp",
+                      "logCategory": "impression",
+                      "logType": "impression",
+                      "pageName": "option_list",
+                      "eventName": "sdp_option_list_deliveryfee_toggle_impression",
+                      "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                      "productId": 1008978,
+                      "itemId": 4242032,
+                      "vendorItemId": 92843978880,
+                      "status": "off"
+                    },
+                    "version": "1"
+                  }
+                }
+              }
+            },
+            "status": false
+          }
+        },
+        "viewType": "PRODUCT_OPTION_TABLE_TOGGLE_HEADER"
+      },
+      {
+        "landingItemId": 4242032,
+        "landingProductId": 1008978,
+        "landingVendorItemId": 92843978880,
+        "logging": {
+          "alwaysSentLiveLog": false,
+          "bypass": {
+            "exposureSchema": {
+              "id": "10843",
+              "mandatory": {
+                "logCategory": "impression",
+                "logType": "impression",
+                "pageName": "sdp",
+                "eventName": "impression_sdp_option_comparison_table",
+                "domain": "sdp",
+                "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                "productId": 1008978,
+                "itemId": 4242032,
+                "vendorItemId": 92843978880,
+                "categoryId": "1266",
+                "optionTableStyle": "sdp_standard",
+                "attributes": "개당 중량,수량",
+                "isSeeAll": true,
+                "isImage": false,
+                "firstAttributeOptionList": "attribute1:20g,attribute2:50g,attribute3:80g,attribute4:120g,attribute5:250g",
+                "selectedAttribute": "firstAttribute:80g",
+                "listVendorItemId": "option1:92843978880,option2:3005113499,option3:86387426228,option4:86387426235",
+                "listVendorItemPrice": "option1:4260,option2:10080,option3:18660,option4:36320",
+                "listQty": "option1:1개,option2:3개,option3:6개,option4:12개",
+                "listDeliveryType": "option1:ROCKET_WOW,option2:ROCKET_WOW,option3:ROCKET_WOW,option4:ROCKET_WOW",
+                "listUnitPrice": "option1:5325,option2:4200,option3:3888,option4:3783",
+                "listMin": "option1:false,option2:false,option3:false,option4:true",
+                "listOos": "option1:false,option2:false,option3:false,option4:false",
+                "listDefault": "option1:true,option2:true,option3:true,option4:true",
+                "listPriceLabel": "option1:,option2:,option3:,option4:",
+                "selectedOption": "option1"
+              },
+              "version": "16"
+            }
+          }
+        },
+        "optionList": [
+          {
+            "action": {
+              "event": {
+                "url": "/vm/v5/products/1008978/vendor-items/92843978880?landingItemId=4242032&landingProductId=1008978&landingVendorItemId=92843978880"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "10844",
+                      "mandatory": {
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "sdp",
+                        "eventName": "click_sdp_option_comparison_table",
+                        "domain": "sdp",
+                        "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                        "productId": 1008978,
+                        "itemId": 4242032,
+                        "vendorItemId": 92843978880,
+                        "categoryId": "1266",
+                        "clickArea": "option",
+                        "clickValue": "option1:92843978880",
+                        "isImage": false
+                      },
+                      "version": "12"
+                    }
+                  ]
+                }
+              }
+            },
+            "defaultShow": true,
+            "deliveryBadgeUrl": "https://image.coupangcdn.com/image/coupang/rds/logo/hdpi/logo_wow_small.png",
+            "deliveryType": "ROCKET_WOW",
+            "finalPrice": "4,260원",
+            "finalUnitPrice": "100g당 5,325원",
+            "hoverImageUrl": "//thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/53054286256769-a5dd03f5-e395-4b46-80e7-51d9cf4fea89.jpg",
+            "hoverSelectionText": "80g × 1개",
+            "itemId": 4242032,
+            "optionItemName": "1개",
+            "selected": true,
+            "soldOut": false,
+            "vendorItemId": 92843978880
+          },
+          {
+            "action": {
+              "event": {
+                "url": "/vm/v5/products/1008978/vendor-items/3005113499?landingItemId=4242032&landingProductId=1008978&landingVendorItemId=92843978880"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "10844",
+                      "mandatory": {
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "sdp",
+                        "eventName": "click_sdp_option_comparison_table",
+                        "domain": "sdp",
+                        "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                        "productId": 1008978,
+                        "itemId": 4242032,
+                        "vendorItemId": 92843978880,
+                        "categoryId": "1266",
+                        "clickArea": "option",
+                        "clickValue": "option2:3005113499",
+                        "isImage": false
+                      },
+                      "version": "12"
+                    }
+                  ]
+                }
+              }
+            },
+            "defaultShow": true,
+            "deliveryBadgeUrl": "https://image.coupangcdn.com/image/coupang/rds/logo/hdpi/logo_wow_small.png",
+            "deliveryType": "ROCKET_WOW",
+            "finalPrice": "10,080원",
+            "finalUnitPrice": "100g당 4,200원",
+            "hoverImageUrl": "//thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/1025_amir_coupang_oct_80k/8864/ca6c1d77bba7a738f0f886ed213f29da908fb8fc520251b2490f0c3cb133.jpg",
+            "hoverSelectionText": "80g × 3개",
+            "itemId": 4242181,
+            "optionItemName": "3개",
+            "selected": false,
+            "soldOut": false,
+            "vendorItemId": 3005113499
+          },
+          {
+            "action": {
+              "event": {
+                "url": "/vm/v5/products/1008978/vendor-items/86387426228?landingItemId=4242032&landingProductId=1008978&landingVendorItemId=92843978880"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "10844",
+                      "mandatory": {
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "sdp",
+                        "eventName": "click_sdp_option_comparison_table",
+                        "domain": "sdp",
+                        "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                        "productId": 1008978,
+                        "itemId": 4242032,
+                        "vendorItemId": 92843978880,
+                        "categoryId": "1266",
+                        "clickArea": "option",
+                        "clickValue": "option3:86387426228",
+                        "isImage": false
+                      },
+                      "version": "12"
+                    }
+                  ]
+                }
+              }
+            },
+            "defaultShow": true,
+            "deliveryBadgeUrl": "https://image.coupangcdn.com/image/coupang/rds/logo/hdpi/logo_wow_small.png",
+            "deliveryType": "ROCKET_WOW",
+            "finalPrice": "18,660원",
+            "finalUnitPrice": "100g당 3,888원",
+            "hoverImageUrl": "//thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/326835947251918-df2f904f-7ebb-4b4f-a04e-756ca285a5f1.jpg",
+            "hoverSelectionText": "80g × 6개",
+            "itemId": 19272257729,
+            "optionItemName": "6개",
+            "selected": false,
+            "soldOut": false,
+            "vendorItemId": 86387426228
+          },
+          {
+            "action": {
+              "event": {
+                "url": "/vm/v5/products/1008978/vendor-items/86387426235?landingItemId=4242032&landingProductId=1008978&landingVendorItemId=92843978880"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "10844",
+                      "mandatory": {
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "sdp",
+                        "eventName": "click_sdp_option_comparison_table",
+                        "domain": "sdp",
+                        "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                        "productId": 1008978,
+                        "itemId": 4242032,
+                        "vendorItemId": 92843978880,
+                        "categoryId": "1266",
+                        "clickArea": "option",
+                        "clickValue": "option4:86387426235",
+                        "isImage": false
+                      },
+                      "version": "12"
+                    }
+                  ]
+                }
+              }
+            },
+            "defaultShow": true,
+            "deliveryBadgeUrl": "https://image.coupangcdn.com/image/coupang/rds/logo/hdpi/logo_wow_small.png",
+            "deliveryType": "ROCKET_WOW",
+            "finalPrice": "36,320원",
+            "finalUnitPrice": "100g당 3,783원",
+            "finalUnitPriceLabel": "(최저 단위가)",
+            "hoverImageUrl": "//thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/46814089945413-9e22b535-b540-425b-bfa4-3a79e75ff4da.jpg",
+            "hoverSelectionText": "80g × 12개",
+            "itemId": 19272257737,
+            "optionItemName": "12개",
+            "selected": false,
+            "soldOut": false,
+            "vendorItemId": 86387426235
+          }
+        ],
+        "seeAllButton": {
+          "action": {
+            "logging": {
+              "alwaysSentLiveLog": false,
+              "bypass": {
+                "clickSchemas": [
+                  {
+                    "id": "10844",
+                    "mandatory": {
+                      "logCategory": "event",
+                      "logType": "click",
+                      "pageName": "sdp",
+                      "eventName": "click_sdp_option_comparison_table",
+                      "domain": "sdp",
+                      "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                      "productId": 1008978,
+                      "itemId": 4242032,
+                      "vendorItemId": 92843978880,
+                      "categoryId": "1266",
+                      "clickArea": "seeAll",
+                      "clickValue": "모든 옵션 보기",
+                      "isImage": false,
+                      "isToggleOn": false
+                    },
+                    "version": "12"
+                  }
+                ]
+              }
+            }
+          },
+          "buttonText": "모든 옵션 보기"
+        },
+        "style": "SHORT_ATTR",
+        "tableId": "NzYzN3w4MGc",
+        "viewType": "PRODUCT_OPTION_TABLE_LIST_VIEW"
+      },
+      {
+        "items": [
+          {
+            "action": {
+              "event": {
+                "url": "vp/products/1008978/vendoritems/87832352041"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "5104",
+                      "mandatory": {
+                        "domain": "sdp",
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "option_list",
+                        "eventName": "option_list_click",
+                        "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                        "vendorItemId": 87832352041,
+                        "searchId": "",
+                        "vendorItemIdAttributes": "20g_1개_unitPrice:6600_vendorItemPrice:1320_deliveryType:ROCKET_WOW_deliveryFee:0"
+                      },
+                      "version": "6"
+                    }
+                  ],
+                  "exposureSchema": {
+                    "id": "5112",
+                    "mandatory": {
+                      "logCategory": "impression",
+                      "logType": "impression",
+                      "pageName": "option_list",
+                      "eventName": "option_list_item_impression",
+                      "domain": "sdp",
+                      "referSdpItem": "p1008978_i4242032_v92843978880",
+                      "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                      "vendorItemId": "87832352041",
+                      "originalItemId": 4242032,
+                      "originalVendorItemId": 92843978880,
+                      "rocketWowType": "ROCKET_WOW_DAWN",
+                      "searchId": "",
+                      "vendorItemIdAttributes": "20g_1개_unitPrice:6600_vendorItemPrice:1320_deliveryType:ROCKET_WOW_deliveryFee:0"
+                    },
+                    "version": "9"
+                  }
+                }
+              }
+            },
+            "deliveryInfo": {
+              "deliveryBadge": {
+                "height": 16,
+                "url": "https://image.coupangcdn.com/image/coupang/rds/logo/xhdpi/logo_wow_medium.png",
+                "width": 65
+              },
+              "deliveryDateColor": "GREEN",
+              "deliveryDateDescriptions": "내일(목) 새벽 도착 보장"
+            },
+            "itemBasicInfo": {
+              "invalid": false,
+              "itemId": 16303912130,
+              "itemName": "20g × 1개",
+              "vendorItemId": 87832352041
+            },
+            "priceInfo": {
+              "finalDeliveryDescription": "무료배송",
+              "finalPrice": "1,320원",
+              "finalUnitPrice": "(100g당 6,600원)"
+            },
+            "stockInfo": {
+              "logistics": true,
+              "restockNotification": false,
+              "soldOut": false
+            }
+          },
+          {
+            "action": {
+              "event": {
+                "url": "vp/products/1008978/vendoritems/87845229052"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "5104",
+                      "mandatory": {
+                        "domain": "sdp",
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "option_list",
+                        "eventName": "option_list_click",
+                        "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                        "vendorItemId": 87845229052,
+                        "searchId": "",
+                        "vendorItemIdAttributes": "20g_2개_unitPrice:6000_vendorItemPrice:2400_deliveryType:ROCKET_WOW_deliveryFee:0"
+                      },
+                      "version": "6"
+                    }
+                  ],
+                  "exposureSchema": {
+                    "id": "5112",
+                    "mandatory": {
+                      "logCategory": "impression",
+                      "logType": "impression",
+                      "pageName": "option_list",
+                      "eventName": "option_list_item_impression",
+                      "domain": "sdp",
+                      "referSdpItem": "p1008978_i4242032_v92843978880",
+                      "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                      "vendorItemId": "87845229052",
+                      "originalItemId": 4242032,
+                      "originalVendorItemId": 92843978880,
+                      "rocketWowType": "ROCKET_WOW_DAWN",
+                      "searchId": "",
+                      "vendorItemIdAttributes": "20g_2개_unitPrice:6000_vendorItemPrice:2400_deliveryType:ROCKET_WOW_deliveryFee:0"
+                    },
+                    "version": "9"
+                  }
+                }
+              }
+            },
+            "deliveryInfo": {
+              "deliveryBadge": {
+                "height": 16,
+                "url": "https://image.coupangcdn.com/image/coupang/rds/logo/xhdpi/logo_wow_medium.png",
+                "width": 65
+              },
+              "deliveryDateColor": "GREEN",
+              "deliveryDateDescriptions": "내일(목) 새벽 도착 보장"
+            },
+            "itemBasicInfo": {
+              "invalid": false,
+              "itemId": 62200732,
+              "itemName": "20g × 2개",
+              "vendorItemId": 87845229052
+            },
+            "priceInfo": {
+              "finalDeliveryDescription": "무료배송",
+              "finalPrice": "2,400원",
+              "finalUnitPrice": "(100g당 6,000원)"
+            },
+            "stockInfo": {
+              "logistics": true,
+              "restockNotification": false,
+              "soldOut": false
+            }
+          },
+          {
+            "action": {
+              "event": {
+                "url": "vp/products/1008978/vendoritems/87845229479"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "5104",
+                      "mandatory": {
+                        "domain": "sdp",
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "option_list",
+                        "eventName": "option_list_click",
+                        "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                        "vendorItemId": 87845229479,
+                        "searchId": "",
+                        "vendorItemIdAttributes": "20g_3개_unitPrice:5750_vendorItemPrice:3450_deliveryType:ROCKET_WOW_deliveryFee:0"
+                      },
+                      "version": "6"
+                    }
+                  ],
+                  "exposureSchema": {
+                    "id": "5112",
+                    "mandatory": {
+                      "logCategory": "impression",
+                      "logType": "impression",
+                      "pageName": "option_list",
+                      "eventName": "option_list_item_impression",
+                      "domain": "sdp",
+                      "referSdpItem": "p1008978_i4242032_v92843978880",
+                      "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                      "vendorItemId": "87845229479",
+                      "originalItemId": 4242032,
+                      "originalVendorItemId": 92843978880,
+                      "rocketWowType": "ROCKET_WOW_DAWN",
+                      "searchId": "",
+                      "vendorItemIdAttributes": "20g_3개_unitPrice:5750_vendorItemPrice:3450_deliveryType:ROCKET_WOW_deliveryFee:0"
+                    },
+                    "version": "9"
+                  }
+                }
+              }
+            },
+            "deliveryInfo": {
+              "deliveryBadge": {
+                "height": 16,
+                "url": "https://image.coupangcdn.com/image/coupang/rds/logo/xhdpi/logo_wow_medium.png",
+                "width": 65
+              },
+              "deliveryDateColor": "GREEN",
+              "deliveryDateDescriptions": "내일(목) 새벽 도착 보장"
+            },
+            "itemBasicInfo": {
+              "invalid": false,
+              "itemId": 16303912128,
+              "itemName": "20g × 3개",
+              "vendorItemId": 87845229479
+            },
+            "priceInfo": {
+              "finalDeliveryDescription": "무료배송",
+              "finalPrice": "3,450원",
+              "finalUnitPrice": "(100g당 5,750원)"
+            },
+            "stockInfo": {
+              "logistics": true,
+              "restockNotification": false,
+              "soldOut": false
+            }
+          },
+          {
+            "action": {
+              "event": {
+                "url": "vp/products/1008978/vendoritems/87845229460"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "5104",
+                      "mandatory": {
+                        "domain": "sdp",
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "option_list",
+                        "eventName": "option_list_click",
+                        "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                        "vendorItemId": 87845229460,
+                        "searchId": "",
+                        "vendorItemIdAttributes": "20g_4개_unitPrice:5750_vendorItemPrice:4600_deliveryType:ROCKET_WOW_deliveryFee:0"
+                      },
+                      "version": "6"
+                    }
+                  ],
+                  "exposureSchema": {
+                    "id": "5112",
+                    "mandatory": {
+                      "logCategory": "impression",
+                      "logType": "impression",
+                      "pageName": "option_list",
+                      "eventName": "option_list_item_impression",
+                      "domain": "sdp",
+                      "referSdpItem": "p1008978_i4242032_v92843978880",
+                      "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                      "vendorItemId": "87845229460",
+                      "originalItemId": 4242032,
+                      "originalVendorItemId": 92843978880,
+                      "rocketWowType": "ROCKET_WOW_DAWN",
+                      "searchId": "",
+                      "vendorItemIdAttributes": "20g_4개_unitPrice:5750_vendorItemPrice:4600_deliveryType:ROCKET_WOW_deliveryFee:0"
+                    },
+                    "version": "9"
+                  }
+                }
+              }
+            },
+            "deliveryInfo": {
+              "deliveryBadge": {
+                "height": 16,
+                "url": "https://image.coupangcdn.com/image/coupang/rds/logo/xhdpi/logo_wow_medium.png",
+                "width": 65
+              },
+              "deliveryDateColor": "GREEN",
+              "deliveryDateDescriptions": "내일(목) 새벽 도착 보장"
+            },
+            "itemBasicInfo": {
+              "invalid": false,
+              "itemId": 62200733,
+              "itemName": "20g × 4개",
+              "vendorItemId": 87845229460
+            },
+            "priceInfo": {
+              "finalDeliveryDescription": "무료배송",
+              "finalPrice": "4,600원",
+              "finalUnitPrice": "(100g당 5,750원)"
+            },
+            "stockInfo": {
+              "logistics": true,
+              "restockNotification": false,
+              "soldOut": false
+            }
+          },
+          {
+            "action": {
+              "event": {
+                "url": "vp/products/1008978/vendoritems/3028860240"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "5104",
+                      "mandatory": {
+                        "domain": "sdp",
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "option_list",
+                        "eventName": "option_list_click",
+                        "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                        "vendorItemId": 3028860240,
+                        "searchId": "",
+                        "vendorItemIdAttributes": "20g_5개_unitPrice:5500_vendorItemPrice:5500_deliveryType:ROCKET_WOW_deliveryFee:0"
+                      },
+                      "version": "6"
+                    }
+                  ],
+                  "exposureSchema": {
+                    "id": "5112",
+                    "mandatory": {
+                      "logCategory": "impression",
+                      "logType": "impression",
+                      "pageName": "option_list",
+                      "eventName": "option_list_item_impression",
+                      "domain": "sdp",
+                      "referSdpItem": "p1008978_i4242032_v92843978880",
+                      "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                      "vendorItemId": "3028860240",
+                      "originalItemId": 4242032,
+                      "originalVendorItemId": 92843978880,
+                      "rocketWowType": "ROCKET_WOW_DAWN",
+                      "searchId": "",
+                      "vendorItemIdAttributes": "20g_5개_unitPrice:5500_vendorItemPrice:5500_deliveryType:ROCKET_WOW_deliveryFee:0"
+                    },
+                    "version": "9"
+                  }
+                }
+              }
+            },
+            "deliveryInfo": {
+              "deliveryBadge": {
+                "height": 16,
+                "url": "https://image.coupangcdn.com/image/coupang/rds/logo/xhdpi/logo_wow_medium.png",
+                "width": 65
+              },
+              "deliveryDateColor": "GREEN",
+              "deliveryDateDescriptions": "내일(목) 새벽 도착 보장"
+            },
+            "itemBasicInfo": {
+              "invalid": false,
+              "itemId": 14759790131,
+              "itemName": "20g × 5개",
+              "vendorItemId": 3028860240
+            },
+            "priceInfo": {
+              "finalDeliveryDescription": "무료배송",
+              "finalPrice": "5,500원",
+              "finalUnitPrice": "(100g당 5,500원)"
+            },
+            "stockInfo": {
+              "logistics": true,
+              "restockNotification": false,
+              "soldOut": false
+            }
+          },
+          {
+            "action": {
+              "event": {
+                "url": "vp/products/1008978/vendoritems/87845220530"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "5104",
+                      "mandatory": {
+                        "domain": "sdp",
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "option_list",
+                        "eventName": "option_list_click",
+                        "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                        "vendorItemId": 87845220530,
+                        "searchId": "",
+                        "vendorItemIdAttributes": "20g_6개_unitPrice:5333_vendorItemPrice:6400_deliveryType:ROCKET_WOW_deliveryFee:0"
+                      },
+                      "version": "6"
+                    }
+                  ],
+                  "exposureSchema": {
+                    "id": "5112",
+                    "mandatory": {
+                      "logCategory": "impression",
+                      "logType": "impression",
+                      "pageName": "option_list",
+                      "eventName": "option_list_item_impression",
+                      "domain": "sdp",
+                      "referSdpItem": "p1008978_i4242032_v92843978880",
+                      "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                      "vendorItemId": "87845220530",
+                      "originalItemId": 4242032,
+                      "originalVendorItemId": 92843978880,
+                      "rocketWowType": "ROCKET_WOW_DAWN",
+                      "searchId": "",
+                      "vendorItemIdAttributes": "20g_6개_unitPrice:5333_vendorItemPrice:6400_deliveryType:ROCKET_WOW_deliveryFee:0"
+                    },
+                    "version": "9"
+                  }
+                }
+              }
+            },
+            "deliveryInfo": {
+              "deliveryBadge": {
+                "height": 16,
+                "url": "https://image.coupangcdn.com/image/coupang/rds/logo/xhdpi/logo_wow_medium.png",
+                "width": 65
+              },
+              "deliveryDateColor": "GREEN",
+              "deliveryDateDescriptions": "내일(목) 새벽 도착 보장"
+            },
+            "itemBasicInfo": {
+              "invalid": false,
+              "itemId": 62200734,
+              "itemName": "20g × 6개",
+              "vendorItemId": 87845220530
+            },
+            "priceInfo": {
+              "finalDeliveryDescription": "무료배송",
+              "finalPrice": "6,400원",
+              "finalUnitPrice": "(100g당 5,333원)"
+            },
+            "stockInfo": {
+              "logistics": true,
+              "restockNotification": false,
+              "soldOut": false
+            }
+          },
+          {
+            "action": {
+              "event": {
+                "url": "vp/products/1008978/vendoritems/86397352175"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "5104",
+                      "mandatory": {
+                        "domain": "sdp",
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "option_list",
+                        "eventName": "option_list_click",
+                        "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                        "vendorItemId": 86397352175,
+                        "searchId": "",
+                        "vendorItemIdAttributes": "20g_10개_unitPrice:4850_vendorItemPrice:9700_deliveryType:ROCKET_WOW_deliveryFee:0"
+                      },
+                      "version": "6"
+                    }
+                  ],
+                  "exposureSchema": {
+                    "id": "5112",
+                    "mandatory": {
+                      "logCategory": "impression",
+                      "logType": "impression",
+                      "pageName": "option_list",
+                      "eventName": "option_list_item_impression",
+                      "domain": "sdp",
+                      "referSdpItem": "p1008978_i4242032_v92843978880",
+                      "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                      "vendorItemId": "86397352175",
+                      "originalItemId": 4242032,
+                      "originalVendorItemId": 92843978880,
+                      "rocketWowType": "ROCKET_WOW_DAWN",
+                      "searchId": "",
+                      "vendorItemIdAttributes": "20g_10개_unitPrice:4850_vendorItemPrice:9700_deliveryType:ROCKET_WOW_deliveryFee:0"
+                    },
+                    "version": "9"
+                  }
+                }
+              }
+            },
+            "deliveryInfo": {
+              "deliveryBadge": {
+                "height": 16,
+                "url": "https://image.coupangcdn.com/image/coupang/rds/logo/xhdpi/logo_wow_medium.png",
+                "width": 65
+              },
+              "deliveryDateColor": "GREEN",
+              "deliveryDateDescriptions": "내일(목) 새벽 도착 보장"
+            },
+            "itemBasicInfo": {
+              "invalid": false,
+              "itemId": 19282392294,
+              "itemName": "20g × 10개",
+              "vendorItemId": 86397352175
+            },
+            "priceInfo": {
+              "finalDeliveryDescription": "무료배송",
+              "finalPrice": "9,700원",
+              "finalUnitPrice": "(100g당 4,850원)"
+            },
+            "stockInfo": {
+              "logistics": true,
+              "restockNotification": false,
+              "soldOut": false
+            }
+          },
+          {
+            "action": {
+              "event": {
+                "url": "vp/products/1008978/vendoritems/86397352191"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "5104",
+                      "mandatory": {
+                        "domain": "sdp",
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "option_list",
+                        "eventName": "option_list_click",
+                        "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                        "vendorItemId": 86397352191,
+                        "searchId": "",
+                        "vendorItemIdAttributes": "20g_15개_unitPrice:4600_vendorItemPrice:13800_deliveryType:ROCKET_WOW_deliveryFee:0"
+                      },
+                      "version": "6"
+                    }
+                  ],
+                  "exposureSchema": {
+                    "id": "5112",
+                    "mandatory": {
+                      "logCategory": "impression",
+                      "logType": "impression",
+                      "pageName": "option_list",
+                      "eventName": "option_list_item_impression",
+                      "domain": "sdp",
+                      "referSdpItem": "p1008978_i4242032_v92843978880",
+                      "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                      "vendorItemId": "86397352191",
+                      "originalItemId": 4242032,
+                      "originalVendorItemId": 92843978880,
+                      "rocketWowType": "ROCKET_WOW_DAWN",
+                      "searchId": "",
+                      "vendorItemIdAttributes": "20g_15개_unitPrice:4600_vendorItemPrice:13800_deliveryType:ROCKET_WOW_deliveryFee:0"
+                    },
+                    "version": "9"
+                  }
+                }
+              }
+            },
+            "deliveryInfo": {
+              "deliveryBadge": {
+                "height": 16,
+                "url": "https://image.coupangcdn.com/image/coupang/rds/logo/xhdpi/logo_wow_medium.png",
+                "width": 65
+              },
+              "deliveryDateColor": "GREEN",
+              "deliveryDateDescriptions": "내일(목) 새벽 도착 보장"
+            },
+            "itemBasicInfo": {
+              "invalid": false,
+              "itemId": 19282392304,
+              "itemName": "20g × 15개",
+              "vendorItemId": 86397352191
+            },
+            "priceInfo": {
+              "finalDeliveryDescription": "무료배송",
+              "finalPrice": "13,800원",
+              "finalUnitPrice": "(100g당 4,600원)"
+            },
+            "stockInfo": {
+              "logistics": true,
+              "restockNotification": false,
+              "soldOut": false
+            }
+          },
+          {
+            "action": {
+              "event": {
+                "url": "vp/products/1008978/vendoritems/86397352207"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "5104",
+                      "mandatory": {
+                        "domain": "sdp",
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "option_list",
+                        "eventName": "option_list_click",
+                        "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                        "vendorItemId": 86397352207,
+                        "searchId": "",
+                        "vendorItemIdAttributes": "20g_20개_unitPrice:4475_vendorItemPrice:17900_deliveryType:ROCKET_WOW_deliveryFee:0"
+                      },
+                      "version": "6"
+                    }
+                  ],
+                  "exposureSchema": {
+                    "id": "5112",
+                    "mandatory": {
+                      "logCategory": "impression",
+                      "logType": "impression",
+                      "pageName": "option_list",
+                      "eventName": "option_list_item_impression",
+                      "domain": "sdp",
+                      "referSdpItem": "p1008978_i4242032_v92843978880",
+                      "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                      "vendorItemId": "86397352207",
+                      "originalItemId": 4242032,
+                      "originalVendorItemId": 92843978880,
+                      "rocketWowType": "ROCKET_WOW_DAWN",
+                      "searchId": "",
+                      "vendorItemIdAttributes": "20g_20개_unitPrice:4475_vendorItemPrice:17900_deliveryType:ROCKET_WOW_deliveryFee:0"
+                    },
+                    "version": "9"
+                  }
+                }
+              }
+            },
+            "deliveryInfo": {
+              "deliveryBadge": {
+                "height": 16,
+                "url": "https://image.coupangcdn.com/image/coupang/rds/logo/xhdpi/logo_wow_medium.png",
+                "width": 65
+              },
+              "deliveryDateColor": "GREEN",
+              "deliveryDateDescriptions": "내일(목) 새벽 도착 보장"
+            },
+            "itemBasicInfo": {
+              "invalid": false,
+              "itemId": 14759790135,
+              "itemName": "20g × 20개",
+              "vendorItemId": 86397352207
+            },
+            "priceInfo": {
+              "finalDeliveryDescription": "무료배송",
+              "finalPrice": "17,900원",
+              "finalUnitPrice": "(100g당 4,475원)"
+            },
+            "stockInfo": {
+              "logistics": true,
+              "restockNotification": false,
+              "soldOut": false
+            }
+          },
+          {
+            "action": {
+              "event": {
+                "url": "vp/products/1008978/vendoritems/86397352186"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "5104",
+                      "mandatory": {
+                        "domain": "sdp",
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "option_list",
+                        "eventName": "option_list_click",
+                        "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                        "vendorItemId": 86397352186,
+                        "searchId": "",
+                        "vendorItemIdAttributes": "20g_25개_unitPrice:4474_vendorItemPrice:22370_deliveryType:ROCKET_WOW_deliveryFee:0"
+                      },
+                      "version": "6"
+                    }
+                  ],
+                  "exposureSchema": {
+                    "id": "5112",
+                    "mandatory": {
+                      "logCategory": "impression",
+                      "logType": "impression",
+                      "pageName": "option_list",
+                      "eventName": "option_list_item_impression",
+                      "domain": "sdp",
+                      "referSdpItem": "p1008978_i4242032_v92843978880",
+                      "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                      "vendorItemId": "86397352186",
+                      "originalItemId": 4242032,
+                      "originalVendorItemId": 92843978880,
+                      "rocketWowType": "ROCKET_WOW_DAWN",
+                      "searchId": "",
+                      "vendorItemIdAttributes": "20g_25개_unitPrice:4474_vendorItemPrice:22370_deliveryType:ROCKET_WOW_deliveryFee:0"
+                    },
+                    "version": "9"
+                  }
+                }
+              }
+            },
+            "deliveryInfo": {
+              "deliveryBadge": {
+                "height": 16,
+                "url": "https://image.coupangcdn.com/image/coupang/rds/logo/xhdpi/logo_wow_medium.png",
+                "width": 65
+              },
+              "deliveryDateColor": "GREEN",
+              "deliveryDateDescriptions": "내일(목) 새벽 도착 보장"
+            },
+            "itemBasicInfo": {
+              "invalid": false,
+              "itemId": 19282392301,
+              "itemName": "20g × 25개",
+              "vendorItemId": 86397352186
+            },
+            "priceInfo": {
+              "finalDeliveryDescription": "무료배송",
+              "finalPrice": "22,370원",
+              "finalUnitPrice": "(100g당 4,474원)"
+            },
+            "stockInfo": {
+              "logistics": true,
+              "restockNotification": false,
+              "soldOut": false
+            }
+          },
+          {
+            "action": {
+              "event": {
+                "url": "vp/products/1008978/vendoritems/86397348560"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "5104",
+                      "mandatory": {
+                        "domain": "sdp",
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "option_list",
+                        "eventName": "option_list_click",
+                        "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                        "vendorItemId": 86397348560,
+                        "searchId": "",
+                        "vendorItemIdAttributes": "20g_30개_unitPrice:4473_vendorItemPrice:26840_deliveryType:ROCKET_WOW_deliveryFee:0"
+                      },
+                      "version": "6"
+                    }
+                  ],
+                  "exposureSchema": {
+                    "id": "5112",
+                    "mandatory": {
+                      "logCategory": "impression",
+                      "logType": "impression",
+                      "pageName": "option_list",
+                      "eventName": "option_list_item_impression",
+                      "domain": "sdp",
+                      "referSdpItem": "p1008978_i4242032_v92843978880",
+                      "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                      "vendorItemId": "86397348560",
+                      "originalItemId": 4242032,
+                      "originalVendorItemId": 92843978880,
+                      "rocketWowType": "ROCKET_WOW_DAWN",
+                      "searchId": "",
+                      "vendorItemIdAttributes": "20g_30개_unitPrice:4473_vendorItemPrice:26840_deliveryType:ROCKET_WOW_deliveryFee:0"
+                    },
+                    "version": "9"
+                  }
+                }
+              }
+            },
+            "deliveryInfo": {
+              "deliveryBadge": {
+                "height": 16,
+                "url": "https://image.coupangcdn.com/image/coupang/rds/logo/xhdpi/logo_wow_medium.png",
+                "width": 65
+              },
+              "deliveryDateColor": "GREEN",
+              "deliveryDateDescriptions": "내일(목) 새벽 도착 보장"
+            },
+            "itemBasicInfo": {
+              "invalid": false,
+              "itemId": 14759790136,
+              "itemName": "20g × 30개",
+              "vendorItemId": 86397348560
+            },
+            "priceInfo": {
+              "finalDeliveryDescription": "무료배송",
+              "finalPrice": "26,840원",
+              "finalUnitPrice": "(100g당 4,473원)"
+            },
+            "stockInfo": {
+              "logistics": true,
+              "restockNotification": false,
+              "soldOut": false
+            }
+          },
+          {
+            "action": {
+              "event": {
+                "url": "vp/products/1008978/vendoritems/89216668765"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "5104",
+                      "mandatory": {
+                        "domain": "sdp",
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "option_list",
+                        "eventName": "option_list_click",
+                        "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                        "vendorItemId": 89216668765,
+                        "searchId": "",
+                        "vendorItemIdAttributes": "50g_1개_unitPrice:8800_vendorItemPrice:4400_deliveryType:3p_deliveryFee:0"
+                      },
+                      "version": "6"
+                    }
+                  ],
+                  "exposureSchema": {
+                    "id": "5112",
+                    "mandatory": {
+                      "logCategory": "impression",
+                      "logType": "impression",
+                      "pageName": "option_list",
+                      "eventName": "option_list_item_impression",
+                      "domain": "sdp",
+                      "referSdpItem": "p1008978_i4242032_v92843978880",
+                      "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                      "vendorItemId": "89216668765",
+                      "originalItemId": 4242032,
+                      "originalVendorItemId": 92843978880,
+                      "rocketWowType": "ROCKET_WOW_DAWN",
+                      "searchId": "",
+                      "vendorItemIdAttributes": "50g_1개_unitPrice:8800_vendorItemPrice:4400_deliveryType:3p_deliveryFee:0"
+                    },
+                    "version": "9"
+                  }
+                }
+              }
+            },
+            "itemBasicInfo": {
+              "invalid": false,
+              "itemId": 16531540167,
+              "itemName": "50g × 1개",
+              "vendorItemId": 89216668765
+            },
+            "priceInfo": {
+              "finalDeliveryDescription": "무료배송",
+              "finalPrice": "4,400원",
+              "finalUnitPrice": "(100g당 8,800원)"
+            },
+            "stockInfo": {
+              "logistics": false,
+              "restockNotification": false,
+              "soldOut": true,
+              "stockStatus": "품절"
+            }
+          },
+          {
+            "action": {
+              "event": {
+                "url": "vp/products/1008978/vendoritems/86410635294"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "5104",
+                      "mandatory": {
+                        "domain": "sdp",
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "option_list",
+                        "eventName": "option_list_click",
+                        "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                        "vendorItemId": 86410635294,
+                        "searchId": "",
+                        "vendorItemIdAttributes": "50g_2개_unitPrice:4580_vendorItemPrice:4580_deliveryType:ROCKET_WOW_deliveryFee:0"
+                      },
+                      "version": "6"
+                    }
+                  ],
+                  "exposureSchema": {
+                    "id": "5112",
+                    "mandatory": {
+                      "logCategory": "impression",
+                      "logType": "impression",
+                      "pageName": "option_list",
+                      "eventName": "option_list_item_impression",
+                      "domain": "sdp",
+                      "referSdpItem": "p1008978_i4242032_v92843978880",
+                      "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                      "vendorItemId": "86410635294",
+                      "originalItemId": 4242032,
+                      "originalVendorItemId": 92843978880,
+                      "rocketWowType": "ROCKET_WOW_DAWN",
+                      "searchId": "",
+                      "vendorItemIdAttributes": "50g_2개_unitPrice:4580_vendorItemPrice:4580_deliveryType:ROCKET_WOW_deliveryFee:0"
+                    },
+                    "version": "9"
+                  }
+                }
+              }
+            },
+            "deliveryInfo": {
+              "deliveryBadge": {
+                "height": 16,
+                "url": "https://image.coupangcdn.com/image/coupang/rds/logo/xhdpi/logo_wow_medium.png",
+                "width": 65
+              },
+              "deliveryDateColor": "GREEN",
+              "deliveryDateDescriptions": "내일(목) 새벽 도착 보장"
+            },
+            "itemBasicInfo": {
+              "invalid": false,
+              "itemId": 19296007053,
+              "itemName": "50g × 2개",
+              "vendorItemId": 86410635294
+            },
+            "priceInfo": {
+              "finalDeliveryDescription": "무료배송",
+              "finalPrice": "4,580원",
+              "finalUnitPrice": "(100g당 4,580원)"
+            },
+            "stockInfo": {
+              "logistics": true,
+              "restockNotification": false,
+              "soldOut": false
+            }
+          },
+          {
+            "action": {
+              "event": {
+                "url": "vp/products/1008978/vendoritems/86410636013"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "5104",
+                      "mandatory": {
+                        "domain": "sdp",
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "option_list",
+                        "eventName": "option_list_click",
+                        "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                        "vendorItemId": 86410636013,
+                        "searchId": "",
+                        "vendorItemIdAttributes": "50g_3개_unitPrice:4247_vendorItemPrice:6370_deliveryType:ROCKET_WOW_deliveryFee:0"
+                      },
+                      "version": "6"
+                    }
+                  ],
+                  "exposureSchema": {
+                    "id": "5112",
+                    "mandatory": {
+                      "logCategory": "impression",
+                      "logType": "impression",
+                      "pageName": "option_list",
+                      "eventName": "option_list_item_impression",
+                      "domain": "sdp",
+                      "referSdpItem": "p1008978_i4242032_v92843978880",
+                      "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                      "vendorItemId": "86410636013",
+                      "originalItemId": 4242032,
+                      "originalVendorItemId": 92843978880,
+                      "rocketWowType": "ROCKET_WOW_DAWN",
+                      "searchId": "",
+                      "vendorItemIdAttributes": "50g_3개_unitPrice:4247_vendorItemPrice:6370_deliveryType:ROCKET_WOW_deliveryFee:0"
+                    },
+                    "version": "9"
+                  }
+                }
+              }
+            },
+            "deliveryInfo": {
+              "deliveryBadge": {
+                "height": 16,
+                "url": "https://image.coupangcdn.com/image/coupang/rds/logo/xhdpi/logo_wow_medium.png",
+                "width": 65
+              },
+              "deliveryDateColor": "GREEN",
+              "deliveryDateDescriptions": "내일(목) 새벽 도착 보장"
+            },
+            "itemBasicInfo": {
+              "invalid": false,
+              "itemId": 19296008163,
+              "itemName": "50g × 3개",
+              "vendorItemId": 86410636013
+            },
+            "priceInfo": {
+              "finalDeliveryDescription": "무료배송",
+              "finalPrice": "6,370원",
+              "finalUnitPrice": "(100g당 4,247원)"
+            },
+            "stockInfo": {
+              "logistics": true,
+              "restockNotification": false,
+              "soldOut": false
+            }
+          },
+          {
+            "action": {
+              "event": {
+                "url": "vp/products/1008978/vendoritems/86410637676"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "5104",
+                      "mandatory": {
+                        "domain": "sdp",
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "option_list",
+                        "eventName": "option_list_click",
+                        "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                        "vendorItemId": 86410637676,
+                        "searchId": "",
+                        "vendorItemIdAttributes": "50g_4개_unitPrice:4080_vendorItemPrice:8160_deliveryType:ROCKET_WOW_deliveryFee:0"
+                      },
+                      "version": "6"
+                    }
+                  ],
+                  "exposureSchema": {
+                    "id": "5112",
+                    "mandatory": {
+                      "logCategory": "impression",
+                      "logType": "impression",
+                      "pageName": "option_list",
+                      "eventName": "option_list_item_impression",
+                      "domain": "sdp",
+                      "referSdpItem": "p1008978_i4242032_v92843978880",
+                      "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                      "vendorItemId": "86410637676",
+                      "originalItemId": 4242032,
+                      "originalVendorItemId": 92843978880,
+                      "rocketWowType": "ROCKET_WOW_DAWN",
+                      "searchId": "",
+                      "vendorItemIdAttributes": "50g_4개_unitPrice:4080_vendorItemPrice:8160_deliveryType:ROCKET_WOW_deliveryFee:0"
+                    },
+                    "version": "9"
+                  }
+                }
+              }
+            },
+            "deliveryInfo": {
+              "deliveryBadge": {
+                "height": 16,
+                "url": "https://image.coupangcdn.com/image/coupang/rds/logo/xhdpi/logo_wow_medium.png",
+                "width": 65
+              },
+              "deliveryDateColor": "GREEN",
+              "deliveryDateDescriptions": "내일(목) 새벽 도착 보장"
+            },
+            "itemBasicInfo": {
+              "invalid": false,
+              "itemId": 19296009469,
+              "itemName": "50g × 4개",
+              "vendorItemId": 86410637676
+            },
+            "priceInfo": {
+              "finalDeliveryDescription": "무료배송",
+              "finalPrice": "8,160원",
+              "finalUnitPrice": "(100g당 4,080원)"
+            },
+            "stockInfo": {
+              "logistics": true,
+              "restockNotification": false,
+              "soldOut": false
+            }
+          },
+          {
+            "action": {
+              "event": {
+                "url": "vp/products/1008978/vendoritems/3004902559"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "5104",
+                      "mandatory": {
+                        "domain": "sdp",
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "option_list",
+                        "eventName": "option_list_click",
+                        "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                        "vendorItemId": 3004902559,
+                        "searchId": "",
+                        "vendorItemIdAttributes": "50g_5개_unitPrice:3980_vendorItemPrice:9950_deliveryType:ROCKET_WOW_deliveryFee:0"
+                      },
+                      "version": "6"
+                    }
+                  ],
+                  "exposureSchema": {
+                    "id": "5112",
+                    "mandatory": {
+                      "logCategory": "impression",
+                      "logType": "impression",
+                      "pageName": "option_list",
+                      "eventName": "option_list_item_impression",
+                      "domain": "sdp",
+                      "referSdpItem": "p1008978_i4242032_v92843978880",
+                      "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                      "vendorItemId": "3004902559",
+                      "originalItemId": 4242032,
+                      "originalVendorItemId": 92843978880,
+                      "rocketWowType": "ROCKET_WOW_DAWN",
+                      "searchId": "",
+                      "vendorItemIdAttributes": "50g_5개_unitPrice:3980_vendorItemPrice:9950_deliveryType:ROCKET_WOW_deliveryFee:0"
+                    },
+                    "version": "9"
+                  }
+                }
+              }
+            },
+            "deliveryInfo": {
+              "deliveryBadge": {
+                "height": 16,
+                "url": "https://image.coupangcdn.com/image/coupang/rds/logo/xhdpi/logo_wow_medium.png",
+                "width": 65
+              },
+              "deliveryDateColor": "GREEN",
+              "deliveryDateDescriptions": "내일(목) 새벽 도착 보장"
+            },
+            "itemBasicInfo": {
+              "invalid": false,
+              "itemId": 16303927277,
+              "itemName": "50g × 5개",
+              "vendorItemId": 3004902559
+            },
+            "priceInfo": {
+              "finalDeliveryDescription": "무료배송",
+              "finalPrice": "9,950원",
+              "finalUnitPrice": "(100g당 3,980원)"
+            },
+            "stockInfo": {
+              "logistics": true,
+              "restockNotification": false,
+              "soldOut": false
+            }
+          },
+          {
+            "action": {
+              "event": {
+                "url": "vp/products/1008978/vendoritems/86410637811"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "5104",
+                      "mandatory": {
+                        "domain": "sdp",
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "option_list",
+                        "eventName": "option_list_click",
+                        "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                        "vendorItemId": 86410637811,
+                        "searchId": "",
+                        "vendorItemIdAttributes": "50g_6개_unitPrice:3980_vendorItemPrice:11940_deliveryType:ROCKET_WOW_deliveryFee:0"
+                      },
+                      "version": "6"
+                    }
+                  ],
+                  "exposureSchema": {
+                    "id": "5112",
+                    "mandatory": {
+                      "logCategory": "impression",
+                      "logType": "impression",
+                      "pageName": "option_list",
+                      "eventName": "option_list_item_impression",
+                      "domain": "sdp",
+                      "referSdpItem": "p1008978_i4242032_v92843978880",
+                      "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                      "vendorItemId": "86410637811",
+                      "originalItemId": 4242032,
+                      "originalVendorItemId": 92843978880,
+                      "rocketWowType": "ROCKET_WOW_DAWN",
+                      "searchId": "",
+                      "vendorItemIdAttributes": "50g_6개_unitPrice:3980_vendorItemPrice:11940_deliveryType:ROCKET_WOW_deliveryFee:0"
+                    },
+                    "version": "9"
+                  }
+                }
+              }
+            },
+            "deliveryInfo": {
+              "deliveryBadge": {
+                "height": 16,
+                "url": "https://image.coupangcdn.com/image/coupang/rds/logo/xhdpi/logo_wow_medium.png",
+                "width": 65
+              },
+              "deliveryDateColor": "GREEN",
+              "deliveryDateDescriptions": "내일(목) 새벽 도착 보장"
+            },
+            "itemBasicInfo": {
+              "invalid": false,
+              "itemId": 19296009583,
+              "itemName": "50g × 6개",
+              "vendorItemId": 86410637811
+            },
+            "priceInfo": {
+              "finalDeliveryDescription": "무료배송",
+              "finalPrice": "11,940원",
+              "finalUnitPrice": "(100g당 3,980원)"
+            },
+            "stockInfo": {
+              "logistics": true,
+              "restockNotification": false,
+              "soldOut": false
+            }
+          },
+          {
+            "action": {
+              "event": {
+                "url": "vp/products/1008978/vendoritems/92843978880"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "5104",
+                      "mandatory": {
+                        "domain": "sdp",
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "option_list",
+                        "eventName": "option_list_click",
+                        "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                        "vendorItemId": 92843978880,
+                        "searchId": "",
+                        "vendorItemIdAttributes": "80g_1개_unitPrice:5325_vendorItemPrice:4260_deliveryType:ROCKET_WOW_deliveryFee:0"
+                      },
+                      "version": "6"
+                    }
+                  ],
+                  "exposureSchema": {
+                    "id": "5112",
+                    "mandatory": {
+                      "logCategory": "impression",
+                      "logType": "impression",
+                      "pageName": "option_list",
+                      "eventName": "option_list_item_impression",
+                      "domain": "sdp",
+                      "referSdpItem": "p1008978_i4242032_v92843978880",
+                      "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                      "vendorItemId": "92843978880",
+                      "originalItemId": 4242032,
+                      "originalVendorItemId": 92843978880,
+                      "rocketWowType": "ROCKET_WOW_DAWN",
+                      "searchId": "",
+                      "vendorItemIdAttributes": "80g_1개_unitPrice:5325_vendorItemPrice:4260_deliveryType:ROCKET_WOW_deliveryFee:0"
+                    },
+                    "version": "9"
+                  }
+                }
+              }
+            },
+            "deliveryInfo": {
+              "deliveryBadge": {
+                "height": 16,
+                "url": "https://image.coupangcdn.com/image/coupang/rds/logo/xhdpi/logo_wow_medium.png",
+                "width": 65
+              },
+              "deliveryDateColor": "GREEN",
+              "deliveryDateDescriptions": "내일(목) 새벽 도착 보장"
+            },
+            "itemBasicInfo": {
+              "invalid": false,
+              "itemId": 4242032,
+              "itemName": "80g × 1개",
+              "vendorItemId": 92843978880
+            },
+            "priceInfo": {
+              "finalDeliveryDescription": "무료배송",
+              "finalPrice": "4,260원",
+              "finalUnitPrice": "(100g당 5,325원)"
+            },
+            "selected": true,
+            "stockInfo": {
+              "logistics": true,
+              "restockNotification": false,
+              "soldOut": false
+            }
+          },
+          {
+            "action": {
+              "event": {
+                "url": "vp/products/1008978/vendoritems/92900672376"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "5104",
+                      "mandatory": {
+                        "domain": "sdp",
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "option_list",
+                        "eventName": "option_list_click",
+                        "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                        "vendorItemId": 92900672376,
+                        "searchId": "",
+                        "vendorItemIdAttributes": "80g_2개_unitPrice:4800_vendorItemPrice:7680_deliveryType:ROCKET_WOW_deliveryFee:0"
+                      },
+                      "version": "6"
+                    }
+                  ],
+                  "exposureSchema": {
+                    "id": "5112",
+                    "mandatory": {
+                      "logCategory": "impression",
+                      "logType": "impression",
+                      "pageName": "option_list",
+                      "eventName": "option_list_item_impression",
+                      "domain": "sdp",
+                      "referSdpItem": "p1008978_i4242032_v92843978880",
+                      "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                      "vendorItemId": "92900672376",
+                      "originalItemId": 4242032,
+                      "originalVendorItemId": 92843978880,
+                      "rocketWowType": "ROCKET_WOW_DAWN",
+                      "searchId": "",
+                      "vendorItemIdAttributes": "80g_2개_unitPrice:4800_vendorItemPrice:7680_deliveryType:ROCKET_WOW_deliveryFee:0"
+                    },
+                    "version": "9"
+                  }
+                }
+              }
+            },
+            "deliveryInfo": {
+              "deliveryBadge": {
+                "height": 16,
+                "url": "https://image.coupangcdn.com/image/coupang/rds/logo/xhdpi/logo_wow_medium.png",
+                "width": 65
+              },
+              "deliveryDateColor": "GREEN",
+              "deliveryDateDescriptions": "내일(목) 새벽 도착 보장"
+            },
+            "itemBasicInfo": {
+              "invalid": false,
+              "itemId": 25915068419,
+              "itemName": "80g × 2개",
+              "vendorItemId": 92900672376
+            },
+            "priceInfo": {
+              "finalDeliveryDescription": "무료배송",
+              "finalPrice": "7,680원",
+              "finalUnitPrice": "(100g당 4,800원)"
+            },
+            "stockInfo": {
+              "logistics": true,
+              "restockNotification": false,
+              "soldOut": false
+            }
+          },
+          {
+            "action": {
+              "event": {
+                "url": "vp/products/1008978/vendoritems/3005113499"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "5104",
+                      "mandatory": {
+                        "domain": "sdp",
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "option_list",
+                        "eventName": "option_list_click",
+                        "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                        "vendorItemId": 3005113499,
+                        "searchId": "",
+                        "vendorItemIdAttributes": "80g_3개_unitPrice:4200_vendorItemPrice:10080_deliveryType:ROCKET_WOW_deliveryFee:0"
+                      },
+                      "version": "6"
+                    }
+                  ],
+                  "exposureSchema": {
+                    "id": "5112",
+                    "mandatory": {
+                      "logCategory": "impression",
+                      "logType": "impression",
+                      "pageName": "option_list",
+                      "eventName": "option_list_item_impression",
+                      "domain": "sdp",
+                      "referSdpItem": "p1008978_i4242032_v92843978880",
+                      "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                      "vendorItemId": "3005113499",
+                      "originalItemId": 4242032,
+                      "originalVendorItemId": 92843978880,
+                      "rocketWowType": "ROCKET_WOW_DAWN",
+                      "searchId": "",
+                      "vendorItemIdAttributes": "80g_3개_unitPrice:4200_vendorItemPrice:10080_deliveryType:ROCKET_WOW_deliveryFee:0"
+                    },
+                    "version": "9"
+                  }
+                }
+              }
+            },
+            "deliveryInfo": {
+              "deliveryBadge": {
+                "height": 16,
+                "url": "https://image.coupangcdn.com/image/coupang/rds/logo/xhdpi/logo_wow_medium.png",
+                "width": 65
+              },
+              "deliveryDateColor": "GREEN",
+              "deliveryDateDescriptions": "내일(목) 새벽 도착 보장"
+            },
+            "itemBasicInfo": {
+              "invalid": false,
+              "itemId": 4242181,
+              "itemName": "80g × 3개",
+              "vendorItemId": 3005113499
+            },
+            "priceInfo": {
+              "finalDeliveryDescription": "무료배송",
+              "finalPrice": "10,080원",
+              "finalUnitPrice": "(100g당 4,200원)"
+            },
+            "stockInfo": {
+              "logistics": true,
+              "restockNotification": false,
+              "soldOut": false
+            }
+          },
+          {
+            "action": {
+              "event": {
+                "url": "vp/products/1008978/vendoritems/86387426228"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "5104",
+                      "mandatory": {
+                        "domain": "sdp",
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "option_list",
+                        "eventName": "option_list_click",
+                        "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                        "vendorItemId": 86387426228,
+                        "searchId": "",
+                        "vendorItemIdAttributes": "80g_6개_unitPrice:3888_vendorItemPrice:18660_deliveryType:ROCKET_WOW_deliveryFee:0"
+                      },
+                      "version": "6"
+                    }
+                  ],
+                  "exposureSchema": {
+                    "id": "5112",
+                    "mandatory": {
+                      "logCategory": "impression",
+                      "logType": "impression",
+                      "pageName": "option_list",
+                      "eventName": "option_list_item_impression",
+                      "domain": "sdp",
+                      "referSdpItem": "p1008978_i4242032_v92843978880",
+                      "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                      "vendorItemId": "86387426228",
+                      "originalItemId": 4242032,
+                      "originalVendorItemId": 92843978880,
+                      "rocketWowType": "ROCKET_WOW_DAWN",
+                      "searchId": "",
+                      "vendorItemIdAttributes": "80g_6개_unitPrice:3888_vendorItemPrice:18660_deliveryType:ROCKET_WOW_deliveryFee:0"
+                    },
+                    "version": "9"
+                  }
+                }
+              }
+            },
+            "deliveryInfo": {
+              "deliveryBadge": {
+                "height": 16,
+                "url": "https://image.coupangcdn.com/image/coupang/rds/logo/xhdpi/logo_wow_medium.png",
+                "width": 65
+              },
+              "deliveryDateColor": "GREEN",
+              "deliveryDateDescriptions": "내일(목) 새벽 도착 보장"
+            },
+            "itemBasicInfo": {
+              "invalid": false,
+              "itemId": 19272257729,
+              "itemName": "80g × 6개",
+              "vendorItemId": 86387426228
+            },
+            "priceInfo": {
+              "finalDeliveryDescription": "무료배송",
+              "finalPrice": "18,660원",
+              "finalUnitPrice": "(100g당 3,888원)"
+            },
+            "stockInfo": {
+              "logistics": true,
+              "restockNotification": false,
+              "soldOut": false
+            }
+          },
+          {
+            "action": {
+              "event": {
+                "url": "vp/products/1008978/vendoritems/86387426235"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "5104",
+                      "mandatory": {
+                        "domain": "sdp",
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "option_list",
+                        "eventName": "option_list_click",
+                        "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                        "vendorItemId": 86387426235,
+                        "searchId": "",
+                        "vendorItemIdAttributes": "80g_12개_unitPrice:3783_vendorItemPrice:36320_deliveryType:ROCKET_WOW_deliveryFee:0"
+                      },
+                      "version": "6"
+                    }
+                  ],
+                  "exposureSchema": {
+                    "id": "5112",
+                    "mandatory": {
+                      "logCategory": "impression",
+                      "logType": "impression",
+                      "pageName": "option_list",
+                      "eventName": "option_list_item_impression",
+                      "domain": "sdp",
+                      "referSdpItem": "p1008978_i4242032_v92843978880",
+                      "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                      "vendorItemId": "86387426235",
+                      "originalItemId": 4242032,
+                      "originalVendorItemId": 92843978880,
+                      "rocketWowType": "ROCKET_WOW_DAWN",
+                      "searchId": "",
+                      "vendorItemIdAttributes": "80g_12개_unitPrice:3783_vendorItemPrice:36320_deliveryType:ROCKET_WOW_deliveryFee:0"
+                    },
+                    "version": "9"
+                  }
+                }
+              }
+            },
+            "deliveryInfo": {
+              "deliveryBadge": {
+                "height": 16,
+                "url": "https://image.coupangcdn.com/image/coupang/rds/logo/xhdpi/logo_wow_medium.png",
+                "width": 65
+              },
+              "deliveryDateColor": "GREEN",
+              "deliveryDateDescriptions": "내일(목) 새벽 도착 보장"
+            },
+            "itemBasicInfo": {
+              "invalid": false,
+              "itemId": 19272257737,
+              "itemName": "80g × 12개",
+              "vendorItemId": 86387426235
+            },
+            "priceInfo": {
+              "finalDeliveryDescription": "무료배송",
+              "finalPrice": "36,320원",
+              "finalUnitPrice": "(100g당 3,783원)"
+            },
+            "stockInfo": {
+              "logistics": true,
+              "restockNotification": false,
+              "soldOut": false
+            }
+          },
+          {
+            "action": {
+              "event": {
+                "url": "vp/products/1008978/vendoritems/86387426312"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "5104",
+                      "mandatory": {
+                        "domain": "sdp",
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "option_list",
+                        "eventName": "option_list_click",
+                        "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                        "vendorItemId": 86387426312,
+                        "searchId": "",
+                        "vendorItemIdAttributes": "80g_15개_unitPrice:3783_vendorItemPrice:45400_deliveryType:ROCKET_WOW_deliveryFee:0"
+                      },
+                      "version": "6"
+                    }
+                  ],
+                  "exposureSchema": {
+                    "id": "5112",
+                    "mandatory": {
+                      "logCategory": "impression",
+                      "logType": "impression",
+                      "pageName": "option_list",
+                      "eventName": "option_list_item_impression",
+                      "domain": "sdp",
+                      "referSdpItem": "p1008978_i4242032_v92843978880",
+                      "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                      "vendorItemId": "86387426312",
+                      "originalItemId": 4242032,
+                      "originalVendorItemId": 92843978880,
+                      "rocketWowType": "ROCKET_WOW_DAWN",
+                      "searchId": "",
+                      "vendorItemIdAttributes": "80g_15개_unitPrice:3783_vendorItemPrice:45400_deliveryType:ROCKET_WOW_deliveryFee:0"
+                    },
+                    "version": "9"
+                  }
+                }
+              }
+            },
+            "deliveryInfo": {
+              "deliveryBadge": {
+                "height": 16,
+                "url": "https://image.coupangcdn.com/image/coupang/rds/logo/xhdpi/logo_wow_medium.png",
+                "width": 65
+              },
+              "deliveryDateColor": "GREEN",
+              "deliveryDateDescriptions": "내일(목) 새벽 도착 보장"
+            },
+            "itemBasicInfo": {
+              "invalid": false,
+              "itemId": 19272257790,
+              "itemName": "80g × 15개",
+              "vendorItemId": 86387426312
+            },
+            "priceInfo": {
+              "finalDeliveryDescription": "무료배송",
+              "finalPrice": "45,400원",
+              "finalUnitPrice": "(100g당 3,783원)"
+            },
+            "stockInfo": {
+              "logistics": true,
+              "restockNotification": false,
+              "soldOut": false
+            }
+          },
+          {
+            "action": {
+              "event": {
+                "url": "vp/products/1008978/vendoritems/87407429664"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "5104",
+                      "mandatory": {
+                        "domain": "sdp",
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "option_list",
+                        "eventName": "option_list_click",
+                        "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                        "vendorItemId": 87407429664,
+                        "searchId": "",
+                        "vendorItemIdAttributes": "120g_1개_unitPrice:6142_vendorItemPrice:7370_deliveryType:3p_deliveryFee:0"
+                      },
+                      "version": "6"
+                    }
+                  ],
+                  "exposureSchema": {
+                    "id": "5112",
+                    "mandatory": {
+                      "logCategory": "impression",
+                      "logType": "impression",
+                      "pageName": "option_list",
+                      "eventName": "option_list_item_impression",
+                      "domain": "sdp",
+                      "referSdpItem": "p1008978_i4242032_v92843978880",
+                      "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                      "vendorItemId": "87407429664",
+                      "originalItemId": 4242032,
+                      "originalVendorItemId": 92843978880,
+                      "rocketWowType": "ROCKET_WOW_DAWN",
+                      "searchId": "",
+                      "vendorItemIdAttributes": "120g_1개_unitPrice:6142_vendorItemPrice:7370_deliveryType:3p_deliveryFee:0"
+                    },
+                    "version": "9"
+                  }
+                }
+              }
+            },
+            "deliveryInfo": {
+              "deliveryDateDescriptions": "모레(금) 10/24 도착 예정 (판매자배송)"
+            },
+            "itemBasicInfo": {
+              "invalid": false,
+              "itemId": 14170838738,
+              "itemName": "120g × 1개",
+              "vendorItemId": 87407429664
+            },
+            "priceInfo": {
+              "finalDeliveryDescription": "무료배송",
+              "finalPrice": "7,370원",
+              "finalUnitPrice": "(100g당 6,142원)"
+            },
+            "stockInfo": {
+              "logistics": false,
+              "restockNotification": false,
+              "soldOut": false
+            }
+          },
+          {
+            "action": {
+              "event": {
+                "url": "vp/products/1008978/vendoritems/92322389223"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "5104",
+                      "mandatory": {
+                        "domain": "sdp",
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "option_list",
+                        "eventName": "option_list_click",
+                        "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                        "vendorItemId": 92322389223,
+                        "searchId": "",
+                        "vendorItemIdAttributes": "120g_2개_unitPrice:5371_vendorItemPrice:12890_deliveryType:3p_deliveryFee:0"
+                      },
+                      "version": "6"
+                    }
+                  ],
+                  "exposureSchema": {
+                    "id": "5112",
+                    "mandatory": {
+                      "logCategory": "impression",
+                      "logType": "impression",
+                      "pageName": "option_list",
+                      "eventName": "option_list_item_impression",
+                      "domain": "sdp",
+                      "referSdpItem": "p1008978_i4242032_v92843978880",
+                      "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                      "vendorItemId": "92322389223",
+                      "originalItemId": 4242032,
+                      "originalVendorItemId": 92843978880,
+                      "rocketWowType": "ROCKET_WOW_DAWN",
+                      "searchId": "",
+                      "vendorItemIdAttributes": "120g_2개_unitPrice:5371_vendorItemPrice:12890_deliveryType:3p_deliveryFee:0"
+                    },
+                    "version": "9"
+                  }
+                }
+              }
+            },
+            "deliveryInfo": {
+              "deliveryDateDescriptions": "모레(금) 10/24 도착 예정 (판매자배송)"
+            },
+            "itemBasicInfo": {
+              "invalid": false,
+              "itemId": 25327529488,
+              "itemName": "120g × 2개",
+              "vendorItemId": 92322389223
+            },
+            "priceInfo": {
+              "finalDeliveryDescription": "무료배송",
+              "finalPrice": "12,890원",
+              "finalUnitPrice": "(100g당 5,371원)"
+            },
+            "stockInfo": {
+              "logistics": false,
+              "restockNotification": false,
+              "soldOut": false
+            }
+          },
+          {
+            "action": {
+              "event": {
+                "url": "vp/products/1008978/vendoritems/89307271263"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "5104",
+                      "mandatory": {
+                        "domain": "sdp",
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "option_list",
+                        "eventName": "option_list_click",
+                        "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                        "vendorItemId": 89307271263,
+                        "searchId": "",
+                        "vendorItemIdAttributes": "120g_3개_unitPrice:4803_vendorItemPrice:17290_deliveryType:3p_deliveryFee:0"
+                      },
+                      "version": "6"
+                    }
+                  ],
+                  "exposureSchema": {
+                    "id": "5112",
+                    "mandatory": {
+                      "logCategory": "impression",
+                      "logType": "impression",
+                      "pageName": "option_list",
+                      "eventName": "option_list_item_impression",
+                      "domain": "sdp",
+                      "referSdpItem": "p1008978_i4242032_v92843978880",
+                      "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                      "vendorItemId": "89307271263",
+                      "originalItemId": 4242032,
+                      "originalVendorItemId": 92843978880,
+                      "rocketWowType": "ROCKET_WOW_DAWN",
+                      "searchId": "",
+                      "vendorItemIdAttributes": "120g_3개_unitPrice:4803_vendorItemPrice:17290_deliveryType:3p_deliveryFee:0"
+                    },
+                    "version": "9"
+                  }
+                }
+              }
+            },
+            "deliveryInfo": {
+              "deliveryDateDescriptions": "모레(금) 10/24 도착 예정 (판매자배송)"
+            },
+            "itemBasicInfo": {
+              "invalid": false,
+              "itemId": 21514959895,
+              "itemName": "120g × 3개",
+              "vendorItemId": 89307271263
+            },
+            "priceInfo": {
+              "finalDeliveryDescription": "무료배송",
+              "finalPrice": "17,290원",
+              "finalUnitPrice": "(100g당 4,803원)"
+            },
+            "stockInfo": {
+              "logistics": false,
+              "restockNotification": false,
+              "soldOut": false
+            }
+          },
+          {
+            "action": {
+              "event": {
+                "url": "vp/products/1008978/vendoritems/92322389244"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "5104",
+                      "mandatory": {
+                        "domain": "sdp",
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "option_list",
+                        "eventName": "option_list_click",
+                        "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                        "vendorItemId": 92322389244,
+                        "searchId": "",
+                        "vendorItemIdAttributes": "120g_4개_unitPrice:4731_vendorItemPrice:22710_deliveryType:3p_deliveryFee:0"
+                      },
+                      "version": "6"
+                    }
+                  ],
+                  "exposureSchema": {
+                    "id": "5112",
+                    "mandatory": {
+                      "logCategory": "impression",
+                      "logType": "impression",
+                      "pageName": "option_list",
+                      "eventName": "option_list_item_impression",
+                      "domain": "sdp",
+                      "referSdpItem": "p1008978_i4242032_v92843978880",
+                      "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                      "vendorItemId": "92322389244",
+                      "originalItemId": 4242032,
+                      "originalVendorItemId": 92843978880,
+                      "rocketWowType": "ROCKET_WOW_DAWN",
+                      "searchId": "",
+                      "vendorItemIdAttributes": "120g_4개_unitPrice:4731_vendorItemPrice:22710_deliveryType:3p_deliveryFee:0"
+                    },
+                    "version": "9"
+                  }
+                }
+              }
+            },
+            "deliveryInfo": {
+              "deliveryDateDescriptions": "모레(금) 10/24 도착 예정 (판매자배송)"
+            },
+            "itemBasicInfo": {
+              "invalid": false,
+              "itemId": 25327529496,
+              "itemName": "120g × 4개",
+              "vendorItemId": 92322389244
+            },
+            "priceInfo": {
+              "finalDeliveryDescription": "무료배송",
+              "finalPrice": "22,710원",
+              "finalUnitPrice": "(100g당 4,731원)"
+            },
+            "stockInfo": {
+              "logistics": false,
+              "restockNotification": false,
+              "soldOut": false
+            }
+          },
+          {
+            "action": {
+              "event": {
+                "url": "vp/products/1008978/vendoritems/90513246517"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "5104",
+                      "mandatory": {
+                        "domain": "sdp",
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "option_list",
+                        "eventName": "option_list_click",
+                        "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                        "vendorItemId": 90513246517,
+                        "searchId": "",
+                        "vendorItemIdAttributes": "120g_10개_unitPrice:4327_vendorItemPrice:51920_deliveryType:3p_deliveryFee:0"
+                      },
+                      "version": "6"
+                    }
+                  ],
+                  "exposureSchema": {
+                    "id": "5112",
+                    "mandatory": {
+                      "logCategory": "impression",
+                      "logType": "impression",
+                      "pageName": "option_list",
+                      "eventName": "option_list_item_impression",
+                      "domain": "sdp",
+                      "referSdpItem": "p1008978_i4242032_v92843978880",
+                      "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                      "vendorItemId": "90513246517",
+                      "originalItemId": 4242032,
+                      "originalVendorItemId": 92843978880,
+                      "rocketWowType": "ROCKET_WOW_DAWN",
+                      "searchId": "",
+                      "vendorItemIdAttributes": "120g_10개_unitPrice:4327_vendorItemPrice:51920_deliveryType:3p_deliveryFee:0"
+                    },
+                    "version": "9"
+                  }
+                }
+              }
+            },
+            "deliveryInfo": {
+              "deliveryDateDescriptions": "모레(금) 10/24 도착 예정 (판매자배송)"
+            },
+            "itemBasicInfo": {
+              "invalid": false,
+              "itemId": 23486758591,
+              "itemName": "120g × 10개",
+              "vendorItemId": 90513246517
+            },
+            "priceInfo": {
+              "finalDeliveryDescription": "무료배송",
+              "finalPrice": "51,920원",
+              "finalUnitPrice": "(100g당 4,327원)"
+            },
+            "stockInfo": {
+              "logistics": false,
+              "restockNotification": false,
+              "soldOut": false
+            }
+          },
+          {
+            "action": {
+              "event": {
+                "url": "vp/products/1008978/vendoritems/93146452408"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "5104",
+                      "mandatory": {
+                        "domain": "sdp",
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "option_list",
+                        "eventName": "option_list_click",
+                        "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                        "vendorItemId": 93146452408,
+                        "searchId": "",
+                        "vendorItemIdAttributes": "250g_1개_unitPrice:5424_vendorItemPrice:13560_deliveryType:3p_deliveryFee:0"
+                      },
+                      "version": "6"
+                    }
+                  ],
+                  "exposureSchema": {
+                    "id": "5112",
+                    "mandatory": {
+                      "logCategory": "impression",
+                      "logType": "impression",
+                      "pageName": "option_list",
+                      "eventName": "option_list_item_impression",
+                      "domain": "sdp",
+                      "referSdpItem": "p1008978_i4242032_v92843978880",
+                      "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                      "vendorItemId": "93146452408",
+                      "originalItemId": 4242032,
+                      "originalVendorItemId": 92843978880,
+                      "rocketWowType": "ROCKET_WOW_DAWN",
+                      "searchId": "",
+                      "vendorItemIdAttributes": "250g_1개_unitPrice:5424_vendorItemPrice:13560_deliveryType:3p_deliveryFee:0"
+                    },
+                    "version": "9"
+                  }
+                }
+              }
+            },
+            "deliveryInfo": {
+              "deliveryDateDescriptions": "모레(금) 10/24 도착 예정 (판매자배송)"
+            },
+            "itemBasicInfo": {
+              "invalid": false,
+              "itemId": 25841907598,
+              "itemName": "250g × 1개",
+              "vendorItemId": 93146452408
+            },
+            "priceInfo": {
+              "finalDeliveryDescription": "무료배송",
+              "finalPrice": "13,560원",
+              "finalUnitPrice": "(100g당 5,424원)"
+            },
+            "stockInfo": {
+              "logistics": false,
+              "restockNotification": false,
+              "soldOut": false
+            }
+          },
+          {
+            "action": {
+              "event": {
+                "url": "vp/products/1008978/vendoritems/86940812754"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "5104",
+                      "mandatory": {
+                        "domain": "sdp",
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "option_list",
+                        "eventName": "option_list_click",
+                        "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                        "vendorItemId": 86940812754,
+                        "searchId": "",
+                        "vendorItemIdAttributes": "250g_2개_unitPrice:5378_vendorItemPrice:26890_deliveryType:3p_deliveryFee:0"
+                      },
+                      "version": "6"
+                    }
+                  ],
+                  "exposureSchema": {
+                    "id": "5112",
+                    "mandatory": {
+                      "logCategory": "impression",
+                      "logType": "impression",
+                      "pageName": "option_list",
+                      "eventName": "option_list_item_impression",
+                      "domain": "sdp",
+                      "referSdpItem": "p1008978_i4242032_v92843978880",
+                      "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                      "vendorItemId": "86940812754",
+                      "originalItemId": 4242032,
+                      "originalVendorItemId": 92843978880,
+                      "rocketWowType": "ROCKET_WOW_DAWN",
+                      "searchId": "",
+                      "vendorItemIdAttributes": "250g_2개_unitPrice:5378_vendorItemPrice:26890_deliveryType:3p_deliveryFee:0"
+                    },
+                    "version": "9"
+                  }
+                }
+              }
+            },
+            "deliveryInfo": {
+              "deliveryDateDescriptions": "모레(금) 10/24 도착 예정 (판매자배송)"
+            },
+            "itemBasicInfo": {
+              "invalid": false,
+              "itemId": 19839244443,
+              "itemName": "250g × 2개",
+              "vendorItemId": 86940812754
+            },
+            "priceInfo": {
+              "finalDeliveryDescription": "무료배송",
+              "finalPrice": "26,890원",
+              "finalUnitPrice": "(100g당 5,378원)"
+            },
+            "stockInfo": {
+              "logistics": false,
+              "restockNotification": false,
+              "soldOut": false
+            }
+          },
+          {
+            "action": {
+              "event": {
+                "url": "vp/products/1008978/vendoritems/86940812738"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "5104",
+                      "mandatory": {
+                        "domain": "sdp",
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "option_list",
+                        "eventName": "option_list_click",
+                        "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                        "vendorItemId": 86940812738,
+                        "searchId": "",
+                        "vendorItemIdAttributes": "250g_3개_unitPrice:5000_vendorItemPrice:37500_deliveryType:3p_deliveryFee:0"
+                      },
+                      "version": "6"
+                    }
+                  ],
+                  "exposureSchema": {
+                    "id": "5112",
+                    "mandatory": {
+                      "logCategory": "impression",
+                      "logType": "impression",
+                      "pageName": "option_list",
+                      "eventName": "option_list_item_impression",
+                      "domain": "sdp",
+                      "referSdpItem": "p1008978_i4242032_v92843978880",
+                      "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                      "vendorItemId": "86940812738",
+                      "originalItemId": 4242032,
+                      "originalVendorItemId": 92843978880,
+                      "rocketWowType": "ROCKET_WOW_DAWN",
+                      "searchId": "",
+                      "vendorItemIdAttributes": "250g_3개_unitPrice:5000_vendorItemPrice:37500_deliveryType:3p_deliveryFee:0"
+                    },
+                    "version": "9"
+                  }
+                }
+              }
+            },
+            "deliveryInfo": {
+              "deliveryDateDescriptions": "모레(금) 10/24 도착 예정 (판매자배송)"
+            },
+            "itemBasicInfo": {
+              "invalid": false,
+              "itemId": 19839244439,
+              "itemName": "250g × 3개",
+              "vendorItemId": 86940812738
+            },
+            "priceInfo": {
+              "finalDeliveryDescription": "무료배송",
+              "finalPrice": "37,500원",
+              "finalUnitPrice": "(100g당 5,000원)"
+            },
+            "stockInfo": {
+              "logistics": false,
+              "restockNotification": false,
+              "soldOut": false
+            }
+          }
+        ],
+        "titleName": "개당 중량 × 수량",
+        "toggle": {
+          "action": {
+            "logging": {
+              "alwaysSentLiveLog": false,
+              "bypass": {
+                "clickSchemas": [
+                  {
+                    "id": "10932",
+                    "mandatory": {
+                      "domain": "sdp",
+                      "logCategory": "event",
+                      "logType": "click",
+                      "pageName": "option_list",
+                      "eventName": "sdp_option_list_deliveryfee_toggle_click",
+                      "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                      "productId": 1008978,
+                      "itemId": 4242032,
+                      "vendorItemId": 92843978880,
+                      "action": "on"
+                    },
+                    "version": "1"
+                  }
+                ],
+                "exposureSchema": {
+                  "id": "10931",
+                  "mandatory": {
+                    "domain": "sdp",
+                    "logCategory": "impression",
+                    "logType": "impression",
+                    "pageName": "option_list",
+                    "eventName": "sdp_option_list_deliveryfee_toggle_impression",
+                    "sdpVisitKey": "tk1qa6xf5kutzdwf",
+                    "productId": 1008978,
+                    "itemId": 4242032,
+                    "vendorItemId": 92843978880,
+                    "status": "off"
+                  },
+                  "version": "1"
+                }
+              }
+            }
+          },
+          "description": "배송비 포함",
+          "status": false
+        },
+        "viewType": "PRODUCT_DETAIL_OPTION_LIST"
+      },
+      {
+        "deliveryInfo": {
+          "wowMemberDelivery": {
+            "arrivalMessage": [
+              {
+                "color": "#00891A",
+                "size": 14,
+                "text": "<b>내일(목) 새벽 7시 전</b>"
+              },
+              {
+                "color": "#00891A",
+                "size": 14,
+                "text": " 도착 보장"
+              }
+            ],
+            "deliveryBadge": {
+              "height": 16,
+              "url": "https://image.coupangcdn.com/image/coupang/rds/logo/xhdpi/logo_wow_medium.png",
+              "width": 65
+            },
+            "shippingFeeTag": [
+              {
+                "bold": true,
+                "color": "#212B36",
+                "size": 14,
+                "text": "무료배송"
+              }
+            ]
+          }
+        },
+        "itemInfo": {
+          "itemId": 4242032,
+          "itemName": "오뚜기옛날 자른미역",
+          "productId": 1008978,
+          "thumbnailImage": {
+            "height": 60,
+            "url": "https://image.coupangcdn.com/image/retail/images/53054286256769-a5dd03f5-e395-4b46-80e7-51d9cf4fea89.jpg",
+            "width": 60
+          },
+          "vendorItemId": 92843978880
+        },
+        "priceInfo": {
+          "finalPrice": {
+            "applicable": true,
+            "displayPrice": "4,260원",
+            "price": 4260
+          }
+        },
+        "viewType": "PRODUCT_DETAIL_HANDLEBAR_BASE_INFO"
+      },
+      {
+        "pddList": [
+          {
+            "arrivalDate": 1761231599000,
+            "arrivalMessage": "<b>내일(목) 새벽 7시 전</b> 도착 보장",
+            "countDown": {
+              "countDownTime": 2583274,
+              "cutOffThreshold": 3600000,
+              "displayCutoffType": "NORMAL"
+            },
+            "deliveryBadge": {
+              "height": 20,
+              "url": "https://image.coupangcdn.com/image/coupang/rds/logo/hdpi/logo_wow_symbol_large.png",
+              "width": 20
+            },
+            "deliveryBadgePlus": {
+              "height": 14,
+              "url": "https://image.coupangcdn.com/image/coupang/rds/logo/hdpi/logo_wow_text_medium.png",
+              "width": 47
+            },
+            "deliveryBadgeV2": {
+              "height": 16,
+              "url": "https://image.coupangcdn.com/image/coupang/rds/logo/xhdpi/logo_wow_medium.png",
+              "width": 65
+            },
+            "deliveryChargeType": "CONDITIONAL_FREE",
+            "deliveryType": "ROCKET_WOW",
+            "freeShippingThreshold": 0,
+            "infoIcon": {
+              "action": {
+                "event": {
+                  "url": "coupang://loyalty?tab=Y&title=%20&url=https%3A%2F%2Floyalty.coupang.com%2Fm%2Floyalty%2Fsign-up%2Fhome%3Fsource%3DSDP"
+                }
+              }
+            },
+            "wowArrivalDate": 1761170400000,
+            "wowShippingSpeed": "OVERNIGHT"
+          }
+        ],
+        "viewType": "PRODUCT_DETAIL_DELIVERY_INFO"
+      }
+    ],
+    "price": {
+      "cashPromotionMessage": null,
+      "couponDiscountAmount": null,
+      "couponPrice": "4,260",
+      "couponPriceTitle": "",
+      "couponUnitPrice": "100g당 5,325원",
+      "description": null,
+      "discountRate": null,
+      "finalPrice": "4,260",
+      "gppuPricePolicy": null,
+      "hasNormalCouponDiscount": false,
+      "hasNormalInstantDiscount": false,
+      "hasWowCouponDiscount": false,
+      "hasWowInstantDiscount": false,
+      "i18nCouponDiscountAmount": null,
+      "i18nCouponPrice": {
+        "amount": "4260",
+        "currency": "KRW",
+        "fractionDigits": 0,
+        "rawAmount": null
+      },
+      "i18nOriginPrice": null,
+      "i18nPriceAmount": null,
+      "i18nSalePrice": {
+        "amount": "4260",
+        "currency": "KRW",
+        "fractionDigits": 0,
+        "rawAmount": null
+      },
+      "instantDiscount": false,
+      "instantPriceType": null,
+      "loyaltyButtonText": null,
+      "loyaltyRegistrationUrl": null,
+      "originPrice": null,
+      "originalPriceDesc": "",
+      "priceAmount": null,
+      "salePrice": "4,260",
+      "salePriceTitle": "",
+      "saleUnitPrice": "100g당 5,325원",
+      "title": null,
+      "type": null,
+      "unitDiscountRate": null,
+      "unitPrice": null,
+      "wowCouponDiscount": false
+    },
+    "priceList": [],
+    "priceUnit": "원",
+    "quantity": 1,
+    "quantityLimitationVO": null,
+    "selectedIndex": 0,
+    "shipmentDisplayType": "NORMAL",
+    "shippingFee": {
+      "dividerIcon": null,
+      "extremeMessage": null,
+      "freeShippingConditionMessage": null,
+      "message": "<em class='prod-txt-bold'>무료배송</em>",
+      "popupFreeShippingConditionMessage": null,
+      "returnFeeMessage": null,
+      "shippingFee": "0",
+      "shippingFeeIcon": null,
+      "shippingFeeType": "FREE",
+      "title": null,
+      "titleIcon": null
+    },
+    "shippingFeeList": [
+      {
+        "dividerIcon": null,
+        "extremeMessage": null,
+        "freeShippingConditionMessage": null,
+        "message": "<em class='prod-txt-bold'>무료배송</em>",
+        "popupFreeShippingConditionMessage": null,
+        "returnFeeMessage": null,
+        "shippingFee": null,
+        "shippingFeeIcon": null,
+        "shippingFeeType": "FREE",
+        "title": null,
+        "titleIcon": null
+      }
+    ],
+    "subscriptionDelivery": null,
+    "subscriptionDiscountRate": -1,
+    "subscriptionPrice": null,
+    "subscriptionPriceList": [],
+    "wowOnlyInstantDiscountRate": 0
+  }
+]

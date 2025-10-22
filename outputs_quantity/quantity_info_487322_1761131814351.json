@@ -1,0 +1,3864 @@
+[
+  {
+    "abFlags": {
+      "applyExtremeProminenceFreeDeliveryMessages": "A",
+      "ab54632": "B"
+    },
+    "appliedCoupon": null,
+    "benefitDisplayType": null,
+    "bundleOption": {
+      "optionDetails": null,
+      "options": [],
+      "viewType": null
+    },
+    "cashBackSummary": {
+      "basicCashBackList": [
+        {
+          "amount": 61,
+          "benefit": "쿠페이 머니 결제 시 1% 적립",
+          "expired": false,
+          "i18nAmount": {
+            "amount": "61",
+            "currency": "KRW",
+            "fractionDigits": 0,
+            "rawAmount": 61
+          },
+          "leftDays": null,
+          "rate": "1",
+          "type": "BASIC",
+          "validity": "월 최대 1만원"
+        }
+      ],
+      "basicRocketPayCashAmt": 61,
+      "basicRocketPayRate": "1",
+      "bookCashbackLimitScope": null,
+      "cashBackTitle": "캐시적립 혜택",
+      "cashIconUrl": "https://image.coupangcdn.com/image/badges/cashback/web/list-cash-icon@2x.png",
+      "cashWidgetIconUrl": "https://image.coupangcdn.com/image/badges/sdp/cashback/web/cash-icon@2x.png",
+      "clubMemberCashAmt": null,
+      "clubMemberRate": null,
+      "clubMemberRewardExpires": null,
+      "clubMemberRewardExpiryTime": null,
+      "clubMemberRewardLeftDays": null,
+      "couPayBankAmt": null,
+      "couPayBankExpires": true,
+      "couPayBankLeftDays": null,
+      "couPayBankRate": null,
+      "couPayMoneyAmt": null,
+      "couPayMoneyExpires": true,
+      "couPayMoneyLeftDays": null,
+      "couPayMoneyRate": null,
+      "extraCashBackList": [],
+      "finalCashBackAmt": 61,
+      "finalCashBackAmtIncludeRewardCashAmount": 61,
+      "giftRewardCashAmount": null,
+      "i18nBasicRocketPayCashAmt": {
+        "amount": "61",
+        "currency": "KRW",
+        "fractionDigits": 0,
+        "rawAmount": 61
+      },
+      "i18nClubMemberCashAmt": null,
+      "i18nCouPayBankAmt": null,
+      "i18nCouPayMoneyAmt": null,
+      "i18nFinalCashBackAmt": {
+        "amount": "61",
+        "currency": "KRW",
+        "fractionDigits": 0,
+        "rawAmount": 61
+      },
+      "i18nFinalCashBackAmtIncludeRewardCashAmount": {
+        "amount": "61",
+        "currency": "KRW",
+        "fractionDigits": 0,
+        "rawAmount": 61
+      },
+      "i18nRewardCashAmount": null,
+      "inBookCategory": null,
+      "luxuryItem": false,
+      "popupType": "BASIC",
+      "rewardCashAmount": null,
+      "targetedPromotionBanner": null
+    },
+    "delivery": {
+      "badgeUrl": "https://image.coupangcdn.com/image/mobile_app/v3/brandsdp/loyalty/pc/rocketwowBi16@2x.png",
+      "company": null,
+      "companyLabel": null,
+      "countDownMessage": "<em class='prod-txt-onyx'>밤 12시 전 주문 시</em>",
+      "countDownMillisecond": null,
+      "delayMessage": null,
+      "deliveryExtraInfo": null,
+      "deliveryNotice": null,
+      "deliveryReminderMessage": null,
+      "descriptionBadge": null,
+      "descriptionIcon": null,
+      "descriptions": "<em class='prod-txt-onyx prod-txt-green-2'>내일(목) 10/23 새벽 7시 전 </em><em class='prod-txt-onyx  prod-txt-green-normal'>도착 보장</em>",
+      "extraDataMap": {
+        "decodeDescriptions": "내일(목) 10/23 새벽 7시 전 도착 보장"
+      },
+      "extremeDescriptions": null,
+      "hideQuestionMark": false,
+      "logistics": true,
+      "loyaltyButtonText": null,
+      "rocketWowQuestionMark": true,
+      "speedType": "OVERNIGHT",
+      "title": null,
+      "type": "ROCKET_DELIVERY"
+    },
+    "deliveryList": [
+      {
+        "badgeUrl": "https://image.coupangcdn.com/image/mobile_app/v3/brandsdp/loyalty/pc/rocketwowBi16@2x.png",
+        "company": null,
+        "companyLabel": null,
+        "countDownMessage": "<em class='prod-txt-onyx'>밤 12시 전 주문 시</em>",
+        "countDownMillisecond": null,
+        "delayMessage": null,
+        "deliveryExtraInfo": null,
+        "deliveryNotice": null,
+        "deliveryReminderMessage": null,
+        "descriptionBadge": null,
+        "descriptionIcon": null,
+        "descriptions": "<em class='prod-txt-onyx prod-txt-green-2'>내일(목) 10/23 새벽 7시 전 </em><em class='prod-txt-onyx  prod-txt-green-normal'>도착 보장</em>",
+        "extraDataMap": {
+          "decodeDescriptions": "내일(목) 10/23 새벽 7시 전 도착 보장"
+        },
+        "extremeDescriptions": null,
+        "hideQuestionMark": false,
+        "logistics": true,
+        "loyaltyButtonText": null,
+        "rocketWowQuestionMark": true,
+        "speedType": "OVERNIGHT",
+        "title": null,
+        "type": "ROCKET_DELIVERY"
+      }
+    ],
+    "deliveryOptionList": null,
+    "freebieBenefit": null,
+    "freebieBenefitV2": null,
+    "freebiePromotions": null,
+    "moduleData": [
+      {
+        "abFlags": {
+          "displayTwoPricesWow": "A",
+          "sdpCartUpdateNewPmcPolicy": "false",
+          "deliveryFeeToggleShow": "false"
+        },
+        "detailPriceBundle": {
+          "finalPrice": {
+            "bestPriceInfo": {
+              "currency": "KRW",
+              "discountRate": 32,
+              "discountRateValid": true,
+              "doubleElevenPromoted": false,
+              "firstPurchase": false,
+              "goldbox": false,
+              "hasEligibilityConditions": false,
+              "lightning": false,
+              "lightningOrGoldbox": false,
+              "memberPrice": false,
+              "notExpired": true,
+              "percentageDiscount": false,
+              "price": 6050,
+              "priceBasedDiscountRate": 32,
+              "priceType": "FINAL_PRICE",
+              "priceWithDeliveryFee": 6050,
+              "unitCCIDuration": 100,
+              "unitPrice": {
+                "amount": 100,
+                "extendedPrice": {
+                  "money": {
+                    "amount": 336,
+                    "currency": "KRW"
+                  },
+                  "offset": 0
+                },
+                "priceEx": {
+                  "amount": 336,
+                  "currency": "KRW"
+                },
+                "unit": "ml"
+              },
+              "unitPriceAmount": 336,
+              "unitPriceAmountWithDeliveryFee": 336,
+              "unitPriceDescription": "(100ml당 336원)",
+              "unitPriceDescriptionWithoutParenthesis": "100ml당 336원",
+              "unitPriceIncludeDeliveryFeeDescription": "(100ml당 336원)",
+              "unitPriceIncludeDeliveryFeeDescriptionWithoutParenthesis": "100ml당 336원",
+              "unitPriceWithDeliveryFee": {
+                "amount": 100,
+                "extendedPrice": {
+                  "money": {
+                    "amount": 336,
+                    "currency": "KRW"
+                  },
+                  "offset": 0
+                },
+                "unit": "ml"
+              },
+              "valid": true
+            },
+            "displayDelivery": {
+              "benefitDescription": "무료배송 새벽도착",
+              "deliveryBadgeType": "ROCKET_WOW",
+              "rocketDeliveryType": "ROCKET_WOW"
+            },
+            "displayType": "FINAL",
+            "downloadCouponType": "NONE",
+            "downloadDiscountAmount": 0,
+            "instantDiscountAmount": 0,
+            "instantDiscountType": "NONE",
+            "memberPrice": false,
+            "otOrWot": false,
+            "price": 6050,
+            "priceBaseDiscountRate": 32,
+            "priceWithDeliveryFee": 6050,
+            "realType": "SALES",
+            "unitPriceAmount": 336,
+            "unitPriceAmountWithDeliveryFee": 336,
+            "unitPriceDescription": "(100ml당 336원)",
+            "unitPriceDescriptionWithoutParenthesis": "100ml당 336원",
+            "unitPriceIncludeDeliveryFeeDescription": "(100ml당 336원)"
+          },
+          "finalPriceDiscountRate": 32,
+          "nonWowMemberPrice": {
+            "price": 6050,
+            "priceWithDeliveryFee": 6050
+          },
+          "originalPrice": {
+            "displayType": "ORIGINAL",
+            "downloadCouponType": "NONE",
+            "instantDiscountType": "NONE",
+            "memberPrice": false,
+            "otOrWot": false,
+            "price": 8950,
+            "priceWithDeliveryFee": 8950,
+            "realType": "ORIGINAL",
+            "unitPriceDescription": "(100ml당 497원)"
+          },
+          "wowMemberPrice": {
+            "price": 6050,
+            "priceWithDeliveryFee": 6050
+          }
+        },
+        "logging": {},
+        "normalCouponDiscount": false,
+        "normalInstantDiscount": false,
+        "priceLogData": {
+          "unitPrice": "(100ml당 336원)",
+          "discountRate": "32.0",
+          "underThresholdCouponSavingAmount": "null",
+          "targetedCouponSavingAmount": "null",
+          "instantDiscountSavingAmount": "null",
+          "overThresholdCouponSavingAmount": "null",
+          "salesPrice": 6050,
+          "finalPrice": 6050,
+          "underThresholdCouponThreshold": "null",
+          "isBadDiscount": "false",
+          "isLoyaltyMember": true,
+          "wowUnderThresholdCouponThreshold": "null",
+          "anchorPrice": "8950",
+          "ccidEligibleSavingAmount": "null",
+          "wowInstantDiscountSavingAmount": "null",
+          "wowUnderThresholdCouponSavingAmount": "null",
+          "wowCcidEligibleSavingAmount": "null",
+          "myCcidDiscountSavingAmount": "null",
+          "businessType": "1p",
+          "wowOverThresholdCouponSavingAmount": "null"
+        },
+        "pricePolicies": [
+          {
+            "currency": "원",
+            "description": "쿠팡 판매를 위한 할인 적용 이전의 가격(업체가 쿠팡에 제공한 희망소매가격 또는 공식판매처 판매가 등. 도서정가제 대상 도서인 경우, 도서 정가)입니다.",
+            "discountRate": 32,
+            "formattedPrice": "8,950원",
+            "price": "8,950",
+            "priceWithDeliveryFee": "8,950",
+            "type": "ORIGINAL"
+          }
+        ],
+        "priceWithDeliveryFee": false,
+        "targetedDiscount": false,
+        "viewType": "PRODUCT_DETAIL_PRICE_INFO",
+        "wowCouponDiscount": false,
+        "wowDiscountAndNormalOtAndNonWowMember": false,
+        "wowInstantDiscount": false
+      },
+      {
+        "attributeBasedTitle": "해표 식용유, 1.8L, 1개",
+        "countryOfOrigin": "원산지: 상품 상세설명 참조",
+        "logging": {
+          "alwaysSentLiveLog": false,
+          "bypass": {
+            "exposureSchemas": [
+              {
+                "id": "11942",
+                "mandatory": {
+                  "logCategory": "impression",
+                  "logType": "impression",
+                  "pageName": "sdp",
+                  "eventName": "option_table_test_exposure",
+                  "domain": "sdp",
+                  "sdpVisitKey": "veojp66cmjmj7lzmam",
+                  "productId": 487322,
+                  "itemId": 16372474586,
+                  "vendorItemId": 3000080400,
+                  "abGroup": "B",
+                  "abTestId": "47980"
+                },
+                "version": "2"
+              }
+            ]
+          }
+        },
+        "title": "해표 식용유 1.8L, 1개",
+        "viewType": "PRODUCT_DETAIL_PRODUCT_INFO"
+      },
+      {
+        "abFlags": {
+          "47980": "B"
+        },
+        "featureFlags": {
+          "option_table_pc_expand_1_and_2_attr": "B"
+        },
+        "viewType": "PRODUCT_WEB_DATA_AB_FLAGS"
+      },
+      {
+        "tabList": [
+          {
+            "attributeId": "7823",
+            "items": [
+              {
+                "action": {
+                  "event": {
+                    "url": "https://www.coupang.com/vp/products/487322/items/16372474586/vendoritems/3000080400/option-table?optionTableLandingVendorItemId=3000080400&landedItemId=16372474586&landedVendorItemId=3000080400&withDeliveryFee=true&deliveryToggle=false&selectedValue=7652%3ANzY1Mnwx6rCc%2C7823%3ANzgyM3wxbWw&selectedShowPriceStatus=Default&sdp-st=H4sIAAAAAAAA_6tW8i8oyczPC0lMykkNSCxKzC1WsqpWyi_JKchUsjKxMDc2MtIBcTNBXEMDE1MwrwzIMzYAAgsDEwODWh2oKcGpOanJIAbYJJBBxWVoCl1SczLLUosqQ_LT05FtTEERV7JKS8wpToUb7JNZXAIzs7YWAPiMVLq1AAAA"
+                  },
+                  "logging": {
+                    "alwaysSentLiveLog": false,
+                    "bypass": {
+                      "clickSchemas": [
+                        {
+                          "id": "10844",
+                          "mandatory": {
+                            "logCategory": "event",
+                            "logType": "click",
+                            "pageName": "sdp",
+                            "eventName": "click_sdp_option_comparison_table",
+                            "domain": "sdp",
+                            "sdpVisitKey": "veojp66cmjmj7lzmam",
+                            "productId": 487322,
+                            "itemId": 16372474586,
+                            "vendorItemId": 3000080400,
+                            "categoryId": "1213",
+                            "rocketWowType": "ROCKET_WOW_DAWN",
+                            "optionTableStyle": "sdp_standard",
+                            "clickArea": "attributeOption",
+                            "clickValue": "firstAttribute:1ml",
+                            "isImage": false
+                          },
+                          "version": "12"
+                        }
+                      ]
+                    }
+                  }
+                },
+                "id": "NzgyM3wxbWw",
+                "invalid": false,
+                "selected": false,
+                "selectedValue": [
+                  "7652:NzY1Mnwx6rCc",
+                  "7823:NzgyM3wxbWw"
+                ],
+                "soldOut": false,
+                "valueName": "1ml"
+              },
+              {
+                "action": {
+                  "event": {
+                    "url": "https://www.coupang.com/vp/products/487322/items/16372474586/vendoritems/3000080400/option-table?optionTableLandingVendorItemId=3000080400&landedItemId=16372474586&landedVendorItemId=3000080400&withDeliveryFee=true&deliveryToggle=false&selectedValue=7652%3ANzY1Mnwx6rCc%2C7823%3ANzgyM3wyNTBtbA&selectedShowPriceStatus=Default&sdp-st=H4sIAAAAAAAA_6tW8i8oyczPC0lMykkNSCxKzC1WsqpWyi_JKchUsjKxMDc2MtIBcTNBXEMDE1MwrwzIMzYAAgsDEwODWh2oKcGpOanJIAbYJJBBxWVoCl1SczLLUosqQ_LT05FtTEERV7JKS8wpToUb7JNZXAIzs7YWAPiMVLq1AAAA"
+                  },
+                  "logging": {
+                    "alwaysSentLiveLog": false,
+                    "bypass": {
+                      "clickSchemas": [
+                        {
+                          "id": "10844",
+                          "mandatory": {
+                            "logCategory": "event",
+                            "logType": "click",
+                            "pageName": "sdp",
+                            "eventName": "click_sdp_option_comparison_table",
+                            "domain": "sdp",
+                            "sdpVisitKey": "veojp66cmjmj7lzmam",
+                            "productId": 487322,
+                            "itemId": 16372474586,
+                            "vendorItemId": 3000080400,
+                            "categoryId": "1213",
+                            "rocketWowType": "ROCKET_WOW_DAWN",
+                            "optionTableStyle": "sdp_standard",
+                            "clickArea": "attributeOption",
+                            "clickValue": "firstAttribute:250ml",
+                            "isImage": false
+                          },
+                          "version": "12"
+                        }
+                      ]
+                    }
+                  }
+                },
+                "id": "NzgyM3wyNTBtbA",
+                "invalid": false,
+                "selected": false,
+                "selectedValue": [
+                  "7652:NzY1Mnwx6rCc",
+                  "7823:NzgyM3wyNTBtbA"
+                ],
+                "soldOut": false,
+                "valueName": "250ml"
+              },
+              {
+                "action": {
+                  "event": {
+                    "url": "https://www.coupang.com/vp/products/487322/items/16372474586/vendoritems/3000080400/option-table?optionTableLandingVendorItemId=3000080400&landedItemId=16372474586&landedVendorItemId=3000080400&withDeliveryFee=true&deliveryToggle=false&selectedValue=7652%3ANzY1Mnwx6rCc%2C7823%3ANzgyM3w1MDBtbA&selectedShowPriceStatus=Default&sdp-st=H4sIAAAAAAAA_6tW8i8oyczPC0lMykkNSCxKzC1WsqpWyi_JKchUsjKxMDc2MtIBcTNBXEMDE1MwrwzIMzYAAgsDEwODWh2oKcGpOanJIAbYJJBBxWVoCl1SczLLUosqQ_LT05FtTEERV7JKS8wpToUb7JNZXAIzs7YWAPiMVLq1AAAA"
+                  },
+                  "logging": {
+                    "alwaysSentLiveLog": false,
+                    "bypass": {
+                      "clickSchemas": [
+                        {
+                          "id": "10844",
+                          "mandatory": {
+                            "logCategory": "event",
+                            "logType": "click",
+                            "pageName": "sdp",
+                            "eventName": "click_sdp_option_comparison_table",
+                            "domain": "sdp",
+                            "sdpVisitKey": "veojp66cmjmj7lzmam",
+                            "productId": 487322,
+                            "itemId": 16372474586,
+                            "vendorItemId": 3000080400,
+                            "categoryId": "1213",
+                            "rocketWowType": "ROCKET_WOW_DAWN",
+                            "optionTableStyle": "sdp_standard",
+                            "clickArea": "attributeOption",
+                            "clickValue": "firstAttribute:500ml",
+                            "isImage": false
+                          },
+                          "version": "12"
+                        }
+                      ]
+                    }
+                  }
+                },
+                "id": "NzgyM3w1MDBtbA",
+                "invalid": false,
+                "selected": false,
+                "selectedValue": [
+                  "7652:NzY1Mnwx6rCc",
+                  "7823:NzgyM3w1MDBtbA"
+                ],
+                "soldOut": false,
+                "valueName": "500ml"
+              },
+              {
+                "action": {
+                  "event": {
+                    "url": "https://www.coupang.com/vp/products/487322/items/16372474586/vendoritems/3000080400/option-table?optionTableLandingVendorItemId=3000080400&landedItemId=16372474586&landedVendorItemId=3000080400&withDeliveryFee=true&deliveryToggle=false&selectedValue=7652%3ANzY1Mnwx6rCc%2C7823%3ANzgyM3w5MDBtbA&selectedShowPriceStatus=Default&sdp-st=H4sIAAAAAAAA_6tW8i8oyczPC0lMykkNSCxKzC1WsqpWyi_JKchUsjKxMDc2MtIBcTNBXEMDE1MwrwzIMzYAAgsDEwODWh2oKcGpOanJIAbYJJBBxWVoCl1SczLLUosqQ_LT05FtTEERV7JKS8wpToUb7JNZXAIzs7YWAPiMVLq1AAAA"
+                  },
+                  "logging": {
+                    "alwaysSentLiveLog": false,
+                    "bypass": {
+                      "clickSchemas": [
+                        {
+                          "id": "10844",
+                          "mandatory": {
+                            "logCategory": "event",
+                            "logType": "click",
+                            "pageName": "sdp",
+                            "eventName": "click_sdp_option_comparison_table",
+                            "domain": "sdp",
+                            "sdpVisitKey": "veojp66cmjmj7lzmam",
+                            "productId": 487322,
+                            "itemId": 16372474586,
+                            "vendorItemId": 3000080400,
+                            "categoryId": "1213",
+                            "rocketWowType": "ROCKET_WOW_DAWN",
+                            "optionTableStyle": "sdp_standard",
+                            "clickArea": "attributeOption",
+                            "clickValue": "firstAttribute:900ml",
+                            "isImage": false
+                          },
+                          "version": "12"
+                        }
+                      ]
+                    }
+                  }
+                },
+                "id": "NzgyM3w5MDBtbA",
+                "invalid": false,
+                "selected": false,
+                "selectedValue": [
+                  "7652:NzY1Mnwx6rCc",
+                  "7823:NzgyM3w5MDBtbA"
+                ],
+                "soldOut": false,
+                "valueName": "900ml"
+              },
+              {
+                "action": {
+                  "event": {
+                    "url": "https://www.coupang.com/vp/products/487322/items/16372474586/vendoritems/3000080400/option-table?optionTableLandingVendorItemId=3000080400&landedItemId=16372474586&landedVendorItemId=3000080400&withDeliveryFee=true&deliveryToggle=false&selectedValue=7652%3ANzY1Mnwx6rCc%2C7823%3ANzgyM3wxLjVM&selectedShowPriceStatus=Default&sdp-st=H4sIAAAAAAAA_6tW8i8oyczPC0lMykkNSCxKzC1WsqpWyi_JKchUsjKxMDc2MtIBcTNBXEMDE1MwrwzIMzYAAgsDEwODWh2oKcGpOanJIAbYJJBBxWVoCl1SczLLUosqQ_LT05FtTEERV7JKS8wpToUb7JNZXAIzs7YWAPiMVLq1AAAA"
+                  },
+                  "logging": {
+                    "alwaysSentLiveLog": false,
+                    "bypass": {
+                      "clickSchemas": [
+                        {
+                          "id": "10844",
+                          "mandatory": {
+                            "logCategory": "event",
+                            "logType": "click",
+                            "pageName": "sdp",
+                            "eventName": "click_sdp_option_comparison_table",
+                            "domain": "sdp",
+                            "sdpVisitKey": "veojp66cmjmj7lzmam",
+                            "productId": 487322,
+                            "itemId": 16372474586,
+                            "vendorItemId": 3000080400,
+                            "categoryId": "1213",
+                            "rocketWowType": "ROCKET_WOW_DAWN",
+                            "optionTableStyle": "sdp_standard",
+                            "clickArea": "attributeOption",
+                            "clickValue": "firstAttribute:1.5L",
+                            "isImage": false
+                          },
+                          "version": "12"
+                        }
+                      ]
+                    }
+                  }
+                },
+                "id": "NzgyM3wxLjVM",
+                "invalid": false,
+                "selected": false,
+                "selectedValue": [
+                  "7652:NzY1Mnwx6rCc",
+                  "7823:NzgyM3wxLjVM"
+                ],
+                "soldOut": false,
+                "valueName": "1.5L"
+              },
+              {
+                "action": {
+                  "event": {
+                    "url": "https://www.coupang.com/vp/products/487322/items/16372474586/vendoritems/3000080400/option-table?optionTableLandingVendorItemId=3000080400&landedItemId=16372474586&landedVendorItemId=3000080400&withDeliveryFee=true&deliveryToggle=false&selectedValue=7652%3ANzY1Mnwx6rCc%2C7823%3ANzgyM3wxLjhM&selectedShowPriceStatus=Default&sdp-st=H4sIAAAAAAAA_6tW8i8oyczPC0lMykkNSCxKzC1WsqpWyi_JKchUsjKxMDc2MtIBcTNBXEMDE1MwrwzIMzYAAgsDEwODWh2oKcGpOanJIAbYJJBBxWVoCl1SczLLUosqQ_LT05FtTEERV7JKS8wpToUb7JNZXAIzs7YWAPiMVLq1AAAA"
+                  },
+                  "logging": {
+                    "alwaysSentLiveLog": false,
+                    "bypass": {
+                      "clickSchemas": [
+                        {
+                          "id": "10844",
+                          "mandatory": {
+                            "logCategory": "event",
+                            "logType": "click",
+                            "pageName": "sdp",
+                            "eventName": "click_sdp_option_comparison_table",
+                            "domain": "sdp",
+                            "sdpVisitKey": "veojp66cmjmj7lzmam",
+                            "productId": 487322,
+                            "itemId": 16372474586,
+                            "vendorItemId": 3000080400,
+                            "categoryId": "1213",
+                            "rocketWowType": "ROCKET_WOW_DAWN",
+                            "optionTableStyle": "sdp_standard",
+                            "clickArea": "attributeOption",
+                            "clickValue": "firstAttribute:1.8L",
+                            "isImage": false
+                          },
+                          "version": "12"
+                        }
+                      ]
+                    }
+                  }
+                },
+                "id": "NzgyM3wxLjhM",
+                "invalid": false,
+                "selected": true,
+                "selectedValue": [
+                  "7652:NzY1Mnwx6rCc",
+                  "7823:NzgyM3wxLjhM"
+                ],
+                "soldOut": false,
+                "valueName": "1.8L"
+              },
+              {
+                "action": {
+                  "event": {
+                    "url": "https://www.coupang.com/vp/products/487322/items/16372474586/vendoritems/3000080400/option-table?optionTableLandingVendorItemId=3000080400&landedItemId=16372474586&landedVendorItemId=3000080400&withDeliveryFee=true&deliveryToggle=false&selectedValue=7652%3ANzY1Mnwx6rCc%2C7823%3ANzgyM3wzLjZM&selectedShowPriceStatus=Default&sdp-st=H4sIAAAAAAAA_6tW8i8oyczPC0lMykkNSCxKzC1WsqpWyi_JKchUsjKxMDc2MtIBcTNBXEMDE1MwrwzIMzYAAgsDEwODWh2oKcGpOanJIAbYJJBBxWVoCl1SczLLUosqQ_LT05FtTEERV7JKS8wpToUb7JNZXAIzs7YWAPiMVLq1AAAA"
+                  },
+                  "logging": {
+                    "alwaysSentLiveLog": false,
+                    "bypass": {
+                      "clickSchemas": [
+                        {
+                          "id": "10844",
+                          "mandatory": {
+                            "logCategory": "event",
+                            "logType": "click",
+                            "pageName": "sdp",
+                            "eventName": "click_sdp_option_comparison_table",
+                            "domain": "sdp",
+                            "sdpVisitKey": "veojp66cmjmj7lzmam",
+                            "productId": 487322,
+                            "itemId": 16372474586,
+                            "vendorItemId": 3000080400,
+                            "categoryId": "1213",
+                            "rocketWowType": "ROCKET_WOW_DAWN",
+                            "optionTableStyle": "sdp_standard",
+                            "clickArea": "attributeOption",
+                            "clickValue": "firstAttribute:3.6L",
+                            "isImage": false
+                          },
+                          "version": "12"
+                        }
+                      ]
+                    }
+                  }
+                },
+                "id": "NzgyM3wzLjZM",
+                "invalid": false,
+                "selected": false,
+                "selectedValue": [
+                  "7652:NzY1Mnwx6rCc",
+                  "7823:NzgyM3wzLjZM"
+                ],
+                "soldOut": false,
+                "valueName": "3.6L"
+              }
+            ],
+            "sizeAttribute": false,
+            "style": "TAB",
+            "title": "개당 용량 × 수량: ",
+            "valueName": "1.8L × 1개"
+          }
+        ],
+        "viewType": "PRODUCT_OPTION_TABLE_TAB_SELECTOR"
+      },
+      {
+        "data": {
+          "description": "배송비 포함",
+          "title": "더 많은 옵션 보기"
+        },
+        "viewType": "PRODUCT_OPTION_TABLE_TOGGLE_HEADER"
+      },
+      {
+        "landingItemId": 41045,
+        "landingProductId": 487322,
+        "landingVendorItemId": 3000080400,
+        "logging": {
+          "alwaysSentLiveLog": false,
+          "bypass": {
+            "exposureSchema": {
+              "id": "10843",
+              "mandatory": {
+                "logCategory": "impression",
+                "logType": "impression",
+                "pageName": "sdp",
+                "eventName": "impression_sdp_option_comparison_table",
+                "domain": "sdp",
+                "sdpVisitKey": "veojp66cmjmj7lzmam",
+                "productId": 487322,
+                "itemId": 16372474586,
+                "vendorItemId": 3000080400,
+                "categoryId": "1213",
+                "optionTableStyle": "sdp_standard",
+                "attributes": "개당 용량,수량",
+                "isSeeAll": true,
+                "isImage": false,
+                "firstAttributeOptionList": "attribute1:1ml,attribute2:250ml,attribute3:500ml,attribute4:900ml,attribute5:1.5L,attribute6:1.8L,attribute7:3.6L",
+                "selectedAttribute": "firstAttribute:1.8L",
+                "listVendorItemId": "option1:3000080400,option2:84994378244,option3:84994382062,option4:93478889635",
+                "listVendorItemPrice": "option1:6050,option2:10650,option3:25000,option4:48610",
+                "listQty": "option1:1개,option2:2개,option3:5개,option4:10개",
+                "listDeliveryType": "option1:ROCKET_WOW,option2:ROCKET_WOW,option3:ROCKET_WOW,option4:",
+                "listUnitPrice": "option1:336,option2:296,option3:278,option4:270",
+                "listMin": "option1:false,option2:false,option3:false,option4:true",
+                "listOos": "option1:false,option2:false,option3:false,option4:false",
+                "listDefault": "option1:true,option2:true,option3:true,option4:true",
+                "listPriceLabel": "option1:,option2:,option3:,option4:",
+                "selectedOption": "option1"
+              },
+              "version": "16"
+            }
+          }
+        },
+        "optionList": [
+          {
+            "action": {
+              "event": {
+                "url": "/vm/v5/products/487322/vendor-items/3000080400?landingItemId=41045&landingProductId=487322&landingVendorItemId=3000080400"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "10844",
+                      "mandatory": {
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "sdp",
+                        "eventName": "click_sdp_option_comparison_table",
+                        "domain": "sdp",
+                        "sdpVisitKey": "veojp66cmjmj7lzmam",
+                        "productId": 487322,
+                        "itemId": 16372474586,
+                        "vendorItemId": 3000080400,
+                        "categoryId": "1213",
+                        "clickArea": "option",
+                        "clickValue": "option1:3000080400",
+                        "isImage": false
+                      },
+                      "version": "12"
+                    }
+                  ]
+                }
+              }
+            },
+            "defaultShow": true,
+            "deliveryBadgeUrl": "https://image.coupangcdn.com/image/coupang/rds/logo/hdpi/logo_wow_small.png",
+            "deliveryType": "ROCKET_WOW",
+            "finalPrice": "6,050원",
+            "finalUnitPrice": "100ml당 336원",
+            "hoverImageUrl": "//thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/1531874807130-c2efe3f9-dd12-4589-a68f-7560d010004f.png",
+            "hoverSelectionText": "1.8L × 1개",
+            "itemId": 16372474586,
+            "optionItemName": "1개",
+            "selected": true,
+            "soldOut": false,
+            "vendorItemId": 3000080400
+          },
+          {
+            "action": {
+              "event": {
+                "url": "/vm/v5/products/487322/vendor-items/84994378244?landingItemId=41045&landingProductId=487322&landingVendorItemId=3000080400"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "10844",
+                      "mandatory": {
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "sdp",
+                        "eventName": "click_sdp_option_comparison_table",
+                        "domain": "sdp",
+                        "sdpVisitKey": "veojp66cmjmj7lzmam",
+                        "productId": 487322,
+                        "itemId": 16372474586,
+                        "vendorItemId": 3000080400,
+                        "categoryId": "1213",
+                        "clickArea": "option",
+                        "clickValue": "option2:84994378244",
+                        "isImage": false
+                      },
+                      "version": "12"
+                    }
+                  ]
+                }
+              }
+            },
+            "defaultShow": true,
+            "deliveryBadgeUrl": "https://image.coupangcdn.com/image/coupang/rds/logo/hdpi/logo_wow_small.png",
+            "deliveryType": "ROCKET_WOW",
+            "finalPrice": "10,650원",
+            "finalUnitPrice": "100ml당 296원",
+            "hoverImageUrl": "//thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/1531959195853-193313a8-18f7-4a84-9c78-602f059cff1d.png",
+            "hoverSelectionText": "1.8L × 2개",
+            "itemId": 231349355,
+            "optionItemName": "2개",
+            "selected": false,
+            "soldOut": false,
+            "vendorItemId": 84994378244
+          },
+          {
+            "action": {
+              "event": {
+                "url": "/vm/v5/products/487322/vendor-items/84994382062?landingItemId=41045&landingProductId=487322&landingVendorItemId=3000080400"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "10844",
+                      "mandatory": {
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "sdp",
+                        "eventName": "click_sdp_option_comparison_table",
+                        "domain": "sdp",
+                        "sdpVisitKey": "veojp66cmjmj7lzmam",
+                        "productId": 487322,
+                        "itemId": 16372474586,
+                        "vendorItemId": 3000080400,
+                        "categoryId": "1213",
+                        "clickArea": "option",
+                        "clickValue": "option3:84994382062",
+                        "isImage": false
+                      },
+                      "version": "12"
+                    }
+                  ]
+                }
+              }
+            },
+            "defaultShow": true,
+            "deliveryBadgeUrl": "https://image.coupangcdn.com/image/coupang/rds/logo/hdpi/logo_wow_small.png",
+            "deliveryType": "ROCKET_WOW",
+            "finalPrice": "25,000원",
+            "finalUnitPrice": "100ml당 278원",
+            "hoverImageUrl": "//thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/1532311582423-6ce4c928-2e7f-48b9-bf60-81305f13b54d.png",
+            "hoverSelectionText": "1.8L × 5개",
+            "itemId": 12419031959,
+            "optionItemName": "5개",
+            "selected": false,
+            "soldOut": false,
+            "vendorItemId": 84994382062
+          },
+          {
+            "action": {
+              "event": {
+                "url": "/vm/v5/products/487322/vendor-items/93478889635?landingItemId=41045&landingProductId=487322&landingVendorItemId=3000080400"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "10844",
+                      "mandatory": {
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "sdp",
+                        "eventName": "click_sdp_option_comparison_table",
+                        "domain": "sdp",
+                        "sdpVisitKey": "veojp66cmjmj7lzmam",
+                        "productId": 487322,
+                        "itemId": 16372474586,
+                        "vendorItemId": 3000080400,
+                        "categoryId": "1213",
+                        "clickArea": "option",
+                        "clickValue": "option4:93478889635",
+                        "isImage": false
+                      },
+                      "version": "12"
+                    }
+                  ]
+                }
+              }
+            },
+            "defaultShow": true,
+            "finalPrice": "48,610원",
+            "finalUnitPrice": "100ml당 270원",
+            "finalUnitPriceLabel": "(최저 단위가)",
+            "hoverImageUrl": "//thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/vendor_inventory/4ea2/0cc08fa2e671954f6c2a32821056631b1a095fba6f915ab093f52bfbc3ef.jpg",
+            "hoverSelectionText": "1.8L × 10개",
+            "itemId": 18172808489,
+            "optionItemName": "10개",
+            "selected": false,
+            "soldOut": false,
+            "vendorItemId": 93478889635
+          }
+        ],
+        "seeAllButton": {
+          "action": {
+            "logging": {
+              "alwaysSentLiveLog": false,
+              "bypass": {
+                "clickSchemas": [
+                  {
+                    "id": "10844",
+                    "mandatory": {
+                      "logCategory": "event",
+                      "logType": "click",
+                      "pageName": "sdp",
+                      "eventName": "click_sdp_option_comparison_table",
+                      "domain": "sdp",
+                      "sdpVisitKey": "veojp66cmjmj7lzmam",
+                      "productId": 487322,
+                      "itemId": 16372474586,
+                      "vendorItemId": 3000080400,
+                      "categoryId": "1213",
+                      "clickArea": "seeAll",
+                      "clickValue": "모든 옵션 보기",
+                      "isImage": false,
+                      "isToggleOn": false
+                    },
+                    "version": "12"
+                  }
+                ]
+              }
+            }
+          },
+          "buttonText": "모든 옵션 보기"
+        },
+        "style": "SHORT_ATTR",
+        "tableId": "NzgyM3wxLjhM",
+        "viewType": "PRODUCT_OPTION_TABLE_LIST_VIEW"
+      },
+      {
+        "items": [
+          {
+            "action": {
+              "event": {
+                "url": "vp/products/487322/vendoritems/93457860996"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "5104",
+                      "mandatory": {
+                        "domain": "sdp",
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "option_list",
+                        "eventName": "option_list_click",
+                        "sdpVisitKey": "veojp66cmjmj7lzmam",
+                        "vendorItemId": 93457860996,
+                        "searchId": "",
+                        "vendorItemIdAttributes": "1ml_1개_unitPrice:6303000_vendorItemPrice:63030_deliveryType:3p_deliveryFee:0"
+                      },
+                      "version": "6"
+                    }
+                  ],
+                  "exposureSchema": {
+                    "id": "5112",
+                    "mandatory": {
+                      "logCategory": "impression",
+                      "logType": "impression",
+                      "pageName": "option_list",
+                      "eventName": "option_list_item_impression",
+                      "domain": "sdp",
+                      "referSdpItem": "p487322_i16372474586_v3000080400",
+                      "sdpVisitKey": "veojp66cmjmj7lzmam",
+                      "vendorItemId": "93457860996",
+                      "originalItemId": 16372474586,
+                      "originalVendorItemId": 3000080400,
+                      "rocketWowType": "ROCKET_WOW_DAWN",
+                      "searchId": "",
+                      "vendorItemIdAttributes": "1ml_1개_unitPrice:6303000_vendorItemPrice:63030_deliveryType:3p_deliveryFee:0"
+                    },
+                    "version": "9"
+                  }
+                }
+              }
+            },
+            "deliveryInfo": {
+              "deliveryDateDescriptions": "화요일 10/28 도착 예정 (판매자배송)"
+            },
+            "itemBasicInfo": {
+              "invalid": false,
+              "itemId": 25030082985,
+              "itemName": "1ml × 1개",
+              "vendorItemId": 93457860996
+            },
+            "priceInfo": {
+              "finalDeliveryDescription": "무료배송",
+              "finalPrice": "63,030원",
+              "finalUnitPrice": "(100ml당 6,303,000원)"
+            },
+            "stockInfo": {
+              "logistics": false,
+              "restockNotification": false,
+              "soldOut": false
+            }
+          },
+          {
+            "action": {
+              "event": {
+                "url": "vp/products/487322/vendoritems/84359815106"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "5104",
+                      "mandatory": {
+                        "domain": "sdp",
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "option_list",
+                        "eventName": "option_list_click",
+                        "sdpVisitKey": "veojp66cmjmj7lzmam",
+                        "vendorItemId": 84359815106,
+                        "searchId": "",
+                        "vendorItemIdAttributes": "250ml_3개_unitPrice:847_vendorItemPrice:6350_deliveryType:3p_deliveryFee:0"
+                      },
+                      "version": "6"
+                    }
+                  ],
+                  "exposureSchema": {
+                    "id": "5112",
+                    "mandatory": {
+                      "logCategory": "impression",
+                      "logType": "impression",
+                      "pageName": "option_list",
+                      "eventName": "option_list_item_impression",
+                      "domain": "sdp",
+                      "referSdpItem": "p487322_i16372474586_v3000080400",
+                      "sdpVisitKey": "veojp66cmjmj7lzmam",
+                      "vendorItemId": "84359815106",
+                      "originalItemId": 16372474586,
+                      "originalVendorItemId": 3000080400,
+                      "rocketWowType": "ROCKET_WOW_DAWN",
+                      "searchId": "",
+                      "vendorItemIdAttributes": "250ml_3개_unitPrice:847_vendorItemPrice:6350_deliveryType:3p_deliveryFee:0"
+                    },
+                    "version": "9"
+                  }
+                }
+              }
+            },
+            "deliveryInfo": {
+              "deliveryDateDescriptions": "모레(금) 10/24 도착 예정 (판매자배송)"
+            },
+            "itemBasicInfo": {
+              "invalid": false,
+              "itemId": 19506776993,
+              "itemName": "250ml × 3개",
+              "vendorItemId": 84359815106
+            },
+            "priceInfo": {
+              "finalDeliveryDescription": "무료배송",
+              "finalPrice": "6,350원",
+              "finalUnitPrice": "(100ml당 847원)"
+            },
+            "stockInfo": {
+              "logistics": false,
+              "restockNotification": false,
+              "soldOut": false
+            }
+          },
+          {
+            "action": {
+              "event": {
+                "url": "vp/products/487322/vendoritems/91037695686"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "5104",
+                      "mandatory": {
+                        "domain": "sdp",
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "option_list",
+                        "eventName": "option_list_click",
+                        "sdpVisitKey": "veojp66cmjmj7lzmam",
+                        "vendorItemId": 91037695686,
+                        "searchId": "",
+                        "vendorItemIdAttributes": "250ml_8개_unitPrice:645_vendorItemPrice:12900_deliveryType:3p_deliveryFee:0"
+                      },
+                      "version": "6"
+                    }
+                  ],
+                  "exposureSchema": {
+                    "id": "5112",
+                    "mandatory": {
+                      "logCategory": "impression",
+                      "logType": "impression",
+                      "pageName": "option_list",
+                      "eventName": "option_list_item_impression",
+                      "domain": "sdp",
+                      "referSdpItem": "p487322_i16372474586_v3000080400",
+                      "sdpVisitKey": "veojp66cmjmj7lzmam",
+                      "vendorItemId": "91037695686",
+                      "originalItemId": 16372474586,
+                      "originalVendorItemId": 3000080400,
+                      "rocketWowType": "ROCKET_WOW_DAWN",
+                      "searchId": "",
+                      "vendorItemIdAttributes": "250ml_8개_unitPrice:645_vendorItemPrice:12900_deliveryType:3p_deliveryFee:0"
+                    },
+                    "version": "9"
+                  }
+                }
+              }
+            },
+            "deliveryInfo": {
+              "deliveryDateDescriptions": "모레(금) 10/24 도착 예정 (판매자배송)"
+            },
+            "itemBasicInfo": {
+              "invalid": false,
+              "itemId": 19941445720,
+              "itemName": "250ml × 8개",
+              "vendorItemId": 91037695686
+            },
+            "priceInfo": {
+              "finalDeliveryDescription": "무료배송",
+              "finalPrice": "12,900원",
+              "finalUnitPrice": "(100ml당 645원)"
+            },
+            "stockInfo": {
+              "logistics": false,
+              "restockNotification": false,
+              "soldOut": false
+            }
+          },
+          {
+            "action": {
+              "event": {
+                "url": "vp/products/487322/vendoritems/91037721924"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "5104",
+                      "mandatory": {
+                        "domain": "sdp",
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "option_list",
+                        "eventName": "option_list_click",
+                        "sdpVisitKey": "veojp66cmjmj7lzmam",
+                        "vendorItemId": 91037721924,
+                        "searchId": "",
+                        "vendorItemIdAttributes": "250ml_10개_unitPrice:583_vendorItemPrice:14580_deliveryType:3p_deliveryFee:0"
+                      },
+                      "version": "6"
+                    }
+                  ],
+                  "exposureSchema": {
+                    "id": "5112",
+                    "mandatory": {
+                      "logCategory": "impression",
+                      "logType": "impression",
+                      "pageName": "option_list",
+                      "eventName": "option_list_item_impression",
+                      "domain": "sdp",
+                      "referSdpItem": "p487322_i16372474586_v3000080400",
+                      "sdpVisitKey": "veojp66cmjmj7lzmam",
+                      "vendorItemId": "91037721924",
+                      "originalItemId": 16372474586,
+                      "originalVendorItemId": 3000080400,
+                      "rocketWowType": "ROCKET_WOW_DAWN",
+                      "searchId": "",
+                      "vendorItemIdAttributes": "250ml_10개_unitPrice:583_vendorItemPrice:14580_deliveryType:3p_deliveryFee:0"
+                    },
+                    "version": "9"
+                  }
+                }
+              }
+            },
+            "deliveryInfo": {
+              "deliveryDateDescriptions": "모레(금) 10/24 도착 예정 (판매자배송)"
+            },
+            "itemBasicInfo": {
+              "invalid": false,
+              "itemId": 21086007983,
+              "itemName": "250ml × 10개",
+              "vendorItemId": 91037721924
+            },
+            "priceInfo": {
+              "finalDeliveryDescription": "무료배송",
+              "finalPrice": "14,580원",
+              "finalUnitPrice": "(100ml당 583원)"
+            },
+            "stockInfo": {
+              "logistics": false,
+              "restockNotification": false,
+              "soldOut": false
+            }
+          },
+          {
+            "action": {
+              "event": {
+                "url": "vp/products/487322/vendoritems/3000080401"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "5104",
+                      "mandatory": {
+                        "domain": "sdp",
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "option_list",
+                        "eventName": "option_list_click",
+                        "sdpVisitKey": "veojp66cmjmj7lzmam",
+                        "vendorItemId": 3000080401,
+                        "searchId": "",
+                        "vendorItemIdAttributes": "500ml_1개_unitPrice:580_vendorItemPrice:2900_deliveryType:ROCKET_WOW_deliveryFee:0"
+                      },
+                      "version": "6"
+                    }
+                  ],
+                  "exposureSchema": {
+                    "id": "5112",
+                    "mandatory": {
+                      "logCategory": "impression",
+                      "logType": "impression",
+                      "pageName": "option_list",
+                      "eventName": "option_list_item_impression",
+                      "domain": "sdp",
+                      "referSdpItem": "p487322_i16372474586_v3000080400",
+                      "sdpVisitKey": "veojp66cmjmj7lzmam",
+                      "vendorItemId": "3000080401",
+                      "originalItemId": 16372474586,
+                      "originalVendorItemId": 3000080400,
+                      "rocketWowType": "ROCKET_WOW_DAWN",
+                      "searchId": "",
+                      "vendorItemIdAttributes": "500ml_1개_unitPrice:580_vendorItemPrice:2900_deliveryType:ROCKET_WOW_deliveryFee:0"
+                    },
+                    "version": "9"
+                  }
+                }
+              }
+            },
+            "deliveryInfo": {
+              "deliveryBadge": {
+                "height": 16,
+                "url": "https://image.coupangcdn.com/image/coupang/rds/logo/xhdpi/logo_wow_medium.png",
+                "width": 65
+              },
+              "deliveryDateColor": "GREEN",
+              "deliveryDateDescriptions": "내일(목) 새벽 도착 보장"
+            },
+            "itemBasicInfo": {
+              "invalid": false,
+              "itemId": 19061114654,
+              "itemName": "500ml × 1개",
+              "vendorItemId": 3000080401
+            },
+            "priceInfo": {
+              "finalDeliveryDescription": "무료배송",
+              "finalPrice": "2,900원",
+              "finalUnitPrice": "(100ml당 580원)"
+            },
+            "stockInfo": {
+              "logistics": true,
+              "restockNotification": false,
+              "soldOut": false
+            }
+          },
+          {
+            "action": {
+              "event": {
+                "url": "vp/products/487322/vendoritems/3028775987"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "5104",
+                      "mandatory": {
+                        "domain": "sdp",
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "option_list",
+                        "eventName": "option_list_click",
+                        "sdpVisitKey": "veojp66cmjmj7lzmam",
+                        "vendorItemId": 3028775987,
+                        "searchId": "",
+                        "vendorItemIdAttributes": "500ml_2개_unitPrice:500_vendorItemPrice:5000_deliveryType:ROCKET_WOW_deliveryFee:0"
+                      },
+                      "version": "6"
+                    }
+                  ],
+                  "exposureSchema": {
+                    "id": "5112",
+                    "mandatory": {
+                      "logCategory": "impression",
+                      "logType": "impression",
+                      "pageName": "option_list",
+                      "eventName": "option_list_item_impression",
+                      "domain": "sdp",
+                      "referSdpItem": "p487322_i16372474586_v3000080400",
+                      "sdpVisitKey": "veojp66cmjmj7lzmam",
+                      "vendorItemId": "3028775987",
+                      "originalItemId": 16372474586,
+                      "originalVendorItemId": 3000080400,
+                      "rocketWowType": "ROCKET_WOW_DAWN",
+                      "searchId": "",
+                      "vendorItemIdAttributes": "500ml_2개_unitPrice:500_vendorItemPrice:5000_deliveryType:ROCKET_WOW_deliveryFee:0"
+                    },
+                    "version": "9"
+                  }
+                }
+              }
+            },
+            "deliveryInfo": {
+              "deliveryBadge": {
+                "height": 16,
+                "url": "https://image.coupangcdn.com/image/coupang/rds/logo/xhdpi/logo_wow_medium.png",
+                "width": 65
+              },
+              "deliveryDateColor": "GREEN",
+              "deliveryDateDescriptions": "내일(목) 새벽 도착 보장"
+            },
+            "itemBasicInfo": {
+              "invalid": false,
+              "itemId": 24085922977,
+              "itemName": "500ml × 2개",
+              "vendorItemId": 3028775987
+            },
+            "priceInfo": {
+              "finalDeliveryDescription": "무료배송",
+              "finalPrice": "5,000원",
+              "finalUnitPrice": "(100ml당 500원)"
+            },
+            "stockInfo": {
+              "logistics": true,
+              "restockNotification": false,
+              "soldOut": false
+            }
+          },
+          {
+            "action": {
+              "event": {
+                "url": "vp/products/487322/vendoritems/3000992274"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "5104",
+                      "mandatory": {
+                        "domain": "sdp",
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "option_list",
+                        "eventName": "option_list_click",
+                        "sdpVisitKey": "veojp66cmjmj7lzmam",
+                        "vendorItemId": 3000992274,
+                        "searchId": "",
+                        "vendorItemIdAttributes": "500ml_3개_unitPrice:450_vendorItemPrice:6750_deliveryType:ROCKET_WOW_deliveryFee:0"
+                      },
+                      "version": "6"
+                    }
+                  ],
+                  "exposureSchema": {
+                    "id": "5112",
+                    "mandatory": {
+                      "logCategory": "impression",
+                      "logType": "impression",
+                      "pageName": "option_list",
+                      "eventName": "option_list_item_impression",
+                      "domain": "sdp",
+                      "referSdpItem": "p487322_i16372474586_v3000080400",
+                      "sdpVisitKey": "veojp66cmjmj7lzmam",
+                      "vendorItemId": "3000992274",
+                      "originalItemId": 16372474586,
+                      "originalVendorItemId": 3000080400,
+                      "rocketWowType": "ROCKET_WOW_DAWN",
+                      "searchId": "",
+                      "vendorItemIdAttributes": "500ml_3개_unitPrice:450_vendorItemPrice:6750_deliveryType:ROCKET_WOW_deliveryFee:0"
+                    },
+                    "version": "9"
+                  }
+                }
+              }
+            },
+            "deliveryInfo": {
+              "deliveryBadge": {
+                "height": 16,
+                "url": "https://image.coupangcdn.com/image/coupang/rds/logo/xhdpi/logo_wow_medium.png",
+                "width": 65
+              },
+              "deliveryDateColor": "GREEN",
+              "deliveryDateDescriptions": "내일(목) 새벽 도착 보장"
+            },
+            "itemBasicInfo": {
+              "invalid": false,
+              "itemId": 23561309029,
+              "itemName": "500ml × 3개",
+              "vendorItemId": 3000992274
+            },
+            "priceInfo": {
+              "finalDeliveryDescription": "무료배송",
+              "finalPrice": "6,750원",
+              "finalUnitPrice": "(100ml당 450원)"
+            },
+            "stockInfo": {
+              "logistics": true,
+              "restockNotification": false,
+              "soldOut": false
+            }
+          },
+          {
+            "action": {
+              "event": {
+                "url": "vp/products/487322/vendoritems/84723556536"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "5104",
+                      "mandatory": {
+                        "domain": "sdp",
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "option_list",
+                        "eventName": "option_list_click",
+                        "sdpVisitKey": "veojp66cmjmj7lzmam",
+                        "vendorItemId": 84723556536,
+                        "searchId": "",
+                        "vendorItemIdAttributes": "500ml_4개_unitPrice:425_vendorItemPrice:8500_deliveryType:ROCKET_WOW_deliveryFee:0"
+                      },
+                      "version": "6"
+                    }
+                  ],
+                  "exposureSchema": {
+                    "id": "5112",
+                    "mandatory": {
+                      "logCategory": "impression",
+                      "logType": "impression",
+                      "pageName": "option_list",
+                      "eventName": "option_list_item_impression",
+                      "domain": "sdp",
+                      "referSdpItem": "p487322_i16372474586_v3000080400",
+                      "sdpVisitKey": "veojp66cmjmj7lzmam",
+                      "vendorItemId": "84723556536",
+                      "originalItemId": 16372474586,
+                      "originalVendorItemId": 3000080400,
+                      "rocketWowType": "ROCKET_WOW_DAWN",
+                      "searchId": "",
+                      "vendorItemIdAttributes": "500ml_4개_unitPrice:425_vendorItemPrice:8500_deliveryType:ROCKET_WOW_deliveryFee:0"
+                    },
+                    "version": "9"
+                  }
+                }
+              }
+            },
+            "deliveryInfo": {
+              "deliveryBadge": {
+                "height": 16,
+                "url": "https://image.coupangcdn.com/image/coupang/rds/logo/xhdpi/logo_wow_medium.png",
+                "width": 65
+              },
+              "deliveryDateColor": "GREEN",
+              "deliveryDateDescriptions": "내일(목) 새벽 도착 보장"
+            },
+            "itemBasicInfo": {
+              "invalid": false,
+              "itemId": 19592572083,
+              "itemName": "500ml × 4개",
+              "vendorItemId": 84723556536
+            },
+            "priceInfo": {
+              "finalDeliveryDescription": "무료배송",
+              "finalPrice": "8,500원",
+              "finalUnitPrice": "(100ml당 425원)"
+            },
+            "stockInfo": {
+              "logistics": true,
+              "restockNotification": false,
+              "soldOut": false
+            }
+          },
+          {
+            "action": {
+              "event": {
+                "url": "vp/products/487322/vendoritems/85101035865"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "5104",
+                      "mandatory": {
+                        "domain": "sdp",
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "option_list",
+                        "eventName": "option_list_click",
+                        "sdpVisitKey": "veojp66cmjmj7lzmam",
+                        "vendorItemId": 85101035865,
+                        "searchId": "",
+                        "vendorItemIdAttributes": "500ml_5개_unitPrice:410_vendorItemPrice:10250_deliveryType:ROCKET_WOW_deliveryFee:0"
+                      },
+                      "version": "6"
+                    }
+                  ],
+                  "exposureSchema": {
+                    "id": "5112",
+                    "mandatory": {
+                      "logCategory": "impression",
+                      "logType": "impression",
+                      "pageName": "option_list",
+                      "eventName": "option_list_item_impression",
+                      "domain": "sdp",
+                      "referSdpItem": "p487322_i16372474586_v3000080400",
+                      "sdpVisitKey": "veojp66cmjmj7lzmam",
+                      "vendorItemId": "85101035865",
+                      "originalItemId": 16372474586,
+                      "originalVendorItemId": 3000080400,
+                      "rocketWowType": "ROCKET_WOW_DAWN",
+                      "searchId": "",
+                      "vendorItemIdAttributes": "500ml_5개_unitPrice:410_vendorItemPrice:10250_deliveryType:ROCKET_WOW_deliveryFee:0"
+                    },
+                    "version": "9"
+                  }
+                }
+              }
+            },
+            "deliveryInfo": {
+              "deliveryBadge": {
+                "height": 16,
+                "url": "https://image.coupangcdn.com/image/coupang/rds/logo/xhdpi/logo_wow_medium.png",
+                "width": 65
+              },
+              "deliveryDateColor": "GREEN",
+              "deliveryDateDescriptions": "내일(목) 새벽 도착 보장"
+            },
+            "itemBasicInfo": {
+              "invalid": false,
+              "itemId": 21680342056,
+              "itemName": "500ml × 5개",
+              "vendorItemId": 85101035865
+            },
+            "priceInfo": {
+              "finalDeliveryDescription": "무료배송",
+              "finalPrice": "10,250원",
+              "finalUnitPrice": "(100ml당 410원)"
+            },
+            "stockInfo": {
+              "logistics": true,
+              "restockNotification": false,
+              "soldOut": false
+            }
+          },
+          {
+            "action": {
+              "event": {
+                "url": "vp/products/487322/vendoritems/85101035785"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "5104",
+                      "mandatory": {
+                        "domain": "sdp",
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "option_list",
+                        "eventName": "option_list_click",
+                        "sdpVisitKey": "veojp66cmjmj7lzmam",
+                        "vendorItemId": 85101035785,
+                        "searchId": "",
+                        "vendorItemIdAttributes": "500ml_6개_unitPrice:400_vendorItemPrice:12000_deliveryType:ROCKET_WOW_deliveryFee:0"
+                      },
+                      "version": "6"
+                    }
+                  ],
+                  "exposureSchema": {
+                    "id": "5112",
+                    "mandatory": {
+                      "logCategory": "impression",
+                      "logType": "impression",
+                      "pageName": "option_list",
+                      "eventName": "option_list_item_impression",
+                      "domain": "sdp",
+                      "referSdpItem": "p487322_i16372474586_v3000080400",
+                      "sdpVisitKey": "veojp66cmjmj7lzmam",
+                      "vendorItemId": "85101035785",
+                      "originalItemId": 16372474586,
+                      "originalVendorItemId": 3000080400,
+                      "rocketWowType": "ROCKET_WOW_DAWN",
+                      "searchId": "",
+                      "vendorItemIdAttributes": "500ml_6개_unitPrice:400_vendorItemPrice:12000_deliveryType:ROCKET_WOW_deliveryFee:0"
+                    },
+                    "version": "9"
+                  }
+                }
+              }
+            },
+            "deliveryInfo": {
+              "deliveryBadge": {
+                "height": 16,
+                "url": "https://image.coupangcdn.com/image/coupang/rds/logo/xhdpi/logo_wow_medium.png",
+                "width": 65
+              },
+              "deliveryDateColor": "GREEN",
+              "deliveryDateDescriptions": "내일(목) 새벽 도착 보장"
+            },
+            "itemBasicInfo": {
+              "invalid": false,
+              "itemId": 19727579135,
+              "itemName": "500ml × 6개",
+              "vendorItemId": 85101035785
+            },
+            "priceInfo": {
+              "finalDeliveryDescription": "무료배송",
+              "finalPrice": "12,000원",
+              "finalUnitPrice": "(100ml당 400원)"
+            },
+            "stockInfo": {
+              "logistics": true,
+              "restockNotification": false,
+              "soldOut": false
+            }
+          },
+          {
+            "action": {
+              "event": {
+                "url": "vp/products/487322/vendoritems/92027106292"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "5104",
+                      "mandatory": {
+                        "domain": "sdp",
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "option_list",
+                        "eventName": "option_list_click",
+                        "sdpVisitKey": "veojp66cmjmj7lzmam",
+                        "vendorItemId": 92027106292,
+                        "searchId": "",
+                        "vendorItemIdAttributes": "500ml_15개_unitPrice:399_vendorItemPrice:29960_deliveryType:3p_deliveryFee:0"
+                      },
+                      "version": "6"
+                    }
+                  ],
+                  "exposureSchema": {
+                    "id": "5112",
+                    "mandatory": {
+                      "logCategory": "impression",
+                      "logType": "impression",
+                      "pageName": "option_list",
+                      "eventName": "option_list_item_impression",
+                      "domain": "sdp",
+                      "referSdpItem": "p487322_i16372474586_v3000080400",
+                      "sdpVisitKey": "veojp66cmjmj7lzmam",
+                      "vendorItemId": "92027106292",
+                      "originalItemId": 16372474586,
+                      "originalVendorItemId": 3000080400,
+                      "rocketWowType": "ROCKET_WOW_DAWN",
+                      "searchId": "",
+                      "vendorItemIdAttributes": "500ml_15개_unitPrice:399_vendorItemPrice:29960_deliveryType:3p_deliveryFee:0"
+                    },
+                    "version": "9"
+                  }
+                }
+              }
+            },
+            "deliveryInfo": {
+              "deliveryDateDescriptions": "모레(금) 10/24 도착 예정 (판매자배송)"
+            },
+            "itemBasicInfo": {
+              "invalid": false,
+              "itemId": 25022334976,
+              "itemName": "500ml × 15개",
+              "vendorItemId": 92027106292
+            },
+            "priceInfo": {
+              "finalDeliveryDescription": "무료배송",
+              "finalPrice": "29,960원",
+              "finalUnitPrice": "(100ml당 399원)"
+            },
+            "stockInfo": {
+              "logistics": false,
+              "restockNotification": false,
+              "soldOut": false
+            }
+          },
+          {
+            "action": {
+              "event": {
+                "url": "vp/products/487322/vendoritems/92027106324"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "5104",
+                      "mandatory": {
+                        "domain": "sdp",
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "option_list",
+                        "eventName": "option_list_click",
+                        "sdpVisitKey": "veojp66cmjmj7lzmam",
+                        "vendorItemId": 92027106324,
+                        "searchId": "",
+                        "vendorItemIdAttributes": "500ml_30개_unitPrice:382_vendorItemPrice:57360_deliveryType:3p_deliveryFee:0"
+                      },
+                      "version": "6"
+                    }
+                  ],
+                  "exposureSchema": {
+                    "id": "5112",
+                    "mandatory": {
+                      "logCategory": "impression",
+                      "logType": "impression",
+                      "pageName": "option_list",
+                      "eventName": "option_list_item_impression",
+                      "domain": "sdp",
+                      "referSdpItem": "p487322_i16372474586_v3000080400",
+                      "sdpVisitKey": "veojp66cmjmj7lzmam",
+                      "vendorItemId": "92027106324",
+                      "originalItemId": 16372474586,
+                      "originalVendorItemId": 3000080400,
+                      "rocketWowType": "ROCKET_WOW_DAWN",
+                      "searchId": "",
+                      "vendorItemIdAttributes": "500ml_30개_unitPrice:382_vendorItemPrice:57360_deliveryType:3p_deliveryFee:0"
+                    },
+                    "version": "9"
+                  }
+                }
+              }
+            },
+            "deliveryInfo": {
+              "deliveryDateDescriptions": "모레(금) 10/24 도착 예정 (판매자배송)"
+            },
+            "itemBasicInfo": {
+              "invalid": false,
+              "itemId": 25035150535,
+              "itemName": "500ml × 30개",
+              "vendorItemId": 92027106324
+            },
+            "priceInfo": {
+              "finalDeliveryDescription": "무료배송",
+              "finalPrice": "57,360원",
+              "finalUnitPrice": "(100ml당 382원)"
+            },
+            "stockInfo": {
+              "logistics": false,
+              "restockNotification": false,
+              "soldOut": false
+            }
+          },
+          {
+            "action": {
+              "event": {
+                "url": "vp/products/487322/vendoritems/3000014844"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "5104",
+                      "mandatory": {
+                        "domain": "sdp",
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "option_list",
+                        "eventName": "option_list_click",
+                        "sdpVisitKey": "veojp66cmjmj7lzmam",
+                        "vendorItemId": 3000014844,
+                        "searchId": "",
+                        "vendorItemIdAttributes": "900ml_1개_unitPrice:467_vendorItemPrice:4200_deliveryType:ROCKET_WOW_deliveryFee:0"
+                      },
+                      "version": "6"
+                    }
+                  ],
+                  "exposureSchema": {
+                    "id": "5112",
+                    "mandatory": {
+                      "logCategory": "impression",
+                      "logType": "impression",
+                      "pageName": "option_list",
+                      "eventName": "option_list_item_impression",
+                      "domain": "sdp",
+                      "referSdpItem": "p487322_i16372474586_v3000080400",
+                      "sdpVisitKey": "veojp66cmjmj7lzmam",
+                      "vendorItemId": "3000014844",
+                      "originalItemId": 16372474586,
+                      "originalVendorItemId": 3000080400,
+                      "rocketWowType": "ROCKET_WOW_DAWN",
+                      "searchId": "",
+                      "vendorItemIdAttributes": "900ml_1개_unitPrice:467_vendorItemPrice:4200_deliveryType:ROCKET_WOW_deliveryFee:0"
+                    },
+                    "version": "9"
+                  }
+                }
+              }
+            },
+            "deliveryInfo": {
+              "deliveryBadge": {
+                "height": 16,
+                "url": "https://image.coupangcdn.com/image/coupang/rds/logo/xhdpi/logo_wow_medium.png",
+                "width": 65
+              },
+              "deliveryDateColor": "GREEN",
+              "deliveryDateDescriptions": "내일(목) 새벽 도착 보장"
+            },
+            "itemBasicInfo": {
+              "invalid": false,
+              "itemId": 21364582514,
+              "itemName": "900ml × 1개",
+              "vendorItemId": 3000014844
+            },
+            "priceInfo": {
+              "finalDeliveryDescription": "무료배송",
+              "finalPrice": "4,200원",
+              "finalUnitPrice": "(100ml당 467원)"
+            },
+            "stockInfo": {
+              "logistics": true,
+              "restockNotification": false,
+              "soldOut": false
+            }
+          },
+          {
+            "action": {
+              "event": {
+                "url": "vp/products/487322/vendoritems/92027085521"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "5104",
+                      "mandatory": {
+                        "domain": "sdp",
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "option_list",
+                        "eventName": "option_list_click",
+                        "sdpVisitKey": "veojp66cmjmj7lzmam",
+                        "vendorItemId": 92027085521,
+                        "searchId": "",
+                        "vendorItemIdAttributes": "900ml_2개_unitPrice:382_vendorItemPrice:6870_deliveryType:3p_deliveryFee:0"
+                      },
+                      "version": "6"
+                    }
+                  ],
+                  "exposureSchema": {
+                    "id": "5112",
+                    "mandatory": {
+                      "logCategory": "impression",
+                      "logType": "impression",
+                      "pageName": "option_list",
+                      "eventName": "option_list_item_impression",
+                      "domain": "sdp",
+                      "referSdpItem": "p487322_i16372474586_v3000080400",
+                      "sdpVisitKey": "veojp66cmjmj7lzmam",
+                      "vendorItemId": "92027085521",
+                      "originalItemId": 16372474586,
+                      "originalVendorItemId": 3000080400,
+                      "rocketWowType": "ROCKET_WOW_DAWN",
+                      "searchId": "",
+                      "vendorItemIdAttributes": "900ml_2개_unitPrice:382_vendorItemPrice:6870_deliveryType:3p_deliveryFee:0"
+                    },
+                    "version": "9"
+                  }
+                }
+              }
+            },
+            "deliveryInfo": {
+              "deliveryDateDescriptions": "모레(금) 10/24 도착 예정 (판매자배송)"
+            },
+            "itemBasicInfo": {
+              "invalid": false,
+              "itemId": 20866339007,
+              "itemName": "900ml × 2개",
+              "vendorItemId": 92027085521
+            },
+            "priceInfo": {
+              "finalDeliveryDescription": "무료배송",
+              "finalPrice": "6,870원",
+              "finalPriceTitle": "할인",
+              "finalUnitPrice": "(100ml당 382원)"
+            },
+            "stockInfo": {
+              "logistics": false,
+              "restockNotification": false,
+              "soldOut": false
+            }
+          },
+          {
+            "action": {
+              "event": {
+                "url": "vp/products/487322/vendoritems/84994377307"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "5104",
+                      "mandatory": {
+                        "domain": "sdp",
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "option_list",
+                        "eventName": "option_list_click",
+                        "sdpVisitKey": "veojp66cmjmj7lzmam",
+                        "vendorItemId": 84994377307,
+                        "searchId": "",
+                        "vendorItemIdAttributes": "900ml_3개_unitPrice:366_vendorItemPrice:9870_deliveryType:ROCKET_WOW_deliveryFee:0"
+                      },
+                      "version": "6"
+                    }
+                  ],
+                  "exposureSchema": {
+                    "id": "5112",
+                    "mandatory": {
+                      "logCategory": "impression",
+                      "logType": "impression",
+                      "pageName": "option_list",
+                      "eventName": "option_list_item_impression",
+                      "domain": "sdp",
+                      "referSdpItem": "p487322_i16372474586_v3000080400",
+                      "sdpVisitKey": "veojp66cmjmj7lzmam",
+                      "vendorItemId": "84994377307",
+                      "originalItemId": 16372474586,
+                      "originalVendorItemId": 3000080400,
+                      "rocketWowType": "ROCKET_WOW_DAWN",
+                      "searchId": "",
+                      "vendorItemIdAttributes": "900ml_3개_unitPrice:366_vendorItemPrice:9870_deliveryType:ROCKET_WOW_deliveryFee:0"
+                    },
+                    "version": "9"
+                  }
+                }
+              }
+            },
+            "deliveryInfo": {
+              "deliveryBadge": {
+                "height": 16,
+                "url": "https://image.coupangcdn.com/image/coupang/rds/logo/xhdpi/logo_wow_medium.png",
+                "width": 65
+              },
+              "deliveryDateColor": "GREEN",
+              "deliveryDateDescriptions": "내일(목) 새벽 도착 보장"
+            },
+            "itemBasicInfo": {
+              "invalid": false,
+              "itemId": 21364582526,
+              "itemName": "900ml × 3개",
+              "vendorItemId": 84994377307
+            },
+            "priceInfo": {
+              "finalDeliveryDescription": "무료배송",
+              "finalPrice": "9,870원",
+              "finalUnitPrice": "(100ml당 366원)"
+            },
+            "stockInfo": {
+              "logistics": true,
+              "restockNotification": false,
+              "soldOut": false
+            }
+          },
+          {
+            "action": {
+              "event": {
+                "url": "vp/products/487322/vendoritems/84994377330"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "5104",
+                      "mandatory": {
+                        "domain": "sdp",
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "option_list",
+                        "eventName": "option_list_click",
+                        "sdpVisitKey": "veojp66cmjmj7lzmam",
+                        "vendorItemId": 84994377330,
+                        "searchId": "",
+                        "vendorItemIdAttributes": "900ml_4개_unitPrice:352_vendorItemPrice:12660_deliveryType:ROCKET_WOW_deliveryFee:0"
+                      },
+                      "version": "6"
+                    }
+                  ],
+                  "exposureSchema": {
+                    "id": "5112",
+                    "mandatory": {
+                      "logCategory": "impression",
+                      "logType": "impression",
+                      "pageName": "option_list",
+                      "eventName": "option_list_item_impression",
+                      "domain": "sdp",
+                      "referSdpItem": "p487322_i16372474586_v3000080400",
+                      "sdpVisitKey": "veojp66cmjmj7lzmam",
+                      "vendorItemId": "84994377330",
+                      "originalItemId": 16372474586,
+                      "originalVendorItemId": 3000080400,
+                      "rocketWowType": "ROCKET_WOW_DAWN",
+                      "searchId": "",
+                      "vendorItemIdAttributes": "900ml_4개_unitPrice:352_vendorItemPrice:12660_deliveryType:ROCKET_WOW_deliveryFee:0"
+                    },
+                    "version": "9"
+                  }
+                }
+              }
+            },
+            "deliveryInfo": {
+              "deliveryBadge": {
+                "height": 16,
+                "url": "https://image.coupangcdn.com/image/coupang/rds/logo/xhdpi/logo_wow_medium.png",
+                "width": 65
+              },
+              "deliveryDateColor": "GREEN",
+              "deliveryDateDescriptions": "내일(목) 새벽 도착 보장"
+            },
+            "itemBasicInfo": {
+              "invalid": false,
+              "itemId": 22525954406,
+              "itemName": "900ml × 4개",
+              "vendorItemId": 84994377330
+            },
+            "priceInfo": {
+              "finalDeliveryDescription": "무료배송",
+              "finalPrice": "12,660원",
+              "finalUnitPrice": "(100ml당 352원)"
+            },
+            "stockInfo": {
+              "logistics": true,
+              "restockNotification": false,
+              "soldOut": false
+            }
+          },
+          {
+            "action": {
+              "event": {
+                "url": "vp/products/487322/vendoritems/84994377320"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "5104",
+                      "mandatory": {
+                        "domain": "sdp",
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "option_list",
+                        "eventName": "option_list_click",
+                        "sdpVisitKey": "veojp66cmjmj7lzmam",
+                        "vendorItemId": 84994377320,
+                        "searchId": "",
+                        "vendorItemIdAttributes": "900ml_5개_unitPrice:343_vendorItemPrice:15450_deliveryType:ROCKET_WOW_deliveryFee:0"
+                      },
+                      "version": "6"
+                    }
+                  ],
+                  "exposureSchema": {
+                    "id": "5112",
+                    "mandatory": {
+                      "logCategory": "impression",
+                      "logType": "impression",
+                      "pageName": "option_list",
+                      "eventName": "option_list_item_impression",
+                      "domain": "sdp",
+                      "referSdpItem": "p487322_i16372474586_v3000080400",
+                      "sdpVisitKey": "veojp66cmjmj7lzmam",
+                      "vendorItemId": "84994377320",
+                      "originalItemId": 16372474586,
+                      "originalVendorItemId": 3000080400,
+                      "rocketWowType": "ROCKET_WOW_DAWN",
+                      "searchId": "",
+                      "vendorItemIdAttributes": "900ml_5개_unitPrice:343_vendorItemPrice:15450_deliveryType:ROCKET_WOW_deliveryFee:0"
+                    },
+                    "version": "9"
+                  }
+                }
+              }
+            },
+            "deliveryInfo": {
+              "deliveryBadge": {
+                "height": 16,
+                "url": "https://image.coupangcdn.com/image/coupang/rds/logo/xhdpi/logo_wow_medium.png",
+                "width": 65
+              },
+              "deliveryDateColor": "GREEN",
+              "deliveryDateDescriptions": "내일(목) 새벽 도착 보장"
+            },
+            "itemBasicInfo": {
+              "invalid": false,
+              "itemId": 24438225944,
+              "itemName": "900ml × 5개",
+              "vendorItemId": 84994377320
+            },
+            "priceInfo": {
+              "finalDeliveryDescription": "무료배송",
+              "finalPrice": "15,450원",
+              "finalUnitPrice": "(100ml당 343원)"
+            },
+            "stockInfo": {
+              "logistics": true,
+              "restockNotification": false,
+              "soldOut": false
+            }
+          },
+          {
+            "action": {
+              "event": {
+                "url": "vp/products/487322/vendoritems/84994378206"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "5104",
+                      "mandatory": {
+                        "domain": "sdp",
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "option_list",
+                        "eventName": "option_list_click",
+                        "sdpVisitKey": "veojp66cmjmj7lzmam",
+                        "vendorItemId": 84994378206,
+                        "searchId": "",
+                        "vendorItemIdAttributes": "900ml_6개_unitPrice:330_vendorItemPrice:17800_deliveryType:ROCKET_WOW_deliveryFee:0"
+                      },
+                      "version": "6"
+                    }
+                  ],
+                  "exposureSchema": {
+                    "id": "5112",
+                    "mandatory": {
+                      "logCategory": "impression",
+                      "logType": "impression",
+                      "pageName": "option_list",
+                      "eventName": "option_list_item_impression",
+                      "domain": "sdp",
+                      "referSdpItem": "p487322_i16372474586_v3000080400",
+                      "sdpVisitKey": "veojp66cmjmj7lzmam",
+                      "vendorItemId": "84994378206",
+                      "originalItemId": 16372474586,
+                      "originalVendorItemId": 3000080400,
+                      "rocketWowType": "ROCKET_WOW_DAWN",
+                      "searchId": "",
+                      "vendorItemIdAttributes": "900ml_6개_unitPrice:330_vendorItemPrice:17800_deliveryType:ROCKET_WOW_deliveryFee:0"
+                    },
+                    "version": "9"
+                  }
+                }
+              }
+            },
+            "deliveryInfo": {
+              "deliveryBadge": {
+                "height": 16,
+                "url": "https://image.coupangcdn.com/image/coupang/rds/logo/xhdpi/logo_wow_medium.png",
+                "width": 65
+              },
+              "deliveryDateColor": "GREEN",
+              "deliveryDateDescriptions": "내일(목) 새벽 도착 보장"
+            },
+            "itemBasicInfo": {
+              "invalid": false,
+              "itemId": 24532047914,
+              "itemName": "900ml × 6개",
+              "vendorItemId": 84994378206
+            },
+            "priceInfo": {
+              "finalDeliveryDescription": "무료배송",
+              "finalPrice": "17,800원",
+              "finalUnitPrice": "(100ml당 330원)"
+            },
+            "stockInfo": {
+              "logistics": true,
+              "restockNotification": false,
+              "soldOut": false
+            }
+          },
+          {
+            "action": {
+              "event": {
+                "url": "vp/products/487322/vendoritems/91477788988"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "5104",
+                      "mandatory": {
+                        "domain": "sdp",
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "option_list",
+                        "eventName": "option_list_click",
+                        "sdpVisitKey": "veojp66cmjmj7lzmam",
+                        "vendorItemId": 91477788988,
+                        "searchId": "",
+                        "vendorItemIdAttributes": "900ml_8개_unitPrice:330_vendorItemPrice:23760_deliveryType:3p_deliveryFee:0"
+                      },
+                      "version": "6"
+                    }
+                  ],
+                  "exposureSchema": {
+                    "id": "5112",
+                    "mandatory": {
+                      "logCategory": "impression",
+                      "logType": "impression",
+                      "pageName": "option_list",
+                      "eventName": "option_list_item_impression",
+                      "domain": "sdp",
+                      "referSdpItem": "p487322_i16372474586_v3000080400",
+                      "sdpVisitKey": "veojp66cmjmj7lzmam",
+                      "vendorItemId": "91477788988",
+                      "originalItemId": 16372474586,
+                      "originalVendorItemId": 3000080400,
+                      "rocketWowType": "ROCKET_WOW_DAWN",
+                      "searchId": "",
+                      "vendorItemIdAttributes": "900ml_8개_unitPrice:330_vendorItemPrice:23760_deliveryType:3p_deliveryFee:0"
+                    },
+                    "version": "9"
+                  }
+                }
+              }
+            },
+            "deliveryInfo": {
+              "deliveryDateDescriptions": "모레(금) 10/24 도착 예정 (판매자배송)"
+            },
+            "itemBasicInfo": {
+              "invalid": false,
+              "itemId": 22525954408,
+              "itemName": "900ml × 8개",
+              "vendorItemId": 91477788988
+            },
+            "priceInfo": {
+              "finalDeliveryDescription": "무료배송",
+              "finalPrice": "23,760원",
+              "finalUnitPrice": "(100ml당 330원)"
+            },
+            "stockInfo": {
+              "logistics": false,
+              "restockNotification": false,
+              "soldOut": false
+            }
+          },
+          {
+            "action": {
+              "event": {
+                "url": "vp/products/487322/vendoritems/91477788962"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "5104",
+                      "mandatory": {
+                        "domain": "sdp",
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "option_list",
+                        "eventName": "option_list_click",
+                        "sdpVisitKey": "veojp66cmjmj7lzmam",
+                        "vendorItemId": 91477788962,
+                        "searchId": "",
+                        "vendorItemIdAttributes": "900ml_9개_unitPrice:326_vendorItemPrice:26370_deliveryType:3p_deliveryFee:0"
+                      },
+                      "version": "6"
+                    }
+                  ],
+                  "exposureSchema": {
+                    "id": "5112",
+                    "mandatory": {
+                      "logCategory": "impression",
+                      "logType": "impression",
+                      "pageName": "option_list",
+                      "eventName": "option_list_item_impression",
+                      "domain": "sdp",
+                      "referSdpItem": "p487322_i16372474586_v3000080400",
+                      "sdpVisitKey": "veojp66cmjmj7lzmam",
+                      "vendorItemId": "91477788962",
+                      "originalItemId": 16372474586,
+                      "originalVendorItemId": 3000080400,
+                      "rocketWowType": "ROCKET_WOW_DAWN",
+                      "searchId": "",
+                      "vendorItemIdAttributes": "900ml_9개_unitPrice:326_vendorItemPrice:26370_deliveryType:3p_deliveryFee:0"
+                    },
+                    "version": "9"
+                  }
+                }
+              }
+            },
+            "deliveryInfo": {
+              "deliveryDateDescriptions": "모레(금) 10/24 도착 예정 (판매자배송)"
+            },
+            "itemBasicInfo": {
+              "invalid": false,
+              "itemId": 25022314261,
+              "itemName": "900ml × 9개",
+              "vendorItemId": 91477788962
+            },
+            "priceInfo": {
+              "finalDeliveryDescription": "무료배송",
+              "finalPrice": "26,370원",
+              "finalUnitPrice": "(100ml당 326원)"
+            },
+            "stockInfo": {
+              "logistics": false,
+              "restockNotification": false,
+              "soldOut": false
+            }
+          },
+          {
+            "action": {
+              "event": {
+                "url": "vp/products/487322/vendoritems/91477788949"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "5104",
+                      "mandatory": {
+                        "domain": "sdp",
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "option_list",
+                        "eventName": "option_list_click",
+                        "sdpVisitKey": "veojp66cmjmj7lzmam",
+                        "vendorItemId": 91477788949,
+                        "searchId": "",
+                        "vendorItemIdAttributes": "900ml_12개_unitPrice:319_vendorItemPrice:34430_deliveryType:3p_deliveryFee:0"
+                      },
+                      "version": "6"
+                    }
+                  ],
+                  "exposureSchema": {
+                    "id": "5112",
+                    "mandatory": {
+                      "logCategory": "impression",
+                      "logType": "impression",
+                      "pageName": "option_list",
+                      "eventName": "option_list_item_impression",
+                      "domain": "sdp",
+                      "referSdpItem": "p487322_i16372474586_v3000080400",
+                      "sdpVisitKey": "veojp66cmjmj7lzmam",
+                      "vendorItemId": "91477788949",
+                      "originalItemId": 16372474586,
+                      "originalVendorItemId": 3000080400,
+                      "rocketWowType": "ROCKET_WOW_DAWN",
+                      "searchId": "",
+                      "vendorItemIdAttributes": "900ml_12개_unitPrice:319_vendorItemPrice:34430_deliveryType:3p_deliveryFee:0"
+                    },
+                    "version": "9"
+                  }
+                }
+              }
+            },
+            "deliveryInfo": {
+              "deliveryDateDescriptions": "모레(금) 10/24 도착 예정 (판매자배송)"
+            },
+            "itemBasicInfo": {
+              "invalid": false,
+              "itemId": 23561308802,
+              "itemName": "900ml × 12개",
+              "vendorItemId": 91477788949
+            },
+            "priceInfo": {
+              "finalDeliveryDescription": "무료배송",
+              "finalPrice": "34,430원",
+              "finalUnitPrice": "(100ml당 319원)"
+            },
+            "stockInfo": {
+              "logistics": false,
+              "restockNotification": false,
+              "soldOut": false
+            }
+          },
+          {
+            "action": {
+              "event": {
+                "url": "vp/products/487322/vendoritems/91477788986"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "5104",
+                      "mandatory": {
+                        "domain": "sdp",
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "option_list",
+                        "eventName": "option_list_click",
+                        "sdpVisitKey": "veojp66cmjmj7lzmam",
+                        "vendorItemId": 91477788986,
+                        "searchId": "",
+                        "vendorItemIdAttributes": "900ml_15개_unitPrice:311_vendorItemPrice:42050_deliveryType:3p_deliveryFee:0"
+                      },
+                      "version": "6"
+                    }
+                  ],
+                  "exposureSchema": {
+                    "id": "5112",
+                    "mandatory": {
+                      "logCategory": "impression",
+                      "logType": "impression",
+                      "pageName": "option_list",
+                      "eventName": "option_list_item_impression",
+                      "domain": "sdp",
+                      "referSdpItem": "p487322_i16372474586_v3000080400",
+                      "sdpVisitKey": "veojp66cmjmj7lzmam",
+                      "vendorItemId": "91477788986",
+                      "originalItemId": 16372474586,
+                      "originalVendorItemId": 3000080400,
+                      "rocketWowType": "ROCKET_WOW_DAWN",
+                      "searchId": "",
+                      "vendorItemIdAttributes": "900ml_15개_unitPrice:311_vendorItemPrice:42050_deliveryType:3p_deliveryFee:0"
+                    },
+                    "version": "9"
+                  }
+                }
+              }
+            },
+            "deliveryInfo": {
+              "deliveryDateDescriptions": "모레(금) 10/24 도착 예정 (판매자배송)"
+            },
+            "itemBasicInfo": {
+              "invalid": false,
+              "itemId": 21563246024,
+              "itemName": "900ml × 15개",
+              "vendorItemId": 91477788986
+            },
+            "priceInfo": {
+              "finalDeliveryDescription": "무료배송",
+              "finalPrice": "42,050원",
+              "finalUnitPrice": "(100ml당 311원)"
+            },
+            "stockInfo": {
+              "logistics": false,
+              "restockNotification": false,
+              "soldOut": false
+            }
+          },
+          {
+            "action": {
+              "event": {
+                "url": "vp/products/487322/vendoritems/91477788992"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "5104",
+                      "mandatory": {
+                        "domain": "sdp",
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "option_list",
+                        "eventName": "option_list_click",
+                        "sdpVisitKey": "veojp66cmjmj7lzmam",
+                        "vendorItemId": 91477788992,
+                        "searchId": "",
+                        "vendorItemIdAttributes": "900ml_18개_unitPrice:308_vendorItemPrice:49890_deliveryType:3p_deliveryFee:0"
+                      },
+                      "version": "6"
+                    }
+                  ],
+                  "exposureSchema": {
+                    "id": "5112",
+                    "mandatory": {
+                      "logCategory": "impression",
+                      "logType": "impression",
+                      "pageName": "option_list",
+                      "eventName": "option_list_item_impression",
+                      "domain": "sdp",
+                      "referSdpItem": "p487322_i16372474586_v3000080400",
+                      "sdpVisitKey": "veojp66cmjmj7lzmam",
+                      "vendorItemId": "91477788992",
+                      "originalItemId": 16372474586,
+                      "originalVendorItemId": 3000080400,
+                      "rocketWowType": "ROCKET_WOW_DAWN",
+                      "searchId": "",
+                      "vendorItemIdAttributes": "900ml_18개_unitPrice:308_vendorItemPrice:49890_deliveryType:3p_deliveryFee:0"
+                    },
+                    "version": "9"
+                  }
+                }
+              }
+            },
+            "deliveryInfo": {
+              "deliveryDateDescriptions": "모레(금) 10/24 도착 예정 (판매자배송)"
+            },
+            "itemBasicInfo": {
+              "invalid": false,
+              "itemId": 19499361519,
+              "itemName": "900ml × 18개",
+              "vendorItemId": 91477788992
+            },
+            "priceInfo": {
+              "finalDeliveryDescription": "무료배송",
+              "finalPrice": "49,890원",
+              "finalUnitPrice": "(100ml당 308원)"
+            },
+            "stockInfo": {
+              "logistics": false,
+              "restockNotification": false,
+              "soldOut": false
+            }
+          },
+          {
+            "action": {
+              "event": {
+                "url": "vp/products/487322/vendoritems/91477788982"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "5104",
+                      "mandatory": {
+                        "domain": "sdp",
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "option_list",
+                        "eventName": "option_list_click",
+                        "sdpVisitKey": "veojp66cmjmj7lzmam",
+                        "vendorItemId": 91477788982,
+                        "searchId": "",
+                        "vendorItemIdAttributes": "900ml_20개_unitPrice:306_vendorItemPrice:55120_deliveryType:3p_deliveryFee:0"
+                      },
+                      "version": "6"
+                    }
+                  ],
+                  "exposureSchema": {
+                    "id": "5112",
+                    "mandatory": {
+                      "logCategory": "impression",
+                      "logType": "impression",
+                      "pageName": "option_list",
+                      "eventName": "option_list_item_impression",
+                      "domain": "sdp",
+                      "referSdpItem": "p487322_i16372474586_v3000080400",
+                      "sdpVisitKey": "veojp66cmjmj7lzmam",
+                      "vendorItemId": "91477788982",
+                      "originalItemId": 16372474586,
+                      "originalVendorItemId": 3000080400,
+                      "rocketWowType": "ROCKET_WOW_DAWN",
+                      "searchId": "",
+                      "vendorItemIdAttributes": "900ml_20개_unitPrice:306_vendorItemPrice:55120_deliveryType:3p_deliveryFee:0"
+                    },
+                    "version": "9"
+                  }
+                }
+              }
+            },
+            "deliveryInfo": {
+              "deliveryDateDescriptions": "모레(금) 10/24 도착 예정 (판매자배송)"
+            },
+            "itemBasicInfo": {
+              "invalid": false,
+              "itemId": 14677580271,
+              "itemName": "900ml × 20개",
+              "vendorItemId": 91477788982
+            },
+            "priceInfo": {
+              "finalDeliveryDescription": "무료배송",
+              "finalPrice": "55,120원",
+              "finalUnitPrice": "(100ml당 306원)"
+            },
+            "stockInfo": {
+              "logistics": false,
+              "restockNotification": false,
+              "soldOut": false
+            }
+          },
+          {
+            "action": {
+              "event": {
+                "url": "vp/products/487322/vendoritems/3000014845"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "5104",
+                      "mandatory": {
+                        "domain": "sdp",
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "option_list",
+                        "eventName": "option_list_click",
+                        "sdpVisitKey": "veojp66cmjmj7lzmam",
+                        "vendorItemId": 3000014845,
+                        "searchId": "",
+                        "vendorItemIdAttributes": "1.5L_1개_unitPrice:372_vendorItemPrice:5580_deliveryType:ROCKET_WOW_deliveryFee:0"
+                      },
+                      "version": "6"
+                    }
+                  ],
+                  "exposureSchema": {
+                    "id": "5112",
+                    "mandatory": {
+                      "logCategory": "impression",
+                      "logType": "impression",
+                      "pageName": "option_list",
+                      "eventName": "option_list_item_impression",
+                      "domain": "sdp",
+                      "referSdpItem": "p487322_i16372474586_v3000080400",
+                      "sdpVisitKey": "veojp66cmjmj7lzmam",
+                      "vendorItemId": "3000014845",
+                      "originalItemId": 16372474586,
+                      "originalVendorItemId": 3000080400,
+                      "rocketWowType": "ROCKET_WOW_DAWN",
+                      "searchId": "",
+                      "vendorItemIdAttributes": "1.5L_1개_unitPrice:372_vendorItemPrice:5580_deliveryType:ROCKET_WOW_deliveryFee:0"
+                    },
+                    "version": "9"
+                  }
+                }
+              }
+            },
+            "deliveryInfo": {
+              "deliveryBadge": {
+                "height": 16,
+                "url": "https://image.coupangcdn.com/image/coupang/rds/logo/xhdpi/logo_wow_medium.png",
+                "width": 65
+              },
+              "deliveryDateColor": "GREEN",
+              "deliveryDateDescriptions": "내일(목) 새벽 도착 보장"
+            },
+            "itemBasicInfo": {
+              "invalid": false,
+              "itemId": 41045,
+              "itemName": "1.5L × 1개",
+              "vendorItemId": 3000014845
+            },
+            "priceInfo": {
+              "finalDeliveryDescription": "무료배송",
+              "finalPrice": "5,580원",
+              "finalUnitPrice": "(100ml당 372원)"
+            },
+            "stockInfo": {
+              "logistics": true,
+              "restockNotification": false,
+              "soldOut": false
+            }
+          },
+          {
+            "action": {
+              "event": {
+                "url": "vp/products/487322/vendoritems/85172280504"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "5104",
+                      "mandatory": {
+                        "domain": "sdp",
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "option_list",
+                        "eventName": "option_list_click",
+                        "sdpVisitKey": "veojp66cmjmj7lzmam",
+                        "vendorItemId": 85172280504,
+                        "searchId": "",
+                        "vendorItemIdAttributes": "1.5L_2개_unitPrice:322_vendorItemPrice:9660_deliveryType:ROCKET_WOW_deliveryFee:0"
+                      },
+                      "version": "6"
+                    }
+                  ],
+                  "exposureSchema": {
+                    "id": "5112",
+                    "mandatory": {
+                      "logCategory": "impression",
+                      "logType": "impression",
+                      "pageName": "option_list",
+                      "eventName": "option_list_item_impression",
+                      "domain": "sdp",
+                      "referSdpItem": "p487322_i16372474586_v3000080400",
+                      "sdpVisitKey": "veojp66cmjmj7lzmam",
+                      "vendorItemId": "85172280504",
+                      "originalItemId": 16372474586,
+                      "originalVendorItemId": 3000080400,
+                      "rocketWowType": "ROCKET_WOW_DAWN",
+                      "searchId": "",
+                      "vendorItemIdAttributes": "1.5L_2개_unitPrice:322_vendorItemPrice:9660_deliveryType:ROCKET_WOW_deliveryFee:0"
+                    },
+                    "version": "9"
+                  }
+                }
+              }
+            },
+            "deliveryInfo": {
+              "deliveryBadge": {
+                "height": 16,
+                "url": "https://image.coupangcdn.com/image/coupang/rds/logo/xhdpi/logo_wow_medium.png",
+                "width": 65
+              },
+              "deliveryDateColor": "GREEN",
+              "deliveryDateDescriptions": "내일(목) 새벽 도착 보장"
+            },
+            "itemBasicInfo": {
+              "invalid": false,
+              "itemId": 18016944861,
+              "itemName": "1.5L × 2개",
+              "vendorItemId": 85172280504
+            },
+            "priceInfo": {
+              "finalDeliveryDescription": "무료배송",
+              "finalPrice": "9,660원",
+              "finalUnitPrice": "(100ml당 322원)"
+            },
+            "stockInfo": {
+              "logistics": true,
+              "restockNotification": false,
+              "soldOut": false
+            }
+          },
+          {
+            "action": {
+              "event": {
+                "url": "vp/products/487322/vendoritems/85172280657"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "5104",
+                      "mandatory": {
+                        "domain": "sdp",
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "option_list",
+                        "eventName": "option_list_click",
+                        "sdpVisitKey": "veojp66cmjmj7lzmam",
+                        "vendorItemId": 85172280657,
+                        "searchId": "",
+                        "vendorItemIdAttributes": "1.5L_3개_unitPrice:300_vendorItemPrice:13500_deliveryType:ROCKET_WOW_deliveryFee:0"
+                      },
+                      "version": "6"
+                    }
+                  ],
+                  "exposureSchema": {
+                    "id": "5112",
+                    "mandatory": {
+                      "logCategory": "impression",
+                      "logType": "impression",
+                      "pageName": "option_list",
+                      "eventName": "option_list_item_impression",
+                      "domain": "sdp",
+                      "referSdpItem": "p487322_i16372474586_v3000080400",
+                      "sdpVisitKey": "veojp66cmjmj7lzmam",
+                      "vendorItemId": "85172280657",
+                      "originalItemId": 16372474586,
+                      "originalVendorItemId": 3000080400,
+                      "rocketWowType": "ROCKET_WOW_DAWN",
+                      "searchId": "",
+                      "vendorItemIdAttributes": "1.5L_3개_unitPrice:300_vendorItemPrice:13500_deliveryType:ROCKET_WOW_deliveryFee:0"
+                    },
+                    "version": "9"
+                  }
+                }
+              }
+            },
+            "deliveryInfo": {
+              "deliveryBadge": {
+                "height": 16,
+                "url": "https://image.coupangcdn.com/image/coupang/rds/logo/xhdpi/logo_wow_medium.png",
+                "width": 65
+              },
+              "deliveryDateColor": "GREEN",
+              "deliveryDateDescriptions": "내일(목) 새벽 도착 보장"
+            },
+            "itemBasicInfo": {
+              "invalid": false,
+              "itemId": 18016945113,
+              "itemName": "1.5L × 3개",
+              "vendorItemId": 85172280657
+            },
+            "priceInfo": {
+              "finalDeliveryDescription": "무료배송",
+              "finalPrice": "13,500원",
+              "finalUnitPrice": "(100ml당 300원)"
+            },
+            "stockInfo": {
+              "logistics": true,
+              "restockNotification": false,
+              "soldOut": false
+            }
+          },
+          {
+            "action": {
+              "event": {
+                "url": "vp/products/487322/vendoritems/85172285392"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "5104",
+                      "mandatory": {
+                        "domain": "sdp",
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "option_list",
+                        "eventName": "option_list_click",
+                        "sdpVisitKey": "veojp66cmjmj7lzmam",
+                        "vendorItemId": 85172285392,
+                        "searchId": "",
+                        "vendorItemIdAttributes": "1.5L_4개_unitPrice:300_vendorItemPrice:18000_deliveryType:ROCKET_WOW_deliveryFee:0"
+                      },
+                      "version": "6"
+                    }
+                  ],
+                  "exposureSchema": {
+                    "id": "5112",
+                    "mandatory": {
+                      "logCategory": "impression",
+                      "logType": "impression",
+                      "pageName": "option_list",
+                      "eventName": "option_list_item_impression",
+                      "domain": "sdp",
+                      "referSdpItem": "p487322_i16372474586_v3000080400",
+                      "sdpVisitKey": "veojp66cmjmj7lzmam",
+                      "vendorItemId": "85172285392",
+                      "originalItemId": 16372474586,
+                      "originalVendorItemId": 3000080400,
+                      "rocketWowType": "ROCKET_WOW_DAWN",
+                      "searchId": "",
+                      "vendorItemIdAttributes": "1.5L_4개_unitPrice:300_vendorItemPrice:18000_deliveryType:ROCKET_WOW_deliveryFee:0"
+                    },
+                    "version": "9"
+                  }
+                }
+              }
+            },
+            "deliveryInfo": {
+              "deliveryBadge": {
+                "height": 16,
+                "url": "https://image.coupangcdn.com/image/coupang/rds/logo/xhdpi/logo_wow_medium.png",
+                "width": 65
+              },
+              "deliveryDateColor": "GREEN",
+              "deliveryDateDescriptions": "내일(목) 새벽 도착 보장"
+            },
+            "itemBasicInfo": {
+              "invalid": false,
+              "itemId": 18016949869,
+              "itemName": "1.5L × 4개",
+              "vendorItemId": 85172285392
+            },
+            "priceInfo": {
+              "finalDeliveryDescription": "무료배송",
+              "finalPrice": "18,000원",
+              "finalUnitPrice": "(100ml당 300원)"
+            },
+            "stockInfo": {
+              "logistics": true,
+              "restockNotification": false,
+              "soldOut": false
+            }
+          },
+          {
+            "action": {
+              "event": {
+                "url": "vp/products/487322/vendoritems/85172281913"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "5104",
+                      "mandatory": {
+                        "domain": "sdp",
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "option_list",
+                        "eventName": "option_list_click",
+                        "sdpVisitKey": "veojp66cmjmj7lzmam",
+                        "vendorItemId": 85172281913,
+                        "searchId": "",
+                        "vendorItemIdAttributes": "1.5L_5개_unitPrice:300_vendorItemPrice:22500_deliveryType:ROCKET_WOW_deliveryFee:0"
+                      },
+                      "version": "6"
+                    }
+                  ],
+                  "exposureSchema": {
+                    "id": "5112",
+                    "mandatory": {
+                      "logCategory": "impression",
+                      "logType": "impression",
+                      "pageName": "option_list",
+                      "eventName": "option_list_item_impression",
+                      "domain": "sdp",
+                      "referSdpItem": "p487322_i16372474586_v3000080400",
+                      "sdpVisitKey": "veojp66cmjmj7lzmam",
+                      "vendorItemId": "85172281913",
+                      "originalItemId": 16372474586,
+                      "originalVendorItemId": 3000080400,
+                      "rocketWowType": "ROCKET_WOW_DAWN",
+                      "searchId": "",
+                      "vendorItemIdAttributes": "1.5L_5개_unitPrice:300_vendorItemPrice:22500_deliveryType:ROCKET_WOW_deliveryFee:0"
+                    },
+                    "version": "9"
+                  }
+                }
+              }
+            },
+            "deliveryInfo": {
+              "deliveryBadge": {
+                "height": 16,
+                "url": "https://image.coupangcdn.com/image/coupang/rds/logo/xhdpi/logo_wow_medium.png",
+                "width": 65
+              },
+              "deliveryDateColor": "GREEN",
+              "deliveryDateDescriptions": "내일(목) 새벽 도착 보장"
+            },
+            "itemBasicInfo": {
+              "invalid": false,
+              "itemId": 18016946493,
+              "itemName": "1.5L × 5개",
+              "vendorItemId": 85172281913
+            },
+            "priceInfo": {
+              "finalDeliveryDescription": "무료배송",
+              "finalPrice": "22,500원",
+              "finalUnitPrice": "(100ml당 300원)"
+            },
+            "stockInfo": {
+              "logistics": true,
+              "restockNotification": false,
+              "soldOut": false
+            }
+          },
+          {
+            "action": {
+              "event": {
+                "url": "vp/products/487322/vendoritems/85172285085"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "5104",
+                      "mandatory": {
+                        "domain": "sdp",
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "option_list",
+                        "eventName": "option_list_click",
+                        "sdpVisitKey": "veojp66cmjmj7lzmam",
+                        "vendorItemId": 85172285085,
+                        "searchId": "",
+                        "vendorItemIdAttributes": "1.5L_6개_unitPrice:296_vendorItemPrice:26600_deliveryType:ROCKET_WOW_deliveryFee:0"
+                      },
+                      "version": "6"
+                    }
+                  ],
+                  "exposureSchema": {
+                    "id": "5112",
+                    "mandatory": {
+                      "logCategory": "impression",
+                      "logType": "impression",
+                      "pageName": "option_list",
+                      "eventName": "option_list_item_impression",
+                      "domain": "sdp",
+                      "referSdpItem": "p487322_i16372474586_v3000080400",
+                      "sdpVisitKey": "veojp66cmjmj7lzmam",
+                      "vendorItemId": "85172285085",
+                      "originalItemId": 16372474586,
+                      "originalVendorItemId": 3000080400,
+                      "rocketWowType": "ROCKET_WOW_DAWN",
+                      "searchId": "",
+                      "vendorItemIdAttributes": "1.5L_6개_unitPrice:296_vendorItemPrice:26600_deliveryType:ROCKET_WOW_deliveryFee:0"
+                    },
+                    "version": "9"
+                  }
+                }
+              }
+            },
+            "deliveryInfo": {
+              "deliveryBadge": {
+                "height": 16,
+                "url": "https://image.coupangcdn.com/image/coupang/rds/logo/xhdpi/logo_wow_medium.png",
+                "width": 65
+              },
+              "deliveryDateColor": "GREEN",
+              "deliveryDateDescriptions": "내일(목) 새벽 도착 보장"
+            },
+            "itemBasicInfo": {
+              "invalid": false,
+              "itemId": 18016949135,
+              "itemName": "1.5L × 6개",
+              "vendorItemId": 85172285085
+            },
+            "priceInfo": {
+              "finalDeliveryDescription": "무료배송",
+              "finalPrice": "26,600원",
+              "finalUnitPrice": "(100ml당 296원)"
+            },
+            "stockInfo": {
+              "logistics": true,
+              "restockNotification": false,
+              "soldOut": false
+            }
+          },
+          {
+            "action": {
+              "event": {
+                "url": "vp/products/487322/vendoritems/92027061253"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "5104",
+                      "mandatory": {
+                        "domain": "sdp",
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "option_list",
+                        "eventName": "option_list_click",
+                        "sdpVisitKey": "veojp66cmjmj7lzmam",
+                        "vendorItemId": 92027061253,
+                        "searchId": "",
+                        "vendorItemIdAttributes": "1.5L_8개_unitPrice:281_vendorItemPrice:33730_deliveryType:3p_deliveryFee:0"
+                      },
+                      "version": "6"
+                    }
+                  ],
+                  "exposureSchema": {
+                    "id": "5112",
+                    "mandatory": {
+                      "logCategory": "impression",
+                      "logType": "impression",
+                      "pageName": "option_list",
+                      "eventName": "option_list_item_impression",
+                      "domain": "sdp",
+                      "referSdpItem": "p487322_i16372474586_v3000080400",
+                      "sdpVisitKey": "veojp66cmjmj7lzmam",
+                      "vendorItemId": "92027061253",
+                      "originalItemId": 16372474586,
+                      "originalVendorItemId": 3000080400,
+                      "rocketWowType": "ROCKET_WOW_DAWN",
+                      "searchId": "",
+                      "vendorItemIdAttributes": "1.5L_8개_unitPrice:281_vendorItemPrice:33730_deliveryType:3p_deliveryFee:0"
+                    },
+                    "version": "9"
+                  }
+                }
+              }
+            },
+            "deliveryInfo": {
+              "deliveryDateDescriptions": "모레(금) 10/24 도착 예정 (판매자배송)"
+            },
+            "itemBasicInfo": {
+              "invalid": false,
+              "itemId": 25022289867,
+              "itemName": "1.5L × 8개",
+              "vendorItemId": 92027061253
+            },
+            "priceInfo": {
+              "finalDeliveryDescription": "무료배송",
+              "finalPrice": "33,730원",
+              "finalUnitPrice": "(100ml당 281원)"
+            },
+            "stockInfo": {
+              "logistics": false,
+              "restockNotification": false,
+              "soldOut": false
+            }
+          },
+          {
+            "action": {
+              "event": {
+                "url": "vp/products/487322/vendoritems/3000080400"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "5104",
+                      "mandatory": {
+                        "domain": "sdp",
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "option_list",
+                        "eventName": "option_list_click",
+                        "sdpVisitKey": "veojp66cmjmj7lzmam",
+                        "vendorItemId": 3000080400,
+                        "searchId": "",
+                        "vendorItemIdAttributes": "1.8L_1개_unitPrice:336_vendorItemPrice:6050_deliveryType:ROCKET_WOW_deliveryFee:0"
+                      },
+                      "version": "6"
+                    }
+                  ],
+                  "exposureSchema": {
+                    "id": "5112",
+                    "mandatory": {
+                      "logCategory": "impression",
+                      "logType": "impression",
+                      "pageName": "option_list",
+                      "eventName": "option_list_item_impression",
+                      "domain": "sdp",
+                      "referSdpItem": "p487322_i16372474586_v3000080400",
+                      "sdpVisitKey": "veojp66cmjmj7lzmam",
+                      "vendorItemId": "3000080400",
+                      "originalItemId": 16372474586,
+                      "originalVendorItemId": 3000080400,
+                      "rocketWowType": "ROCKET_WOW_DAWN",
+                      "searchId": "",
+                      "vendorItemIdAttributes": "1.8L_1개_unitPrice:336_vendorItemPrice:6050_deliveryType:ROCKET_WOW_deliveryFee:0"
+                    },
+                    "version": "9"
+                  }
+                }
+              }
+            },
+            "deliveryInfo": {
+              "deliveryBadge": {
+                "height": 16,
+                "url": "https://image.coupangcdn.com/image/coupang/rds/logo/xhdpi/logo_wow_medium.png",
+                "width": 65
+              },
+              "deliveryDateColor": "GREEN",
+              "deliveryDateDescriptions": "내일(목) 새벽 도착 보장"
+            },
+            "itemBasicInfo": {
+              "invalid": false,
+              "itemId": 16372474586,
+              "itemName": "1.8L × 1개",
+              "vendorItemId": 3000080400
+            },
+            "priceInfo": {
+              "finalDeliveryDescription": "무료배송",
+              "finalPrice": "6,050원",
+              "finalUnitPrice": "(100ml당 336원)"
+            },
+            "selected": true,
+            "stockInfo": {
+              "logistics": true,
+              "restockNotification": false,
+              "soldOut": false
+            }
+          },
+          {
+            "action": {
+              "event": {
+                "url": "vp/products/487322/vendoritems/84994378244"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "5104",
+                      "mandatory": {
+                        "domain": "sdp",
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "option_list",
+                        "eventName": "option_list_click",
+                        "sdpVisitKey": "veojp66cmjmj7lzmam",
+                        "vendorItemId": 84994378244,
+                        "searchId": "",
+                        "vendorItemIdAttributes": "1.8L_2개_unitPrice:296_vendorItemPrice:10650_deliveryType:ROCKET_WOW_deliveryFee:0"
+                      },
+                      "version": "6"
+                    }
+                  ],
+                  "exposureSchema": {
+                    "id": "5112",
+                    "mandatory": {
+                      "logCategory": "impression",
+                      "logType": "impression",
+                      "pageName": "option_list",
+                      "eventName": "option_list_item_impression",
+                      "domain": "sdp",
+                      "referSdpItem": "p487322_i16372474586_v3000080400",
+                      "sdpVisitKey": "veojp66cmjmj7lzmam",
+                      "vendorItemId": "84994378244",
+                      "originalItemId": 16372474586,
+                      "originalVendorItemId": 3000080400,
+                      "rocketWowType": "ROCKET_WOW_DAWN",
+                      "searchId": "",
+                      "vendorItemIdAttributes": "1.8L_2개_unitPrice:296_vendorItemPrice:10650_deliveryType:ROCKET_WOW_deliveryFee:0"
+                    },
+                    "version": "9"
+                  }
+                }
+              }
+            },
+            "deliveryInfo": {
+              "deliveryBadge": {
+                "height": 16,
+                "url": "https://image.coupangcdn.com/image/coupang/rds/logo/xhdpi/logo_wow_medium.png",
+                "width": 65
+              },
+              "deliveryDateColor": "GREEN",
+              "deliveryDateDescriptions": "내일(목) 새벽 도착 보장"
+            },
+            "itemBasicInfo": {
+              "invalid": false,
+              "itemId": 231349355,
+              "itemName": "1.8L × 2개",
+              "vendorItemId": 84994378244
+            },
+            "priceInfo": {
+              "finalDeliveryDescription": "무료배송",
+              "finalPrice": "10,650원",
+              "finalUnitPrice": "(100ml당 296원)"
+            },
+            "stockInfo": {
+              "logistics": true,
+              "restockNotification": false,
+              "soldOut": false
+            }
+          },
+          {
+            "action": {
+              "event": {
+                "url": "vp/products/487322/vendoritems/84994378258"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "5104",
+                      "mandatory": {
+                        "domain": "sdp",
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "option_list",
+                        "eventName": "option_list_click",
+                        "sdpVisitKey": "veojp66cmjmj7lzmam",
+                        "vendorItemId": 84994378258,
+                        "searchId": "",
+                        "vendorItemIdAttributes": "1.8L_3개_unitPrice:278_vendorItemPrice:15000_deliveryType:ROCKET_WOW_deliveryFee:0"
+                      },
+                      "version": "6"
+                    }
+                  ],
+                  "exposureSchema": {
+                    "id": "5112",
+                    "mandatory": {
+                      "logCategory": "impression",
+                      "logType": "impression",
+                      "pageName": "option_list",
+                      "eventName": "option_list_item_impression",
+                      "domain": "sdp",
+                      "referSdpItem": "p487322_i16372474586_v3000080400",
+                      "sdpVisitKey": "veojp66cmjmj7lzmam",
+                      "vendorItemId": "84994378258",
+                      "originalItemId": 16372474586,
+                      "originalVendorItemId": 3000080400,
+                      "rocketWowType": "ROCKET_WOW_DAWN",
+                      "searchId": "",
+                      "vendorItemIdAttributes": "1.8L_3개_unitPrice:278_vendorItemPrice:15000_deliveryType:ROCKET_WOW_deliveryFee:0"
+                    },
+                    "version": "9"
+                  }
+                }
+              }
+            },
+            "deliveryInfo": {
+              "deliveryBadge": {
+                "height": 16,
+                "url": "https://image.coupangcdn.com/image/coupang/rds/logo/xhdpi/logo_wow_medium.png",
+                "width": 65
+              },
+              "deliveryDateColor": "GREEN",
+              "deliveryDateDescriptions": "내일(목) 새벽 도착 보장"
+            },
+            "itemBasicInfo": {
+              "invalid": false,
+              "itemId": 17572599273,
+              "itemName": "1.8L × 3개",
+              "vendorItemId": 84994378258
+            },
+            "priceInfo": {
+              "finalDeliveryDescription": "무료배송",
+              "finalPrice": "15,000원",
+              "finalUnitPrice": "(100ml당 278원)"
+            },
+            "stockInfo": {
+              "logistics": true,
+              "restockNotification": false,
+              "soldOut": false
+            }
+          },
+          {
+            "action": {
+              "event": {
+                "url": "vp/products/487322/vendoritems/85322098214"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "5104",
+                      "mandatory": {
+                        "domain": "sdp",
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "option_list",
+                        "eventName": "option_list_click",
+                        "sdpVisitKey": "veojp66cmjmj7lzmam",
+                        "vendorItemId": 85322098214,
+                        "searchId": "",
+                        "vendorItemIdAttributes": "1.8L_4개_unitPrice:278_vendorItemPrice:20000_deliveryType:ROCKET_WOW_deliveryFee:0"
+                      },
+                      "version": "6"
+                    }
+                  ],
+                  "exposureSchema": {
+                    "id": "5112",
+                    "mandatory": {
+                      "logCategory": "impression",
+                      "logType": "impression",
+                      "pageName": "option_list",
+                      "eventName": "option_list_item_impression",
+                      "domain": "sdp",
+                      "referSdpItem": "p487322_i16372474586_v3000080400",
+                      "sdpVisitKey": "veojp66cmjmj7lzmam",
+                      "vendorItemId": "85322098214",
+                      "originalItemId": 16372474586,
+                      "originalVendorItemId": 3000080400,
+                      "rocketWowType": "ROCKET_WOW_DAWN",
+                      "searchId": "",
+                      "vendorItemIdAttributes": "1.8L_4개_unitPrice:278_vendorItemPrice:20000_deliveryType:ROCKET_WOW_deliveryFee:0"
+                    },
+                    "version": "9"
+                  }
+                }
+              }
+            },
+            "deliveryInfo": {
+              "deliveryBadge": {
+                "height": 16,
+                "url": "https://image.coupangcdn.com/image/coupang/rds/logo/xhdpi/logo_wow_medium.png",
+                "width": 65
+              },
+              "deliveryDateColor": "GREEN",
+              "deliveryDateDescriptions": "내일(목) 새벽 도착 보장"
+            },
+            "itemBasicInfo": {
+              "invalid": false,
+              "itemId": 40726277,
+              "itemName": "1.8L × 4개",
+              "vendorItemId": 85322098214
+            },
+            "priceInfo": {
+              "finalDeliveryDescription": "무료배송",
+              "finalPrice": "20,000원",
+              "finalUnitPrice": "(100ml당 278원)"
+            },
+            "stockInfo": {
+              "logistics": true,
+              "restockNotification": false,
+              "soldOut": false
+            }
+          },
+          {
+            "action": {
+              "event": {
+                "url": "vp/products/487322/vendoritems/84994382062"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "5104",
+                      "mandatory": {
+                        "domain": "sdp",
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "option_list",
+                        "eventName": "option_list_click",
+                        "sdpVisitKey": "veojp66cmjmj7lzmam",
+                        "vendorItemId": 84994382062,
+                        "searchId": "",
+                        "vendorItemIdAttributes": "1.8L_5개_unitPrice:278_vendorItemPrice:25000_deliveryType:ROCKET_WOW_deliveryFee:0"
+                      },
+                      "version": "6"
+                    }
+                  ],
+                  "exposureSchema": {
+                    "id": "5112",
+                    "mandatory": {
+                      "logCategory": "impression",
+                      "logType": "impression",
+                      "pageName": "option_list",
+                      "eventName": "option_list_item_impression",
+                      "domain": "sdp",
+                      "referSdpItem": "p487322_i16372474586_v3000080400",
+                      "sdpVisitKey": "veojp66cmjmj7lzmam",
+                      "vendorItemId": "84994382062",
+                      "originalItemId": 16372474586,
+                      "originalVendorItemId": 3000080400,
+                      "rocketWowType": "ROCKET_WOW_DAWN",
+                      "searchId": "",
+                      "vendorItemIdAttributes": "1.8L_5개_unitPrice:278_vendorItemPrice:25000_deliveryType:ROCKET_WOW_deliveryFee:0"
+                    },
+                    "version": "9"
+                  }
+                }
+              }
+            },
+            "deliveryInfo": {
+              "deliveryBadge": {
+                "height": 16,
+                "url": "https://image.coupangcdn.com/image/coupang/rds/logo/xhdpi/logo_wow_medium.png",
+                "width": 65
+              },
+              "deliveryDateColor": "GREEN",
+              "deliveryDateDescriptions": "내일(목) 새벽 도착 보장"
+            },
+            "itemBasicInfo": {
+              "invalid": false,
+              "itemId": 12419031959,
+              "itemName": "1.8L × 5개",
+              "vendorItemId": 84994382062
+            },
+            "priceInfo": {
+              "finalDeliveryDescription": "무료배송",
+              "finalPrice": "25,000원",
+              "finalUnitPrice": "(100ml당 278원)"
+            },
+            "stockInfo": {
+              "logistics": true,
+              "restockNotification": false,
+              "soldOut": false
+            }
+          },
+          {
+            "action": {
+              "event": {
+                "url": "vp/products/487322/vendoritems/85322098714"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "5104",
+                      "mandatory": {
+                        "domain": "sdp",
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "option_list",
+                        "eventName": "option_list_click",
+                        "sdpVisitKey": "veojp66cmjmj7lzmam",
+                        "vendorItemId": 85322098714,
+                        "searchId": "",
+                        "vendorItemIdAttributes": "1.8L_6개_unitPrice:278_vendorItemPrice:30000_deliveryType:ROCKET_WOW_deliveryFee:0"
+                      },
+                      "version": "6"
+                    }
+                  ],
+                  "exposureSchema": {
+                    "id": "5112",
+                    "mandatory": {
+                      "logCategory": "impression",
+                      "logType": "impression",
+                      "pageName": "option_list",
+                      "eventName": "option_list_item_impression",
+                      "domain": "sdp",
+                      "referSdpItem": "p487322_i16372474586_v3000080400",
+                      "sdpVisitKey": "veojp66cmjmj7lzmam",
+                      "vendorItemId": "85322098714",
+                      "originalItemId": 16372474586,
+                      "originalVendorItemId": 3000080400,
+                      "rocketWowType": "ROCKET_WOW_DAWN",
+                      "searchId": "",
+                      "vendorItemIdAttributes": "1.8L_6개_unitPrice:278_vendorItemPrice:30000_deliveryType:ROCKET_WOW_deliveryFee:0"
+                    },
+                    "version": "9"
+                  }
+                }
+              }
+            },
+            "deliveryInfo": {
+              "deliveryBadge": {
+                "height": 16,
+                "url": "https://image.coupangcdn.com/image/coupang/rds/logo/xhdpi/logo_wow_medium.png",
+                "width": 65
+              },
+              "deliveryDateColor": "GREEN",
+              "deliveryDateDescriptions": "내일(목) 새벽 도착 보장"
+            },
+            "itemBasicInfo": {
+              "invalid": false,
+              "itemId": 15592853918,
+              "itemName": "1.8L × 6개",
+              "vendorItemId": 85322098714
+            },
+            "priceInfo": {
+              "finalDeliveryDescription": "무료배송",
+              "finalPrice": "30,000원",
+              "finalUnitPrice": "(100ml당 278원)"
+            },
+            "stockInfo": {
+              "logistics": true,
+              "restockNotification": false,
+              "soldOut": false
+            }
+          },
+          {
+            "action": {
+              "event": {
+                "url": "vp/products/487322/vendoritems/93478889635"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "5104",
+                      "mandatory": {
+                        "domain": "sdp",
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "option_list",
+                        "eventName": "option_list_click",
+                        "sdpVisitKey": "veojp66cmjmj7lzmam",
+                        "vendorItemId": 93478889635,
+                        "searchId": "",
+                        "vendorItemIdAttributes": "1.8L_10개_unitPrice:270_vendorItemPrice:48610_deliveryType:3p_deliveryFee:0"
+                      },
+                      "version": "6"
+                    }
+                  ],
+                  "exposureSchema": {
+                    "id": "5112",
+                    "mandatory": {
+                      "logCategory": "impression",
+                      "logType": "impression",
+                      "pageName": "option_list",
+                      "eventName": "option_list_item_impression",
+                      "domain": "sdp",
+                      "referSdpItem": "p487322_i16372474586_v3000080400",
+                      "sdpVisitKey": "veojp66cmjmj7lzmam",
+                      "vendorItemId": "93478889635",
+                      "originalItemId": 16372474586,
+                      "originalVendorItemId": 3000080400,
+                      "rocketWowType": "ROCKET_WOW_DAWN",
+                      "searchId": "",
+                      "vendorItemIdAttributes": "1.8L_10개_unitPrice:270_vendorItemPrice:48610_deliveryType:3p_deliveryFee:0"
+                    },
+                    "version": "9"
+                  }
+                }
+              }
+            },
+            "deliveryInfo": {
+              "deliveryDateDescriptions": "모레(금) 10/24 도착 예정 (판매자배송)"
+            },
+            "itemBasicInfo": {
+              "invalid": false,
+              "itemId": 18172808489,
+              "itemName": "1.8L × 10개",
+              "vendorItemId": 93478889635
+            },
+            "priceInfo": {
+              "finalDeliveryDescription": "무료배송",
+              "finalPrice": "48,610원",
+              "finalUnitPrice": "(100ml당 270원)"
+            },
+            "stockInfo": {
+              "logistics": false,
+              "restockNotification": false,
+              "soldOut": false
+            }
+          },
+          {
+            "action": {
+              "event": {
+                "url": "vp/products/487322/vendoritems/93426890849"
+              },
+              "logging": {
+                "alwaysSentLiveLog": false,
+                "bypass": {
+                  "clickSchemas": [
+                    {
+                      "id": "5104",
+                      "mandatory": {
+                        "domain": "sdp",
+                        "logCategory": "event",
+                        "logType": "click",
+                        "pageName": "option_list",
+                        "eventName": "option_list_click",
+                        "sdpVisitKey": "veojp66cmjmj7lzmam",
+                        "vendorItemId": 93426890849,
+                        "searchId": "",
+                        "vendorItemIdAttributes": "3.6L_1개_unitPrice:712_vendorItemPrice:25630_deliveryType:3p_deliveryFee:0"
+                      },
+                      "version": "6"
+                    }
+                  ],
+                  "exposureSchema": {
+                    "id": "5112",
+                    "mandatory": {
+                      "logCategory": "impression",
+                      "logType": "impression",
+                      "pageName": "option_list",
+                      "eventName": "option_list_item_impression",
+                      "domain": "sdp",
+                      "referSdpItem": "p487322_i16372474586_v3000080400",
+                      "sdpVisitKey": "veojp66cmjmj7lzmam",
+                      "vendorItemId": "93426890849",
+                      "originalItemId": 16372474586,
+                      "originalVendorItemId": 3000080400,
+                      "rocketWowType": "ROCKET_WOW_DAWN",
+                      "searchId": "",
+                      "vendorItemIdAttributes": "3.6L_1개_unitPrice:712_vendorItemPrice:25630_deliveryType:3p_deliveryFee:0"
+                    },
+                    "version": "9"
+                  }
+                }
+              }
+            },
+            "deliveryInfo": {
+              "deliveryDateDescriptions": "토요일 10/25 도착 예정 (판매자배송)"
+            },
+            "itemBasicInfo": {
+              "invalid": false,
+              "itemId": 23560586640,
+              "itemName": "3.6L × 1개",
+              "vendorItemId": 93426890849
+            },
+            "priceInfo": {
+              "finalDeliveryDescription": "무료배송",
+              "finalPrice": "25,630원",
+              "finalUnitPrice": "(100ml당 712원)"
+            },
+            "stockInfo": {
+              "logistics": false,
+              "restockNotification": false,
+              "soldOut": false
+            }
+          }
+        ],
+        "titleName": "개당 용량 × 수량",
+        "viewType": "PRODUCT_DETAIL_OPTION_LIST"
+      },
+      {
+        "deliveryInfo": {
+          "wowMemberDelivery": {
+            "arrivalMessage": [
+              {
+                "color": "#00891A",
+                "size": 14,
+                "text": "<b>내일(목) 새벽 7시 전</b>"
+              },
+              {
+                "color": "#00891A",
+                "size": 14,
+                "text": " 도착 보장"
+              }
+            ],
+            "deliveryBadge": {
+              "height": 16,
+              "url": "https://image.coupangcdn.com/image/coupang/rds/logo/xhdpi/logo_wow_medium.png",
+              "width": 65
+            },
+            "shippingFeeTag": [
+              {
+                "bold": true,
+                "color": "#212B36",
+                "size": 14,
+                "text": "무료배송"
+              }
+            ]
+          }
+        },
+        "itemInfo": {
+          "itemId": 16372474586,
+          "itemName": "해표 식용유",
+          "productId": 487322,
+          "thumbnailImage": {
+            "height": 60,
+            "url": "https://image.coupangcdn.com/image/retail/images/1531874807130-c2efe3f9-dd12-4589-a68f-7560d010004f.png",
+            "width": 60
+          },
+          "vendorItemId": 3000080400
+        },
+        "priceInfo": {
+          "finalPrice": {
+            "applicable": true,
+            "displayPrice": "6,050원",
+            "price": 6050
+          },
+          "finalPriceDiscountRate": 32,
+          "originalPrice": {
+            "applicable": true,
+            "displayPrice": "8,950원",
+            "price": 8950
+          }
+        },
+        "viewType": "PRODUCT_DETAIL_HANDLEBAR_BASE_INFO"
+      },
+      {
+        "pddList": [
+          {
+            "arrivalDate": 1761231599000,
+            "arrivalMessage": "<b>내일(목) 새벽 7시 전</b> 도착 보장",
+            "countDown": {
+              "countDownTime": 13385690,
+              "cutOffThreshold": 3600000,
+              "displayCutoffType": "NORMAL"
+            },
+            "deliveryBadge": {
+              "height": 20,
+              "url": "https://image.coupangcdn.com/image/coupang/rds/logo/hdpi/logo_wow_symbol_large.png",
+              "width": 20
+            },
+            "deliveryBadgePlus": {
+              "height": 14,
+              "url": "https://image.coupangcdn.com/image/coupang/rds/logo/hdpi/logo_wow_text_medium.png",
+              "width": 47
+            },
+            "deliveryBadgeV2": {
+              "height": 16,
+              "url": "https://image.coupangcdn.com/image/coupang/rds/logo/xhdpi/logo_wow_medium.png",
+              "width": 65
+            },
+            "deliveryChargeType": "CONDITIONAL_FREE",
+            "deliveryType": "ROCKET_WOW",
+            "freeShippingThreshold": 0,
+            "infoIcon": {
+              "action": {
+                "event": {
+                  "url": "coupang://loyalty?tab=Y&title=%20&url=https%3A%2F%2Floyalty.coupang.com%2Fm%2Floyalty%2Fsign-up%2Fhome%3Fsource%3DSDP"
+                }
+              }
+            },
+            "wowArrivalDate": 1761170400000,
+            "wowShippingSpeed": "OVERNIGHT"
+          }
+        ],
+        "viewType": "PRODUCT_DETAIL_DELIVERY_INFO"
+      }
+    ],
+    "price": {
+      "cashPromotionMessage": null,
+      "couponDiscountAmount": null,
+      "couponPrice": "6,050",
+      "couponPriceTitle": "",
+      "couponUnitPrice": "100ml당 336원",
+      "description": null,
+      "discountRate": "32",
+      "finalPrice": "6,050",
+      "gppuPricePolicy": [
+        {
+          "description": "업체의 권장소비자가 또는 공식 판매처 판매가 또는 도서 정가(도서 정가제 대상인 경우)입니다. 해당 가격이 없는 경우 90일 내 쿠팡에서 판매된 가격 중 가장 높은 가격을 표시합니다.",
+          "priceInfo": "<span class='discount-rate'>32%</span><span class='origin-price'>8,950원</span>"
+        }
+      ],
+      "hasNormalCouponDiscount": false,
+      "hasNormalInstantDiscount": false,
+      "hasWowCouponDiscount": false,
+      "hasWowInstantDiscount": false,
+      "i18nCouponDiscountAmount": null,
+      "i18nCouponPrice": {
+        "amount": "6050",
+        "currency": "KRW",
+        "fractionDigits": 0,
+        "rawAmount": null
+      },
+      "i18nOriginPrice": {
+        "amount": "8950",
+        "currency": "KRW",
+        "fractionDigits": 0,
+        "rawAmount": null
+      },
+      "i18nPriceAmount": null,
+      "i18nSalePrice": {
+        "amount": "6050",
+        "currency": "KRW",
+        "fractionDigits": 0,
+        "rawAmount": null
+      },
+      "instantDiscount": false,
+      "instantPriceType": null,
+      "loyaltyButtonText": null,
+      "loyaltyRegistrationUrl": null,
+      "originPrice": "8,950",
+      "originalPriceDesc": null,
+      "priceAmount": null,
+      "salePrice": "6,050",
+      "salePriceTitle": "",
+      "saleUnitPrice": "100ml당 336원",
+      "title": null,
+      "type": null,
+      "unitDiscountRate": null,
+      "unitPrice": null,
+      "wowCouponDiscount": false
+    },
+    "priceList": [],
+    "priceUnit": "원",
+    "quantity": 1,
+    "quantityLimitationVO": null,
+    "selectedIndex": 0,
+    "shipmentDisplayType": "NORMAL",
+    "shippingFee": {
+      "dividerIcon": null,
+      "extremeMessage": null,
+      "freeShippingConditionMessage": null,
+      "message": "<em class='prod-txt-bold'>무료배송</em>",
+      "popupFreeShippingConditionMessage": null,
+      "returnFeeMessage": null,
+      "shippingFee": "0",
+      "shippingFeeIcon": null,
+      "shippingFeeType": "FREE",
+      "title": null,
+      "titleIcon": null
+    },
+    "shippingFeeList": [
+      {
+        "dividerIcon": null,
+        "extremeMessage": null,
+        "freeShippingConditionMessage": null,
+        "message": "<em class='prod-txt-bold'>무료배송</em>",
+        "popupFreeShippingConditionMessage": null,
+        "returnFeeMessage": null,
+        "shippingFee": null,
+        "shippingFeeIcon": null,
+        "shippingFeeType": "FREE",
+        "title": null,
+        "titleIcon": null
+      }
+    ],
+    "subscriptionDelivery": null,
+    "subscriptionDiscountRate": -1,
+    "subscriptionPrice": null,
+    "subscriptionPriceList": [],
+    "wowOnlyInstantDiscountRate": 0
+  }
+]

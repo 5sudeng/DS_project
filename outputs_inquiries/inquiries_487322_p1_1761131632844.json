@@ -1,0 +1,195 @@
+{
+  "success": {
+    "rCode": "RET0000",
+    "rRedirectCode": null,
+    "rRedirectUrl": null,
+    "rViewName": "page/product/productDetail/inquiryList/inquiryItemsMore",
+    "rMessage": "",
+    "rData": {
+      "webbuildNo": "20251022172536",
+      "isLogin": true,
+      "memberId": "120274279",
+      "trCid": null,
+      "trAid": null,
+      "navigation": {
+        "firstPageUnit": {
+          "displayPageNo": 1,
+          "isSelected": false,
+          "link": null
+        },
+        "previousPageUnit": {
+          "displayPageNo": 1,
+          "isSelected": false,
+          "link": null
+        },
+        "nextPageUnit": {
+          "displayPageNo": 11,
+          "isSelected": false,
+          "link": null
+        },
+        "lastPageUnit": {
+          "displayPageNo": 154,
+          "isSelected": false,
+          "link": null
+        },
+        "pageList": [
+          {
+            "displayPageNo": 1,
+            "isSelected": true,
+            "link": null
+          },
+          {
+            "displayPageNo": 2,
+            "isSelected": false,
+            "link": null
+          },
+          {
+            "displayPageNo": 3,
+            "isSelected": false,
+            "link": null
+          },
+          {
+            "displayPageNo": 4,
+            "isSelected": false,
+            "link": null
+          },
+          {
+            "displayPageNo": 5,
+            "isSelected": false,
+            "link": null
+          },
+          {
+            "displayPageNo": 6,
+            "isSelected": false,
+            "link": null
+          },
+          {
+            "displayPageNo": 7,
+            "isSelected": false,
+            "link": null
+          },
+          {
+            "displayPageNo": 8,
+            "isSelected": false,
+            "link": null
+          },
+          {
+            "displayPageNo": 9,
+            "isSelected": false,
+            "link": null
+          },
+          {
+            "displayPageNo": 10,
+            "isSelected": false,
+            "link": null
+          }
+        ],
+        "contents": [
+          {
+            "vendorItemId": 92027106324,
+            "inquiryId": 143632332,
+            "createdAt": "20251002145415",
+            "displayWriter": "",
+            "content": "안녕하세요. 구매한 개수보다 더 배송되었습니다. \n처리부탁드리겠습니다! 빠른 시일 내에 가져가 주시길 바랍니다~",
+            "comments": [
+              {
+                "inquiryCommentId": 137120897,
+                "inquiryId": 143632332,
+                "displayWriter": "농업회사법인(주) 콩쥐팥쥐",
+                "content": "고객님 주문번호 또는 수령하신 운송장 번호 알려주시면 회수 접수 도와드리겠습니다 죄송합니다 \n현재 4일이 제일 빠릅니다",
+                "createdAt": "20251002174616",
+                "author": false,
+                "formattedCreateDate": "2025/10/02 17:46:16"
+              }
+            ],
+            "authorMemberId": 123461616,
+            "serializedAttrName": "500ml | 30개",
+            "vendorId": "A00261406",
+            "vendorName": "농업회사법인(주) 콩쥐팥쥐",
+            "author": false,
+            "formattedCreateDate": "2025/10/02 14:54:15"
+          },
+          {
+            "vendorItemId": 82877234304,
+            "inquiryId": 143503523,
+            "createdAt": "20250930142634",
+            "displayWriter": "",
+            "content": "유통기한이 어떻게 되나요? 오늘주문하면 언제 발송되나요?",
+            "comments": [
+              {
+                "inquiryCommentId": 136997966,
+                "inquiryId": 143503523,
+                "displayWriter": "(주)에스에이치유통",
+                "content": "안녕하세요 고객님, 식용유 판매처입니다.\r\n현재 보유하고 있는 제품의 유통기한은 27년 6월까지인 제품입니다.\r\n저희 스토어는 당일 12시 이전 주문건까지 당일발송하고있으며, 10/2 택배발송마감입니다.\r\n감사합니다.",
+                "createdAt": "20250930172954",
+                "author": false,
+                "formattedCreateDate": "2025/09/30 17:29:54"
+              }
+            ],
+            "authorMemberId": 164046340,
+            "serializedAttrName": "1.8L | 3개",
+            "vendorId": "A00395158",
+            "vendorName": "(주)에스에이치유통",
+            "author": false,
+            "formattedCreateDate": "2025/09/30 14:26:34"
+          },
+          {
+            "vendorItemId": 92023579215,
+            "inquiryId": 143451826,
+            "createdAt": "20250929154524",
+            "displayWriter": "",
+            "content": "유통기간 어떻게 되나요?\n식용유 2개짜리 제품은 로켓와우 안되덴데요. 언제 도착예정일까요?\n2-3일정도요?",
+            "comments": [
+              {
+                "inquiryCommentId": 136940828,
+                "inquiryId": 143451826,
+                "displayWriter": "농업회사법인(주) 콩쥐팥쥐",
+                "content": "30일 출고시 1일~2일 수령예상됩니다 이동중 파손이나 사고일 경우 제회",
+                "createdAt": "20250929180810",
+                "author": false,
+                "formattedCreateDate": "2025/09/29 18:08:10"
+              }
+            ],
+            "authorMemberId": 153802808,
+            "serializedAttrName": "1.8L | 2개",
+            "vendorId": "A00261406",
+            "vendorName": "농업회사법인(주) 콩쥐팥쥐",
+            "author": false,
+            "formattedCreateDate": "2025/09/29 15:45:24"
+          },
+          {
+            "vendorItemId": 92023579215,
+            "inquiryId": 143451775,
+            "createdAt": "20250929154423",
+            "displayWriter": "",
+            "content": "식용유 2개짜리 제품은 로켓와우 안되덴데요. 유통기간이 달라서 저렴한 것일까요?\n아니면 로켓와우가 안되어서 저렴한 것일까요?\n도착일이 좀 늦을까요?",
+            "comments": [
+              {
+                "inquiryCommentId": 136940812,
+                "inquiryId": 143451775,
+                "displayWriter": "농업회사법인(주) 콩쥐팥쥐",
+                "content": "죄송합니다. 판매자 배송상품입니다\n때때로 와우보다 판매자가 가격이 착할때도있고 아닐때도있고 그래요 \n도착일은 택배 배송으로 늦을수도있습니다",
+                "createdAt": "20250929180754",
+                "author": false,
+                "formattedCreateDate": "2025/09/29 18:07:54"
+              }
+            ],
+            "authorMemberId": 153802808,
+            "serializedAttrName": "1.8L | 2개",
+            "vendorId": "A00261406",
+            "vendorName": "농업회사법인(주) 콩쥐팥쥐",
+            "author": false,
+            "formattedCreateDate": "2025/09/29 15:44:23"
+          }
+        ],
+        "currentPageIndex": 1,
+        "totalPageIndex": 154
+      },
+      "isPreview": true,
+      "keyword": "",
+      "searchInquiry": true,
+      "totalElements": 615
+    },
+    "rCookies": null
+  }
+}

@@ -1,0 +1,195 @@
+{
+  "success": {
+    "rCode": "RET0000",
+    "rRedirectCode": null,
+    "rRedirectUrl": null,
+    "rViewName": "page/product/productDetail/inquiryList/inquiryItemsMore",
+    "rMessage": "",
+    "rData": {
+      "webbuildNo": "20251022172536",
+      "isLogin": true,
+      "memberId": "120274279",
+      "trCid": null,
+      "trAid": null,
+      "navigation": {
+        "firstPageUnit": {
+          "displayPageNo": 1,
+          "isSelected": false,
+          "link": null
+        },
+        "previousPageUnit": {
+          "displayPageNo": 1,
+          "isSelected": false,
+          "link": null
+        },
+        "nextPageUnit": {
+          "displayPageNo": 11,
+          "isSelected": false,
+          "link": null
+        },
+        "lastPageUnit": {
+          "displayPageNo": 651,
+          "isSelected": false,
+          "link": null
+        },
+        "pageList": [
+          {
+            "displayPageNo": 1,
+            "isSelected": true,
+            "link": null
+          },
+          {
+            "displayPageNo": 2,
+            "isSelected": false,
+            "link": null
+          },
+          {
+            "displayPageNo": 3,
+            "isSelected": false,
+            "link": null
+          },
+          {
+            "displayPageNo": 4,
+            "isSelected": false,
+            "link": null
+          },
+          {
+            "displayPageNo": 5,
+            "isSelected": false,
+            "link": null
+          },
+          {
+            "displayPageNo": 6,
+            "isSelected": false,
+            "link": null
+          },
+          {
+            "displayPageNo": 7,
+            "isSelected": false,
+            "link": null
+          },
+          {
+            "displayPageNo": 8,
+            "isSelected": false,
+            "link": null
+          },
+          {
+            "displayPageNo": 9,
+            "isSelected": false,
+            "link": null
+          },
+          {
+            "displayPageNo": 10,
+            "isSelected": false,
+            "link": null
+          }
+        ],
+        "contents": [
+          {
+            "vendorItemId": 92236984873,
+            "inquiryId": 144516373,
+            "createdAt": "20251021181629",
+            "displayWriter": "",
+            "content": "제조일자 최근 상품으로 유통기한 넉넉한 상품으로 부탁드립니다.",
+            "comments": [
+              {
+                "inquiryCommentId": 138015065,
+                "inquiryId": 144516373,
+                "displayWriter": "(주)로적",
+                "content": "감사합니다",
+                "createdAt": "20251022080200",
+                "author": false,
+                "formattedCreateDate": "2025/10/22 08:02:00"
+              }
+            ],
+            "authorMemberId": 10696695,
+            "serializedAttrName": "20개",
+            "vendorId": "A00137901",
+            "vendorName": "(주)로적",
+            "author": false,
+            "formattedCreateDate": "2025/10/21 18:16:29"
+          },
+          {
+            "vendorItemId": 92236984873,
+            "inquiryId": 144507043,
+            "createdAt": "20251021160923",
+            "displayWriter": "",
+            "content": "20개 한박스를 100박스 주문하는 방법 없을까요?",
+            "comments": [
+              {
+                "inquiryCommentId": 137992959,
+                "inquiryId": 144507043,
+                "displayWriter": "(주)로적",
+                "content": "확인해보겠습니다",
+                "createdAt": "20251021162105",
+                "author": false,
+                "formattedCreateDate": "2025/10/21 16:21:05"
+              }
+            ],
+            "authorMemberId": 55418121,
+            "serializedAttrName": "20개",
+            "vendorId": "A00137901",
+            "vendorName": "(주)로적",
+            "author": false,
+            "formattedCreateDate": "2025/10/21 16:09:23"
+          },
+          {
+            "vendorItemId": 92236984873,
+            "inquiryId": 143971128,
+            "createdAt": "20251012170722",
+            "displayWriter": "",
+            "content": "20개 주문했습니다\n유통기한 많이 남은것으로 주세요   고맙습니다",
+            "comments": [
+              {
+                "inquiryCommentId": 137418647,
+                "inquiryId": 143971128,
+                "displayWriter": "(주)로적",
+                "content": "감사합니다",
+                "createdAt": "20251013080155",
+                "author": false,
+                "formattedCreateDate": "2025/10/13 08:01:55"
+              }
+            ],
+            "authorMemberId": 20418629,
+            "serializedAttrName": "20개",
+            "vendorId": "A00137901",
+            "vendorName": "(주)로적",
+            "author": false,
+            "formattedCreateDate": "2025/10/12 17:07:22"
+          },
+          {
+            "vendorItemId": 93711927344,
+            "inquiryId": 143936727,
+            "createdAt": "20251011210323",
+            "displayWriter": "",
+            "content": "제가 쿠팡에서 신라면 꾸준히 시켜 먹고 있는데 \r\n왜 이번 라면은 생으로 먹었을때 눅눅하고 딱딱하고 맛이 없나요?\r\n이전에 시킨 신라면은 바삭바삭 하고 고소하고 맛있었는데 ..\r\n이번에 배송된 라면은 왜그런가요?",
+            "comments": [
+              {
+                "inquiryCommentId": 137453263,
+                "inquiryId": 143936727,
+                "displayWriter": "주식회사 키킷",
+                "content": "주문해주신 내역이 확인 되지 않습니다. 주문 번호 말씀 부탁드립니다. ",
+                "createdAt": "20251013103406",
+                "author": false,
+                "formattedCreateDate": "2025/10/13 10:34:06"
+              }
+            ],
+            "authorMemberId": 124543787,
+            "serializedAttrName": "1개",
+            "vendorId": "A01032178",
+            "vendorName": "주식회사 키킷",
+            "author": false,
+            "formattedCreateDate": "2025/10/11 21:03:23"
+          }
+        ],
+        "currentPageIndex": 1,
+        "totalPageIndex": 651
+      },
+      "isPreview": true,
+      "keyword": "",
+      "searchInquiry": true,
+      "totalElements": 2602
+    },
+    "rCookies": null
+  }
+}

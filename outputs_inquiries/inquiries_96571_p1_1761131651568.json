@@ -1,0 +1,195 @@
+{
+  "success": {
+    "rCode": "RET0000",
+    "rRedirectCode": null,
+    "rRedirectUrl": null,
+    "rViewName": "page/product/productDetail/inquiryList/inquiryItemsMore",
+    "rMessage": "",
+    "rData": {
+      "webbuildNo": "20251022172536",
+      "isLogin": true,
+      "memberId": "120274279",
+      "trCid": null,
+      "trAid": null,
+      "navigation": {
+        "firstPageUnit": {
+          "displayPageNo": 1,
+          "isSelected": false,
+          "link": null
+        },
+        "previousPageUnit": {
+          "displayPageNo": 1,
+          "isSelected": false,
+          "link": null
+        },
+        "nextPageUnit": {
+          "displayPageNo": 11,
+          "isSelected": false,
+          "link": null
+        },
+        "lastPageUnit": {
+          "displayPageNo": 855,
+          "isSelected": false,
+          "link": null
+        },
+        "pageList": [
+          {
+            "displayPageNo": 1,
+            "isSelected": true,
+            "link": null
+          },
+          {
+            "displayPageNo": 2,
+            "isSelected": false,
+            "link": null
+          },
+          {
+            "displayPageNo": 3,
+            "isSelected": false,
+            "link": null
+          },
+          {
+            "displayPageNo": 4,
+            "isSelected": false,
+            "link": null
+          },
+          {
+            "displayPageNo": 5,
+            "isSelected": false,
+            "link": null
+          },
+          {
+            "displayPageNo": 6,
+            "isSelected": false,
+            "link": null
+          },
+          {
+            "displayPageNo": 7,
+            "isSelected": false,
+            "link": null
+          },
+          {
+            "displayPageNo": 8,
+            "isSelected": false,
+            "link": null
+          },
+          {
+            "displayPageNo": 9,
+            "isSelected": false,
+            "link": null
+          },
+          {
+            "displayPageNo": 10,
+            "isSelected": false,
+            "link": null
+          }
+        ],
+        "contents": [
+          {
+            "vendorItemId": 93021332015,
+            "inquiryId": 144454508,
+            "createdAt": "20251020181446",
+            "displayWriter": "",
+            "content": "저기요~  문의내용 훑어보니  유통기한 묻는 질문에 6개월 남은 제품으로 보내주신다면서요. 리뷰에 9월에 라면 샀는 사람도 유통기한 내년 2~3월인데  어제 주문해서 오늘 받았는데 유통기한 2달 남았네요. 뭡니까?",
+            "comments": [
+              {
+                "inquiryCommentId": 137956027,
+                "inquiryId": 144454508,
+                "displayWriter": "다미온",
+                "content": "안녕하세요. 고객님. 유통기한은 당사가 일부 파악을 못하고 보내드리는것도 있습니다. 도움이 못된거 같아서 죄송합니다.",
+                "createdAt": "20251021093221",
+                "author": false,
+                "formattedCreateDate": "2025/10/21 09:32:21"
+              }
+            ],
+            "authorMemberId": 2807596,
+            "serializedAttrName": "1개",
+            "vendorId": "A01170423",
+            "vendorName": "다미온",
+            "author": false,
+            "formattedCreateDate": "2025/10/20 18:14:46"
+          },
+          {
+            "vendorItemId": 84993758114,
+            "inquiryId": 144029445,
+            "createdAt": "20251013164143",
+            "displayWriter": "",
+            "content": "유통기한 좀 알수있을까요?",
+            "comments": [
+              {
+                "inquiryCommentId": 137507126,
+                "inquiryId": 144029445,
+                "displayWriter": "[COUPANG]",
+                "content": "안녕하세요. 상품이 입고되는 순으로 발송하고 있어 상품마다 제조일자 또는 유통기한이 상이할 수 있습니다. 상품 수령 시 제품에 표기된 제조일자 및 유통기한을 참고해 주시기 바랍니다. 감사합니다.",
+                "createdAt": "20251013172815",
+                "author": false,
+                "formattedCreateDate": "2025/10/13 17:28:15"
+              }
+            ],
+            "authorMemberId": 159260003,
+            "serializedAttrName": "10개",
+            "vendorId": "A00010028",
+            "vendorName": "쿠팡",
+            "author": false,
+            "formattedCreateDate": "2025/10/13 16:41:43"
+          },
+          {
+            "vendorItemId": 84993758244,
+            "inquiryId": 144029268,
+            "createdAt": "20251013163939",
+            "displayWriter": "",
+            "content": "유통기한 좀 알수있을까요?",
+            "comments": [
+              {
+                "inquiryCommentId": 137507058,
+                "inquiryId": 144029268,
+                "displayWriter": "[COUPANG]",
+                "content": "안녕하세요. 상품이 입고되는 순으로 발송하고 있어 상품마다 제조일자 또는 유통기한이 상이할 수 있습니다. 상품 수령 시 제품에 표기된 제조일자 및 유통기한을 참고해 주시기 바랍니다. 감사합니다.",
+                "createdAt": "20251013172727",
+                "author": false,
+                "formattedCreateDate": "2025/10/13 17:27:27"
+              }
+            ],
+            "authorMemberId": 159260003,
+            "serializedAttrName": "25개",
+            "vendorId": "A00010028",
+            "vendorName": "쿠팡",
+            "author": false,
+            "formattedCreateDate": "2025/10/13 16:39:39"
+          },
+          {
+            "vendorItemId": 93711926603,
+            "inquiryId": 143877692,
+            "createdAt": "20251010175541",
+            "displayWriter": "",
+            "content": "라면포장을 비닐에 해서 배송이 오다보니 라면이 부스러기가 많이 생깁니다.\r\n부스러기가 많아 빨리 배송을 받아도 기분이 별로네요.\r\n다음부터는 파손이 덜되게 보내주면 감사하겠습니다.",
+            "comments": [
+              {
+                "inquiryCommentId": 137357689,
+                "inquiryId": 143877692,
+                "displayWriter": "주식회사 키킷",
+                "content": "저희 업체 주문이 확인 되지 않습니다. 저희는 비닐로 배송하지 않습니다. 주문번호 말씀 부탁드립니다. ",
+                "createdAt": "20251010201313",
+                "author": false,
+                "formattedCreateDate": "2025/10/10 20:13:13"
+              }
+            ],
+            "authorMemberId": 64086139,
+            "serializedAttrName": "2개",
+            "vendorId": "A01032178",
+            "vendorName": "주식회사 키킷",
+            "author": false,
+            "formattedCreateDate": "2025/10/10 17:55:41"
+          }
+        ],
+        "currentPageIndex": 1,
+        "totalPageIndex": 855
+      },
+      "isPreview": true,
+      "keyword": "",
+      "searchInquiry": true,
+      "totalElements": 3417
+    },
+    "rCookies": null
+  }
+}

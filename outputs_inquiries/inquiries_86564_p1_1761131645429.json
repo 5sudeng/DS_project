@@ -1,0 +1,195 @@
+{
+  "success": {
+    "rCode": "RET0000",
+    "rRedirectCode": null,
+    "rRedirectUrl": null,
+    "rViewName": "page/product/productDetail/inquiryList/inquiryItemsMore",
+    "rMessage": "",
+    "rData": {
+      "webbuildNo": "20251022172536",
+      "isLogin": true,
+      "memberId": "120274279",
+      "trCid": null,
+      "trAid": null,
+      "navigation": {
+        "firstPageUnit": {
+          "displayPageNo": 1,
+          "isSelected": false,
+          "link": null
+        },
+        "previousPageUnit": {
+          "displayPageNo": 1,
+          "isSelected": false,
+          "link": null
+        },
+        "nextPageUnit": {
+          "displayPageNo": 11,
+          "isSelected": false,
+          "link": null
+        },
+        "lastPageUnit": {
+          "displayPageNo": 61,
+          "isSelected": false,
+          "link": null
+        },
+        "pageList": [
+          {
+            "displayPageNo": 1,
+            "isSelected": true,
+            "link": null
+          },
+          {
+            "displayPageNo": 2,
+            "isSelected": false,
+            "link": null
+          },
+          {
+            "displayPageNo": 3,
+            "isSelected": false,
+            "link": null
+          },
+          {
+            "displayPageNo": 4,
+            "isSelected": false,
+            "link": null
+          },
+          {
+            "displayPageNo": 5,
+            "isSelected": false,
+            "link": null
+          },
+          {
+            "displayPageNo": 6,
+            "isSelected": false,
+            "link": null
+          },
+          {
+            "displayPageNo": 7,
+            "isSelected": false,
+            "link": null
+          },
+          {
+            "displayPageNo": 8,
+            "isSelected": false,
+            "link": null
+          },
+          {
+            "displayPageNo": 9,
+            "isSelected": false,
+            "link": null
+          },
+          {
+            "displayPageNo": 10,
+            "isSelected": false,
+            "link": null
+          }
+        ],
+        "contents": [
+          {
+            "vendorItemId": 89819605191,
+            "inquiryId": 144105194,
+            "createdAt": "20251014191007",
+            "displayWriter": "",
+            "content": "10/9일부터 상품이 움직이지 않고 있어요 확인하여 조치하여 주세요",
+            "comments": [
+              {
+                "inquiryCommentId": 137607382,
+                "inquiryId": 144105194,
+                "displayWriter": "탑몰",
+                "content": "판매자입니다.\n고객님께서 주신 문의 글이 주문번호로 인입되지 않아 주문내역을 확인할수가 없습니다.\n주문번호로 재문의 주시면 확인해드리겠습니다.",
+                "createdAt": "20251015095457",
+                "author": false,
+                "formattedCreateDate": "2025/10/15 09:54:57"
+              }
+            ],
+            "authorMemberId": 155043678,
+            "serializedAttrName": "2개",
+            "vendorId": "A00379277",
+            "vendorName": "탑몰",
+            "author": false,
+            "formattedCreateDate": "2025/10/14 19:10:07"
+          },
+          {
+            "vendorItemId": 93085331442,
+            "inquiryId": 142520704,
+            "createdAt": "20250912012115",
+            "displayWriter": "",
+            "content": "더 작은사이즈도 있나요?",
+            "comments": [
+              {
+                "inquiryCommentId": 135993141,
+                "inquiryId": 142520704,
+                "displayWriter": "장바구니닷컴",
+                "content": "더 작은사이즈는 없습니다~~",
+                "createdAt": "20250912014652",
+                "author": false,
+                "formattedCreateDate": "2025/09/12 01:46:52"
+              }
+            ],
+            "authorMemberId": 145109536,
+            "serializedAttrName": "1개",
+            "vendorId": "A01471391",
+            "vendorName": "장바구니닷컴",
+            "author": false,
+            "formattedCreateDate": "2025/09/12 01:21:15"
+          },
+          {
+            "vendorItemId": 93085331442,
+            "inquiryId": 140528724,
+            "createdAt": "20250804191729",
+            "displayWriter": "",
+            "content": "어는 택배사로 보내주시나요?",
+            "comments": [
+              {
+                "inquiryCommentId": 134008628,
+                "inquiryId": 140528724,
+                "displayWriter": "장바구니닷컴",
+                "content": "롯데택배로 보내드립니다~~",
+                "createdAt": "20250805020404",
+                "author": false,
+                "formattedCreateDate": "2025/08/05 02:04:04"
+              }
+            ],
+            "authorMemberId": 122696915,
+            "serializedAttrName": "1개",
+            "vendorId": "A01471391",
+            "vendorName": "장바구니닷컴",
+            "author": false,
+            "formattedCreateDate": "2025/08/04 19:17:29"
+          },
+          {
+            "vendorItemId": 92130587544,
+            "inquiryId": 139265559,
+            "createdAt": "20250711054157",
+            "displayWriter": "",
+            "content": "6개 들어있는 묶음이 6개 오는것 맞나요?\r\n사발면 총 36개요?",
+            "comments": [
+              {
+                "inquiryCommentId": 132747126,
+                "inquiryId": 139265559,
+                "displayWriter": "셀픽",
+                "content": "안녕하세요\n6개입 1박스 입니다.",
+                "createdAt": "20250711104118",
+                "author": false,
+                "formattedCreateDate": "2025/07/11 10:41:18"
+              }
+            ],
+            "authorMemberId": 122856479,
+            "serializedAttrName": "6개",
+            "vendorId": "A01361086",
+            "vendorName": "셀픽",
+            "author": false,
+            "formattedCreateDate": "2025/07/11 05:41:57"
+          }
+        ],
+        "currentPageIndex": 1,
+        "totalPageIndex": 61
+      },
+      "isPreview": true,
+      "keyword": "",
+      "searchInquiry": true,
+      "totalElements": 242
+    },
+    "rCookies": null
+  }
+}
