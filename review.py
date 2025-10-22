@@ -1,4 +1,3 @@
-# review_fetch.py (single + batch, robust)
 import json
 import time
 import csv
@@ -8,6 +7,25 @@ from pathlib import Path
 from typing import Optional, Dict, Tuple, Iterable
 
 import requests
+
+'''
+use example (single) :
+    python review.py \
+        --product-id 8250433942 \
+        --item-id 23751564869 \
+        --vendor-item-id 90776061353 \
+        --page 1 --size 50 \
+        --outdir outputs_reviews \
+        --cookie-file cookie.txt
+
+use example (batch) :
+    python review.py \
+    --input products.csv \
+    --outdir outputs_reviews \
+    --jsonl outputs_reviews/reviews.jsonl \
+    --cookie-file cookie.txt
+
+'''
 
 # ── 기본값 ────────────────────────────────────────────
 URL = "https://www.coupang.com/next-api/review"
@@ -32,7 +50,6 @@ def build_headers(product_detail_url: str, cookie: Optional[str]) -> Dict[str, s
         "user-agent": UA,
         "origin": "https://www.coupang.com",
         "referer": product_detail_url,
-        # XHR 지문
         "x-requested-with": "XMLHttpRequest",
         "sec-fetch-mode": "cors",
         "sec-fetch-site": "same-origin",
