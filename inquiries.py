@@ -1,4 +1,3 @@
-# inquiries_fetch.py (batch-ready)
 import json
 import time
 import csv
@@ -8,6 +7,25 @@ from pathlib import Path
 from typing import Optional, Dict, Tuple, Iterable
 
 import requests
+
+'''
+use example (single) :
+    python inquiries.py \                 
+        --product-id 8250433942 \
+        --item-id 23751564869 \     
+        --vendor-item-id 90776061353 \                 
+        --page-no 1 \           
+        --outdir outputs_inquiries \
+        --cookie-file cookie.txt
+
+use esample (batch) :
+    python inquiries.py \
+        --input products.csv \
+        --outdir outputs_inquiries \
+        --jsonl outputs_inquiries/inquiries_all.jsonl \
+        --cookie-file cookie.txt
+  
+'''
 
 # ── 기본값 ────────────────────────────────────────────
 URL = "https://www.coupang.com/next-api/products/inquiries"
@@ -176,7 +194,6 @@ def batch_inquiries(
                     vendor_item_id=vid,
                     outdir=outdir,
                     retries=retries,
-                    single_file=True, 
                 )
                 if resp.status_code == 200:
                     ok += 1
