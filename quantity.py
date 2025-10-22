@@ -5,6 +5,23 @@ import argparse, csv, random, sys, socket, subprocess, shlex
 from pathlib import Path
 from typing import Optional, Dict
 
+'''
+use example : (single)
+    python quantity.py \
+        --product-id 8250433942 \
+        --item-id 23751564869 \
+        --vendor-item-id 90776061353 \
+        --outdir outputs_quantity
+
+use example : (batch)
+    python quantity.py \
+        --input products.csv \
+        --outdir outputs_quantity \
+        --jsonl outputs_quantity/summary.jsonl \
+        --cookie-file cookie.txt
+'''
+
+
 URL = "https://www.coupang.com/next-api/products/quantity-info"
 UA = (
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
@@ -73,6 +90,20 @@ def fetch_quantity_info(product_id: str,
                 data = r.json() if r.headers.get("content-type","").startswith("application/json") else {"raw_text": resp_text}
                 print("[httpx/h2] status:", resp_status)
                 print("[httpx/h2] url   :", resp_url)
+                # synthesize response-like object and save output (httpx success path)
+                class _Resp: pass
+                resp = _Resp()
+                resp.status_code = resp_status
+                resp.url = resp_url
+
+                ts = int(time.time() * 1000)
+                out_dir = Path(outdir or ".")
+                out_dir.mkdir(parents=True, exist_ok=True)
+                out = out_dir / f"{filename_prefix}_{product_id}_{ts}.json"
+                with open(out, "w", encoding="utf-8") as f:
+                    json.dump(data, f, ensure_ascii=False, indent=2)
+                print(f"saved → {out}")
+                return resp, data
             else:
                 raise RuntimeError(f"httpx/h2 unexpected status {resp_status}")
     except Exception as e_h2:
