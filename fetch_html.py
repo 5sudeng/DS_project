@@ -12,6 +12,25 @@ from typing import Optional, Tuple
 import requests
 from bs4 import BeautifulSoup
 
+'''
+use example : (single)
+    python fetch_html.py \                
+        -—product-id 7225189423 \
+        -—item-id 23751564869 \
+        -—vendor-item-id 90776061353 \
+        -—outdir outputs_html \
+        -—cookie-file cookie.txt \
+        -—timeout 40
+use example : (batch)
+    python fetch_html.py \
+        --input products.csv \
+        --outdir outputs_html \    
+        --jsonl outputs_html/summary.jsonl \    
+        --cookie-file cookie.txt \
+        --timeout 40 \                   
+        --delay-min 0.8 --delay-max 1.6
+'''
+
 
 UA = (
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
