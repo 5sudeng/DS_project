@@ -20,10 +20,10 @@ use example (single) :
 
 use example (batch) :
     python review.py \
-    --input products.csv \
-    --outdir outputs_reviews \
-    --jsonl outputs_reviews/reviews.jsonl \
-    --cookie-file cookie.txt
+        --input products.csv \
+        --outdir outputs_reviews \
+        --jsonl outputs_reviews/reviews.jsonl \
+        --cookie-file cookie.txt
 
 '''
 
