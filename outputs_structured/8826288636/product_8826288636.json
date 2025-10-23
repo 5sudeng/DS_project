@@ -1,0 +1,432 @@
+{
+  "productId": "8826288636",
+  "itemId": 25720037760,
+  "vendorItemId": 3000141660,
+  "productTitle": "농심 얼큰한 너구리 120g",
+  "brand": null,
+  "delivery": {
+    "badgeUrl": "https://image.coupangcdn.com/image/mobile_app/v3/brandsdp/loyalty/pc/rocketwowBi16@2x.png",
+    "company": null,
+    "companyLabel": null,
+    "countDownMessage": "<em class='prod-txt-onyx'>밤 12시 전 주문 시</em>",
+    "countDownMillisecond": null,
+    "delayMessage": null,
+    "deliveryExtraInfo": null,
+    "deliveryNotice": null,
+    "deliveryReminderMessage": null,
+    "descriptionBadge": null,
+    "descriptionIcon": null,
+    "descriptions": "<em class='prod-txt-onyx prod-txt-green-2'>내일(목) 10/23 새벽 7시 전 </em><em class='prod-txt-onyx  prod-txt-green-normal'>도착 보장</em>",
+    "extraDataMap": {
+      "decodeDescriptions": "내일(목) 10/23 새벽 7시 전 도착 보장"
+    },
+    "extremeDescriptions": null,
+    "hideQuestionMark": false,
+    "logistics": true,
+    "loyaltyButtonText": null,
+    "rocketWowQuestionMark": true,
+    "speedType": "OVERNIGHT",
+    "title": null,
+    "type": "ROCKET_DELIVERY"
+  },
+  "price": 4420,
+  "unitPrice": 884,
+  "unitPriceDescription": "(1개당 884원)",
+  "cashBackSummary": {
+    "basicCashBackList": [
+      {
+        "amount": 44,
+        "benefit": "쿠페이 머니 결제 시 1% 적립",
+        "expired": false,
+        "i18nAmount": {
+          "amount": "44",
+          "currency": "KRW",
+          "fractionDigits": 0,
+          "rawAmount": 44
+        },
+        "leftDays": null,
+        "rate": "1",
+        "type": "BASIC",
+        "validity": "월 최대 1만원"
+      }
+    ],
+    "basicRocketPayCashAmt": 44,
+    "basicRocketPayRate": "1",
+    "bookCashbackLimitScope": null,
+    "cashBackTitle": "캐시적립 혜택",
+    "cashIconUrl": "https://image.coupangcdn.com/image/badges/cashback/web/list-cash-icon@2x.png",
+    "cashWidgetIconUrl": "https://image.coupangcdn.com/image/badges/sdp/cashback/web/cash-icon@2x.png",
+    "clubMemberCashAmt": null,
+    "clubMemberRate": null,
+    "clubMemberRewardExpires": null,
+    "clubMemberRewardExpiryTime": null,
+    "clubMemberRewardLeftDays": null,
+    "couPayBankAmt": null,
+    "couPayBankExpires": true,
+    "couPayBankLeftDays": null,
+    "couPayBankRate": null,
+    "couPayMoneyAmt": null,
+    "couPayMoneyExpires": true,
+    "couPayMoneyLeftDays": null,
+    "couPayMoneyRate": null,
+    "extraCashBackList": [],
+    "finalCashBackAmt": 44,
+    "finalCashBackAmtIncludeRewardCashAmount": 44,
+    "giftRewardCashAmount": null,
+    "i18nBasicRocketPayCashAmt": {
+      "amount": "44",
+      "currency": "KRW",
+      "fractionDigits": 0,
+      "rawAmount": 44
+    },
+    "i18nClubMemberCashAmt": null,
+    "i18nCouPayBankAmt": null,
+    "i18nCouPayMoneyAmt": null,
+    "i18nFinalCashBackAmt": {
+      "amount": "44",
+      "currency": "KRW",
+      "fractionDigits": 0,
+      "rawAmount": 44
+    },
+    "i18nFinalCashBackAmtIncludeRewardCashAmount": {
+      "amount": "44",
+      "currency": "KRW",
+      "fractionDigits": 0,
+      "rawAmount": 44
+    },
+    "i18nRewardCashAmount": null,
+    "inBookCategory": null,
+    "luxuryItem": false,
+    "popupType": "BASIC",
+    "rewardCashAmount": null,
+    "targetedPromotionBanner": null
+  },
+  "options": [
+    {
+      "optionItemName": "1개",
+      "itemId": 1004395560,
+      "vendorItemId": 93436605422,
+      "finalPrice": "800원",
+      "finalUnitPrice": "1개당 800원",
+      "deliveryType": null,
+      "deliveryBadgeUrl": null,
+      "soldOut": false,
+      "selected": false,
+      "hoverImageUrl": "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/vendor_inventory/1914/9a02391a89ce3c0f9e7571a70ef91a32a3c3fee873cd88d17459c21eadf0.png",
+      "hoverSelectionText": "1개"
+    },
+    {
+      "optionItemName": "5개",
+      "itemId": 25720037760,
+      "vendorItemId": 3000141660,
+      "finalPrice": "4,420원",
+      "finalUnitPrice": "1개당 884원",
+      "deliveryType": "ROCKET_WOW",
+      "deliveryBadgeUrl": "https://image.coupangcdn.com/image/coupang/rds/logo/hdpi/logo_wow_small.png",
+      "soldOut": false,
+      "selected": true,
+      "hoverImageUrl": "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/569158263717248-d5521535-4eba-4f08-8bdb-10138baef84b.png",
+      "hoverSelectionText": "5개"
+    },
+    {
+      "optionItemName": "10개",
+      "itemId": 25720094938,
+      "vendorItemId": 85068267775,
+      "finalPrice": "7,630원",
+      "finalUnitPrice": "1개당 763원",
+      "deliveryType": "ROCKET_WOW",
+      "deliveryBadgeUrl": "https://image.coupangcdn.com/image/coupang/rds/logo/hdpi/logo_wow_small.png",
+      "soldOut": false,
+      "selected": false,
+      "hoverImageUrl": "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/1002717356338912-40f7bcca-9327-4888-aca2-878873750f7f.jpg",
+      "hoverSelectionText": "10개"
+    },
+    {
+      "optionItemName": "25개",
+      "itemId": 25720078972,
+      "vendorItemId": 85068269724,
+      "finalPrice": "18,350원",
+      "finalUnitPrice": "1개당 734원",
+      "deliveryType": "ROCKET_WOW",
+      "deliveryBadgeUrl": "https://image.coupangcdn.com/image/coupang/rds/logo/hdpi/logo_wow_small.png",
+      "soldOut": false,
+      "selected": false,
+      "hoverImageUrl": "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/382816342736284-3ffdfaf8-c348-41a1-81c1-6e130f6f3a49.jpg",
+      "hoverSelectionText": "25개"
+    }
+  ],
+  "optionsExpanded": [
+    {
+      "itemId": 1004395560,
+      "itemName": "1개",
+      "vendorItemId": 93436605422,
+      "finalPrice": "800원",
+      "finalUnitPrice": "(1개당 800원)",
+      "deliveryDateDescriptions": "모레(금) 10/24 도착 예정 (판매자배송)",
+      "finalDeliveryDescription": "배송비 3,000원",
+      "soldOut": false
+    },
+    {
+      "itemId": 25720037760,
+      "itemName": "5개",
+      "vendorItemId": 3000141660,
+      "finalPrice": "4,420원",
+      "finalUnitPrice": "(1개당 884원)",
+      "deliveryDateDescriptions": "내일(목) 새벽 도착 보장",
+      "finalDeliveryDescription": "무료배송",
+      "soldOut": false
+    },
+    {
+      "itemId": 25720094938,
+      "itemName": "10개",
+      "vendorItemId": 85068267775,
+      "finalPrice": "7,630원",
+      "finalUnitPrice": "(1개당 763원)",
+      "deliveryDateDescriptions": "내일(목) 새벽 도착 보장",
+      "finalDeliveryDescription": "무료배송",
+      "soldOut": false
+    },
+    {
+      "itemId": 25720061015,
+      "itemName": "15개",
+      "vendorItemId": 85068268284,
+      "finalPrice": "11,440원",
+      "finalUnitPrice": "(1개당 763원)",
+      "deliveryDateDescriptions": "내일(목) 새벽 도착 보장",
+      "finalDeliveryDescription": "무료배송",
+      "soldOut": false
+    },
+    {
+      "itemId": 25720054320,
+      "itemName": "20개",
+      "vendorItemId": 85068267823,
+      "finalPrice": "15,250원",
+      "finalUnitPrice": "(1개당 763원)",
+      "deliveryDateDescriptions": "내일(목) 새벽 도착 보장",
+      "finalDeliveryDescription": "무료배송",
+      "soldOut": false
+    },
+    {
+      "itemId": 25720078972,
+      "itemName": "25개",
+      "vendorItemId": 85068269724,
+      "finalPrice": "18,350원",
+      "finalUnitPrice": "(1개당 734원)",
+      "deliveryDateDescriptions": "내일(목) 새벽 도착 보장",
+      "finalDeliveryDescription": "무료배송",
+      "soldOut": false
+    },
+    {
+      "itemId": 25720099153,
+      "itemName": "30개",
+      "vendorItemId": 85068267859,
+      "finalPrice": "22,020원",
+      "finalUnitPrice": "(1개당 734원)",
+      "deliveryDateDescriptions": "내일(목) 새벽 도착 보장",
+      "finalDeliveryDescription": "무료배송",
+      "soldOut": false
+    },
+    {
+      "itemId": 25720066375,
+      "itemName": "40개",
+      "vendorItemId": 3054120488,
+      "finalPrice": "29,360원",
+      "finalUnitPrice": "(1개당 734원)",
+      "deliveryDateDescriptions": "내일(목) 10/23 도착 보장",
+      "finalDeliveryDescription": "무료배송",
+      "soldOut": false
+    }
+  ],
+  "images": {
+    "fromHTML": [
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/569158263717248-d5521535-4eba-4f08-8bdb-10138baef84b.png",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/1335901604435540-cf0bf83b-3877-4153-bfce-8dbef43eed4f.jpg",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/3986509277312796-f0e15d44-2d35-4099-a654-94bd9e88a33e.jpg",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/1658229469969652-177f68c4-ae64-4dfb-9e06-32a58bfda437.png",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/1335901485057150-173d3022-fe58-462f-9043-1d5aac986319.jpg",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/569158263717248-d5521535-4eba-4f08-8bdb-10138baef84b.png\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/1335901604435540-cf0bf83b-3877-4153-bfce-8dbef43eed4f.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/3986509277312796-f0e15d44-2d35-4099-a654-94bd9e88a33e.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/1658229469969652-177f68c4-ae64-4dfb-9e06-32a58bfda437.png\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/1335901485057150-173d3022-fe58-462f-9043-1d5aac986319.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/230x230ex/image/retail/images/569158263717248-d5521535-4eba-4f08-8bdb-10138baef84b.png\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/48x48ex/image/retail/images/569158263717248-d5521535-4eba-4f08-8bdb-10138baef84b.png\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/230x230ex/image/retail/images/1335901604435540-cf0bf83b-3877-4153-bfce-8dbef43eed4f.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/48x48ex/image/retail/images/1335901604435540-cf0bf83b-3877-4153-bfce-8dbef43eed4f.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/230x230ex/image/retail/images/3986509277312796-f0e15d44-2d35-4099-a654-94bd9e88a33e.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/48x48ex/image/retail/images/3986509277312796-f0e15d44-2d35-4099-a654-94bd9e88a33e.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/230x230ex/image/retail/images/1658229469969652-177f68c4-ae64-4dfb-9e06-32a58bfda437.png\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/48x48ex/image/retail/images/1658229469969652-177f68c4-ae64-4dfb-9e06-32a58bfda437.png\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/230x230ex/image/retail/images/1335901485057150-173d3022-fe58-462f-9043-1d5aac986319.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/48x48ex/image/retail/images/1335901485057150-173d3022-fe58-462f-9043-1d5aac986319.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/1002717356338912-40f7bcca-9327-4888-aca2-878873750f7f.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/382816342736284-3ffdfaf8-c348-41a1-81c1-6e130f6f3a49.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/230x230ex/image/retail/images/1002717356338912-40f7bcca-9327-4888-aca2-878873750f7f.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/48x48ex/image/retail/images/1002717356338912-40f7bcca-9327-4888-aca2-878873750f7f.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/1002699693988915-66b18217-dc06-4a5e-b551-bbef2ae2dccd.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/230x230ex/image/retail/images/1002699693988915-66b18217-dc06-4a5e-b551-bbef2ae2dccd.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/48x48ex/image/retail/images/1002699693988915-66b18217-dc06-4a5e-b551-bbef2ae2dccd.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/469556461726423-178ff721-94cc-450a-a2a8-db7e393b846e.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/230x230ex/image/retail/images/469556461726423-178ff721-94cc-450a-a2a8-db7e393b846e.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/48x48ex/image/retail/images/469556461726423-178ff721-94cc-450a-a2a8-db7e393b846e.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/230x230ex/image/retail/images/382816342736284-3ffdfaf8-c348-41a1-81c1-6e130f6f3a49.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/48x48ex/image/retail/images/382816342736284-3ffdfaf8-c348-41a1-81c1-6e130f6f3a49.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/469534398456031-038bec60-b6fc-4358-b1aa-51625897f94e.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/230x230ex/image/retail/images/469534398456031-038bec60-b6fc-4358-b1aa-51625897f94e.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/48x48ex/image/retail/images/469534398456031-038bec60-b6fc-4358-b1aa-51625897f94e.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/406484851563-75662836-76a4-4687-aed2-1741bc7a24f0.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/230x230ex/image/retail/images/406484851563-75662836-76a4-4687-aed2-1741bc7a24f0.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/48x48ex/image/retail/images/406484851563-75662836-76a4-4687-aed2-1741bc7a24f0.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/2966582102969305-19fae32a-c42e-4705-92f0-d1568692734d.png\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/230x230ex/image/retail/images/2966582102969305-19fae32a-c42e-4705-92f0-d1568692734d.png\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/48x48ex/image/retail/images/2966582102969305-19fae32a-c42e-4705-92f0-d1568692734d.png\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/994850492283771-62c84ac0-96a3-41a5-98fe-c660162ba019.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/230x230ex/image/retail/images/994850492283771-62c84ac0-96a3-41a5-98fe-c660162ba019.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/48x48ex/image/retail/images/994850492283771-62c84ac0-96a3-41a5-98fe-c660162ba019.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/524264294553-a021d409-eb8b-4e34-a154-545c16c27552.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/230x230ex/image/retail/images/524264294553-a021d409-eb8b-4e34-a154-545c16c27552.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/48x48ex/image/retail/images/524264294553-a021d409-eb8b-4e34-a154-545c16c27552.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/1723916911360257-b080a975-39e2-4aa9-a6a8-756bd8582937.png\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/230x230ex/image/retail/images/1723916911360257-b080a975-39e2-4aa9-a6a8-756bd8582937.png\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/48x48ex/image/retail/images/1723916911360257-b080a975-39e2-4aa9-a6a8-756bd8582937.png\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/2507818434034151-6e9fab5f-ef00-4c5f-b550-5b4c1335fa19.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/230x230ex/image/retail/images/2507818434034151-6e9fab5f-ef00-4c5f-b550-5b4c1335fa19.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/48x48ex/image/retail/images/2507818434034151-6e9fab5f-ef00-4c5f-b550-5b4c1335fa19.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/2966582090355944-2eff5705-581b-4c31-ad36-1bff68acaec2.png\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/230x230ex/image/retail/images/2966582090355944-2eff5705-581b-4c31-ad36-1bff68acaec2.png\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/48x48ex/image/retail/images/2966582090355944-2eff5705-581b-4c31-ad36-1bff68acaec2.png\\"
+    ]
+  },
+  "reviewsSummary": {
+    "ratingCount": 191816,
+    "ratingAverage": 5,
+    "ratingSummaries": [
+      {
+        "id": 412559447,
+        "productId": 8826288636,
+        "rating": 5,
+        "count": 166275,
+        "percentage": 87
+      },
+      {
+        "id": 412559446,
+        "productId": 8826288636,
+        "rating": 4,
+        "count": 17293,
+        "percentage": 9
+      },
+      {
+        "id": 412559445,
+        "productId": 8826288636,
+        "rating": 3,
+        "count": 4965,
+        "percentage": 2
+      },
+      {
+        "id": 412559444,
+        "productId": 8826288636,
+        "rating": 2,
+        "count": 1229,
+        "percentage": 1
+      },
+      {
+        "id": 412559443,
+        "productId": 8826288636,
+        "rating": 1,
+        "count": 2054,
+        "percentage": 1
+      }
+    ]
+  },
+  "reviewsPageInfo": {
+    "page": 1,
+    "sizePerPage": 30,
+    "totalCount": 191816,
+    "totalPage": 6394
+  },
+  "inquiries": [
+    {
+      "inquiryId": 144213596,
+      "createdAt": "20251016101255",
+      "formattedCreateDate": "2025/10/16 10:12:55",
+      "vendorItemId": 93436605422,
+      "vendorId": "A00282297",
+      "vendorName": "토래",
+      "serializedAttrName": "1개",
+      "content": "1팩시켰는데 배송때 한박스(8팩)가 왔어요.\r\n고객센터에 연락해서 이야기하고 가져가라고 했는데 지금도\r\n안가져가셨어요.\r\n고객센터에서 1팩빼고 문앞에 놓으라고 하셨어요.\r\n확인부탁드려요.",
+      "comments": [
+        {
+          "inquiryCommentId": 137699782,
+          "displayWriter": "토래",
+          "content": "안녕하세요 고객님 확인하도록 하겠습니다",
+          "createdAt": "20251016121123",
+          "formattedCreateDate": "2025/10/16 12:11:23"
+        }
+      ]
+    },
+    {
+      "inquiryId": 143692625,
+      "createdAt": "20251004075629",
+      "formattedCreateDate": "2025/10/04 07:56:29",
+      "vendorItemId": 3054120488,
+      "vendorId": "A00010028",
+      "vendorName": "쿠팡",
+      "serializedAttrName": "40개",
+      "content": "지금 40봉 주문하면 2025년12월 이후 제품오나요?",
+      "comments": [
+        {
+          "inquiryCommentId": 137154989,
+          "displayWriter": "[COUPANG]",
+          "content": "안녕하세요. 상품이 입고되는 순으로 발송하고 있어 상품마다 제조일자 또는 유통기한이 상이할 수 있습니다. 상품 수령 시 제품에 표기된 제조일자 및 유통기한을 참고해 주시기 바랍니다. 감사합니다.",
+          "createdAt": "20251004100608",
+          "formattedCreateDate": "2025/10/04 10:06:08"
+        }
+      ]
+    },
+    {
+      "inquiryId": 143488049,
+      "createdAt": "20250930100304",
+      "formattedCreateDate": "2025/09/30 10:03:04",
+      "vendorItemId": 85068267775,
+      "vendorId": "A00010028",
+      "vendorName": "쿠팡",
+      "serializedAttrName": "10개",
+      "content": "유통기한이 언제인가요?",
+      "comments": [
+        {
+          "inquiryCommentId": 136968616,
+          "displayWriter": "[COUPANG]",
+          "content": "안녕하세요. 유통기한은 상품페이지 내 상단에서 안내드리고 있으니 참고하여 이용 부탁드립니다. 감사합니다.",
+          "createdAt": "20250930104021",
+          "formattedCreateDate": "2025/09/30 10:40:21"
+        }
+      ]
+    },
+    {
+      "inquiryId": 141920899,
+      "createdAt": "20250901035150",
+      "formattedCreateDate": "2025/09/01 03:51:50",
+      "vendorItemId": 85068267823,
+      "vendorId": "A00010028",
+      "vendorName": "쿠팡",
+      "serializedAttrName": "20개",
+      "content": "정확한 유통기한 언제까지인가요?",
+      "comments": [
+        {
+          "inquiryCommentId": 135391565,
+          "displayWriter": "[COUPANG]",
+          "content": "안녕하세요. 고객님. 상품은 현재 유통기한이 2025년 9월 17일인 상품으로 발송해 드리고 있으며, 상품은 입고된 순으로 순차적 발송되고 있어 상품마다 제조일자 및 유통기한이 상이할 수 있습니다. 상품 수령 시 제품에 표기된 (제조일자 OR 유통기한) 를 참고해 주시기 바랍니다. 감사합니다.",
+          "createdAt": "20250901101447",
+          "formattedCreateDate": "2025/09/01 10:14:47"
+        }
+      ]
+    }
+  ],
+  "inquiriesTotal": 247,
+  "source": {
+    "html": "outputs_html/response_8826288636.html",
+    "quantity": "outputs_quantity/quantity_info_8826288636_1761131822964.json",
+    "reviews": "outputs_reviews/review_8826288636_p1_1761179845940.json",
+    "inquiries": "outputs_inquiries/inquiries_8826288636_p1_1761131638883.json"
+  }
+}

@@ -1,0 +1,367 @@
+{
+  "productId": "185307349",
+  "itemId": 25790113038,
+  "vendorItemId": 92777883529,
+  "productTitle": "한성기업 우동사리 200g, 6개",
+  "brand": null,
+  "delivery": {
+    "badgeUrl": "https://image.coupangcdn.com/image/mobile_app/v3/brandsdp/loyalty/pc/rocketwowBi16@2x.png",
+    "company": null,
+    "companyLabel": null,
+    "countDownMessage": null,
+    "countDownMillisecond": 2563957,
+    "delayMessage": null,
+    "deliveryExtraInfo": null,
+    "deliveryNotice": null,
+    "deliveryReminderMessage": null,
+    "descriptionBadge": null,
+    "descriptionIcon": null,
+    "descriptions": "<em class='prod-txt-onyx prod-txt-green-2'>내일(목) 10/23 새벽 7시 전 </em><em class='prod-txt-onyx  prod-txt-green-normal'>도착 보장</em>",
+    "extraDataMap": {
+      "decodeDescriptions": "내일(목) 10/23 새벽 7시 전 도착 보장"
+    },
+    "extremeDescriptions": null,
+    "hideQuestionMark": false,
+    "logistics": true,
+    "loyaltyButtonText": null,
+    "rocketWowQuestionMark": true,
+    "speedType": "OVERNIGHT",
+    "title": null,
+    "type": "ROCKET_DELIVERY"
+  },
+  "price": 2770,
+  "unitPrice": 231,
+  "unitPriceDescription": "(100g당 231원)",
+  "cashBackSummary": {
+    "basicCashBackList": [
+      {
+        "amount": 28,
+        "benefit": "쿠페이 머니 결제 시 1% 적립",
+        "expired": false,
+        "i18nAmount": {
+          "amount": "28",
+          "currency": "KRW",
+          "fractionDigits": 0,
+          "rawAmount": 28
+        },
+        "leftDays": null,
+        "rate": "1",
+        "type": "BASIC",
+        "validity": "월 최대 1만원"
+      }
+    ],
+    "basicRocketPayCashAmt": 28,
+    "basicRocketPayRate": "1",
+    "bookCashbackLimitScope": null,
+    "cashBackTitle": "캐시적립 혜택",
+    "cashIconUrl": "https://image.coupangcdn.com/image/badges/cashback/web/list-cash-icon@2x.png",
+    "cashWidgetIconUrl": "https://image.coupangcdn.com/image/badges/sdp/cashback/web/cash-icon@2x.png",
+    "clubMemberCashAmt": null,
+    "clubMemberRate": null,
+    "clubMemberRewardExpires": null,
+    "clubMemberRewardExpiryTime": null,
+    "clubMemberRewardLeftDays": null,
+    "couPayBankAmt": null,
+    "couPayBankExpires": true,
+    "couPayBankLeftDays": null,
+    "couPayBankRate": null,
+    "couPayMoneyAmt": null,
+    "couPayMoneyExpires": true,
+    "couPayMoneyLeftDays": null,
+    "couPayMoneyRate": null,
+    "extraCashBackList": [],
+    "finalCashBackAmt": 28,
+    "finalCashBackAmtIncludeRewardCashAmount": 28,
+    "giftRewardCashAmount": null,
+    "i18nBasicRocketPayCashAmt": {
+      "amount": "28",
+      "currency": "KRW",
+      "fractionDigits": 0,
+      "rawAmount": 28
+    },
+    "i18nClubMemberCashAmt": null,
+    "i18nCouPayBankAmt": null,
+    "i18nCouPayMoneyAmt": null,
+    "i18nFinalCashBackAmt": {
+      "amount": "28",
+      "currency": "KRW",
+      "fractionDigits": 0,
+      "rawAmount": 28
+    },
+    "i18nFinalCashBackAmtIncludeRewardCashAmount": {
+      "amount": "28",
+      "currency": "KRW",
+      "fractionDigits": 0,
+      "rawAmount": 28
+    },
+    "i18nRewardCashAmount": null,
+    "inBookCategory": null,
+    "luxuryItem": false,
+    "popupType": "BASIC",
+    "rewardCashAmount": null,
+    "targetedPromotionBanner": null
+  },
+  "options": [
+    {
+      "optionItemName": "1개",
+      "itemId": 325433622,
+      "vendorItemId": 81014128516,
+      "finalPrice": "2,700원",
+      "finalUnitPrice": "100g당 1,350원",
+      "deliveryType": null,
+      "deliveryBadgeUrl": null,
+      "soldOut": false,
+      "selected": false,
+      "hoverImageUrl": "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/vendor_inventory/8358/606980464ccf00721c97cee2dea3fc6dc4c270244df33a78d9a163979c91.jpg",
+      "hoverSelectionText": "200g × 1개"
+    },
+    {
+      "optionItemName": "6개",
+      "itemId": 25790113038,
+      "vendorItemId": 92777883529,
+      "finalPrice": "2,770원",
+      "finalUnitPrice": "100g당 231원",
+      "deliveryType": "ROCKET_WOW",
+      "deliveryBadgeUrl": "https://image.coupangcdn.com/image/coupang/rds/logo/hdpi/logo_wow_small.png",
+      "soldOut": false,
+      "selected": true,
+      "hoverImageUrl": "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/f5bdbfb6-ea5f-4af2-ad65-7dd62e2cd8ed8902265571440607387.png",
+      "hoverSelectionText": "200g × 6개"
+    },
+    {
+      "optionItemName": "40개",
+      "itemId": 18659161832,
+      "vendorItemId": 81014150984,
+      "finalPrice": "18,500원",
+      "finalUnitPrice": "100g당 231원",
+      "deliveryType": null,
+      "deliveryBadgeUrl": null,
+      "soldOut": false,
+      "selected": false,
+      "hoverImageUrl": "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/vendor_inventory/2a1c/26e61bb7d9da46f6c6f25d0e5dd3e4cf55ccfef5fc5aefe9ba7c4c182f90.jpg",
+      "hoverSelectionText": "200g × 40개"
+    },
+    {
+      "optionItemName": "50개",
+      "itemId": 23451548518,
+      "vendorItemId": 93247659274,
+      "finalPrice": "23,020원",
+      "finalUnitPrice": "100g당 230원",
+      "deliveryType": null,
+      "deliveryBadgeUrl": null,
+      "soldOut": false,
+      "selected": false,
+      "hoverImageUrl": "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/vendor_inventory/db72/cd138c7edae890f6347a78670e19225952b29bb7c6faf6de8e814f3186f8.jpg",
+      "hoverSelectionText": "200g × 50개"
+    }
+  ],
+  "optionsExpanded": [
+    {
+      "itemId": 325433622,
+      "itemName": "200g × 1개",
+      "vendorItemId": 81014128516,
+      "finalPrice": "2,700원",
+      "finalUnitPrice": "(100g당 1,350원)",
+      "deliveryDateDescriptions": "모레(금) 10/24 도착 예정 (판매자배송)",
+      "finalDeliveryDescription": "무료배송",
+      "soldOut": false
+    },
+    {
+      "itemId": 25790113038,
+      "itemName": "200g × 6개",
+      "vendorItemId": 92777883529,
+      "finalPrice": "2,770원",
+      "finalUnitPrice": "(100g당 231원)",
+      "deliveryDateDescriptions": "내일(목) 새벽 도착 보장",
+      "finalDeliveryDescription": "무료배송",
+      "soldOut": false
+    },
+    {
+      "itemId": 340593024,
+      "itemName": "200g × 20개",
+      "vendorItemId": 85845906594,
+      "finalPrice": "9,900원",
+      "finalUnitPrice": "(100g당 248원)",
+      "deliveryDateDescriptions": "모레(금) 10/24 도착 예정 (판매자배송)",
+      "finalDeliveryDescription": "무료배송",
+      "soldOut": false
+    },
+    {
+      "itemId": 18659161832,
+      "itemName": "200g × 40개",
+      "vendorItemId": 81014150984,
+      "finalPrice": "18,500원",
+      "finalUnitPrice": "(100g당 231원)",
+      "deliveryDateDescriptions": "모레(금) 10/24 도착 예정 (판매자배송)",
+      "finalDeliveryDescription": "무료배송",
+      "soldOut": false
+    },
+    {
+      "itemId": 23451548518,
+      "itemName": "200g × 50개",
+      "vendorItemId": 93247659274,
+      "finalPrice": "23,020원",
+      "finalUnitPrice": "(100g당 230원)",
+      "deliveryDateDescriptions": "모레(금) 10/24 도착 예정 (판매자배송)",
+      "finalDeliveryDescription": "무료배송",
+      "soldOut": false
+    },
+    {
+      "itemId": 2187613087,
+      "itemName": "200g × 80개",
+      "vendorItemId": 86533235136,
+      "finalPrice": "34,550원",
+      "finalUnitPrice": "(100g당 216원)",
+      "deliveryDateDescriptions": null,
+      "finalDeliveryDescription": "무료배송",
+      "soldOut": true
+    }
+  ],
+  "images": {
+    "fromHTML": [
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/f5bdbfb6-ea5f-4af2-ad65-7dd62e2cd8ed8902265571440607387.png",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/2025/06/16/15/5/20e63852-4507-4b96-a6c9-4e02bc51c1fd.jpg",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/f5bdbfb6-ea5f-4af2-ad65-7dd62e2cd8ed8902265571440607387.png\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/2025/06/16/15/5/20e63852-4507-4b96-a6c9-4e02bc51c1fd.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/230x230ex/image/retail/images/f5bdbfb6-ea5f-4af2-ad65-7dd62e2cd8ed8902265571440607387.png\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/48x48ex/image/retail/images/f5bdbfb6-ea5f-4af2-ad65-7dd62e2cd8ed8902265571440607387.png\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/230x230ex/image/retail/images/2025/06/16/15/5/20e63852-4507-4b96-a6c9-4e02bc51c1fd.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/48x48ex/image/retail/images/2025/06/16/15/5/20e63852-4507-4b96-a6c9-4e02bc51c1fd.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/748ed488-4695-4f08-9b9f-73aa2e7c0ca42077354534904512896.png\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/230x230ex/image/retail/images/748ed488-4695-4f08-9b9f-73aa2e7c0ca42077354534904512896.png\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/48x48ex/image/retail/images/748ed488-4695-4f08-9b9f-73aa2e7c0ca42077354534904512896.png\\"
+    ]
+  },
+  "reviewsSummary": {
+    "ratingCount": 6586,
+    "ratingAverage": 4.5,
+    "ratingSummaries": [
+      {
+        "id": 15227823,
+        "productId": 185307349,
+        "rating": 5,
+        "count": 4775,
+        "percentage": 74
+      },
+      {
+        "id": 19834911,
+        "productId": 185307349,
+        "rating": 4,
+        "count": 827,
+        "percentage": 12
+      },
+      {
+        "id": 20425226,
+        "productId": 185307349,
+        "rating": 3,
+        "count": 431,
+        "percentage": 6
+      },
+      {
+        "id": 21037387,
+        "productId": 185307349,
+        "rating": 2,
+        "count": 220,
+        "percentage": 3
+      },
+      {
+        "id": 21037390,
+        "productId": 185307349,
+        "rating": 1,
+        "count": 333,
+        "percentage": 5
+      }
+    ]
+  },
+  "reviewsPageInfo": {
+    "page": 1,
+    "sizePerPage": 30,
+    "totalCount": 6586,
+    "totalPage": 220
+  },
+  "inquiries": [
+    {
+      "inquiryId": 142355490,
+      "createdAt": "20250909101716",
+      "formattedCreateDate": "2025/09/09 10:17:16",
+      "vendorItemId": 93247659280,
+      "vendorId": "A00513467",
+      "vendorName": "금성식품 주식회사",
+      "serializedAttrName": "200g | 6개",
+      "content": "상온보관으로 기재되어 있는데 \n냉장고에 보관해도되나요?\n아니면 무조건 상온보관하는게 나은가요?",
+      "comments": [
+        {
+          "inquiryCommentId": 135836777,
+          "displayWriter": "금성식품 주식회사",
+          "content": "너무 뜨거운곳 아니시면 상온보관 해주시고 트셨다면 냉장보관 부탁드립니다. ",
+          "createdAt": "20250909112503",
+          "formattedCreateDate": "2025/09/09 11:25:03"
+        }
+      ]
+    },
+    {
+      "inquiryId": 141443292,
+      "createdAt": "20250822102254",
+      "formattedCreateDate": "2025/08/22 10:22:54",
+      "vendorItemId": 85845903078,
+      "vendorId": "A00118960",
+      "vendorName": "주식회사 명일푸드",
+      "serializedAttrName": "200g | 10개",
+      "content": "한성 우동사리 200g 10개 5540원 가격 제품 구매할려고 하는데 사용기한이 어떻게 되고 실온보관 맞나요 몇시까지 주문하면 당일 발송되나요",
+      "comments": [
+        {
+          "inquiryCommentId": 134920999,
+          "displayWriter": "주식회사 명일푸드",
+          "content": "안녕하세요~\n실온상품으로 25년 12월29일 입니다.  오전11시 이전주문결재시 당일발송가능합니다. 감사합니다.",
+          "createdAt": "20250822105122",
+          "formattedCreateDate": "2025/08/22 10:51:22"
+        }
+      ]
+    },
+    {
+      "inquiryId": 140787481,
+      "createdAt": "20250809111918",
+      "formattedCreateDate": "2025/08/09 11:19:18",
+      "vendorItemId": 92777883529,
+      "vendorId": "A00010028",
+      "vendorName": "쿠팡",
+      "serializedAttrName": "200g | 6개",
+      "content": "유통기한 어떻게 되나요",
+      "comments": [
+        {
+          "inquiryCommentId": 134254608,
+          "displayWriter": "[COUPANG]",
+          "content": "안녕하세요.\n해당 상품의 유통기한은 상품페이지 내 상단에서소비기한(또는 유통기한): 2025-11-02 이거나 그 이후인 상품으로 안내하고 있으며 입고된 순으로 순차적 발송되고 있어 상품마다 제조일자 유통기한이 상이할 수 있습니다. 상품 수령 시 제품에 표기된 제조일자 및 유통기한을 참고해주시기 바랍니다.\n감사합니다",
+          "createdAt": "20250809112107",
+          "formattedCreateDate": "2025/08/09 11:21:07"
+        }
+      ]
+    },
+    {
+      "inquiryId": 138978391,
+      "createdAt": "20250706134714",
+      "formattedCreateDate": "2025/07/06 13:47:14",
+      "vendorItemId": 81014150984,
+      "vendorId": "A00118960",
+      "vendorName": "주식회사 명일푸드",
+      "serializedAttrName": "200g | 40개",
+      "content": "시큼한 맛이 나는데 상한건가요?  구매한지 한달도안됐는데",
+      "comments": [
+        {
+          "inquiryCommentId": 132445101,
+          "displayWriter": "주식회사 명일푸드",
+          "content": "주문번호 확인이 되지않습니다. 쿠팡고객센터로 문의접수 부탁드리며 \n당사에서 최근입고상품으로보내드리고 있으며 생면은 보관을위해 주정처리를 한다고 합니다.\n흐르는 물에 한번 씻은 후 사용한번해보시고 자세한제품에대한문의는 제조사인 (주)한성기업 소비자상담실 080-022-0705(수신자요금부담) 의견주시면 빠른답변 받아보실수 있습니다.\n감사합니다.\n",
+          "createdAt": "20250707090518",
+          "formattedCreateDate": "2025/07/07 09:05:18"
+        }
+      ]
+    }
+  ],
+  "inquiriesTotal": 69,
+  "source": {
+    "html": "outputs_html/response_185307349.html",
+    "quantity": "outputs_quantity/quantity_info_185307349_1761131836028.json",
+    "reviews": "outputs_reviews/review_185307349_p1_1761179857267.json",
+    "inquiries": "outputs_inquiries/inquiries_185307349_p1_1761131649097.json"
+  }
+}

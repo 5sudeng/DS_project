@@ -1,0 +1,665 @@
+{
+  "productId": "1008978",
+  "itemId": 4242032,
+  "vendorItemId": 92843978880,
+  "productTitle": "오뚜기옛날 자른미역 80g, 1개",
+  "brand": null,
+  "delivery": {
+    "badgeUrl": "https://image.coupangcdn.com/image/mobile_app/v3/brandsdp/loyalty/pc/rocketwowBi16@2x.png",
+    "company": null,
+    "companyLabel": null,
+    "countDownMessage": null,
+    "countDownMillisecond": 2583220,
+    "delayMessage": null,
+    "deliveryExtraInfo": null,
+    "deliveryNotice": null,
+    "deliveryReminderMessage": null,
+    "descriptionBadge": null,
+    "descriptionIcon": null,
+    "descriptions": "<em class='prod-txt-onyx prod-txt-green-2'>내일(목) 10/23 새벽 7시 전 </em><em class='prod-txt-onyx  prod-txt-green-normal'>도착 보장</em>",
+    "extraDataMap": {
+      "decodeDescriptions": "내일(목) 10/23 새벽 7시 전 도착 보장"
+    },
+    "extremeDescriptions": null,
+    "hideQuestionMark": false,
+    "logistics": true,
+    "loyaltyButtonText": null,
+    "rocketWowQuestionMark": true,
+    "speedType": "OVERNIGHT",
+    "title": null,
+    "type": "ROCKET_DELIVERY"
+  },
+  "price": 4260,
+  "unitPrice": 5325,
+  "unitPriceDescription": "(100g당 5,325원)",
+  "cashBackSummary": {
+    "basicCashBackList": [
+      {
+        "amount": 43,
+        "benefit": "쿠페이 머니 결제 시 1% 적립",
+        "expired": false,
+        "i18nAmount": {
+          "amount": "43",
+          "currency": "KRW",
+          "fractionDigits": 0,
+          "rawAmount": 43
+        },
+        "leftDays": null,
+        "rate": "1",
+        "type": "BASIC",
+        "validity": "월 최대 1만원"
+      }
+    ],
+    "basicRocketPayCashAmt": 43,
+    "basicRocketPayRate": "1",
+    "bookCashbackLimitScope": null,
+    "cashBackTitle": "캐시적립 혜택",
+    "cashIconUrl": "https://image.coupangcdn.com/image/badges/cashback/web/list-cash-icon@2x.png",
+    "cashWidgetIconUrl": "https://image.coupangcdn.com/image/badges/sdp/cashback/web/cash-icon@2x.png",
+    "clubMemberCashAmt": null,
+    "clubMemberRate": null,
+    "clubMemberRewardExpires": null,
+    "clubMemberRewardExpiryTime": null,
+    "clubMemberRewardLeftDays": null,
+    "couPayBankAmt": null,
+    "couPayBankExpires": true,
+    "couPayBankLeftDays": null,
+    "couPayBankRate": null,
+    "couPayMoneyAmt": null,
+    "couPayMoneyExpires": true,
+    "couPayMoneyLeftDays": null,
+    "couPayMoneyRate": null,
+    "extraCashBackList": [],
+    "finalCashBackAmt": 43,
+    "finalCashBackAmtIncludeRewardCashAmount": 43,
+    "giftRewardCashAmount": null,
+    "i18nBasicRocketPayCashAmt": {
+      "amount": "43",
+      "currency": "KRW",
+      "fractionDigits": 0,
+      "rawAmount": 43
+    },
+    "i18nClubMemberCashAmt": null,
+    "i18nCouPayBankAmt": null,
+    "i18nCouPayMoneyAmt": null,
+    "i18nFinalCashBackAmt": {
+      "amount": "43",
+      "currency": "KRW",
+      "fractionDigits": 0,
+      "rawAmount": 43
+    },
+    "i18nFinalCashBackAmtIncludeRewardCashAmount": {
+      "amount": "43",
+      "currency": "KRW",
+      "fractionDigits": 0,
+      "rawAmount": 43
+    },
+    "i18nRewardCashAmount": null,
+    "inBookCategory": null,
+    "luxuryItem": false,
+    "popupType": "BASIC",
+    "rewardCashAmount": null,
+    "targetedPromotionBanner": null
+  },
+  "options": [
+    {
+      "optionItemName": "1개",
+      "itemId": 4242032,
+      "vendorItemId": 92843978880,
+      "finalPrice": "4,260원",
+      "finalUnitPrice": "100g당 5,325원",
+      "deliveryType": "ROCKET_WOW",
+      "deliveryBadgeUrl": "https://image.coupangcdn.com/image/coupang/rds/logo/hdpi/logo_wow_small.png",
+      "soldOut": false,
+      "selected": true,
+      "hoverImageUrl": "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/53054286256769-a5dd03f5-e395-4b46-80e7-51d9cf4fea89.jpg",
+      "hoverSelectionText": "80g × 1개"
+    },
+    {
+      "optionItemName": "3개",
+      "itemId": 4242181,
+      "vendorItemId": 3005113499,
+      "finalPrice": "10,080원",
+      "finalUnitPrice": "100g당 4,200원",
+      "deliveryType": "ROCKET_WOW",
+      "deliveryBadgeUrl": "https://image.coupangcdn.com/image/coupang/rds/logo/hdpi/logo_wow_small.png",
+      "soldOut": false,
+      "selected": false,
+      "hoverImageUrl": "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/1025_amir_coupang_oct_80k/8864/ca6c1d77bba7a738f0f886ed213f29da908fb8fc520251b2490f0c3cb133.jpg",
+      "hoverSelectionText": "80g × 3개"
+    },
+    {
+      "optionItemName": "6개",
+      "itemId": 19272257729,
+      "vendorItemId": 86387426228,
+      "finalPrice": "18,660원",
+      "finalUnitPrice": "100g당 3,888원",
+      "deliveryType": "ROCKET_WOW",
+      "deliveryBadgeUrl": "https://image.coupangcdn.com/image/coupang/rds/logo/hdpi/logo_wow_small.png",
+      "soldOut": false,
+      "selected": false,
+      "hoverImageUrl": "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/326835947251918-df2f904f-7ebb-4b4f-a04e-756ca285a5f1.jpg",
+      "hoverSelectionText": "80g × 6개"
+    },
+    {
+      "optionItemName": "12개",
+      "itemId": 19272257737,
+      "vendorItemId": 86387426235,
+      "finalPrice": "36,320원",
+      "finalUnitPrice": "100g당 3,783원",
+      "deliveryType": "ROCKET_WOW",
+      "deliveryBadgeUrl": "https://image.coupangcdn.com/image/coupang/rds/logo/hdpi/logo_wow_small.png",
+      "soldOut": false,
+      "selected": false,
+      "hoverImageUrl": "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/46814089945413-9e22b535-b540-425b-bfa4-3a79e75ff4da.jpg",
+      "hoverSelectionText": "80g × 12개"
+    }
+  ],
+  "optionsExpanded": [
+    {
+      "itemId": 16303912130,
+      "itemName": "20g × 1개",
+      "vendorItemId": 87832352041,
+      "finalPrice": "1,320원",
+      "finalUnitPrice": "(100g당 6,600원)",
+      "deliveryDateDescriptions": "내일(목) 새벽 도착 보장",
+      "finalDeliveryDescription": "무료배송",
+      "soldOut": false
+    },
+    {
+      "itemId": 62200732,
+      "itemName": "20g × 2개",
+      "vendorItemId": 87845229052,
+      "finalPrice": "2,400원",
+      "finalUnitPrice": "(100g당 6,000원)",
+      "deliveryDateDescriptions": "내일(목) 새벽 도착 보장",
+      "finalDeliveryDescription": "무료배송",
+      "soldOut": false
+    },
+    {
+      "itemId": 16303912128,
+      "itemName": "20g × 3개",
+      "vendorItemId": 87845229479,
+      "finalPrice": "3,450원",
+      "finalUnitPrice": "(100g당 5,750원)",
+      "deliveryDateDescriptions": "내일(목) 새벽 도착 보장",
+      "finalDeliveryDescription": "무료배송",
+      "soldOut": false
+    },
+    {
+      "itemId": 62200733,
+      "itemName": "20g × 4개",
+      "vendorItemId": 87845229460,
+      "finalPrice": "4,600원",
+      "finalUnitPrice": "(100g당 5,750원)",
+      "deliveryDateDescriptions": "내일(목) 새벽 도착 보장",
+      "finalDeliveryDescription": "무료배송",
+      "soldOut": false
+    },
+    {
+      "itemId": 14759790131,
+      "itemName": "20g × 5개",
+      "vendorItemId": 3028860240,
+      "finalPrice": "5,500원",
+      "finalUnitPrice": "(100g당 5,500원)",
+      "deliveryDateDescriptions": "내일(목) 새벽 도착 보장",
+      "finalDeliveryDescription": "무료배송",
+      "soldOut": false
+    },
+    {
+      "itemId": 62200734,
+      "itemName": "20g × 6개",
+      "vendorItemId": 87845220530,
+      "finalPrice": "6,400원",
+      "finalUnitPrice": "(100g당 5,333원)",
+      "deliveryDateDescriptions": "내일(목) 새벽 도착 보장",
+      "finalDeliveryDescription": "무료배송",
+      "soldOut": false
+    },
+    {
+      "itemId": 19282392294,
+      "itemName": "20g × 10개",
+      "vendorItemId": 86397352175,
+      "finalPrice": "9,700원",
+      "finalUnitPrice": "(100g당 4,850원)",
+      "deliveryDateDescriptions": "내일(목) 새벽 도착 보장",
+      "finalDeliveryDescription": "무료배송",
+      "soldOut": false
+    },
+    {
+      "itemId": 19282392304,
+      "itemName": "20g × 15개",
+      "vendorItemId": 86397352191,
+      "finalPrice": "13,800원",
+      "finalUnitPrice": "(100g당 4,600원)",
+      "deliveryDateDescriptions": "내일(목) 새벽 도착 보장",
+      "finalDeliveryDescription": "무료배송",
+      "soldOut": false
+    },
+    {
+      "itemId": 14759790135,
+      "itemName": "20g × 20개",
+      "vendorItemId": 86397352207,
+      "finalPrice": "17,900원",
+      "finalUnitPrice": "(100g당 4,475원)",
+      "deliveryDateDescriptions": "내일(목) 새벽 도착 보장",
+      "finalDeliveryDescription": "무료배송",
+      "soldOut": false
+    },
+    {
+      "itemId": 19282392301,
+      "itemName": "20g × 25개",
+      "vendorItemId": 86397352186,
+      "finalPrice": "22,370원",
+      "finalUnitPrice": "(100g당 4,474원)",
+      "deliveryDateDescriptions": "내일(목) 새벽 도착 보장",
+      "finalDeliveryDescription": "무료배송",
+      "soldOut": false
+    },
+    {
+      "itemId": 14759790136,
+      "itemName": "20g × 30개",
+      "vendorItemId": 86397348560,
+      "finalPrice": "26,840원",
+      "finalUnitPrice": "(100g당 4,473원)",
+      "deliveryDateDescriptions": "내일(목) 새벽 도착 보장",
+      "finalDeliveryDescription": "무료배송",
+      "soldOut": false
+    },
+    {
+      "itemId": 16531540167,
+      "itemName": "50g × 1개",
+      "vendorItemId": 89216668765,
+      "finalPrice": "4,400원",
+      "finalUnitPrice": "(100g당 8,800원)",
+      "deliveryDateDescriptions": null,
+      "finalDeliveryDescription": "무료배송",
+      "soldOut": true
+    },
+    {
+      "itemId": 19296007053,
+      "itemName": "50g × 2개",
+      "vendorItemId": 86410635294,
+      "finalPrice": "4,580원",
+      "finalUnitPrice": "(100g당 4,580원)",
+      "deliveryDateDescriptions": "내일(목) 새벽 도착 보장",
+      "finalDeliveryDescription": "무료배송",
+      "soldOut": false
+    },
+    {
+      "itemId": 19296008163,
+      "itemName": "50g × 3개",
+      "vendorItemId": 86410636013,
+      "finalPrice": "6,370원",
+      "finalUnitPrice": "(100g당 4,247원)",
+      "deliveryDateDescriptions": "내일(목) 새벽 도착 보장",
+      "finalDeliveryDescription": "무료배송",
+      "soldOut": false
+    },
+    {
+      "itemId": 19296009469,
+      "itemName": "50g × 4개",
+      "vendorItemId": 86410637676,
+      "finalPrice": "8,160원",
+      "finalUnitPrice": "(100g당 4,080원)",
+      "deliveryDateDescriptions": "내일(목) 새벽 도착 보장",
+      "finalDeliveryDescription": "무료배송",
+      "soldOut": false
+    },
+    {
+      "itemId": 16303927277,
+      "itemName": "50g × 5개",
+      "vendorItemId": 3004902559,
+      "finalPrice": "9,950원",
+      "finalUnitPrice": "(100g당 3,980원)",
+      "deliveryDateDescriptions": "내일(목) 새벽 도착 보장",
+      "finalDeliveryDescription": "무료배송",
+      "soldOut": false
+    },
+    {
+      "itemId": 19296009583,
+      "itemName": "50g × 6개",
+      "vendorItemId": 86410637811,
+      "finalPrice": "11,940원",
+      "finalUnitPrice": "(100g당 3,980원)",
+      "deliveryDateDescriptions": "내일(목) 새벽 도착 보장",
+      "finalDeliveryDescription": "무료배송",
+      "soldOut": false
+    },
+    {
+      "itemId": 4242032,
+      "itemName": "80g × 1개",
+      "vendorItemId": 92843978880,
+      "finalPrice": "4,260원",
+      "finalUnitPrice": "(100g당 5,325원)",
+      "deliveryDateDescriptions": "내일(목) 새벽 도착 보장",
+      "finalDeliveryDescription": "무료배송",
+      "soldOut": false
+    },
+    {
+      "itemId": 25915068419,
+      "itemName": "80g × 2개",
+      "vendorItemId": 92900672376,
+      "finalPrice": "7,680원",
+      "finalUnitPrice": "(100g당 4,800원)",
+      "deliveryDateDescriptions": "내일(목) 새벽 도착 보장",
+      "finalDeliveryDescription": "무료배송",
+      "soldOut": false
+    },
+    {
+      "itemId": 4242181,
+      "itemName": "80g × 3개",
+      "vendorItemId": 3005113499,
+      "finalPrice": "10,080원",
+      "finalUnitPrice": "(100g당 4,200원)",
+      "deliveryDateDescriptions": "내일(목) 새벽 도착 보장",
+      "finalDeliveryDescription": "무료배송",
+      "soldOut": false
+    },
+    {
+      "itemId": 19272257729,
+      "itemName": "80g × 6개",
+      "vendorItemId": 86387426228,
+      "finalPrice": "18,660원",
+      "finalUnitPrice": "(100g당 3,888원)",
+      "deliveryDateDescriptions": "내일(목) 새벽 도착 보장",
+      "finalDeliveryDescription": "무료배송",
+      "soldOut": false
+    },
+    {
+      "itemId": 19272257737,
+      "itemName": "80g × 12개",
+      "vendorItemId": 86387426235,
+      "finalPrice": "36,320원",
+      "finalUnitPrice": "(100g당 3,783원)",
+      "deliveryDateDescriptions": "내일(목) 새벽 도착 보장",
+      "finalDeliveryDescription": "무료배송",
+      "soldOut": false
+    },
+    {
+      "itemId": 19272257790,
+      "itemName": "80g × 15개",
+      "vendorItemId": 86387426312,
+      "finalPrice": "45,400원",
+      "finalUnitPrice": "(100g당 3,783원)",
+      "deliveryDateDescriptions": "내일(목) 새벽 도착 보장",
+      "finalDeliveryDescription": "무료배송",
+      "soldOut": false
+    },
+    {
+      "itemId": 14170838738,
+      "itemName": "120g × 1개",
+      "vendorItemId": 87407429664,
+      "finalPrice": "7,370원",
+      "finalUnitPrice": "(100g당 6,142원)",
+      "deliveryDateDescriptions": "모레(금) 10/24 도착 예정 (판매자배송)",
+      "finalDeliveryDescription": "무료배송",
+      "soldOut": false
+    },
+    {
+      "itemId": 25327529488,
+      "itemName": "120g × 2개",
+      "vendorItemId": 92322389223,
+      "finalPrice": "12,890원",
+      "finalUnitPrice": "(100g당 5,371원)",
+      "deliveryDateDescriptions": "모레(금) 10/24 도착 예정 (판매자배송)",
+      "finalDeliveryDescription": "무료배송",
+      "soldOut": false
+    },
+    {
+      "itemId": 21514959895,
+      "itemName": "120g × 3개",
+      "vendorItemId": 89307271263,
+      "finalPrice": "17,290원",
+      "finalUnitPrice": "(100g당 4,803원)",
+      "deliveryDateDescriptions": "모레(금) 10/24 도착 예정 (판매자배송)",
+      "finalDeliveryDescription": "무료배송",
+      "soldOut": false
+    },
+    {
+      "itemId": 25327529496,
+      "itemName": "120g × 4개",
+      "vendorItemId": 92322389244,
+      "finalPrice": "22,710원",
+      "finalUnitPrice": "(100g당 4,731원)",
+      "deliveryDateDescriptions": "모레(금) 10/24 도착 예정 (판매자배송)",
+      "finalDeliveryDescription": "무료배송",
+      "soldOut": false
+    },
+    {
+      "itemId": 23486758591,
+      "itemName": "120g × 10개",
+      "vendorItemId": 90513246517,
+      "finalPrice": "51,920원",
+      "finalUnitPrice": "(100g당 4,327원)",
+      "deliveryDateDescriptions": "모레(금) 10/24 도착 예정 (판매자배송)",
+      "finalDeliveryDescription": "무료배송",
+      "soldOut": false
+    },
+    {
+      "itemId": 25841907598,
+      "itemName": "250g × 1개",
+      "vendorItemId": 93146452408,
+      "finalPrice": "13,560원",
+      "finalUnitPrice": "(100g당 5,424원)",
+      "deliveryDateDescriptions": "모레(금) 10/24 도착 예정 (판매자배송)",
+      "finalDeliveryDescription": "무료배송",
+      "soldOut": false
+    },
+    {
+      "itemId": 19839244443,
+      "itemName": "250g × 2개",
+      "vendorItemId": 86940812754,
+      "finalPrice": "26,890원",
+      "finalUnitPrice": "(100g당 5,378원)",
+      "deliveryDateDescriptions": "모레(금) 10/24 도착 예정 (판매자배송)",
+      "finalDeliveryDescription": "무료배송",
+      "soldOut": false
+    },
+    {
+      "itemId": 19839244439,
+      "itemName": "250g × 3개",
+      "vendorItemId": 86940812738,
+      "finalPrice": "37,500원",
+      "finalUnitPrice": "(100g당 5,000원)",
+      "deliveryDateDescriptions": "모레(금) 10/24 도착 예정 (판매자배송)",
+      "finalDeliveryDescription": "무료배송",
+      "soldOut": false
+    }
+  ],
+  "images": {
+    "fromHTML": [
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/53054286256769-a5dd03f5-e395-4b46-80e7-51d9cf4fea89.jpg",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/53054286256769-a5dd03f5-e395-4b46-80e7-51d9cf4fea89.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/53054286256769-a5dd03f5-e395-4b46-80e7-51d9cf4fea89.jpg\\\\\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/230x230ex/image/retail/images/53054286256769-a5dd03f5-e395-4b46-80e7-51d9cf4fea89.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/48x48ex/image/retail/images/53054286256769-a5dd03f5-e395-4b46-80e7-51d9cf4fea89.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/186475160398126-7e9a332f-2879-428c-bb66-11a7967cb547.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/230x230ex/image/retail/images/186475160398126-7e9a332f-2879-428c-bb66-11a7967cb547.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/48x48ex/image/retail/images/186475160398126-7e9a332f-2879-428c-bb66-11a7967cb547.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/860021590431914-f70c2a5d-78f2-4065-a73b-87cfec23b070.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/230x230ex/image/retail/images/860021590431914-f70c2a5d-78f2-4065-a73b-87cfec23b070.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/48x48ex/image/retail/images/860021590431914-f70c2a5d-78f2-4065-a73b-87cfec23b070.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/167994307293751-ed032ce9-47c8-46f4-a536-1118f6bd0b1e.png\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/230x230ex/image/retail/images/167994307293751-ed032ce9-47c8-46f4-a536-1118f6bd0b1e.png\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/48x48ex/image/retail/images/167994307293751-ed032ce9-47c8-46f4-a536-1118f6bd0b1e.png\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/186732760255018-9b85d50d-fd94-485a-a3e3-b1b10bfc8767.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/230x230ex/image/retail/images/186732760255018-9b85d50d-fd94-485a-a3e3-b1b10bfc8767.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/48x48ex/image/retail/images/186732760255018-9b85d50d-fd94-485a-a3e3-b1b10bfc8767.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/46814089945413-9e22b535-b540-425b-bfa4-3a79e75ff4da.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/230x230ex/image/retail/images/46814089945413-9e22b535-b540-425b-bfa4-3a79e75ff4da.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/48x48ex/image/retail/images/46814089945413-9e22b535-b540-425b-bfa4-3a79e75ff4da.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/5721457501664201-45d4812c-713b-4f4e-92a3-afbbddeb7957.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/230x230ex/image/retail/images/5721457501664201-45d4812c-713b-4f4e-92a3-afbbddeb7957.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/48x48ex/image/retail/images/5721457501664201-45d4812c-713b-4f4e-92a3-afbbddeb7957.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/860125358081806-e9a65688-0155-4c54-b0a1-40b5b7a705b2.png\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/230x230ex/image/retail/images/860125358081806-e9a65688-0155-4c54-b0a1-40b5b7a705b2.png\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/48x48ex/image/retail/images/860125358081806-e9a65688-0155-4c54-b0a1-40b5b7a705b2.png\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/859994242322605-1f066653-7f61-4905-a481-d0cfb3f01064.png\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/230x230ex/image/retail/images/859994242322605-1f066653-7f61-4905-a481-d0cfb3f01064.png\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/48x48ex/image/retail/images/859994242322605-1f066653-7f61-4905-a481-d0cfb3f01064.png\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/636475090593290-9c80cbad-fc41-4096-b692-8321ec986bcb.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/230x230ex/image/retail/images/636475090593290-9c80cbad-fc41-4096-b692-8321ec986bcb.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/48x48ex/image/retail/images/636475090593290-9c80cbad-fc41-4096-b692-8321ec986bcb.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/20191695272072-59d269f3-717b-4a36-8437-d0947c7ccd27.png\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/230x230ex/image/retail/images/20191695272072-59d269f3-717b-4a36-8437-d0947c7ccd27.png\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/48x48ex/image/retail/images/20191695272072-59d269f3-717b-4a36-8437-d0947c7ccd27.png\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/155332392568203-bb6deeb8-8fde-426e-83e6-741d8fef2406.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/230x230ex/image/retail/images/155332392568203-bb6deeb8-8fde-426e-83e6-741d8fef2406.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/48x48ex/image/retail/images/155332392568203-bb6deeb8-8fde-426e-83e6-741d8fef2406.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/344160138918065-0bbb37ca-1395-44c9-957b-654ca6f34865.png\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/230x230ex/image/retail/images/344160138918065-0bbb37ca-1395-44c9-957b-654ca6f34865.png\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/48x48ex/image/retail/images/344160138918065-0bbb37ca-1395-44c9-957b-654ca6f34865.png\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/326855619814497-1649b065-260e-4408-aa6d-02cb4ba718b1.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/230x230ex/image/retail/images/326855619814497-1649b065-260e-4408-aa6d-02cb4ba718b1.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/48x48ex/image/retail/images/326855619814497-1649b065-260e-4408-aa6d-02cb4ba718b1.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/153603533189656-d7f45e3b-d490-46c6-8f23-8789cac5e562.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/230x230ex/image/retail/images/153603533189656-d7f45e3b-d490-46c6-8f23-8789cac5e562.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/48x48ex/image/retail/images/153603533189656-d7f45e3b-d490-46c6-8f23-8789cac5e562.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/186749772539638-398b4549-a5c1-4019-89ac-4ce7afc13e8f.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/230x230ex/image/retail/images/186749772539638-398b4549-a5c1-4019-89ac-4ce7afc13e8f.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/48x48ex/image/retail/images/186749772539638-398b4549-a5c1-4019-89ac-4ce7afc13e8f.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/65c1bf3c-3bb6-42a8-8a54-2a5076ea03393020602419927704297.png\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/230x230ex/image/retail/images/65c1bf3c-3bb6-42a8-8a54-2a5076ea03393020602419927704297.png\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/48x48ex/image/retail/images/65c1bf3c-3bb6-42a8-8a54-2a5076ea03393020602419927704297.png\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/326835947251918-df2f904f-7ebb-4b4f-a04e-756ca285a5f1.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/230x230ex/image/retail/images/326835947251918-df2f904f-7ebb-4b4f-a04e-756ca285a5f1.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/48x48ex/image/retail/images/326835947251918-df2f904f-7ebb-4b4f-a04e-756ca285a5f1.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/273171463176726-db386e94-7878-4103-a541-86f6d2ab6d97.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/230x230ex/image/retail/images/273171463176726-db386e94-7878-4103-a541-86f6d2ab6d97.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/48x48ex/image/retail/images/273171463176726-db386e94-7878-4103-a541-86f6d2ab6d97.jpg\\"
+    ]
+  },
+  "reviewsSummary": {
+    "ratingCount": 38038,
+    "ratingAverage": 5,
+    "ratingSummaries": [
+      {
+        "id": 927576,
+        "productId": 1008978,
+        "rating": 5,
+        "count": 33203,
+        "percentage": 87
+      },
+      {
+        "id": 790712,
+        "productId": 1008978,
+        "rating": 4,
+        "count": 3487,
+        "percentage": 9
+      },
+      {
+        "id": 3334604,
+        "productId": 1008978,
+        "rating": 3,
+        "count": 926,
+        "percentage": 2
+      },
+      {
+        "id": 5017991,
+        "productId": 1008978,
+        "rating": 2,
+        "count": 217,
+        "percentage": 1
+      },
+      {
+        "id": 4551816,
+        "productId": 1008978,
+        "rating": 1,
+        "count": 205,
+        "percentage": 1
+      }
+    ]
+  },
+  "reviewsPageInfo": {
+    "page": 1,
+    "sizePerPage": 30,
+    "totalCount": 38038,
+    "totalPage": 1268
+  },
+  "inquiries": [
+    {
+      "inquiryId": 142359795,
+      "createdAt": "20250909113146",
+      "formattedCreateDate": "2025/09/09 11:31:46",
+      "vendorItemId": 86410635294,
+      "vendorId": "A00010028",
+      "vendorName": "쿠팡",
+      "serializedAttrName": "50g | 2개",
+      "content": "제조일이궁금합니다",
+      "comments": [
+        {
+          "inquiryCommentId": 135840604,
+          "displayWriter": "[COUPANG]",
+          "content": "안녕하세요. 입고된 순으로 순차적 발송되고 있어 상품마다 제조일자가 상이할 수 있습니다. 상품 수령 시 제품에 표기된 제조일자를 참고해주시기 바랍니다. 감사합니다.",
+          "createdAt": "20250909122037",
+          "formattedCreateDate": "2025/09/09 12:20:37"
+        }
+      ]
+    },
+    {
+      "inquiryId": 142155394,
+      "createdAt": "20250904205852",
+      "formattedCreateDate": "2025/09/04 20:58:52",
+      "vendorItemId": 86397348560,
+      "vendorId": "A00010028",
+      "vendorName": "쿠팡",
+      "serializedAttrName": "20g | 30개",
+      "content": "안녕하세요? \r\n이 상품의 정확한 유통기간을 알고싶습니다.",
+      "comments": [
+        {
+          "inquiryCommentId": 135638994,
+          "displayWriter": "[COUPANG]",
+          "content": "안녕하세요. 오뚜기 옛날자른미역, 20g, 30개 상품은 현재 유통기한이 2025년 10월 15일인 상품으로 발송해 드리고 있으며, 상품은 입고된 순으로 순차적 발송되고 있어 상품마다 제조일자 및 유통기한이 상이할 수 있습니다. 상품 수령 시 제품에 표기된 (제조일자 OR 유통기한) 를 참고해 주시기 바랍니다. 감사합니다.",
+          "createdAt": "20250905090157",
+          "formattedCreateDate": "2025/09/05 09:01:57"
+        }
+      ]
+    },
+    {
+      "inquiryId": 141529443,
+      "createdAt": "20250824080033",
+      "formattedCreateDate": "2025/08/24 08:00:33",
+      "vendorItemId": 86410635294,
+      "vendorId": "A00010028",
+      "vendorName": "쿠팡",
+      "serializedAttrName": "50g | 2개",
+      "content": "안녕하세요\r\n건조된 상태로 바로 라면이나 기타 끓여 먹어도 되나요??\r\n불리고 씻어 먹어야 하나요?",
+      "comments": [
+        {
+          "inquiryCommentId": 134985987,
+          "displayWriter": "[COUPANG]",
+          "content": "안녕하세요. 물에 충분히 담근 후 이물질을 제거하고 섭취해야 하는 점 상세페이지 내 안내드리고 있으니 참고하여 이용 부탁드립니다. 감사합니다.",
+          "createdAt": "20250824095924",
+          "formattedCreateDate": "2025/08/24 09:59:24"
+        }
+      ]
+    },
+    {
+      "inquiryId": 137359298,
+      "createdAt": "20250606194128",
+      "formattedCreateDate": "2025/06/06 19:41:28",
+      "vendorItemId": 86410637676,
+      "vendorId": "A00010028",
+      "vendorName": "쿠팡",
+      "serializedAttrName": "50g | 4개",
+      "content": "지금 주문하면 유통기한이 언제까지인 제품이 오나요?",
+      "comments": [
+        {
+          "inquiryCommentId": 130807182,
+          "displayWriter": "[COUPANG]",
+          "content": "안녕하세요. 오뚜기 옛날 자른 미역, 50g, 4개 상품의 유통기한은 상품페이지 내 상단에서 안내하고 있으니 참고하여 구매 부탁드립니다. 감사합니다.",
+          "createdAt": "20250606195847",
+          "formattedCreateDate": "2025/06/06 19:58:47"
+        }
+      ]
+    }
+  ],
+  "inquiriesTotal": 65,
+  "source": {
+    "html": "outputs_html/response_1008978.html",
+    "quantity": "outputs_quantity/quantity_info_1008978_1761131816732.json",
+    "reviews": "outputs_reviews/review_1008978_p1_1761179841642.json",
+    "inquiries": "outputs_inquiries/inquiries_1008978_p1_1761131634795.json"
+  }
+}

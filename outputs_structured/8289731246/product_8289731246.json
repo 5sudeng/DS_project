@@ -1,0 +1,399 @@
+{
+  "productId": "8289731246",
+  "itemId": 23467099110,
+  "vendorItemId": 90766226334,
+  "productTitle": "크라운 고소한 땅콩샌드 279g, 3개",
+  "brand": null,
+  "delivery": {
+    "badgeUrl": "https://image.coupangcdn.com/image/mobile_app/v3/brandsdp/loyalty/pc/rocketwowBi16@2x.png",
+    "company": null,
+    "companyLabel": null,
+    "countDownMessage": null,
+    "countDownMillisecond": 2574903,
+    "delayMessage": null,
+    "deliveryExtraInfo": null,
+    "deliveryNotice": null,
+    "deliveryReminderMessage": null,
+    "descriptionBadge": null,
+    "descriptionIcon": null,
+    "descriptions": "<em class='prod-txt-onyx prod-txt-green-2'>내일(목) 10/23 새벽 7시 전 </em><em class='prod-txt-onyx  prod-txt-green-normal'>도착 보장</em>",
+    "extraDataMap": {
+      "decodeDescriptions": "내일(목) 10/23 새벽 7시 전 도착 보장"
+    },
+    "extremeDescriptions": null,
+    "hideQuestionMark": false,
+    "logistics": true,
+    "loyaltyButtonText": null,
+    "rocketWowQuestionMark": true,
+    "speedType": "OVERNIGHT",
+    "title": null,
+    "type": "ROCKET_DELIVERY"
+  },
+  "price": 6480,
+  "unitPrice": 77,
+  "unitPriceDescription": "(10g당 77원)",
+  "cashBackSummary": {
+    "basicCashBackList": [
+      {
+        "amount": 65,
+        "benefit": "쿠페이 머니 결제 시 1% 적립",
+        "expired": false,
+        "i18nAmount": {
+          "amount": "65",
+          "currency": "KRW",
+          "fractionDigits": 0,
+          "rawAmount": 65
+        },
+        "leftDays": null,
+        "rate": "1",
+        "type": "BASIC",
+        "validity": "월 최대 1만원"
+      }
+    ],
+    "basicRocketPayCashAmt": 65,
+    "basicRocketPayRate": "1",
+    "bookCashbackLimitScope": null,
+    "cashBackTitle": "캐시적립 혜택",
+    "cashIconUrl": "https://image.coupangcdn.com/image/badges/cashback/web/list-cash-icon@2x.png",
+    "cashWidgetIconUrl": "https://image.coupangcdn.com/image/badges/sdp/cashback/web/cash-icon@2x.png",
+    "clubMemberCashAmt": null,
+    "clubMemberRate": null,
+    "clubMemberRewardExpires": null,
+    "clubMemberRewardExpiryTime": null,
+    "clubMemberRewardLeftDays": null,
+    "couPayBankAmt": null,
+    "couPayBankExpires": true,
+    "couPayBankLeftDays": null,
+    "couPayBankRate": null,
+    "couPayMoneyAmt": null,
+    "couPayMoneyExpires": true,
+    "couPayMoneyLeftDays": null,
+    "couPayMoneyRate": null,
+    "extraCashBackList": [],
+    "finalCashBackAmt": 65,
+    "finalCashBackAmtIncludeRewardCashAmount": 65,
+    "giftRewardCashAmount": null,
+    "i18nBasicRocketPayCashAmt": {
+      "amount": "65",
+      "currency": "KRW",
+      "fractionDigits": 0,
+      "rawAmount": 65
+    },
+    "i18nClubMemberCashAmt": null,
+    "i18nCouPayBankAmt": null,
+    "i18nCouPayMoneyAmt": null,
+    "i18nFinalCashBackAmt": {
+      "amount": "65",
+      "currency": "KRW",
+      "fractionDigits": 0,
+      "rawAmount": 65
+    },
+    "i18nFinalCashBackAmtIncludeRewardCashAmount": {
+      "amount": "65",
+      "currency": "KRW",
+      "fractionDigits": 0,
+      "rawAmount": 65
+    },
+    "i18nRewardCashAmount": null,
+    "inBookCategory": null,
+    "luxuryItem": false,
+    "popupType": "BASIC",
+    "rewardCashAmount": null,
+    "targetedPromotionBanner": null
+  },
+  "options": [
+    {
+      "optionItemName": "2개",
+      "itemId": 23833081939,
+      "vendorItemId": 90766226597,
+      "finalPrice": "4,320원",
+      "finalUnitPrice": "10g당 77원",
+      "deliveryType": "ROCKET_WOW",
+      "deliveryBadgeUrl": "https://image.coupangcdn.com/image/coupang/rds/logo/hdpi/logo_wow_small.png",
+      "soldOut": false,
+      "selected": false,
+      "hoverImageUrl": "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/242561747366908-5b261837-b768-4d91-bfe5-54c6f98f1932.jpg",
+      "hoverSelectionText": "279g × 2개"
+    },
+    {
+      "optionItemName": "3개",
+      "itemId": 23467099110,
+      "vendorItemId": 90766226334,
+      "finalPrice": "6,480원",
+      "finalUnitPrice": "10g당 77원",
+      "deliveryType": "ROCKET_WOW",
+      "deliveryBadgeUrl": "https://image.coupangcdn.com/image/coupang/rds/logo/hdpi/logo_wow_small.png",
+      "soldOut": false,
+      "selected": true,
+      "hoverImageUrl": "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/68335709441800-eb7f3e2e-895a-4efe-87ac-9df41ea22dab.jpg",
+      "hoverSelectionText": "279g × 3개"
+    },
+    {
+      "optionItemName": "4개",
+      "itemId": 23833081949,
+      "vendorItemId": 90766226752,
+      "finalPrice": "8,640원",
+      "finalUnitPrice": "10g당 77원",
+      "deliveryType": "ROCKET_WOW",
+      "deliveryBadgeUrl": "https://image.coupangcdn.com/image/coupang/rds/logo/hdpi/logo_wow_small.png",
+      "soldOut": false,
+      "selected": false,
+      "hoverImageUrl": "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/139304025090337-28022c9b-9e67-4916-991c-ad89d8683115.jpg",
+      "hoverSelectionText": "279g × 4개"
+    },
+    {
+      "optionItemName": "5개",
+      "itemId": 23833081933,
+      "vendorItemId": 90766226751,
+      "finalPrice": "10,800원",
+      "finalUnitPrice": "10g당 77원",
+      "deliveryType": "ROCKET_WOW",
+      "deliveryBadgeUrl": "https://image.coupangcdn.com/image/coupang/rds/logo/hdpi/logo_wow_small.png",
+      "soldOut": false,
+      "selected": false,
+      "hoverImageUrl": "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/68301230187427-74481562-40f0-4f67-beda-ac109894e0fa.jpg",
+      "hoverSelectionText": "279g × 5개"
+    }
+  ],
+  "optionsExpanded": [
+    {
+      "itemId": 23803838540,
+      "itemName": "93g × 1개",
+      "vendorItemId": 91249198384,
+      "finalPrice": "1,400원",
+      "finalUnitPrice": "(10g당 151원)",
+      "deliveryDateDescriptions": "모레(금) 10/24 도착 예정 (판매자배송)",
+      "finalDeliveryDescription": "배송비 2,500원",
+      "soldOut": false
+    },
+    {
+      "itemId": 23739851645,
+      "itemName": "93g × 5개",
+      "vendorItemId": 90764472062,
+      "finalPrice": "5,000원",
+      "finalUnitPrice": "(10g당 108원)",
+      "deliveryDateDescriptions": "내일(목) 새벽 도착 보장",
+      "finalDeliveryDescription": "무료배송",
+      "soldOut": false
+    },
+    {
+      "itemId": 23833081939,
+      "itemName": "279g × 2개",
+      "vendorItemId": 90766226597,
+      "finalPrice": "4,320원",
+      "finalUnitPrice": "(10g당 77원)",
+      "deliveryDateDescriptions": "내일(목) 새벽 도착 보장",
+      "finalDeliveryDescription": "무료배송",
+      "soldOut": false
+    },
+    {
+      "itemId": 23467099110,
+      "itemName": "279g × 3개",
+      "vendorItemId": 90766226334,
+      "finalPrice": "6,480원",
+      "finalUnitPrice": "(10g당 77원)",
+      "deliveryDateDescriptions": "내일(목) 새벽 도착 보장",
+      "finalDeliveryDescription": "무료배송",
+      "soldOut": false
+    },
+    {
+      "itemId": 23833081949,
+      "itemName": "279g × 4개",
+      "vendorItemId": 90766226752,
+      "finalPrice": "8,640원",
+      "finalUnitPrice": "(10g당 77원)",
+      "deliveryDateDescriptions": "내일(목) 새벽 도착 보장",
+      "finalDeliveryDescription": "무료배송",
+      "soldOut": false
+    },
+    {
+      "itemId": 23833081933,
+      "itemName": "279g × 5개",
+      "vendorItemId": 90766226751,
+      "finalPrice": "10,800원",
+      "finalUnitPrice": "(10g당 77원)",
+      "deliveryDateDescriptions": "내일(목) 새벽 도착 보장",
+      "finalDeliveryDescription": "무료배송",
+      "soldOut": false
+    }
+  ],
+  "images": {
+    "fromHTML": [
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/68335709441800-eb7f3e2e-895a-4efe-87ac-9df41ea22dab.jpg",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/404159762698099-8635ac90-5251-45c0-9f7c-5d6c3e4682f7.png",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/4007919035881966-9ae331b0-5ae4-4548-bdd0-ef44f5a76659.png",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/2696615926025986-6ce5ef89-a465-4a09-82e1-f6e2181976c7.png",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/152730302000214-01df67f8-a335-4bce-a4d6-7fa8d8241c82.png",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/1834506145473894-35820a51-bf22-4fb0-8c5b-fcea54759517.png",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/68335709441800-eb7f3e2e-895a-4efe-87ac-9df41ea22dab.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/404159762698099-8635ac90-5251-45c0-9f7c-5d6c3e4682f7.png\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/4007919035881966-9ae331b0-5ae4-4548-bdd0-ef44f5a76659.png\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/2696615926025986-6ce5ef89-a465-4a09-82e1-f6e2181976c7.png\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/152730302000214-01df67f8-a335-4bce-a4d6-7fa8d8241c82.png\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/1834506145473894-35820a51-bf22-4fb0-8c5b-fcea54759517.png\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/230x230ex/image/retail/images/68335709441800-eb7f3e2e-895a-4efe-87ac-9df41ea22dab.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/48x48ex/image/retail/images/68335709441800-eb7f3e2e-895a-4efe-87ac-9df41ea22dab.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/230x230ex/image/retail/images/404159762698099-8635ac90-5251-45c0-9f7c-5d6c3e4682f7.png\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/48x48ex/image/retail/images/404159762698099-8635ac90-5251-45c0-9f7c-5d6c3e4682f7.png\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/230x230ex/image/retail/images/4007919035881966-9ae331b0-5ae4-4548-bdd0-ef44f5a76659.png\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/48x48ex/image/retail/images/4007919035881966-9ae331b0-5ae4-4548-bdd0-ef44f5a76659.png\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/230x230ex/image/retail/images/2696615926025986-6ce5ef89-a465-4a09-82e1-f6e2181976c7.png\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/48x48ex/image/retail/images/2696615926025986-6ce5ef89-a465-4a09-82e1-f6e2181976c7.png\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/230x230ex/image/retail/images/152730302000214-01df67f8-a335-4bce-a4d6-7fa8d8241c82.png\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/48x48ex/image/retail/images/152730302000214-01df67f8-a335-4bce-a4d6-7fa8d8241c82.png\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/230x230ex/image/retail/images/1834506145473894-35820a51-bf22-4fb0-8c5b-fcea54759517.png\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/48x48ex/image/retail/images/1834506145473894-35820a51-bf22-4fb0-8c5b-fcea54759517.png\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/68301230187427-74481562-40f0-4f67-beda-ac109894e0fa.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/230x230ex/image/retail/images/68301230187427-74481562-40f0-4f67-beda-ac109894e0fa.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/48x48ex/image/retail/images/68301230187427-74481562-40f0-4f67-beda-ac109894e0fa.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/242561747366908-5b261837-b768-4d91-bfe5-54c6f98f1932.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/230x230ex/image/retail/images/242561747366908-5b261837-b768-4d91-bfe5-54c6f98f1932.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/48x48ex/image/retail/images/242561747366908-5b261837-b768-4d91-bfe5-54c6f98f1932.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/78714590736216-39d76d3b-b6e8-4f78-b3bd-4e50cd7cb10f.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/230x230ex/image/retail/images/78714590736216-39d76d3b-b6e8-4f78-b3bd-4e50cd7cb10f.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/48x48ex/image/retail/images/78714590736216-39d76d3b-b6e8-4f78-b3bd-4e50cd7cb10f.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/139304025090337-28022c9b-9e67-4916-991c-ad89d8683115.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/230x230ex/image/retail/images/139304025090337-28022c9b-9e67-4916-991c-ad89d8683115.jpg\\",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/48x48ex/image/retail/images/139304025090337-28022c9b-9e67-4916-991c-ad89d8683115.jpg\\"
+    ]
+  },
+  "reviewsSummary": {
+    "ratingCount": 5278,
+    "ratingAverage": 5,
+    "ratingSummaries": [
+      {
+        "id": 395216172,
+        "productId": 8289731246,
+        "rating": 5,
+        "count": 4454,
+        "percentage": 86
+      },
+      {
+        "id": 395216171,
+        "productId": 8289731246,
+        "rating": 4,
+        "count": 527,
+        "percentage": 9
+      },
+      {
+        "id": 395216170,
+        "productId": 8289731246,
+        "rating": 3,
+        "count": 173,
+        "percentage": 3
+      },
+      {
+        "id": 395216169,
+        "productId": 8289731246,
+        "rating": 2,
+        "count": 53,
+        "percentage": 1
+      },
+      {
+        "id": 395216168,
+        "productId": 8289731246,
+        "rating": 1,
+        "count": 71,
+        "percentage": 1
+      }
+    ]
+  },
+  "reviewsPageInfo": {
+    "page": 1,
+    "sizePerPage": 30,
+    "totalCount": 5278,
+    "totalPage": 176
+  },
+  "inquiries": [
+    {
+      "inquiryId": 143915964,
+      "createdAt": "20251011150714",
+      "formattedCreateDate": "2025/10/11 15:07:14",
+      "vendorItemId": 90766226597,
+      "vendorId": "A00010028",
+      "vendorName": "쿠팡",
+      "serializedAttrName": "279g | 2개",
+      "content": "문의해요 우도땅콩\r\n들어잇다고쓰여잇는데요\r\n우도가  어느지역  인가요?",
+      "comments": [
+        {
+          "inquiryCommentId": 137375149,
+          "displayWriter": "[COUPANG]",
+          "content": "고객님의 문의 사항은 업체(제조사) 확인 후에 답변 드릴 수 있습니다.\n업체의 연결 지연 또는 운영 시간 종료 인한 연락 불가 시에는 답변에 시간이 소요될 수 있음을 양해 부탁 드립니다.\n업체 확인 후 빠른 답변 드릴 수 있도록 노력하겠습니다.\n감사합니다.",
+          "createdAt": "20251011153152",
+          "formattedCreateDate": "2025/10/11 15:31:52"
+        },
+        {
+          "inquiryCommentId": 137774675,
+          "displayWriter": "[COUPANG]",
+          "content": "안녕하세요. 제주 제주시 우도면(섬 지역)인 점 참고하여 이용 부탁드립니다. 감사합니다.",
+          "createdAt": "20251017133432",
+          "formattedCreateDate": "2025/10/17 13:34:32"
+        }
+      ]
+    },
+    {
+      "inquiryId": 141322549,
+      "createdAt": "20250820125335",
+      "formattedCreateDate": "2025/08/20 12:53:35",
+      "vendorItemId": 90766226751,
+      "vendorId": "A00010028",
+      "vendorName": "쿠팡",
+      "serializedAttrName": "279g | 5개",
+      "content": "279g 한박스에 몇봉지 들어가 있나요?\n1박스당 9봉지 들어가있으면 5박스 햇을때 총 4봉지가 되는건지",
+      "comments": [
+        {
+          "inquiryCommentId": 134801274,
+          "displayWriter": "[COUPANG]",
+          "content": "안녕하세요. 고객님. 문의하신 크라운 고소한 땅콩샌드 279g 상품은 1박스에 47g짜리 6봉지가 들어있습니다. 상품 이용에 도움이 되셨기를 바랍니다. 감사합니다.",
+          "createdAt": "20250820133944",
+          "formattedCreateDate": "2025/08/20 13:39:44"
+        }
+      ]
+    },
+    {
+      "inquiryId": 140921275,
+      "createdAt": "20250812120305",
+      "formattedCreateDate": "2025/08/12 12:03:05",
+      "vendorItemId": 91249198384,
+      "vendorId": "A00262231",
+      "vendorName": "주식회사 세븐스타몰",
+      "serializedAttrName": "93g | 1개",
+      "content": "지금 주문하면 유통기한 언제꺼로 출고되나요",
+      "comments": [
+        {
+          "inquiryCommentId": 134415226,
+          "displayWriter": "주식회사 세븐스타몰",
+          "content": "안녕하세요\n현재 출고되는 상품은 12월 17일까지입니다. 감사합니다.\n",
+          "createdAt": "20250812161648",
+          "formattedCreateDate": "2025/08/12 16:16:48"
+        }
+      ]
+    },
+    {
+      "inquiryId": 138522390,
+      "createdAt": "20250627192117",
+      "formattedCreateDate": "2025/06/27 19:21:17",
+      "vendorItemId": 91889032194,
+      "vendorId": null,
+      "vendorName": null,
+      "serializedAttrName": "",
+      "content": "안녕하세요. 국희땅콩샌드 279*2 주문했습니다. 과자류 부서지지 않게 포장발송 부탁드립니다.",
+      "comments": [
+        {
+          "inquiryCommentId": 132004759,
+          "displayWriter": "키즈앤오피스",
+          "content": "네. 감사합니다",
+          "createdAt": "20250628103853",
+          "formattedCreateDate": "2025/06/28 10:38:53"
+        }
+      ]
+    }
+  ],
+  "inquiriesTotal": 10,
+  "source": {
+    "html": "outputs_html/response_8289731246.html",
+    "quantity": "outputs_quantity/quantity_info_8289731246_1761131825093.json",
+    "reviews": "outputs_reviews/review_8289731246_p1_1761179848009.json",
+    "inquiries": "outputs_inquiries/inquiries_8289731246_p1_1761131640707.json"
+  }
+}
