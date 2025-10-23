@@ -14,7 +14,7 @@ use example (single) :
         --product-id 8250433942 \
         --item-id 23751564869 \
         --vendor-item-id 90776061353 \
-        --page 1 --size 50 \
+        --page 1 --size 30 \
         --outdir outputs_reviews \
         --cookie-file cookie.txt
 
