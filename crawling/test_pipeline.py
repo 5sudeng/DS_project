@@ -24,7 +24,7 @@ def test_pipeline():
         
         # Test configuration
         config = {
-            'category_url': 'https://www.coupang.com/np/categories/186764',  # Electronics category
+            'category_url': 'https://www.coupang.com/np/categories/194276',  # Electronics category
             'cookie_file': None,  # No cookie for testing
             'base_dir': temp_dir,
             'continue_on_error': True,

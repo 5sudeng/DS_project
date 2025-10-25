@@ -11,6 +11,7 @@ Coupang Crawling Pipeline (refactored)
 import argparse
 import sys
 import time
+import random
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional, Dict, Any, List, Iterable
@@ -117,24 +118,37 @@ class CoupangCrawlingPipeline:
         write_count = 0
         ensure_dir(self.paths.urls_file.parent)
 
+        # (상단) __init__에서 읽은 쿠키 텍스트가 self.cookie_text에 있음
+
         with self.paths.urls_file.open("a", encoding="utf-8") as fp:
             for idx, page_url in enumerate(page_urls(), 1):
                 print(f"⇒ GET {page_url}")
-                html = fetch_category_html(
-                    page_url,
-                    headers={
-                        # minimal headers; crawl_category_urls.build_headers와 동일하게 맞추고 싶다면 가져와도 됨
-                        "user-agent": (
-                            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-                            "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36"
-                        ),
-                        "referer": page_url,
-                        "origin": "https://www.coupang.com",
-                        "accept-language": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7",
-                        "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-                    },
-                    retries=2,
-                )
+                try:
+                    html = fetch_category_html(
+                        page_url,
+                        headers={
+                            "user-agent": (
+                                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+                                "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36"
+                            ),
+                            "referer": page_url,
+                            "origin": "https://www.coupang.com",
+                            "accept-language": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7",
+                            "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+                            # ✅ 쿠키 추가
+                            **({"cookie": self.cookie_text} if self.cookie_text else {}),
+                        },
+                        # ✅ 읽기 타임아웃 여유(예: 35~40초) + 재시도 3회
+                        retries=3,
+                        connect_to=8,
+                        read_to=40,
+                    )
+                except Exception as e:
+                    # ✅ 페이지 하나 실패해도 다음 페이지로 진행
+                    print(f"  [skip] page fetch failed: {e}")
+                    time.sleep(random.uniform(sleep_min, sleep_max))
+                    continue
+
                 urls = extract_product_links(html, base=page_url)
                 new_urls = [u for u in urls if u not in seen]
                 for u in new_urls:
@@ -148,6 +162,7 @@ class CoupangCrawlingPipeline:
 
                 print(f"  (+{len(new_urls)} new) total_unique={len(seen)}")
                 time.sleep(random.uniform(sleep_min, sleep_max))
+
 
         if write_count > 0:
             print(f"✓ Successfully collected {write_count} product URLs")
@@ -342,8 +357,8 @@ def parse_args():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  python crawling/main.py --category_url "https://www.coupang.com/np/categories/XXXX" --cookie_file cookie.txt
-  python crawling/main.py --url_pattern "https://www.coupang.com/np/categories/XXXX?page={page}" --cookie_file cookie.txt
+  python crawling/main.py --category_url "https://www.coupang.com/np/categories/194276" --cookie_file cookie.txt
+  python crawling/main.py --url_pattern "https://www.coupang.com/np/categories/194276?page={page}" --cookie_file cookie.txt
   python crawling/main.py --category_url "..." --steps 1,2,3 --continue_on_error
         """,
     )
