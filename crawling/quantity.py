@@ -342,16 +342,16 @@ def quick_probe(product_id: str, item_id: str, vendor_item_id: str, cookie: Opti
 # ─────────────────────────────────────────────────────
 def parse_args():
     p = argparse.ArgumentParser(description="Coupang quantity-info fetcher (single/batch)")
-    p.add_argument("--product-id", dest="product_id", help="단일 실행: productId")
-    p.add_argument("--item-id", dest="item_id", help="단일 실행: itemId")
-    p.add_argument("--vendor-item-id", dest="vendor_item_id", help="단일 실행: vendorItemId")
+    p.add_argument("--product_id", dest="product_id", help="단일 실행: productId")
+    p.add_argument("--item_id", dest="item_id", help="단일 실행: itemId")
+    p.add_argument("--vendor_item_id", dest="vendor_item_id", help="단일 실행: vendorItemId")
     p.add_argument("--input", "-i", help="배치 실행 입력 파일 (CSV 또는 JSONL)")
     p.add_argument("--outdir", "-o", default="outputs_quantity", help="응답 JSON 저장 경로")
     p.add_argument("--jsonl", help="요약 JSONL 출력")
     p.add_argument("--cookie", help="쿠키 문자열")
-    p.add_argument("--cookie-file", help="쿠키 텍스트 파일 경로")
-    p.add_argument("--sleep-min", type=float, default=1.5, help="요청 사이 최소 대기(초)")
-    p.add_argument("--sleep-max", type=float, default=3.0, help="요청 사이 최대 대기(초)")
+    p.add_argument("--cookie_file", help="쿠키 텍스트 파일 경로")
+    p.add_argument("--sleep_min", type=float, default=1.5, help="요청 사이 최소 대기(초)")
+    p.add_argument("--sleep_max", type=float, default=3.0, help="요청 사이 최대 대기(초)")
     p.add_argument("--retries", type=int, default=2, help="실패 시 재시도 횟수")
     return p.parse_args()
 

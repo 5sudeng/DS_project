@@ -169,16 +169,16 @@ def extract_product_links(html: str, base: str) -> Set[str]:
 def main():
     ap = argparse.ArgumentParser(description="Coupang category URL crawler (collect product detail URLs)")
     g = ap.add_mutually_exclusive_group(required=True)
-    g.add_argument("--category-url", type=str, help="카테고리 목록 URL (예: https://www.coupang.com/np/categories/XXXX)")
-    g.add_argument("--url-pattern", help="페이지 패턴 (예: 'https://www.coupang.com/np/categories/XXXX?page={page}')")
+    g.add_argument("--category_url", type=str, help="카테고리 목록 URL (예: https://www.coupang.com/np/categories/XXXX)")
+    g.add_argument("--url_pattern", help="페이지 패턴 (예: 'https://www.coupang.com/np/categories/XXXX?page={page}')")
 
-    ap.add_argument("--start-page", type=int, default=1, help="시작 페이지")
-    ap.add_argument("--pages", type=int, default=200, help="가져올 페이지 수")
+    ap.add_argument("--start_page", type=int, default=1, help="시작 페이지")
+    ap.add_argument("--pages", type=int, default=2, help="가져올 페이지 수")
     ap.add_argument("--out", default="urls.txt", help="저장 파일 (한 줄당 한 URL)")
     ap.add_argument("--max", dest="max_count", type=int, default=1000, help="최대 수집 개수")
-    ap.add_argument("--cookie-file", default=None, help="로그인 쿠키 파일 (선택)")
-    ap.add_argument("--sleep-min", type=float, default=2.5)
-    ap.add_argument("--sleep-max", type=float, default=5.6)
+    ap.add_argument("--cookie_file", default=None, help="로그인 쿠키 파일 (선택)")
+    ap.add_argument("--sleep_min", type=float, default=2.5)
+    ap.add_argument("--sleep_max", type=float, default=5.6)
 
     args = ap.parse_args()
     cookie = load_cookie(args.cookie_file)

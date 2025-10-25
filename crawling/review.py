@@ -223,16 +223,16 @@ def batch_reviews(csv_path: str,
 def main():
     ap = argparse.ArgumentParser(description="Fetch product reviews (single or batch)")
     g = ap.add_mutually_exclusive_group(required=False)
-    g.add_argument("--product-id", dest="product_id", help="단일 실행: productId")
+    g.add_argument("--product_id", dest="product_id", help="단일 실행: productId")
     g.add_argument("--input", dest="csv_path", help="배치 실행: CSV 파일 경로 (컬럼: productId,itemId,vendorItemId,startPage,pages,size)")
 
-    ap.add_argument("--item-id", dest="item_id", default=None)
-    ap.add_argument("--vendor-item-id", dest="vendor_item_id", default=None)
+    ap.add_argument("--item_id", dest="item_id", default=None)
+    ap.add_argument("--vendor_item_id", dest="vendor_item_id", default=None)
     ap.add_argument("--page", dest="page", type=int, default=1)
     ap.add_argument("--size", dest="size", type=int, default=10)
     ap.add_argument("--outdir", default="outputs_reviews")
     ap.add_argument("--jsonl", dest="jsonl_path", default=None)
-    ap.add_argument("--cookie-file", dest="cookie_file", default=None)
+    ap.add_argument("--cookie_file", dest="cookie_file", default=None)
     ap.add_argument("--retries", type=int, default=2)
 
     args = ap.parse_args()
@@ -258,7 +258,7 @@ def main():
             retries=args.retries,
         )
     else:
-        ap.error("단일 실행(--product-id) 또는 배치(--input) 중 하나를 지정.")
+        ap.error("단일 실행(--product_id) 또는 배치(--input) 중 하나를 지정.")
 
 if __name__ == "__main__":
     main()

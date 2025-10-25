@@ -342,46 +342,46 @@ def parse_args():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  python main.py --category-url "https://www.coupang.com/np/categories/XXXX" --cookie-file cookie.txt
-  python main.py --url-pattern "https://www.coupang.com/np/categories/XXXX?page={page}" --cookie-file cookie.txt
-  python main.py --category-url "..." --steps 1,2,3 --continue-on-error
+  python crawling/main.py --category_url "https://www.coupang.com/np/categories/XXXX" --cookie_file cookie.txt
+  python crawling/main.py --url_pattern "https://www.coupang.com/np/categories/XXXX?page={page}" --cookie_file cookie.txt
+  python crawling/main.py --category_url "..." --steps 1,2,3 --continue_on_error
         """,
     )
 
     url_group = parser.add_mutually_exclusive_group(required=True)
-    url_group.add_argument("--category-url")
-    url_group.add_argument("--url-pattern")
+    url_group.add_argument("--category_url")
+    url_group.add_argument("--url_pattern")
 
-    parser.add_argument("--cookie-file")
-    parser.add_argument("--base-dir", default=".")
+    parser.add_argument("--cookie_file")
+    parser.add_argument("--base_dir", default=".")
     parser.add_argument("--steps", help="Comma-separated list of steps (1-6)")
-    parser.add_argument("--continue-on-error", action="store_true")
+    parser.add_argument("--continue_on_error", action="store_true")
 
     # step 1
-    parser.add_argument("--max-urls", type=int, default=100)
+    parser.add_argument("--max_urls", type=int, default=100)
     parser.add_argument("--pages", type=int, default=20)
-    parser.add_argument("--start-page", type=int, default=1)
-    parser.add_argument("--sleep-min", type=float, default=2.5)
-    parser.add_argument("--sleep-max", type=float, default=5.6)
+    parser.add_argument("--start_page", type=int, default=1)
+    parser.add_argument("--sleep_min", type=float, default=2.5)
+    parser.add_argument("--sleep_max", type=float, default=5.6)
 
     # step 2
-    parser.add_argument("--default-size", type=int, default=20)
-    parser.add_argument("--no-backfill", action="store_true")
+    parser.add_argument("--default_size", type=int, default=20)
+    parser.add_argument("--no_backfill", action="store_true")
     parser.add_argument("--backfill-limit", type=int)
 
     # step 3
     parser.add_argument("--timeout", type=int, default=40)
-    parser.add_argument("--delay-min", type=float, default=0.8)
-    parser.add_argument("--delay-max", type=float, default=1.6)
+    parser.add_argument("--delay_min", type=float, default=0.8)
+    parser.add_argument("--delay_max", type=float, default=1.6)
 
     # steps 4-6
     parser.add_argument("--retries", type=int, default=2)
-    parser.add_argument("--review-sleep-min", type=float, default=1.2)
-    parser.add_argument("--review-sleep-max", type=float, default=2.2)
-    parser.add_argument("--inquiry-sleep-min", type=float, default=1.2)
-    parser.add_argument("--inquiry-sleep-max", type=float, default=2.2)
-    parser.add_argument("--quantity-sleep-min", type=float, default=1.5)
-    parser.add_argument("--quantity-sleep-max", type=float, default=3.0)
+    parser.add_argument("--review_sleep_min", type=float, default=1.2)
+    parser.add_argument("--review_sleep_max", type=float, default=2.2)
+    parser.add_argument("--inquiry_sleep_min", type=float, default=1.2)
+    parser.add_argument("--inquiry_sleep_max", type=float, default=2.2)
+    parser.add_argument("--quantity_sleep_min", type=float, default=1.5)
+    parser.add_argument("--quantity_sleep_max", type=float, default=3.0)
 
     return parser.parse_args()
 

@@ -196,16 +196,16 @@ def batch_inquiries(csv_path: str,
 def main():
     ap = argparse.ArgumentParser(description="Fetch product inquiries (single or batch)")
     g = ap.add_mutually_exclusive_group(required=False)
-    g.add_argument("--product-id", dest="product_id", help="단일 실행: productId")
+    g.add_argument("--product_id", dest="product_id", help="단일 실행: productId")
     g.add_argument("--input", dest="csv_path", help="배치 실행: CSV 파일 경로 (컬럼: productId,itemId,vendorItemId,startPage,pages)")
 
-    ap.add_argument("--item-id", dest="item_id", default=None, help="단일 실행용 itemId")
-    ap.add_argument("--vendor-item-id", dest="vendor_item_id", default=None, help="단일 실행용 vendorItemId")
-    ap.add_argument("--page-no", dest="page_no", type=int, default=1, help="단일 실행 페이지 번호")
+    ap.add_argument("--item_id", dest="item_id", default=None, help="단일 실행용 itemId")
+    ap.add_argument("--vendor_item_id", dest="vendor_item_id", default=None, help="단일 실행용 vendorItemId")
+    ap.add_argument("--page_no", dest="page_no", type=int, default=1, help="단일 실행 페이지 번호")
     ap.add_argument("--pages", dest="pages", type=int, default=1, help="배치: 각 상품당 페이지 수 (CSV의 pages가 우선)")
     ap.add_argument("--outdir", default="outputs_inquiries", help="JSON 개별 저장 폴더")
     ap.add_argument("--jsonl", dest="jsonl_path", default=None, help="배치: 전체 응답을 JSONL로도 누적 저장")
-    ap.add_argument("--cookie-file", dest="cookie_file", default=None, help="브라우저에서 복사한 cookie 문자열 파일 경로")
+    ap.add_argument("--cookie_file", dest="cookie_file", default=None, help="브라우저에서 복사한 cookie 문자열 파일 경로")
     ap.add_argument("--retries", type=int, default=2, help="요청 재시도 횟수")
 
     args = ap.parse_args()
@@ -232,7 +232,7 @@ def main():
             retries=args.retries,
         )
     else:
-        ap.error("단일 실행(--product-id) 또는 배치(--input) 중 하나를 지정하세요.")
+        ap.error("단일 실행(--product_id) 또는 배치(--input) 중 하나를 지정하세요.")
 
 if __name__ == "__main__":
     main()
