@@ -1,70 +1,42 @@
-import time
-import random
-import socket
-import subprocess, shlex
-import csv, json
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 import argparse
+import csv
+import json
+import random
+import shlex
+import socket
+import subprocess
+import time
 from pathlib import Path
 from types import SimpleNamespace
+from typing import Iterable, List, Optional, Sequence, Tuple
 from urllib.parse import urlencode
-from typing import Optional, Tuple
 
 import requests
 from bs4 import BeautifulSoup
-
-'''
-use example : (single)
-    python fetch_html.py \                
-        -—product-id 7225189423 \
-        -—item-id 23751564869 \
-        -—vendor-item-id 90776061353 \
-        -—outdir outputs_html \
-        -—cookie-file cookie.txt \
-        -—timeout 40
-use example : (batch)
-    python fetch_html.py \
-        --input products.csv \
-        --outdir outputs_html \    
-        --jsonl outputs_html/summary.jsonl \    
-        --cookie-file cookie.txt \
-        --timeout 40 \                   
-        --delay-min 0.8 --delay-max 1.6
-'''
-
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 
 UA = (
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
     "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36"
 )
 
+# ─────────────────────────────────────────────────────
+# Utilities
+# ─────────────────────────────────────────────────────
+def load_cookie(cookie_file: Optional[str]) -> Optional[str]:
+    if not cookie_file:
+        return None
+    p = Path(cookie_file)
+    if not p.is_file():
+        raise FileNotFoundError(f"cookie file not found: {cookie_file}")
+    return p.read_text(encoding="utf-8").strip()
 
-def fetch_html(
-    product_id: str,
-    item_id: str,
-    vendor_item_id: str,
-    timeout: int = 40,
-    cookie: Optional[str] = None,
-    outdir: Optional[Path] = None,
-) -> Tuple[object, BeautifulSoup, Path]:
-    """
-    Fetch Coupang product HTML with conservative defaults (timeouts, retries, IPv4 workaround).
-
-    Returns (response_like, BeautifulSoup, saved_path).
-    response_like has attributes (status_code, url, text).
-    Always saves raw HTML to <outdir or CWD>/response_<product_id>.html
-    """
-    base_url = f"https://www.coupang.com/vp/products/{product_id}"
-
-    # Try multiple URL variants (some SKUs stall unless opened without params first)
-    params_full = {"itemId": item_id, "vendorItemId": vendor_item_id}
-    candidates = [
-        (base_url, None),                    # 1) no params
-        (base_url, params_full),             # 2) with item/vendor
-        (base_url, {"pageSize": "1"}),       # 3) small page variant
-    ]
-
-    # Headers (browser-like)
-    headers = {
+def build_headers(base_url: str, item_id: str, vendor_item_id: str, cookie: Optional[str]) -> dict:
+    h = {
         "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
         "accept-language": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7",
         "accept-encoding": "gzip, deflate, br",
@@ -77,207 +49,182 @@ def fetch_html(
         "connection": "keep-alive",
     }
     if cookie:
-        headers["cookie"] = cookie
+        h["cookie"] = cookie
+    return h
 
-    def log_request(u, p):
-        print("⇒ GET", u)
-        if p:
-            print("   params:", p)
+class IPv4OnlyResolver:
+    """일부 CDN의 IPv6 tar-pit 회피용 DNS 강제기."""
+    def __enter__(self):
+        self._orig = socket.getaddrinfo
+        def _ipv4_only(*a, **k):
+            res = self._orig(*a, **k)
+            return [r for r in res if r[0] == socket.AF_INET] or res
+        socket.getaddrinfo = _ipv4_only
+        return self
+    def __exit__(self, *exc):
+        socket.getaddrinfo = self._orig
 
-    # Force IPv4 DNS during requests paths to avoid IPv6 tar-pits
-    orig_getaddrinfo = socket.getaddrinfo
+def make_requests_session(retries: int = 2) -> requests.Session:
+    s = requests.Session()
+    retry = Retry(
+        total=retries, connect=retries, read=retries, status=retries,
+        backoff_factor=0.8,
+        status_forcelist=[429, 500, 502, 503, 504],
+        allowed_methods=["GET"],
+        raise_on_status=False,
+    )
+    adapter = HTTPAdapter(max_retries=retry, pool_connections=10, pool_maxsize=10)
+    s.mount("https://", adapter)
+    s.mount("http://", adapter)
+    return s
 
-    def _ipv4_only(*args, **kwargs):
-        res = orig_getaddrinfo(*args, **kwargs)
-        return [r for r in res if r[0] == socket.AF_INET] or res
+def print_get(u: str, p: Optional[dict]):
+    print("⇒ GET", u)
+    if p:
+        print("   params:", p)
 
-    socket.getaddrinfo = _ipv4_only
+# ─────────────────────────────────────────────────────
+# Fetch core
+# ─────────────────────────────────────────────────────
+def _candidate_urls(product_id: str, item_id: str, vendor_item_id: str) -> Tuple[str, List[Tuple[str, Optional[dict]]]]:
+    base_url = f"https://www.coupang.com/vp/products/{product_id}"
+    params_full = {"itemId": item_id, "vendorItemId": vendor_item_id}
+    cands = [
+        (base_url, None),              # no params
+        (base_url, params_full),       # with ids
+        (base_url, {"pageSize": "1"}), # tiny page variant
+    ]
+    return base_url, cands
+
+def _try_httpx(candidates: Sequence[Tuple[str, Optional[dict]]], headers: dict, timeout: int) -> Tuple[Optional[int], Optional[str], Optional[str]]:
+    try:
+        import httpx  # optional
+    except Exception:
+        return None, None, None
 
     try:
-        last_err = None
-        resp_status = None
-        resp_url = None
-        resp_text = None
+        import h2  # noqa: F401
+        use_http2 = True
+    except Exception:
+        use_http2 = False
 
-        # ───────────────────────────────────────────────
-        # Attempt A: httpx (HTTP/2 if h2 is present), else HTTP/1.1
-        # ───────────────────────────────────────────────
+    for u, p in candidates:
+        print_get(u, p)
         try:
-            import httpx  # optional
+            timeout_cfg = httpx.Timeout(timeout=float(timeout), connect=5.0, read=float(timeout), write=float(timeout), pool=5.0)
+            with httpx.Client(http2=use_http2, headers=headers, timeout=timeout_cfg, follow_redirects=True) as client:
+                r = client.get(u, params=p)
+                if r.status_code == 200 and r.text:
+                    print(f"[httpx/{'h2' if use_http2 else 'h1'}] status:", r.status_code)
+                    print(f"[httpx/{'h2' if use_http2 else 'h1'}] url   :", str(r.url))
+                    return r.status_code, str(r.url), r.text
+                else:
+                    raise RuntimeError(f"httpx status {r.status_code}")
+        except Exception as e:
+            print("[httpx] failed:", e)
+            time.sleep(0.4 + random.uniform(0, 0.4))
+    return None, None, None
+
+def _try_requests(candidates: Sequence[Tuple[str, Optional[dict]]], headers: dict, timeout: int) -> Tuple[Optional[int], Optional[str], Optional[str]]:
+    sess = make_requests_session(retries=2)
+    for u, p in candidates:
+        print_get(u, p)
+        for attempt in range(1, 3):
             try:
-                import h2  # type: ignore
-                use_http2 = True
-            except Exception:
-                use_http2 = False
+                r = sess.get(u, headers=headers, params=p, timeout=(5, timeout), allow_redirects=True)
+                if r.status_code == 200 and r.text:
+                    print("[requests] status:", r.status_code)
+                    print("[requests] url   :", r.url)
+                    return r.status_code, r.url, r.text
+                else:
+                    raise RuntimeError(f"HTTP {r.status_code}")
+            except requests.Timeout as e:
+                delay = (2 ** (attempt - 1)) + random.uniform(0, 0.7)
+                print(f"[retry {attempt}/2] timeout, wait {delay:.2f}s")
+                time.sleep(delay)
+            except requests.RequestException as e:
+                print(f"[retry {attempt}/2] request error: {e}")
+                time.sleep(1.0)
+    return None, None, None
 
-            for u, p in candidates:
-                log_request(u, p)
-                try:
-                    timeout_cfg = httpx.Timeout(
-                        timeout=float(timeout),   # default for all
-                        connect=5.0,
-                        read=float(timeout),
-                        write=float(timeout),
-                        pool=5.0,
-                    )
-                    with httpx.Client(
-                        http2=use_http2,
-                        headers=headers,
-                        timeout=timeout_cfg,
-                        follow_redirects=True,
-                    ) as client:
-                        r = client.get(u, params=p)
-                        if r.status_code == 200 and r.text:
-                            resp_status, resp_url, resp_text = r.status_code, str(r.url), r.text
-                            print(f"[httpx/{'h2' if use_http2 else 'h1'}] status:", resp_status)
-                            print(f"[httpx/{'h2' if use_http2 else 'h1'}] url   :", resp_url)
-                            break
-                        else:
-                            raise RuntimeError(f"httpx unexpected status {r.status_code}")
-                except Exception as e:
-                    last_err = e
-                    print("[httpx] failed:", e)
-                    time.sleep(0.4 + random.uniform(0, 0.4))
-            # success? -> resp_text set
-        except Exception:
-            # httpx not installed or import failed → skip
-            pass
+def _try_curl(candidates: Sequence[Tuple[str, Optional[dict]]], headers: dict, timeout: int, product_id: str, cookie: Optional[str]) -> Tuple[Optional[int], Optional[str], Optional[str]]:
+    tmp_path = Path(f"_curl_html_{product_id}.html").absolute()
+    # Prebuild common -H flags
+    header_flags = []
+    for k in ["accept", "accept-language", "accept-encoding", "user-agent", "origin", "referer", "sec-ch-ua", "sec-ch-ua-platform", "sec-ch-ua-mobile", "connection"]:
+        if k in headers:
+            header_flags += ["-H", f"{k}: {headers[k]}"]
+    if cookie:
+        header_flags += ["-H", f"cookie: {cookie}"]
 
-        # ───────────────────────────────────────────────
-        # Attempt B: requests Session + Retry (IPv4)
-        # ───────────────────────────────────────────────
-        if resp_text is None:
-            from urllib3.util.retry import Retry
-            from requests.adapters import HTTPAdapter
+    for u, p in candidates:
+        qs = ("?" + urlencode(p)) if p else ""
+        full_url = u + qs
+        curl_cmd = [
+            "curl", "--silent", "--show-error", "--location",
+            "--http1.1", "--ipv4", "--compressed",
+            "--connect-timeout", "5",
+            "--max-time", str(max(15, int(timeout))),
+            *header_flags, full_url, "-o", str(tmp_path)
+        ]
+        print("[fallback] curl:", " ".join(shlex.quote(c) for c in curl_cmd))
+        try:
+            subprocess.run(curl_cmd, check=True)
+        except subprocess.CalledProcessError as ce:
+            print("[fallback] curl exit:", ce.returncode)
 
-            sess = requests.Session()
-            retry = Retry(
-                total=2,
-                connect=2,
-                read=2,
-                status=2,
-                backoff_factor=0.8,
-                status_forcelist=[429, 500, 502, 503, 504],
-                allowed_methods=["GET"],
-                raise_on_status=False,
-            )
-            adapter = HTTPAdapter(max_retries=retry, pool_connections=10, pool_maxsize=10)
-            sess.mount("https://", adapter)
-            sess.mount("http://", adapter)
+        if tmp_path.exists() and tmp_path.stat().st_size > 0:
+            return 200, full_url, tmp_path.read_text(encoding="utf-8", errors="ignore")
+    return None, None, None
 
-            for u, p in candidates:
-                log_request(u, p)
-                for attempt in range(1, 3):  # keep this short so we reach curl fallback sooner if stuck
-                    try:
-                        r2 = sess.get(u, headers=headers, params=p, timeout=(5, timeout), allow_redirects=True)
-                        if r2.status_code == 200 and r2.text:
-                            resp_status, resp_url, resp_text = r2.status_code, r2.url, r2.text
-                            print("[requests] status:", resp_status)
-                            print("[requests] url   :", resp_url)
-                            break
-                        else:
-                            raise RuntimeError(f"HTTP {r2.status_code}")
-                    except requests.Timeout as e:
-                        last_err = e
-                        delay = (2 ** (attempt - 1)) + random.uniform(0, 0.7)
-                        print(f"[retry {attempt}/2] timeout, wait {delay:.2f}s")
-                        time.sleep(delay)
-                    except requests.RequestException as e:
-                        last_err = e
-                        print(f"[retry {attempt}/2] request error: {e}")
-                        time.sleep(1.0)
-                if resp_text:
-                    break
+def fetch_html(
+    product_id: str,
+    item_id: str,
+    vendor_item_id: str,
+    timeout: int = 40,
+    cookie: Optional[str] = None,
+    outdir: Optional[Path] = None,
+) -> Tuple[object, BeautifulSoup, Path]:
+    """
+    Fetch Coupang product HTML with conservative defaults (timeouts, retries, IPv4 workaround).
+    Returns (response_like, BeautifulSoup, saved_path).
+    response_like has attributes (status_code, url, text).
+    Always saves raw HTML to <outdir or CWD>/response_<product_id>.html
+    """
+    base_url, candidates = _candidate_urls(product_id, item_id, vendor_item_id)
+    headers = build_headers(base_url, item_id, vendor_item_id, cookie)
 
-        # ───────────────────────────────────────────────
-        # Attempt C: curl fallback (HTTP/1.1 + IPv4 + compressed)
-        # ───────────────────────────────────────────────
-        if resp_text is None:
-            tmp_path = Path(f"_curl_html_{product_id}.html").absolute()
+    with IPv4OnlyResolver():
+        status, url, text = _try_httpx(candidates, headers, timeout)
+        if text is None:
+            status, url, text = _try_requests(candidates, headers, timeout)
+        if text is None:
+            status, url, text = _try_curl(candidates, headers, timeout, product_id, cookie)
 
-            for u, p in candidates:
-                qs = ("?" + urlencode(p)) if p else ""
-                full_url = u + qs
-                curl_cmd = [
-                    "curl",
-                    "--silent",
-                    "--show-error",
-                    "--location",
-                    "--http1.1",
-                    "--ipv4",
-                    "--compressed",
-                    "--connect-timeout",
-                    "5",
-                    "--max-time",
-                    str(max(15, int(timeout))),
-                    "-H",
-                    f"accept: {headers['accept']}",
-                    "-H",
-                    f"accept-language: {headers['accept-language']}",
-                    "-H",
-                    f"accept-encoding: {headers['accept-encoding']}",
-                    "-H",
-                    f"user-agent: {headers['user-agent']}",
-                    "-H",
-                    f"origin: {headers['origin']}",
-                    "-H",
-                    f"referer: {headers['referer']}",
-                    "-H",
-                    f"sec-ch-ua: {headers['sec-ch-ua']}",
-                    "-H",
-                    f"sec-ch-ua-platform: {headers['sec-ch-ua-platform']}",
-                    "-H",
-                    f"sec-ch-ua-mobile: {headers['sec-ch-ua-mobile']}",
-                    "-H",
-                    "connection: keep-alive",
-                    full_url,
-                    "-o",
-                    str(tmp_path),
-                ]
-                if cookie:
-                    curl_cmd.insert(-2, "-H")
-                    curl_cmd.insert(-2, f"cookie: {cookie}")
+    if text is None:
+        raise RuntimeError("failed to fetch html")
 
-                print("[fallback] curl:", " ".join(shlex.quote(c) for c in curl_cmd))
-                try:
-                    subprocess.run(curl_cmd, check=True)
-                except subprocess.CalledProcessError as ce:
-                    print("[fallback] curl exit:", ce.returncode)
+    # Save & parse
+    save_dir = outdir if outdir else Path.cwd()
+    save_dir.mkdir(parents=True, exist_ok=True)
+    out_path = save_dir / f"response_{product_id}.html"
+    out_path.write_text(text, encoding="utf-8")
 
-                if tmp_path.exists() and tmp_path.stat().st_size > 0:
-                    resp_status, resp_url = 200, full_url
-                    resp_text = tmp_path.read_text(encoding="utf-8", errors="ignore")
-                    print("[fallback] curl read from file")
-                    break
+    print("status:", status)
+    print("url   :", url)
+    print("len   :", len(text))
+    print("saved →", out_path)
 
-        if resp_text is None:
-            raise last_err or RuntimeError("failed to fetch html")
+    soup = BeautifulSoup(text, "html.parser")
+    title = soup.title.text.strip() if soup.title else "(no title)"
+    print("title:", title)
 
-        # Save & parse
-        save_dir = outdir if outdir else Path.cwd()
-        save_dir.mkdir(parents=True, exist_ok=True)
-        out_path = save_dir / f"response_{product_id}.html"
-        out_path.write_text(resp_text, encoding="utf-8")
-        print("status:", resp_status)
-        print("url   :", resp_url)
-        print("len   :", len(resp_text))
-        print("saved →", out_path)
+    resp_like = SimpleNamespace(status_code=status, url=url, text=text)
+    return resp_like, soup, out_path
 
-        soup = BeautifulSoup(resp_text, "html.parser")
-        title = soup.title.text.strip() if soup.title else "(no title)"
-        print("title:", title)
-
-        resp_like = SimpleNamespace(status_code=resp_status, url=resp_url, text=resp_text)
-        return resp_like, soup, out_path
-
-    finally:
-        socket.getaddrinfo = orig_getaddrinfo
-
-
-# ───────────────────────────────────────────────
-# Runners: single & batch
-# ───────────────────────────────────────────────
-
+# ─────────────────────────────────────────────────────
+# Runners
+# ─────────────────────────────────────────────────────
 def run_single(
     product_id: str,
     item_id: str,
@@ -286,21 +233,12 @@ def run_single(
     cookie_file: Optional[str],
     timeout: int,
 ) -> int:
-    cookie = None
-    if cookie_file and Path(cookie_file).is_file():
-        cookie = Path(cookie_file).read_text(encoding="utf-8").strip()
-        print(f"-> Using cookie from {cookie_file}")
+    cookie = load_cookie(cookie_file) if cookie_file else None
     resp, soup, out_path = fetch_html(
-        product_id,
-        item_id,
-        vendor_item_id,
-        timeout=timeout,
-        cookie=cookie,
-        outdir=outdir,
+        product_id, item_id, vendor_item_id, timeout=timeout, cookie=cookie, outdir=outdir
     )
     print(f"saved -> {out_path}")
     return 0
-
 
 def run_batch(
     input_csv: Path,
@@ -312,19 +250,11 @@ def run_batch(
     delay_max: float,
 ) -> int:
     outdir.mkdir(parents=True, exist_ok=True)
-    cookie = None
-    if cookie_file and Path(cookie_file).is_file():
-        cookie = Path(cookie_file).read_text(encoding="utf-8").strip()
-        print(f"-> Using cookie from {cookie_file}")
+    cookie = load_cookie(cookie_file) if cookie_file else None
 
-    # load rows
-    rows = []
-    with input_csv.open(newline="", encoding="utf-8") as f:
-        reader = csv.DictReader(f)
-        for row in reader:
-            rows.append(row)
-
+    rows = list(csv.DictReader(input_csv.open(newline="", encoding="utf-8")))
     print(f"== 총 {len(rows)}개 상품 처리 ==")
+
     stats_ok = 0
     summary = []
 
@@ -335,40 +265,27 @@ def run_batch(
         if not pid:
             print(f"[{i}/{len(rows)}] skip: empty productId")
             continue
+
         print(f"[{i}/{len(rows)}] productId={pid} itemId={iid} vendorItemId={vid}")
         try:
-            resp, soup, out_path = fetch_html(
-                pid, iid, vid, timeout=timeout, cookie=cookie, outdir=outdir
-            )
+            resp, soup, out_path = fetch_html(pid, iid, vid, timeout=timeout, cookie=cookie, outdir=outdir)
             title = soup.title.text.strip() if soup.title else "(no title)"
-            summary.append(
-                {
-                    "productId": pid,
-                    "itemId": iid,
-                    "vendorItemId": vid,
-                    "url": resp.url,
-                    "status": resp.status_code,
-                    "title": title,
-                    "file": str(out_path),
-                    "ok": True,
-                }
-            )
+            summary.append({
+                "productId": pid, "itemId": iid, "vendorItemId": vid,
+                "url": resp.url, "status": resp.status_code, "title": title,
+                "file": str(out_path), "ok": True,
+            })
             stats_ok += 1
             print(f"saved -> {out_path}")
         except Exception as e:
             print(f"failed: {e}")
-            summary.append(
-                {
-                    "productId": pid,
-                    "itemId": iid,
-                    "vendorItemId": vid,
-                    "ok": False,
-                    "error": str(e),
-                }
-            )
+            summary.append({
+                "productId": pid, "itemId": iid, "vendorItemId": vid,
+                "ok": False, "error": str(e),
+            })
+
         time.sleep(random.uniform(delay_min, delay_max))
 
-    # write summary
     if jsonl_path:
         jsonl_path.parent.mkdir(parents=True, exist_ok=True)
         with jsonl_path.open("w", encoding="utf-8") as f:
@@ -379,44 +296,38 @@ def run_batch(
     print(f"== 완료: 성공 {stats_ok} / 실패 {len(rows) - stats_ok} / 총 {len(rows)} ==")
     return 0 if stats_ok > 0 else 1
 
+# ─────────────────────────────────────────────────────
+# CLI
+# ─────────────────────────────────────────────────────
+def parse_args():
+    p = argparse.ArgumentParser(description="Coupang product HTML fetcher (single & batch)")
+    m = p.add_mutually_exclusive_group(required=True)
+    m.add_argument("--input", help="CSV file (columns: productId,itemId,vendorItemId) for batch mode")
+    m.add_argument("--product-id", dest="product_id", help="single mode: productId")
+
+    p.add_argument("--item-id", dest="item_id", default="", help="single mode: itemId")
+    p.add_argument("--vendor-item-id", dest="vendor_item_id", default="", help="single mode: vendorItemId")
+    p.add_argument("--outdir", required=True, help="Output directory for HTML files")
+    p.add_argument("--jsonl", help="Summary JSONL path (batch mode)")
+    p.add_argument("--cookie-file", help="Path to cookie.txt (optional)")
+    p.add_argument("--timeout", type=int, default=40, help="read timeout seconds (default: 40)")
+    p.add_argument("--delay-min", type=float, default=0.8, help="batch: min sleep between requests")
+    p.add_argument("--delay-max", type=float, default=1.6, help="batch: max sleep between requests")
+    return p.parse_args()
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description="Coupang product HTML fetcher (single & batch)"
-    )
-    # Mode selection: either CSV input (batch) or single IDs
-    parser.add_argument(
-        "--input",
-        help="CSV file (columns: productId,itemId,vendorItemId) for batch mode",
-    )
-    parser.add_argument("--product-id", dest="product_id", help="single mode: productId")
-    parser.add_argument("--item-id", dest="item_id", help="single mode: itemId", default="")
-    parser.add_argument(
-        "--vendor-item-id", dest="vendor_item_id", help="single mode: vendorItemId", default=""
-    )
-
-    parser.add_argument("--outdir", required=True, help="Output directory for HTML files")
-    parser.add_argument("--jsonl", help="Summary JSONL path (batch mode)")
-    parser.add_argument("--cookie-file", help="Path to cookie.txt (optional)")
-    parser.add_argument("--timeout", type=int, default=40, help="read timeout seconds (default: 40)")
-    parser.add_argument("--delay-min", type=float, default=0.8, help="batch: min sleep between requests")
-    parser.add_argument("--delay-max", type=float, default=1.6, help="batch: max sleep between requests")
-
-    args = parser.parse_args()
+    args = parse_args()
     outdir = Path(args.outdir)
 
-    # Decide mode
     if args.input:
-        input_csv = Path(args.input)
-        jsonl_path = Path(args.jsonl) if args.jsonl else None
         exit_code = run_batch(
-            input_csv, outdir, jsonl_path, args.cookie_file, args.timeout, args.delay_min, args.delay_max
+            Path(args.input), outdir,
+            Path(args.jsonl) if args.jsonl else None,
+            args.cookie_file, args.timeout, args.delay_min, args.delay_max
         )
-        raise SystemExit(exit_code)
     else:
-        if not args.product_id:
-            parser.error("either --input (batch) or --product-id (single) must be provided")
         exit_code = run_single(
-            args.product_id, args.item_id, args.vendor_item_id, outdir, args.cookie_file, args.timeout
+            args.product_id, args.item_id, args.vendor_item_id,
+            outdir, args.cookie_file, args.timeout
         )
-        raise SystemExit(exit_code)
+    raise SystemExit(exit_code)
