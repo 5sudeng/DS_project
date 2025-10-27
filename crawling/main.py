@@ -24,6 +24,9 @@ from review import batch_reviews
 from inquiries import batch_inquiries
 from quantity import batch_quantity, load_products
 
+from btf import batch_btf  # ← 새로 추가
+
+
 
 # ────────────────────────────────────────────────────
 # Helpers
@@ -56,6 +59,8 @@ class Paths:
     reviews_jsonl: Path
     inquiries_jsonl: Path
     quantity_jsonl: Path
+    btf_dir: Path
+    btf_jsonl: Path
 
 
 def build_paths(base_dir: str) -> Paths:
@@ -73,6 +78,8 @@ def build_paths(base_dir: str) -> Paths:
         reviews_jsonl=outputs / "reviews" / "reviews.jsonl",
         inquiries_jsonl=outputs / "inquiries" / "inquiries.jsonl",
         quantity_jsonl=outputs / "quantity" / "quantity.jsonl",
+        btf_dir=ensure_dir(outputs / "btf"),
+        btf_jsonl=outputs / "btf" / "btf.jsonl",
     )
 
 
@@ -95,10 +102,10 @@ class CoupangCrawlingPipeline:
         category_url = self.config.get("category_url")
         url_pattern = self.config.get("url_pattern")
         start_page = int(self.config.get("start_page", 1))
-        pages = int(self.config.get("pages", 200))
+        pages = int(self.config.get("pages", 1))
         sleep_min = float(self.config.get("sleep_min", 2.5))
         sleep_max = float(self.config.get("sleep_max", 5.6))
-        max_urls = int(self.config.get("max_urls", 1000))
+        max_urls = int(self.config.get("max_urls", 1))
 
         if not (category_url or url_pattern):
             print("✗ Either --category-url or --url-pattern must be provided")
@@ -270,10 +277,39 @@ class CoupangCrawlingPipeline:
         except Exception as e:
             print(f"✗ Error in step 5: {e}")
             return False
-
-    def step6_fetch_quantity(self) -> bool:
+    
+    def step6_fetch_btf(self) -> bool:
         print("\n" + "=" * 60)
-        print("STEP 6: Fetching Quantity Information")
+        print("STEP 6: Fetching Product BTF (below-the-fold)")
+        print("=" * 60)
+
+        if not self.paths.products_csv.exists():
+            print("✗ Products CSV not found. Run step 2 first.")
+            return False
+
+        try:
+            # batch_btf(csv_path, outdir, jsonl_path, cookie_file, retries, per_item_sleep)
+            batch_btf(
+                csv_path=str(self.paths.products_csv),
+                outdir=str(self.paths.btf_dir),
+                jsonl_path=str(self.paths.btf_jsonl),
+                cookie_file=self.cookie_file,
+                retries=self.config.get("retries", 2),
+                per_item_sleep=(
+                    self.config.get("btf_sleep_min", 1.0),
+                    self.config.get("btf_sleep_max", 2.0),
+                ),
+            )
+            print(f"✓ Successfully fetched BTF payloads → {self.paths.btf_dir}")
+            return True
+        except Exception as e:
+            print(f"✗ Error in step 5: {e}")
+            return False
+
+
+    def step7_fetch_quantity(self) -> bool:
+        print("\n" + "=" * 60)
+        print("STEP 7: Fetching Quantity Information")
         print("=" * 60)
 
         if not self.paths.products_csv.exists():
@@ -304,7 +340,7 @@ class CoupangCrawlingPipeline:
 
     def run_pipeline(self, steps: Optional[list] = None) -> bool:
         if steps is None:
-            steps = [1, 2, 3, 4, 5, 6]
+            steps = [1, 2, 3, 4, 5, 6, 7]  # ← 7스텝으로 변경
 
         print("Starting Coupang Crawling Pipeline")
         print(f"Steps to run: {steps}")
@@ -316,9 +352,11 @@ class CoupangCrawlingPipeline:
             2: self.step2_make_products_csv,
             3: self.step3_fetch_html,
             4: self.step4_fetch_reviews,
-            5: self.step5_fetch_inquiries,
-            6: self.step6_fetch_quantity,
+            5: self.step5_fetch_inquiries,   # ← inquiries
+            6: self.step6_fetch_btf,         # ← btf
+            7: self.step7_fetch_quantity,    # ← quantity
         }
+
 
         success_count = 0
         for n in steps:
@@ -369,18 +407,18 @@ Examples:
 
     parser.add_argument("--cookie_file")
     parser.add_argument("--base_dir", default=".")
-    parser.add_argument("--steps", help="Comma-separated list of steps (1-6)")
+    parser.add_argument("--steps", help="Comma-separated list of steps (1-7)")
     parser.add_argument("--continue_on_error", action="store_true")
 
     # step 1
-    parser.add_argument("--max_urls", type=int, default=100)
-    parser.add_argument("--pages", type=int, default=20)
+    parser.add_argument("--max_urls", type=int, default=1)
+    parser.add_argument("--pages", type=int, default=1)
     parser.add_argument("--start_page", type=int, default=1)
     parser.add_argument("--sleep_min", type=float, default=2.5)
     parser.add_argument("--sleep_max", type=float, default=5.6)
 
     # step 2
-    parser.add_argument("--default_size", type=int, default=20)
+    parser.add_argument("--default_size", type=int, default=1)
     parser.add_argument("--no_backfill", action="store_true")
     parser.add_argument("--backfill-limit", type=int)
 
@@ -393,11 +431,13 @@ Examples:
     parser.add_argument("--retries", type=int, default=2)
     parser.add_argument("--review_sleep_min", type=float, default=1.2)
     parser.add_argument("--review_sleep_max", type=float, default=2.2)
+    # ↓↓↓ BTF 전용 슬립 추가
+    parser.add_argument("--btf_sleep_min", type=float, default=1.0)
+    parser.add_argument("--btf_sleep_max", type=float, default=2.0)
     parser.add_argument("--inquiry_sleep_min", type=float, default=1.2)
     parser.add_argument("--inquiry_sleep_max", type=float, default=2.2)
     parser.add_argument("--quantity_sleep_min", type=float, default=1.5)
     parser.add_argument("--quantity_sleep_max", type=float, default=3.0)
-
     return parser.parse_args()
 
 
@@ -408,8 +448,8 @@ def main():
     if args.steps:
         try:
             steps = [int(s.strip()) for s in args.steps.split(",")]
-            if not all(1 <= s <= 6 for s in steps):
-                print("Error: Steps must be 1..6")
+            if not all(1 <= s <= 7 for s in steps):
+                print("Error: Steps must be 1..7")
                 sys.exit(1)
         except ValueError:
             print("Error: Invalid steps format. Use comma-separated numbers (e.g., 1,2,3)")
@@ -441,6 +481,8 @@ def main():
         "retries": args.retries,
         "review_sleep_min": args.review_sleep_min,
         "review_sleep_max": args.review_sleep_max,
+        "btf_sleep_min": args.btf_sleep_min,          # ← 추가
+        "btf_sleep_max": args.btf_sleep_max,          # ← 추가
         "inquiry_sleep_min": args.inquiry_sleep_min,
         "inquiry_sleep_max": args.inquiry_sleep_max,
         "quantity_sleep_min": args.quantity_sleep_min,
