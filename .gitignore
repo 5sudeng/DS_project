@@ -3,3 +3,4 @@ urls.txt
 .DS_Store
 *.JPG
 *.png
+*.pyc
