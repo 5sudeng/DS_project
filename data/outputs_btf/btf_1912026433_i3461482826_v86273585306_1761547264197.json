@@ -1,0 +1,142 @@
+{
+  "rollbackInterstellar": false,
+  "productId": 1912026433,
+  "itemId": 3461482826,
+  "vendorItemId": 86273585306,
+  "vendorItemCertifications": [],
+  "returnPolicyVo": {
+    "vendorItemReturnPolicyLayoutType": "RETAIL",
+    "vendorItemReturnNotice": {
+      "returnCharge": "ㆍ와우멤버십 회원: 무료로 반품/교환 가능<br/>ㆍ와우멤버십 회원 아닌 경우:<br/>1) [총 주문금액] - [반품 상품금액] = 19,800원 미만인 경우 반품비 5,000원<br/>2) [총 주문금액] - [반품 상품금액] = 19,800원 이상인 경우 반품비 2,500원"
+    },
+    "vendorItemDeliveryNotice": {
+      "supportSameDayFresh": true,
+      "rocketInstall": false,
+      "rocketFresh": false,
+      "deliveryMethod": "순차배송",
+      "deliveryCompany": "",
+      "deliveryCharge": "무료배송<br/>- 로켓배송 상품 중 19,800원 이상 구매 시 무료배송<br/>- 도서산간 지역 추가비용 없음",
+      "batchShipment": "가능",
+      "shippingPeriod": null
+    },
+    "sellerDetailInfo": {
+      "bizNum": null,
+      "countryCode": "KR",
+      "ecommReportNum": null,
+      "goldFish": false,
+      "repAddress": null,
+      "repAddress1": null,
+      "repAddress2": null,
+      "repCustomerInfo": null,
+      "repEmail": null,
+      "repEmailHint": null,
+      "repPersonName": null,
+      "repPhoneNum": null,
+      "repPhoneNumHint": null,
+      "retail": true,
+      "sellerWithRepPersonName": null,
+      "threePC": false,
+      "threePM": false,
+      "vendorName": null
+    },
+    "etcNewStyleOptions": "B",
+    "isCsChangeTarget": null,
+    "isCsChangeBGroup": false,
+    "returnPolicyV1": null,
+    "returnPolicyV2": null
+  },
+  "productSellingPoints": [],
+  "exemption": null,
+  "essentials": [
+    {
+      "description": "오동통면",
+      "title": "제품명"
+    },
+    {
+      "description": "유탕면",
+      "title": "식품의 유형"
+    },
+    {
+      "description": "컨텐츠 참조",
+      "title": "생산자 및 소재지"
+    },
+    {
+      "description": "소비기한(또는 유통기한) : 2025년 12월 03일 이거나 그 이후인 상품",
+      "title": "제조연월일, 소비기한 또는 품질유지기한"
+    },
+    {
+      "description": "120g x 10개,1개",
+      "title": "포장단위별 내용물의 용량(중량), 수량"
+    },
+    {
+      "description": "컨텐츠 참조",
+      "title": "원재료명 및 함량"
+    },
+    {
+      "description": "컨텐츠 참조",
+      "title": "영양성분"
+    },
+    {
+      "description": "해당없음",
+      "title": "유전자변형식품에 해당하는 경우의 표시"
+    },
+    {
+      "description": "컨텐츠 참조",
+      "title": "소비자안전을 위한 주의사항"
+    },
+    {
+      "description": "해당없음",
+      "title": "수입식품 문구"
+    },
+    {
+      "description": "쿠팡고객센터 1577-7011",
+      "title": "소비자상담관련 전화번호"
+    }
+  ],
+  "details": [
+    {
+      "cssClass": "type-IMAGE_NO_SPACE",
+      "vendorItemContentDescriptions": [
+        {
+          "content": "//thumbnail.coupangcdn.com/thumbnails/remote/q89/image/retail/images/1546850209605462-9375cd0f-2bbe-4d17-8397-5013370c1e5c.jpg",
+          "cssClass": "subType-IMAGE",
+          "detailType": "IMAGE",
+          "imageType": true
+        }
+      ],
+      "contentType": "IMAGE_NO_SPACE"
+    },
+    {
+      "cssClass": "type-IMAGE_NO_SPACE",
+      "vendorItemContentDescriptions": [
+        {
+          "content": "//thumbnail.coupangcdn.com/thumbnails/remote/q89/image/rs_quotation_api/ctnazpv8/5f932f9c7e0a40dca0248388105d62af.jpg",
+          "cssClass": "subType-IMAGE",
+          "detailType": "IMAGE",
+          "imageType": true
+        }
+      ],
+      "contentType": "IMAGE_NO_SPACE"
+    },
+    {
+      "cssClass": "type-IMAGE_NO_SPACE",
+      "vendorItemContentDescriptions": [
+        {
+          "content": "//thumbnail.coupangcdn.com/thumbnails/remote/q89/image/rs_quotation_api/xfthfenx/f21be1cf2dc04941ae1dab5f1e7a360b.jpg",
+          "cssClass": "subType-IMAGE",
+          "detailType": "IMAGE",
+          "imageType": true
+        }
+      ],
+      "contentType": "IMAGE_NO_SPACE"
+    }
+  ],
+  "forceHide3pWarningBanner": false,
+  "abTests": {
+    "fraud3PReportNumShow": "B",
+    "customDutyABTest": "NOT_APPLICABLE"
+  },
+  "improveCertificationInfoInKoshiAreaOnSdp": true,
+  "genericInfo": null,
+  "productIs3P": false
+}

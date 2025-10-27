@@ -1,0 +1,485 @@
+[
+    {
+        "source_file": "response_86564.html",
+        "source_type": "HTML_STRUCTURE",
+        "chunk_id": "response_86564_c00000",
+        "content_type": "TEXT",
+        "text_content": "김치사발면 86g, 6개",
+        "metadata": {
+            "origin_field": "product_title",
+            "original_length": 13,
+            "chunk_strategy": "FIELD_UNIT"
+        }
+    },
+    {
+        "source_file": "response_86564.html",
+        "source_type": "HTML_STRUCTURE",
+        "chunk_id": "response_86564_c00001",
+        "content_type": "TEXT",
+        "text_content": "5,470원",
+        "metadata": {
+            "origin_field": "final_price_amount",
+            "original_length": 6,
+            "chunk_strategy": "FIELD_UNIT"
+        }
+    },
+    {
+        "source_file": "response_86564.html",
+        "source_type": "HTML_STRUCTURE",
+        "chunk_id": "response_86564_c00002",
+        "content_type": "TEXT",
+        "text_content": "소비기한(또는 유통기한): 2025-12-11 이거나 그 이후인 상품",
+        "metadata": {
+            "origin_field": "product_property",
+            "original_length": 38,
+            "chunk_strategy": "FIELD_UNIT"
+        }
+    },
+    {
+        "source_file": "response_86564.html",
+        "source_type": "HTML_STRUCTURE",
+        "chunk_id": "response_86564_c00003",
+        "content_type": "TEXT",
+        "text_content": "포장형태: 컵",
+        "metadata": {
+            "origin_field": "product_property",
+            "original_length": 7,
+            "chunk_strategy": "FIELD_UNIT"
+        }
+    },
+    {
+        "source_file": "response_86564.html",
+        "source_type": "HTML_STRUCTURE",
+        "chunk_id": "response_86564_c00004",
+        "content_type": "TEXT",
+        "text_content": "라면 맛: 보통맛",
+        "metadata": {
+            "origin_field": "product_property",
+            "original_length": 9,
+            "chunk_strategy": "FIELD_UNIT"
+        }
+    },
+    {
+        "source_file": "response_86564.html",
+        "source_type": "HTML_META",
+        "chunk_id": "response_86564_c00005",
+        "content_type": "TEXT",
+        "text_content": "현재 별점 4.8점, 리뷰 132816개를 가진 김치사발면 86g, 6개! 지금 쿠팡에서 더 저렴하고 다양한 컵라면 제품들을 확인해보세요.",
+        "metadata": {
+            "origin_field": "meta_description",
+            "original_length": 77,
+            "chunk_strategy": "FIELD_UNIT"
+        }
+    },
+    {
+        "source_file": "response_86564.html",
+        "source_type": "HTML_META",
+        "chunk_id": "response_86564_c00006",
+        "content_type": "JSON_LD",
+        "text_content": "{\"@context\":\"https://schema.org/\",\"@type\":\"Product\",\"sku\":\"86564-175470\",\"name\":\"김치사발면 86g, 6개\",\"offers\":{...},\"aggregateRating\":{\"@type\":\"AggregateRating\",\"ratingValue\":4.8,\"ratingCount\":\"132816\"}}",
+        "metadata": {
+            "origin_field": "json_ld_schema",
+            "chunk_strategy": "FIELD_UNIT"
+        }
+    },
+    {
+        "source_file": "btf_86564_i175470_v3000104081_1761547265549.json",
+        "source_type": "STRUCTURED_FIELD",
+        "chunk_id": "btf_86564_i175470_v3000104081_1761547265549_c00007",
+        "content_type": "TEXT",
+        "text_content": "ㆍ와우멤버십 회원: 무료로 반품/교환 가능 ㆍ와우멤버십 회원 아닌 경우: 1) [총 주문금액] - [반품 상품금액] = 19,800원 미만인 경우 반품비 5,000원 2) [총 주",
+        "metadata": {
+            "origin_field": "returnPolicy.returnCharge",
+            "original_length": 156,
+            "chunk_index": 0,
+            "chunk_strategy": "LENGTH_SPLIT_100CHARS"
+        }
+    },
+    {
+        "source_file": "btf_86564_i175470_v3000104081_1761547265549.json",
+        "source_type": "STRUCTURED_FIELD",
+        "chunk_id": "btf_86564_i175470_v3000104081_1761547265549_c00008",
+        "content_type": "TEXT",
+        "text_content": "문금액] - [반품 상품금액] = 19,800원 이상인 경우 반품비 2,500원",
+        "metadata": {
+            "origin_field": "returnPolicy.returnCharge",
+            "original_length": 156,
+            "chunk_index": 1,
+            "chunk_strategy": "LENGTH_SPLIT_100CHARS"
+        }
+    },
+    {
+        "source_file": "btf_86564_i175470_v3000104081_1761547265549.json",
+        "source_type": "STRUCTURED_FIELD",
+        "chunk_id": "btf_86564_i175470_v3000104081_1761547265549_c00009",
+        "content_type": "TEXT",
+        "text_content": "무료배송 - 로켓배송 상품 중 19,800원 이상 구매 시 무료배송 - 도서산간 지역 추가비용 없음",
+        "metadata": {
+            "origin_field": "deliveryPolicy.deliveryCharge",
+            "original_length": 63,
+            "chunk_strategy": "FIELD_UNIT"
+        }
+    },
+    {
+        "source_file": "btf_86564_i175470_v3000104081_1761547265549.json",
+        "source_type": "ESSENTIAL_INFO",
+        "chunk_id": "btf_86564_i175470_v3000104081_1761547265549_c00010",
+        "content_type": "TEXT",
+        "text_content": "컨텐츠 참조",
+        "metadata": {
+            "origin_field": "essentials",
+            "original_length": 6,
+            "chunk_strategy": "FIELD_UNIT"
+        }
+    },
+    {
+        "source_file": "btf_86564_i175470_v3000104081_1761547265549.json",
+        "source_type": "ESSENTIAL_INFO",
+        "chunk_id": "btf_86564_i175470_v3000104081_1761547265549_c00011",
+        "content_type": "TEXT",
+        "text_content": "소비기한(또는 유통기한) : 2026년 01월 28일 이거나 그 이후인 상품",
+        "metadata": {
+            "origin_field": "essentials",
+            "original_length": 42,
+            "chunk_strategy": "FIELD_UNIT"
+        }
+    },
+    {
+        "source_file": "btf_86564_i175470_v3000104081_1761547265549.json",
+        "source_type": "ESSENTIAL_INFO",
+        "chunk_id": "btf_86564_i175470_v3000104081_1761547265549_c00012",
+        "content_type": "TEXT",
+        "text_content": "86g x 6개",
+        "metadata": {
+            "origin_field": "essentials",
+            "original_length": 8,
+            "chunk_strategy": "FIELD_UNIT"
+        }
+    },
+    {
+        "source_file": "btf_86564_i175470_v3000104081_1761547265549.json",
+        "source_type": "ESSENTIAL_INFO",
+        "chunk_id": "btf_86564_i175470_v3000104081_1761547265549_c00013",
+        "content_type": "TEXT",
+        "text_content": "컨텐츠 참조",
+        "metadata": {
+            "origin_field": "essentials",
+            "original_length": 7,
+            "chunk_strategy": "FIELD_UNIT"
+        }
+    },
+    {
+        "source_file": "review_86564_p1_1761179851768.json",
+        "source_type": "REVIEW",
+        "chunk_id": "review_86564_p1_1761179851768_c00014",
+        "content_type": "TEXT",
+        "text_content": "외관 패키지부터 익숙한 사발면 감성 그대로임. 빨간색 바탕에 ‘김치사발면’ 딱 적혀 있어서 딱 봐도 클래식한 컵라면 느낌. 6개 묶음 포장이라 캠핑이나 사무실 비치용으로 딱 좋음.",
+        "metadata": {
+            "origin_field": "review.content",
+            "original_length": 1069,
+            "chunk_index": 0,
+            "chunk_strategy": "LENGTH_SPLIT_100CHARS"
+        }
+    },
+    {
+        "source_file": "review_86564_p1_1761179851768.json",
+        "source_type": "REVIEW",
+        "chunk_id": "review_86564_p1_1761179851768_c00015",
+        "content_type": "TEXT",
+        "text_content": "사이즈는 일반 큰사발보다 살짝 작고, 컵라면 중간 크기라 간식용으로 적당함. 뚜껑 재질도 두꺼워서 물 붓고 덮었을 때 찢어지지 않고 안정적임. 조리법 조리법은 진짜 간단함. 뜨거",
+        "metadata": {
+            "origin_field": "review.content",
+            "original_length": 1069,
+            "chunk_index": 1,
+            "chunk_strategy": "LENGTH_SPLIT_100CHARS"
+        }
+    },
+    {
+        "source_file": "review_86564_p1_1761179851768.json",
+        "source_type": "REVIEW",
+        "chunk_id": "review_86564_p1_1761179851768_c00016",
+        "content_type": "TEXT",
+        "text_content": "운 물만 있으면 끝. 표시선까지 물 붓고 3분 기다리면 완성. 면이 얇아서 빨리 익고, 물 붓고 나서 김치향이 바로 올라옴. 면 불 조절하기도 쉬워서 바쁜 아침이나 간단한 야식으로",
+        "metadata": {
+            "origin_field": "review.content",
+            "original_length": 1069,
+            "chunk_index": 2,
+            "chunk_strategy": "LENGTH_SPLIT_100CHARS"
+        }
+    },
+    {
+        "source_file": "review_86564_p1_1761179851768.json",
+        "source_type": "REVIEW",
+        "chunk_id": "review_86564_p1_1761179851768_c00017",
+        "content_type": "TEXT",
+        "text_content": "좋음. 뜨거운 물만 부어도 충분하지만, 끓는 물로 하면 더 깊은 맛이 살아남. 개인적으로는 전자레인지 30초 돌리면 국물 맛이 더 진해짐. 맛 이게 왜 꾸준히 팔리는지 알겠음.",
+        "metadata": {
+            "origin_field": "review.content",
+            "original_length": 1069,
+            "chunk_index": 3,
+            "chunk_strategy": "LENGTH_SPLIT_100CHARS"
+        }
+    },
+    {
+        "source_file": "review_86564_p1_1761179851768.json",
+        "source_type": "REVIEW",
+        "chunk_id": "review_86564_p1_1761179851768_c00018",
+        "content_type": "TEXT",
+        "text_content": "진짜 클래식한 김치라면의 정석. 국물은 칼칼하고 시원한 편인데, 맵다기보단 깔끔하게 톡 쏘는 김치 맛이 살아있음. 김치 건더기가 꽤 실해서 식감도 괜찮고, 밥 말아 먹으면 완벽함.",
+        "metadata": {
+            "origin_field": "review.content",
+            "original_length": 1069,
+            "chunk_index": 4,
+            "chunk_strategy": "LENGTH_SPLIT_100CHARS"
+        }
+    },
+    {
+        "source_file": "review_86564_p1_1761179851768.json",
+        "source_type": "REVIEW",
+        "chunk_id": "review_86564_p1_1761179851768_c00019",
+        "content_type": "TEXT",
+        "text_content": "짜지 않고, 적당히 산미 있는 김치국 느낌이라 느끼하지 않음. 다른 컵라면처럼 자극적이지 않고 부담 없이 후루룩 먹기 좋음. 양 86g이라 양은 많지 않음. 한 끼 식사라기보단",
+        "metadata": {
+            "origin_field": "review.content",
+            "original_length": 1069,
+            "chunk_index": 5,
+            "chunk_strategy": "LENGTH_SPLIT_100CHARS"
+        }
+    },
+    {
+        "source_file": "review_86564_p1_1761179851768.json",
+        "source_type": "REVIEW",
+        "chunk_id": "review_86564_p1_1761179851768_c00020",
+        "content_type": "TEXT",
+        "text_content": "간식, 혹은 점심 후 입가심용으로 딱. 하지만 면이 얇고 후루룩 넘어가서 속은 편함. 컵라면 치고는 건더기도 꽤 들어 있고, 국물이 시원해서 만족감은 있음. 양이 아쉬운 사람은 김",
+        "metadata": {
+            "origin_field": "review.content",
+            "original_length": 1069,
+            "chunk_index": 6,
+            "chunk_strategy": "LENGTH_SPLIT_100CHARS"
+        }
+    },
+    {
+        "source_file": "review_86564_p1_1761179851768.json",
+        "source_type": "REVIEW",
+        "chunk_id": "review_86564_p1_1761179851768_c00021",
+        "content_type": "TEXT",
+        "text_content": "밥이나 삼각김밥이랑 같이 먹으면 딱 맞음. 활용도 출근길에, 야근 중에, 캠핑 가서, 여행 가서 어디서든 편하게 먹을 수 있음. 전자레인지나 가스버너 없어도 물만 있으면 되니까 활",
+        "metadata": {
+            "origin_field": "review.content",
+            "original_length": 1069,
+            "chunk_index": 7,
+            "chunk_strategy": "LENGTH_SPLIT_100CHARS"
+        }
+    },
+    {
+        "source_file": "review_86564_p1_1761179851768.json",
+        "source_type": "REVIEW",
+        "chunk_id": "review_86564_p1_1761179851768_c00022",
+        "content_type": "TEXT",
+        "text_content": "용도 최고. 집에서는 김치사발면에 달걀 넣거나, 떡 조금 넣으면 훨씬 든든해짐. 개인적으로는 라면 위에 김가루 살짝 뿌리면 진짜 맛있음. 총평 김치사발면은 신제품의 화려함보다 ‘익",
+        "metadata": {
+            "origin_field": "review.content",
+            "original_length": 1069,
+            "chunk_index": 8,
+            "chunk_strategy": "LENGTH_SPLIT_100CHARS"
+        }
+    },
+    {
+        "source_file": "review_86564_p1_1761179851768.json",
+        "source_type": "REVIEW",
+        "chunk_id": "review_86564_p1_1761179851768_c00023",
+        "content_type": "TEXT",
+        "text_content": "숙함’이 강점인 제품임. 먹을 때마다 “이 맛이야” 하게 되는 추억의 맛. 매운 거 잘 못 먹는 사람도 부담 없이 즐길 수 있고, 국물까지 시원하게 마무리 가능. 간단하면서도 만족",
+        "metadata": {
+            "origin_field": "review.content",
+            "original_length": 1069,
+            "chunk_index": 9,
+            "chunk_strategy": "LENGTH_SPLIT_100CHARS"
+        }
+    },
+    {
+        "source_file": "review_86564_p1_1761179851768.json",
+        "source_type": "REVIEW",
+        "chunk_id": "review_86564_p1_1761179851768_c00024",
+        "content_type": "TEXT",
+        "text_content": "도 높은 컵라면 찾는 분들께 강력 추천. 꾸준히 찾게 되는 이유가 확실함. 라면계의 국민 간식 그 자체임.",
+        "metadata": {
+            "origin_field": "review.content",
+            "original_length": 1069,
+            "chunk_index": 10,
+            "chunk_strategy": "LENGTH_SPLIT_100CHARS"
+        }
+    },
+    {
+        "source_file": "review_86564_p1_1761179851768.json",
+        "source_type": "REVIEW",
+        "chunk_id": "review_86564_p1_1761179851768_c00025",
+        "content_type": "TEXT",
+        "text_content": "제목: 칼칼하고 시원한 김치 국물 + 간편 조리 + 부담 없는. 내용: 1. 시원하고 칼칼한 김치 국물 맛 • 여러 리뷰들이 “김치 맛이 잘 살아 있다”, “국물이 개운하다”는 표",
+        "metadata": {
+            "origin_field": "review.content",
+            "original_length": 278,
+            "chunk_index": 0,
+            "chunk_strategy": "LENGTH_SPLIT_100CHARS"
+        }
+    },
+    {
+        "source_file": "review_86564_p1_1761179851768.json",
+        "source_type": "REVIEW",
+        "chunk_id": "review_86564_p1_1761179851768_c00026",
+        "content_type": "TEXT",
+        "text_content": "현을 많이 쓰더군요. ￼ • 특히 매운 정도나 짭조름함이 과하지 않고, 김치의 새콤함과 매콤함이 적절히 조화를 이루어 먹고 나서도 깔끔한 뒷맛이 남는다는 후기들이 많아요. ￼ •",
+        "metadata": {
+            "origin_field": "review.content",
+            "original_length": 278,
+            "chunk_index": 1,
+            "chunk_strategy": "LENGTH_SPLIT_100CHARS"
+        }
+    },
+    {
+        "source_file": "review_86564_p1_1761179851768.json",
+        "source_type": "REVIEW",
+        "chunk_id": "review_86564_p1_1761179851768_c00027",
+        "content_type": "TEXT",
+        "text_content": "해장용 혹은 속 풀이용으로도 괜찮다는 표현이 종종 보이는데, 자극적이지 않으면서도 입맛을 돋우는 맛이라는 평가가 강점으로 꼽힙니다.",
+        "metadata": {
+            "origin_field": "review.content",
+            "original_length": 278,
+            "chunk_index": 2,
+            "chunk_strategy": "LENGTH_SPLIT_100CHARS"
+        }
+    },
+    {
+        "source_file": "inquiries_86564_p1_1761131645429.json",
+        "source_type": "INQUIRY_Q",
+        "chunk_id": "inquiries_86564_p1_1761131645429_c00028",
+        "content_type": "TEXT",
+        "text_content": "10/9일부터 상품이 움직이지 않고 있어요 확인하여 조치하여 주세요",
+        "metadata": {
+            "origin_field": "inquiry.question",
+            "original_length": 37,
+            "chunk_strategy": "FIELD_UNIT"
+        }
+    },
+    {
+        "source_file": "inquiries_86564_p1_1761131645429.json",
+        "source_type": "INQUIRY_A",
+        "chunk_id": "inquiries_86564_p1_1761131645429_c00029",
+        "content_type": "TEXT",
+        "text_content": "판매자입니다. 고객님께서 주신 문의 글이 주문번호로 인입되지 않아 주문내역을 확인할수가 없습니다. 주문번호로 재문의 주시면 확인해드리겠습니다.",
+        "metadata": {
+            "origin_field": "inquiry.answer",
+            "original_length": 79,
+            "chunk_strategy": "FIELD_UNIT"
+        }
+    },
+    {
+        "source_file": "inquiries_86564_p1_1761131645429.json",
+        "source_type": "INQUIRY_Q",
+        "chunk_id": "inquiries_86564_p1_1761131645429_c00030",
+        "content_type": "TEXT",
+        "text_content": "더 작은사이즈도 있나요?",
+        "metadata": {
+            "origin_field": "inquiry.question",
+            "original_length": 13,
+            "chunk_strategy": "FIELD_UNIT"
+        }
+    },
+    {
+        "source_file": "inquiries_86564_p1_1761131645429.json",
+        "source_type": "INQUIRY_A",
+        "chunk_id": "inquiries_86564_p1_1761131645429_c00031",
+        "content_type": "TEXT",
+        "text_content": "더 작은사이즈는 없습니다~~",
+        "metadata": {
+            "origin_field": "inquiry.answer",
+            "original_length": 15,
+            "chunk_strategy": "FIELD_UNIT"
+        }
+    },
+    {
+        "source_file": "quantity_info_86564_1761131830695.json",
+        "source_type": "BENEFIT_INFO",
+        "chunk_id": "quantity_info_86564_1761131830695_c00032",
+        "content_type": "TEXT",
+        "text_content": "쿠페이 머니 결제 시 1% 적립",
+        "metadata": {
+            "origin_field": "cashBackSummary.basicCashBackList.benefit",
+            "original_length": 17,
+            "chunk_strategy": "FIELD_UNIT"
+        }
+    },
+    {
+        "source_file": "quantity_info_86564_1761131830695.json",
+        "source_type": "DELIVERY_INFO",
+        "chunk_id": "quantity_info_86564_1761131830695_c00033",
+        "content_type": "TEXT",
+        "text_content": "내일(목) 10/23 도착 보장 (3시간 42분 내 주문 시)",
+        "metadata": {
+            "origin_field": "delivery.descriptions",
+            "original_length": 229,
+            "chunk_strategy": "FIELD_UNIT"
+        }
+    },
+    {
+        "source_file": "quantity_info_86564_1761131830695.json",
+        "source_type": "PRICE_INFO",
+        "chunk_id": "quantity_info_86564_1761131830695_c00034",
+        "content_type": "TEXT",
+        "text_content": "최종 가격: 5,470원, 단위 가격: 1개당 912원",
+        "metadata": {
+            "origin_field": "price.summary",
+            "original_length": 30,
+            "chunk_strategy": "FIELD_UNIT"
+        }
+    },
+    {
+        "source_file": "quantity_info_86564_1761131830695.json",
+        "source_type": "OPTION_INFO",
+        "chunk_id": "quantity_info_86564_1761131830695_c00035",
+        "content_type": "TEXT",
+        "text_content": "옵션: 1개, 가격: 1,050원, 단위가격: 1개당 1,050원, 배송유형: None",
+        "metadata": {
+            "origin_field": "optionList.option",
+            "original_length": 48,
+            "chunk_strategy": "FIELD_UNIT"
+        }
+    },
+    {
+        "source_file": "quantity_info_86564_1761131830695.json",
+        "source_type": "OPTION_INFO",
+        "chunk_id": "quantity_info_86564_1761131830695_c00036",
+        "content_type": "TEXT",
+        "text_content": "옵션: 6개, 가격: 5,470원, 단위가격: 1개당 912원, 배송유형: ROCKET",
+        "metadata": {
+            "origin_field": "optionList.option",
+            "original_length": 48,
+            "chunk_strategy": "FIELD_UNIT"
+        }
+    },
+    {
+        "source_file": "quantity_info_86564_1761131830695.json",
+        "source_type": "OPTION_INFO",
+        "chunk_id": "quantity_info_86564_1761131830695_c00037",
+        "content_type": "TEXT",
+        "text_content": "옵션: 12개, 가격: 10,780원, 단위가격: 1개당 898원, 배송유형: ROCKET",
+        "metadata": {
+            "origin_field": "optionList.option",
+            "original_length": 50,
+            "chunk_strategy": "FIELD_UNIT"
+        }
+    },
+    {
+        "source_file": "quantity_info_86564_1761131830695.json",
+        "source_type": "OPTION_INFO",
+        "chunk_id": "quantity_info_86564_1761131830695_c00038",
+        "content_type": "TEXT",
+        "text_content": "옵션: 24개, 가격: 19,700원, 단위가격: 1개당 821원, 배송유형: ROCKET",
+        "metadata": {
+            "origin_field": "optionList.option",
+            "original_length": 50,
+            "chunk_strategy": "FIELD_UNIT"
+        }
+    }
+]

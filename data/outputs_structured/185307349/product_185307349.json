@@ -221,15 +221,16 @@
     "fromHTML": [
       "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/f5bdbfb6-ea5f-4af2-ad65-7dd62e2cd8ed8902265571440607387.png",
       "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/2025/06/16/15/5/20e63852-4507-4b96-a6c9-4e02bc51c1fd.jpg",
-      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/f5bdbfb6-ea5f-4af2-ad65-7dd62e2cd8ed8902265571440607387.png\\",
-      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/2025/06/16/15/5/20e63852-4507-4b96-a6c9-4e02bc51c1fd.jpg\\",
-      "https://thumbnail.coupangcdn.com/thumbnails/remote/230x230ex/image/retail/images/f5bdbfb6-ea5f-4af2-ad65-7dd62e2cd8ed8902265571440607387.png\\",
-      "https://thumbnail.coupangcdn.com/thumbnails/remote/48x48ex/image/retail/images/f5bdbfb6-ea5f-4af2-ad65-7dd62e2cd8ed8902265571440607387.png\\",
-      "https://thumbnail.coupangcdn.com/thumbnails/remote/230x230ex/image/retail/images/2025/06/16/15/5/20e63852-4507-4b96-a6c9-4e02bc51c1fd.jpg\\",
-      "https://thumbnail.coupangcdn.com/thumbnails/remote/48x48ex/image/retail/images/2025/06/16/15/5/20e63852-4507-4b96-a6c9-4e02bc51c1fd.jpg\\",
-      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/748ed488-4695-4f08-9b9f-73aa2e7c0ca42077354534904512896.png\\",
-      "https://thumbnail.coupangcdn.com/thumbnails/remote/230x230ex/image/retail/images/748ed488-4695-4f08-9b9f-73aa2e7c0ca42077354534904512896.png\\",
-      "https://thumbnail.coupangcdn.com/thumbnails/remote/48x48ex/image/retail/images/748ed488-4695-4f08-9b9f-73aa2e7c0ca42077354534904512896.png\\"
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/230x230ex/image/retail/images/f5bdbfb6-ea5f-4af2-ad65-7dd62e2cd8ed8902265571440607387.png",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/48x48ex/image/retail/images/f5bdbfb6-ea5f-4af2-ad65-7dd62e2cd8ed8902265571440607387.png",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/230x230ex/image/retail/images/2025/06/16/15/5/20e63852-4507-4b96-a6c9-4e02bc51c1fd.jpg",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/48x48ex/image/retail/images/2025/06/16/15/5/20e63852-4507-4b96-a6c9-4e02bc51c1fd.jpg",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/748ed488-4695-4f08-9b9f-73aa2e7c0ca42077354534904512896.png",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/230x230ex/image/retail/images/748ed488-4695-4f08-9b9f-73aa2e7c0ca42077354534904512896.png",
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/48x48ex/image/retail/images/748ed488-4695-4f08-9b9f-73aa2e7c0ca42077354534904512896.png"
+    ],
+    "fromBTF": [
+      "https://thumbnail.coupangcdn.com/thumbnails/remote/q89/image/rs_quotation_api/k4bcvakn/b7c0d9e0e2074841b7f49c1eb57bcaa7.jpg"
     ]
   },
   "reviewsSummary": {
@@ -358,10 +359,17 @@
     }
   ],
   "inquiriesTotal": 69,
+  "btfFields": {
+    "returnPolicyVo": "B KR 가능 무료배송<br/>- 로켓배송 상품 중 19,800원 이상 구매 시 무료배송<br/>- 도서산간 지역 추가비용 없음 순차배송 ㆍ와우멤버십 회원: 무료로 반품/교환 가능<br/>ㆍ와우멤버십 회원 아닌 경우:<br/>1) [총 주문금액] - [반품 상품금액] = 19,800원 미만인 경우 반품비 5,000원<br/>2) [총 주문금액] - [반품 상품금액] = 19,800원 이상인 경우 반품비 2,500원 RETAIL",
+    "essentials": "소비자상담관련 전화번호 쿠팡고객센터 1577-7011 수입식품 문구 해당없음 소비자안전을 위한 주의사항 컨텐츠 참조 유전자변형식품에 해당하는 경우의 표시 해당없음 영양성분 컨텐츠 참조 원재료명 및 함량 컨텐츠 참조 포장단위별 내용물의 용량(중량), 수량 200g x 6개 제조연월일, 소비기한 또는 품질유지기한 소비기한(또는 유통기한) : 2026년 01월 08일 이거나 그 이후인 상품 생산자 및 소재지 컨텐츠 참조 식품의 유형 컨텐츠 참조 제품명 컨텐츠 참조",
+    "details": "IMAGE_NO_SPACE IMAGE subType-IMAGE //thumbnail.coupangcdn.com/thumbnails/remote/q89/image/rs_quotation_api/k4bcvakn/b7c0d9e0e2074841b7f49c1eb57bcaa7.jpg type-IMAGE_NO_SPACE",
+    "abTests": "NOT_APPLICABLE B"
+  },
   "source": {
-    "html": "outputs_html/response_185307349.html",
-    "quantity": "outputs_quantity/quantity_info_185307349_1761131836028.json",
-    "reviews": "outputs_reviews/review_185307349_p1_1761179857267.json",
-    "inquiries": "outputs_inquiries/inquiries_185307349_p1_1761131649097.json"
+    "html": "data/outputs_html/response_185307349.html",
+    "quantity": "data/outputs_quantity/quantity_info_185307349_1761131836028.json",
+    "reviews": "data/outputs_reviews/review_185307349_p1_1761179857267.json",
+    "inquiries": "data/outputs_inquiries/inquiries_185307349_p1_1761131649097.json",
+    "btf": "data/outputs_btf/*185307349*.json"
   }
 }
