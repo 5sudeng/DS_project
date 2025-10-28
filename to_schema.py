@@ -1,7 +1,7 @@
 '''
 use example :
     python to_schema.py \
-        --html-dir outputs_html \
+        --html-dir data/outputs_html \
         --quantity-dir outputs_quantity \
         --reviews-dir outputs_reviews \
         --inquiries-dir outputs_inquiries \
