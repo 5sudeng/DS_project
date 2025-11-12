@@ -37,16 +37,20 @@ def load_cookie(cookie_file: Optional[str]) -> Optional[str]:
 
 def build_headers(base_url: str, item_id: str, vendor_item_id: str, cookie: Optional[str]) -> dict:
     h = {
-        "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+        "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
         "accept-language": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7",
-        "accept-encoding": "gzip, deflate, br",
+        "accept-encoding": "gzip, deflate, br, zstd",
         "user-agent": UA,
-        "origin": "https://www.coupang.com",
         "referer": f"{base_url}?itemId={item_id}&vendorItemId={vendor_item_id}",
         "sec-ch-ua": '"Chromium";v="141", "Not?A_Brand";v="99", "Google Chrome";v="141"',
         "sec-ch-ua-platform": '"macOS"',
         "sec-ch-ua-mobile": "?0",
-        "connection": "keep-alive",
+        "sec-fetch-dest": "document",
+        "sec-fetch-mode": "navigate",
+        "sec-fetch-site": "same-origin",
+        "sec-fetch-user": "?1",
+        "upgrade-insecure-requests": "1",
+        "cache-control": "max-age=0",
     }
     if cookie:
         h["cookie"] = cookie
@@ -110,28 +114,31 @@ def _try_httpx(candidates: Sequence[Tuple[str, Optional[dict]]], headers: dict, 
 
     for u, p in candidates:
         print_get(u, p)
-        try:
-            timeout_cfg = httpx.Timeout(timeout=float(timeout), connect=5.0, read=float(timeout), write=float(timeout), pool=5.0)
-            with httpx.Client(http2=use_http2, headers=headers, timeout=timeout_cfg, follow_redirects=True) as client:
-                r = client.get(u, params=p)
-                if r.status_code == 200 and r.text:
-                    print(f"[httpx/{'h2' if use_http2 else 'h1'}] status:", r.status_code)
-                    print(f"[httpx/{'h2' if use_http2 else 'h1'}] url   :", str(r.url))
-                    return r.status_code, str(r.url), r.text
-                else:
-                    raise RuntimeError(f"httpx status {r.status_code}")
-        except Exception as e:
-            print("[httpx] failed:", e)
-            time.sleep(0.4 + random.uniform(0, 0.4))
+        for attempt in range(1, 4):
+            try:
+                timeout_cfg = httpx.Timeout(timeout=float(timeout), connect=10.0, read=float(timeout), write=float(timeout), pool=5.0)
+                with httpx.Client(http2=use_http2, headers=headers, timeout=timeout_cfg, follow_redirects=True) as client:
+                    r = client.get(u, params=p)
+                    if r.status_code == 200 and r.text:
+                        print(f"[httpx/{'h2' if use_http2 else 'h1'}] status:", r.status_code)
+                        print(f"[httpx/{'h2' if use_http2 else 'h1'}] url   :", str(r.url))
+                        return r.status_code, str(r.url), r.text
+                    else:
+                        raise RuntimeError(f"httpx status {r.status_code}")
+            except Exception as e:
+                delay = (2 ** (attempt - 1)) + random.uniform(0.5, 1.5)
+                print(f"[httpx] failed (attempt {attempt}/3): {e}, wait {delay:.2f}s")
+                if attempt < 3:
+                    time.sleep(delay)
     return None, None, None
 
 def _try_requests(candidates: Sequence[Tuple[str, Optional[dict]]], headers: dict, timeout: int) -> Tuple[Optional[int], Optional[str], Optional[str]]:
-    sess = make_requests_session(retries=2)
+    sess = make_requests_session(retries=3)
     for u, p in candidates:
         print_get(u, p)
-        for attempt in range(1, 3):
+        for attempt in range(1, 4):
             try:
-                r = sess.get(u, headers=headers, params=p, timeout=(5, timeout), allow_redirects=True)
+                r = sess.get(u, headers=headers, params=p, timeout=(10, timeout), allow_redirects=True)
                 if r.status_code == 200 and r.text:
                     print("[requests] status:", r.status_code)
                     print("[requests] url   :", r.url)
@@ -139,12 +146,13 @@ def _try_requests(candidates: Sequence[Tuple[str, Optional[dict]]], headers: dic
                 else:
                     raise RuntimeError(f"HTTP {r.status_code}")
             except requests.Timeout as e:
-                delay = (2 ** (attempt - 1)) + random.uniform(0, 0.7)
-                print(f"[retry {attempt}/2] timeout, wait {delay:.2f}s")
+                delay = (2 ** attempt) + random.uniform(1, 2)
+                print(f"[retry {attempt}/3] timeout, wait {delay:.2f}s")
                 time.sleep(delay)
             except requests.RequestException as e:
-                print(f"[retry {attempt}/2] request error: {e}")
-                time.sleep(1.0)
+                delay = (2 ** (attempt - 1)) + random.uniform(0.5, 1.5)
+                print(f"[retry {attempt}/3] request error: {e}, wait {delay:.2f}s")
+                time.sleep(delay)
     return None, None, None
 
 def _try_curl(candidates: Sequence[Tuple[str, Optional[dict]]], headers: dict, timeout: int, product_id: str, cookie: Optional[str]) -> Tuple[Optional[int], Optional[str], Optional[str]]:
@@ -181,7 +189,7 @@ def fetch_html(
     product_id: str,
     item_id: str,
     vendor_item_id: str,
-    timeout: int = 40,
+    timeout: int = 60,
     cookie: Optional[str] = None,
     outdir: Optional[Path] = None,
 ) -> Tuple[object, BeautifulSoup, Path]:
