@@ -1,0 +1,155 @@
+{
+  "success": {
+    "rCode": "RET0000",
+    "rRedirectCode": null,
+    "rRedirectUrl": null,
+    "rViewName": "page/product/productDetail/inquiryList/inquiryItemsMore",
+    "rMessage": "",
+    "rData": {
+      "webbuildNo": "20251112151538",
+      "isLogin": false,
+      "memberId": null,
+      "trCid": null,
+      "trAid": null,
+      "navigation": {
+        "firstPageUnit": {
+          "displayPageNo": 1,
+          "isSelected": false,
+          "link": null
+        },
+        "previousPageUnit": {
+          "displayPageNo": 1,
+          "isSelected": false,
+          "link": null
+        },
+        "nextPageUnit": {
+          "displayPageNo": 2,
+          "isSelected": false,
+          "link": null
+        },
+        "lastPageUnit": {
+          "displayPageNo": 2,
+          "isSelected": false,
+          "link": null
+        },
+        "pageList": [
+          {
+            "displayPageNo": 1,
+            "isSelected": true,
+            "link": null
+          },
+          {
+            "displayPageNo": 2,
+            "isSelected": false,
+            "link": null
+          }
+        ],
+        "contents": [
+          {
+            "vendorItemId": 92013707196,
+            "inquiryId": 135939673,
+            "createdAt": "20250509140404",
+            "displayWriter": "",
+            "content": "어제택배받았는데 상자를집어던져서 그런건지 캔이 전체적으로 다 완전엉망으로 찌그러져있고 윗부분이 터지기일보직전처럼 부풀러올라가있고 조심히 뜯어도 기름이 완전넘쳐있어서 질질질 다 흐르고ㅡㅡ싱크대며 손이며.옷이며. 다 엉망되서 뒷처리하는데 식겁했네요.물같은것도아니고 기름이니ㅠㅠ 암튼 결국 폐기ㅠㅠ여태껏 구매하면서 이런적첨인데. 이거어떻해야하나요.진짜 짜증너무나네요 문자주세요\r\n***-****-****",
+            "comments": [
+              {
+                "inquiryCommentId": 129419396,
+                "inquiryId": 135939673,
+                "displayWriter": "농업회사법인(주) 콩쥐팥쥐",
+                "content": "안녕 하세요 \n주문 번호 부탁드립니다.",
+                "createdAt": "20250509174209",
+                "author": false,
+                "formattedCreateDate": "2025/05/09 17:42:09"
+              }
+            ],
+            "authorMemberId": 144436513,
+            "serializedAttrName": "12개 | 85g",
+            "vendorId": "A00261406",
+            "vendorName": "농업회사법인(주) 콩쥐팥쥐",
+            "author": false,
+            "formattedCreateDate": "2025/05/09 14:04:04"
+          },
+          {
+            "vendorItemId": 90915680283,
+            "inquiryId": 124396074,
+            "createdAt": "20240920202913",
+            "displayWriter": "",
+            "content": "완충재없이 와서 다 찌그러져 반품합니다. 개선하시거나.다신온라인으로 캔음식안사요.",
+            "comments": [
+              {
+                "inquiryCommentId": 117900857,
+                "inquiryId": 124396074,
+                "displayWriter": "(주)굿드림",
+                "content": "죄송합니다 현재 주문번호가 확인되시지 않아 답변드리기 어려운 상황입니다. 번거로우시더라도 주문번호 한번만 공유 부탁 드립니다",
+                "createdAt": "20240920210612",
+                "author": false,
+                "formattedCreateDate": "2024/09/20 21:06:12"
+              }
+            ],
+            "authorMemberId": 26030565,
+            "serializedAttrName": "8개 | 85g",
+            "vendorId": "A00434235",
+            "vendorName": "(주)굿드림",
+            "author": false,
+            "formattedCreateDate": "2024/09/20 20:29:13"
+          },
+          {
+            "vendorItemId": 90915680283,
+            "inquiryId": 123894828,
+            "createdAt": "20240909174349",
+            "displayWriter": "",
+            "content": "참치를 8캔 시켰는데.. 4캔만 왔어요",
+            "comments": [
+              {
+                "inquiryCommentId": 117407587,
+                "inquiryId": 123894828,
+                "displayWriter": "(주)굿드림",
+                "content": "죄송합니다 고객님 수령하신 상품 그대로 사진 촬영 후 문의글 첨부 부탁드립니다 \n주문번호또는 송장 번호 함께 남겨주시면 확인 도와드리겠습니다 너무 죄송합니다 \n",
+                "createdAt": "20240909175238",
+                "author": false,
+                "formattedCreateDate": "2024/09/09 17:52:38"
+              }
+            ],
+            "authorMemberId": 113203193,
+            "serializedAttrName": "8개 | 85g",
+            "vendorId": "A00434235",
+            "vendorName": "(주)굿드림",
+            "author": false,
+            "formattedCreateDate": "2024/09/09 17:43:49"
+          },
+          {
+            "vendorItemId": 88486260539,
+            "inquiryId": 115664903,
+            "createdAt": "20240315213427",
+            "displayWriter": "",
+            "content": "배송 언제 오나요?\r\n배송 예정 일 2일 지났는데...",
+            "comments": [
+              {
+                "inquiryCommentId": 109276374,
+                "inquiryId": 115664903,
+                "displayWriter": "주식회사 더가온",
+                "content": "\n안녕하세요 고객님 먼저 불편을 드려 죄송합니다. 현재 고객님의 정보가 확인되지않아 정확한 안내가 어렵습니다. 쿠팡 고객센터로 문의 부탁드립니다. ",
+                "createdAt": "20240318092152",
+                "author": false,
+                "formattedCreateDate": "2024/03/18 09:21:52"
+              }
+            ],
+            "authorMemberId": 112507861,
+            "serializedAttrName": "8개 | 85g",
+            "vendorId": "A00144402",
+            "vendorName": "주식회사 더가온",
+            "author": false,
+            "formattedCreateDate": "2024/03/15 21:34:27"
+          }
+        ],
+        "currentPageIndex": 1,
+        "totalPageIndex": 2
+      },
+      "isPreview": true,
+      "keyword": "",
+      "searchInquiry": true,
+      "totalElements": 5
+    },
+    "rCookies": null
+  }
+}
