@@ -3,17 +3,24 @@
 from __future__ import annotations
 
 import asyncio
+import json
 import os
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
+from urllib.parse import parse_qs, urlparse
 
 from playwright.async_api import Browser, Page, async_playwright
 
 from agent.coupang_playwright_agent import CoupangProductAgent
+from agent.coupang_scenario_pipeline import ScenarioPaths, parse_product_identifiers
 from agent.coupang_search_agent import CoupangSearchAgent, SearchResult
 from agent.llm_utils import ShoppingAssistantLLM
+from crawling.fetch_html import fetch_html as fetch_product_html
+from crawling.review import fetch_reviews
+from crawling.inquiries import fetch_inquiries
+from crawling.quantity import fetch_quantity_info
 
 
 @dataclass
@@ -43,9 +50,11 @@ class InteractiveShoppingCLI:
         headless: bool = False,
         cookie_file: Optional[str] = None,
         api_key: Optional[str] = None,
+        run_dir: Optional[str] = None,
     ):
         self.headless = headless
         self.cookie_file = cookie_file
+        self.run_dir = run_dir
         self.state = ConversationState()
         self.llm = ShoppingAssistantLLM(api_key=api_key)
 
@@ -54,6 +63,19 @@ class InteractiveShoppingCLI:
         self.page: Optional[Page] = None
         self.product_agent: Optional[CoupangProductAgent] = None
         self.search_agent: Optional[CoupangSearchAgent] = None
+        self.cookie_text: Optional[str] = None
+        self.cookie_header_value: Optional[str] = None
+        self.product_paths: Optional[ScenarioPaths] = None
+        self.product_id: Optional[str] = None
+        self.item_id: Optional[str] = None
+        self.vendor_item_id: Optional[str] = None
+        self.artifact_summary: Dict[str, Any] = {}
+
+        if self.cookie_file:
+            cookie_path = Path(self.cookie_file).expanduser()
+            if cookie_path.exists():
+                self.cookie_text = cookie_path.read_text(encoding="utf-8").strip()
+                self.cookie_header_value = self._build_cookie_header(self.cookie_text)
 
     async def run(self):
         """Main entry point for the interactive CLI."""
@@ -77,23 +99,23 @@ class InteractiveShoppingCLI:
             )
 
             # Create context with realistic browser fingerprint
+            extra_headers = {
+                'Accept-Language': 'ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7',
+            }
+            if self.cookie_header_value:
+                extra_headers['Cookie'] = self.cookie_header_value
+
             context = await self.browser.new_context(
                 viewport={'width': 1920, 'height': 1080},
                 user_agent='Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36',
                 locale='ko-KR',
                 timezone_id='Asia/Seoul',
-                extra_http_headers={
-                    'Accept-Language': 'ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7',
-                }
+                extra_http_headers=extra_headers,
             )
 
             # Load cookies if provided
-            if self.cookie_file:
-                cookie_path = Path(self.cookie_file)
-                if cookie_path.exists():
-                    cookie_text = cookie_path.read_text().strip()
-                    # Parse and add cookies
-                    await self._load_cookies(context, cookie_text)
+            if self.cookie_text:
+                await self._load_cookies(context)
 
             self.page = await context.new_page()
 
@@ -189,13 +211,28 @@ class InteractiveShoppingCLI:
         await self._perform_search(query)
         await self._select_from_search_results()
 
-    async def _load_cookies(self, context, cookie_text: str):
+    async def _load_cookies(self, context):
         """Load cookies from text format."""
-        # Parse cookies from semicolon-separated format
-        cookies = []
-        for line in cookie_text.split(';'):
-            line = line.strip()
-            if '=' in line:
+        if not self.cookie_text:
+            return
+        cookies: List[Dict[str, Any]] = []
+
+        try:
+            data = json.loads(self.cookie_text)
+        except json.JSONDecodeError:
+            data = None
+
+        if isinstance(data, dict):
+            cookies = [data]
+        elif isinstance(data, list):
+            cookies = [item for item in data if isinstance(item, dict)]
+
+        if not cookies:
+            # Parse cookies from semicolon-separated format
+            for line in self.cookie_text.split(';'):
+                line = line.strip()
+                if '=' not in line:
+                    continue
                 name, value = line.split('=', 1)
                 cookie_dict = {
                     'name': name.strip(),
@@ -213,6 +250,32 @@ class InteractiveShoppingCLI:
         if cookies:
             await context.add_cookies(cookies)
             print(f"✓ {len(cookies)}개의 쿠키 로드됨 (봇 방어 쿠키 포함)")
+
+    def _build_cookie_header(self, raw_cookie: str) -> Optional[str]:
+        """Convert JSON cookie blobs into a standard Cookie header string."""
+        if not raw_cookie:
+            return None
+
+        try:
+            data = json.loads(raw_cookie)
+        except json.JSONDecodeError:
+            return raw_cookie.strip() or None
+
+        if isinstance(data, dict):
+            items = [data]
+        elif isinstance(data, list):
+            items = [item for item in data if isinstance(item, dict)]
+        else:
+            items = []
+
+        parts = []
+        for item in items:
+            name = item.get("name")
+            value = item.get("value")
+            if not name or value is None:
+                continue
+            parts.append(f"{name}={value}")
+        return "; ".join(parts) if parts else None
 
     async def _load_product(self, url: str):
         """Load a product page."""
@@ -313,6 +376,11 @@ class InteractiveShoppingCLI:
             self.state.current_url = url
             self.state.current_product_name = product_name
 
+            try:
+                await self._collect_structured_data(current_url)
+            except Exception as exc:  # noqa: BLE001
+                print(f"⚠️  데이터 수집 중 오류가 발생했습니다: {exc}")
+
             print(f"✓ 상품: {self.state.current_product_name}")
             print(f"   URL: {current_url}")
             print("\n❓ 무엇이 궁금하신가요? (예: 발볼 넓은 사람도 신을 수 있을까요?)")
@@ -321,6 +389,178 @@ class InteractiveShoppingCLI:
             print(f"\n❌ 페이지 로드 실패: {e}")
             print("다시 시도하시겠습니까? 다른 URL을 입력하거나 'exit'로 종료하세요.")
             raise
+
+    async def _collect_structured_data(self, current_url: str) -> None:
+        """Collect HTML/reviews/inquiries using the crawling stack."""
+
+        try:
+            product_id, item_id, vendor_item_id = parse_product_identifiers(current_url)
+        except ValueError as exc:
+            print(f"⚠️  상품 ID를 추출하지 못해 데이터 수집을 건너뜁니다: {exc}")
+            return
+
+        self.product_id = product_id
+        self.item_id = item_id
+        self.vendor_item_id = vendor_item_id
+        self.product_paths = ScenarioPaths.build(self.run_dir, product_id)
+
+        print(f"\n🗂️  상품 데이터 수집 중 (product_id={product_id})...")
+
+        try:
+            summary = await asyncio.to_thread(self._collect_structured_data_sync)
+            self.artifact_summary = summary
+            print(f"✓ 데이터 수집 완료: {self.product_paths.run_dir}")
+        except Exception as exc:  # noqa: BLE001
+            print(f"⚠️  데이터 수집 중 예기치 않은 오류가 발생했습니다: {exc}")
+
+    def _collect_structured_data_sync(self) -> Dict[str, Any]:
+        """Blocking helper that mirrors coupang_scenario_pipeline collection logic."""
+
+        if not self.product_paths or not self.product_id:
+            return {}
+
+        steps: List[Dict[str, Any]] = []
+
+        def record(name: str, status: str, details: Dict[str, Any]) -> None:
+            serialized = {
+                k: (str(v) if isinstance(v, Path) else v) for k, v in details.items()
+            }
+            steps.append({"name": name, "status": status, "details": serialized})
+
+        # HTML
+        try:
+            resp, soup, out_path = fetch_product_html(
+                self.product_id,
+                self.item_id or "",
+                self.vendor_item_id or "",
+                cookie=self.cookie_header_value,
+                timeout=40,
+                outdir=self.product_paths.html_dir,
+            )
+            self._update_ids_from_url(resp.url)
+            record(
+                "fetch_html",
+                "success",
+                {
+                    "status": resp.status_code,
+                    "url": resp.url,
+                    "file": out_path,
+                    "title": soup.title.text.strip() if soup.title else "",
+                    "resolved_item_id": self.item_id,
+                    "resolved_vendor_item_id": self.vendor_item_id,
+                },
+            )
+        except Exception as exc:  # noqa: BLE001
+            record("fetch_html", "error", {"error": str(exc)})
+
+        # Reviews
+        try:
+            review_pages = 1
+            review_page_size = 20
+            page_records: List[Dict[str, Any]] = []
+            for page_no in range(1, review_pages + 1):
+                resp, data = fetch_reviews(
+                    product_id=self.product_id,
+                    vendor_item_id=self.vendor_item_id,
+                    item_id=self.item_id,
+                    cookie=self.cookie_header_value,
+                    page=page_no,
+                    size=review_page_size,
+                    outdir=str(self.product_paths.reviews_dir),
+                    retries=2,
+                )
+                page_records.append(
+                    {
+                        "page": page_no,
+                        "status": resp.status_code,
+                        "response_keys": list(data.keys()),
+                    }
+                )
+            record(
+                "fetch_reviews",
+                "success",
+                {"output_dir": self.product_paths.reviews_dir, "pages": page_records},
+            )
+        except Exception as exc:  # noqa: BLE001
+            record("fetch_reviews", "error", {"error": str(exc)})
+
+        # Inquiries
+        try:
+            resp, data = fetch_inquiries(
+                product_id=self.product_id,
+                page_no=1,
+                cookie=self.cookie_header_value,
+                item_id=self.item_id,
+                vendor_item_id=self.vendor_item_id,
+                outdir=str(self.product_paths.inquiries_dir),
+                retries=2,
+                is_preview=True,
+            )
+            record(
+                "fetch_inquiries",
+                "success",
+                {
+                    "output_dir": self.product_paths.inquiries_dir,
+                    "status": resp.status_code,
+                    "response_keys": list(data.keys()),
+                    "page_no": 1,
+                },
+            )
+        except Exception as exc:  # noqa: BLE001
+            record("fetch_inquiries", "error", {"error": str(exc)})
+
+        # Quantity (optional)
+        if self.item_id and self.vendor_item_id:
+            try:
+                resp, data = fetch_quantity_info(
+                    self.product_id,
+                    self.item_id,
+                    self.vendor_item_id,
+                    cookie=self.cookie_header_value,
+                    outdir=str(self.product_paths.quantity_dir),
+                )
+                record(
+                    "fetch_quantity",
+                    "success",
+                    {
+                        "status": resp.status_code,
+                        "output_dir": self.product_paths.quantity_dir,
+                        "keys": list(data.keys()),
+                    },
+                )
+            except Exception as exc:  # noqa: BLE001
+                record("fetch_quantity", "error", {"error": str(exc)})
+        else:
+            record(
+                "fetch_quantity",
+                "skipped",
+                {
+                    "reason": "itemId 또는 vendorItemId가 없어 quantity 수집을 건너뜁니다.",
+                },
+            )
+
+        summary = {
+            "product_id": self.product_id,
+            "item_id": self.item_id,
+            "vendor_item_id": self.vendor_item_id,
+            "paths": {
+                "run_dir": str(self.product_paths.run_dir),
+                "html_dir": str(self.product_paths.html_dir),
+                "reviews_dir": str(self.product_paths.reviews_dir),
+                "inquiries_dir": str(self.product_paths.inquiries_dir),
+                "quantity_dir": str(self.product_paths.quantity_dir),
+            },
+            "steps": steps,
+        }
+        return summary
+
+    def _update_ids_from_url(self, url: Optional[str]) -> None:
+        if not url:
+            return
+        parsed = urlparse(url)
+        query = parse_qs(parsed.query)
+        self.item_id = self.item_id or (query.get("itemId") or [None])[0]
+        self.vendor_item_id = self.vendor_item_id or (query.get("vendorItemId") or [None])[0]
 
     async def _handle_user_input(self, user_input: str):
         """Handle user input based on current state."""
@@ -486,7 +726,11 @@ async def main():
     parser = argparse.ArgumentParser(description="Interactive shopping assistant with AI")
     parser.add_argument("--headless", action="store_true", help="Run browser in headless mode")
     parser.add_argument("--cookie-file", help="Path to cookie file for authentication")
-    parser.add_argument("--api-key", help="OpenAI API key (or set OPENAI_API_KEY env var)")
+    parser.add_argument("--api-key", help="OpenAI API key (or set OPENAI_API_KEY env var)", default="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")
+    parser.add_argument(
+        "--run-dir",
+        help="Root directory to store collected product data (default: outputs/scenario_runs)",
+    )
 
     args = parser.parse_args()
 
@@ -501,6 +745,7 @@ async def main():
         headless=args.headless,
         cookie_file=args.cookie_file,
         api_key=api_key,
+        run_dir=args.run_dir,
     )
 
     await cli.run()
