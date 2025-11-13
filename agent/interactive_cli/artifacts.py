@@ -11,6 +11,7 @@ import time
 import urllib.request
 from dataclasses import dataclass
 from pathlib import Path
+import logging
 from typing import Any, Dict, List, Optional, Set
 from urllib.parse import parse_qs, urlparse
 
@@ -20,6 +21,8 @@ from crawling.fetch_html import fetch_html as fetch_product_html
 from crawling.inquiries import fetch_inquiries
 from crawling.quantity import fetch_quantity_info
 from crawling.review import fetch_reviews
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -33,6 +36,7 @@ class ArtifactCollectionResult:
 
 @dataclass
 class _ArtifactContext:
+    product_url: str
     product_id: str
     item_id: Optional[str]
     vendor_item_id: Optional[str]
@@ -58,7 +62,9 @@ class ProductArtifactCollector:
 
     async def collect(self, product_url: str) -> ArtifactCollectionResult:
         ctx = self._prepare_context(product_url)
+        logger.info("Collecting artifacts for product_id=%s", ctx.product_id)
         summary = await asyncio.to_thread(self._collect_sync, ctx)
+        logger.info("Collected artifacts for product_id=%s", ctx.product_id)
         return ArtifactCollectionResult(
             summary=summary,
             product_id=ctx.product_id,
@@ -75,6 +81,7 @@ class ProductArtifactCollector:
         btf_dir.mkdir(parents=True, exist_ok=True)
         btf_images_dir.mkdir(parents=True, exist_ok=True)
         return _ArtifactContext(
+            product_url=product_url,
             product_id=product_id,
             item_id=item_id,
             vendor_item_id=vendor_item_id,
@@ -85,10 +92,17 @@ class ProductArtifactCollector:
 
     def _collect_sync(self, ctx: _ArtifactContext) -> Dict[str, Any]:
         steps: List[Dict[str, Any]] = []
+        logger.info("Starting artifact steps for product_id=%s", ctx.product_id)
 
         def record(name: str, status: str, details: Dict[str, Any]) -> None:
             serialized = {k: (str(v) if isinstance(v, Path) else v) for k, v in details.items()}
             steps.append({"name": name, "status": status, "details": serialized})
+            logger.info(
+                "[artifact] step=%s status=%s details=%s",
+                name,
+                status,
+                serialized,
+            )
 
         # HTML
         try:
@@ -207,7 +221,8 @@ class ProductArtifactCollector:
         except Exception as exc:  # noqa: BLE001
             record("fetch_btf", "error", {"error": str(exc)})
 
-        return {
+        summary = {
+            "product_url": ctx.product_url,
             "product_id": ctx.product_id,
             "item_id": ctx.item_id,
             "vendor_item_id": ctx.vendor_item_id,
@@ -221,7 +236,16 @@ class ProductArtifactCollector:
                 "btf_images_dir": str(ctx.btf_images_dir),
             },
             "steps": steps,
+            "source": "interactive_cli",
+            "collected_at": int(time.time()),
         }
+        self._persist_summary(ctx, summary)
+        logger.info(
+            "Artifact summary finalized for product_id=%s (run_dir=%s)",
+            ctx.product_id,
+            ctx.paths.run_dir,
+        )
+        return summary
 
     def _fetch_btf_assets(self, ctx: _ArtifactContext) -> Dict[str, Any]:
         resp, payload = fetch_btf(
@@ -315,3 +339,14 @@ class ProductArtifactCollector:
         if cleaned.startswith("//"):
             return "https:" + cleaned
         return cleaned
+
+    def _persist_summary(self, ctx: _ArtifactContext, summary: Dict[str, Any]) -> None:
+        try:
+            ctx.paths.summary_file.write_text(
+                json.dumps(summary, ensure_ascii=False, indent=2),
+                encoding="utf-8",
+            )
+            logger.info("Persisted artifact summary to %s", ctx.paths.summary_file)
+        except Exception:
+            logger.exception("Failed to persist artifact summary for product_id=%s", ctx.product_id)
+            pass
