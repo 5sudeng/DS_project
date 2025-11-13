@@ -5,6 +5,7 @@ from __future__ import annotations
 import asyncio
 import os
 import sys
+import logging
 from typing import Any, Dict, Optional
 
 from playwright.async_api import Browser, Page, async_playwright
@@ -20,6 +21,8 @@ from agent.interactive_cli.cookies import (
 )
 from agent.interactive_cli.state import ConversationState
 from agent.llm_utils import ShoppingAssistantLLM
+
+logger = logging.getLogger(__name__)
 
 
 class InteractiveShoppingCLI:
@@ -56,6 +59,7 @@ class InteractiveShoppingCLI:
         print("=" * 60)
         print("🛍️  쿠팡 쇼핑 도우미에 오신 것을 환영합니다!")
         print("=" * 60)
+        logger.info("InteractiveShoppingCLI started (headless=%s, run_dir=%s)", self.headless, self.run_dir)
 
         async with async_playwright() as playwright:
             session = await bootstrap_browser(
@@ -74,8 +78,12 @@ class InteractiveShoppingCLI:
             elif self.cookie_text:
                 print("⚠️  쿠키 파일을 읽었지만 적용 가능한 쿠키를 찾지 못했습니다.")
 
-            self.product_agent = CoupangProductAgent(self.page)
+            self.product_agent = CoupangProductAgent(
+                self.page,
+                response_generator=self.llm,
+            )
             self.search_agent = CoupangSearchAgent(self.page)
+            logger.info("Browser session established; agents ready.")
 
             try:
                 await self._conversation_loop()
@@ -112,6 +120,7 @@ class InteractiveShoppingCLI:
         """Get the initial product URL from user."""
         while True:
             url = input("\n📦 상품 URL을 입력하세요 (또는 'search'로 검색 시작): ").strip()
+            logger.info("Initial product input received: %s", url)
 
             if url.lower() == "search":
                 await self._start_with_search()
@@ -138,6 +147,7 @@ class InteractiveShoppingCLI:
     async def _load_product(self, url: str):
         """Load a product page."""
         print(f"\n⏳ 상품 페이지를 불러오는 중...")
+        logger.info("Attempting to load product page: %s", url)
 
         try:
             # First, try to navigate to Coupang homepage to establish connection
@@ -233,11 +243,13 @@ class InteractiveShoppingCLI:
 
             self.state.current_url = url
             self.state.current_product_name = product_name
+            logger.info("Product ready current_url=%s product_name=%s", current_url, product_name)
 
             try:
                 await self._collect_structured_data(current_url)
             except Exception as exc:  # noqa: BLE001
                 print(f"⚠️  데이터 수집 중 오류가 발생했습니다: {exc}")
+                logger.exception("Structured data collection raised from load: %s", exc)
 
             print(f"✓ 상품: {self.state.current_product_name}")
             print(f"   URL: {current_url}")
@@ -246,35 +258,43 @@ class InteractiveShoppingCLI:
         except Exception as e:
             print(f"\n❌ 페이지 로드 실패: {e}")
             print("다시 시도하시겠습니까? 다른 URL을 입력하거나 'exit'로 종료하세요.")
+            logger.exception("Product page load failed: %s", e)
             raise
 
     async def _collect_structured_data(self, current_url: str) -> None:
         """Collect HTML/reviews/inquiries using the crawling stack."""
 
         print("\n🗂️  상품 데이터 수집 중...")
+        logger.info("Collecting structured data for %s", current_url)
         try:
             result = await self.data_collector.collect(current_url)
         except ValueError as exc:
             print(f"⚠️  상품 ID를 추출하지 못해 데이터 수집을 건너뜁니다: {exc}")
+            logger.warning("Product ID parse failed: %s", exc)
             return
         except Exception as exc:  # noqa: BLE001
             print(f"⚠️  데이터 수집 중 예기치 않은 오류가 발생했습니다: {exc}")
+            logger.exception("Unexpected error during data collection: %s", exc)
             return
 
         self.artifact_summary = result.summary
         print(f"✓ 데이터 수집 완료: {result.paths.run_dir}")
+        logger.info("Structured data stored under %s", result.paths.run_dir)
 
     async def _handle_user_input(self, user_input: str):
         """Handle user input based on current state."""
+        logger.info("Handling user input: %s", user_input)
 
         # If waiting for clarification about dissatisfaction
         if self.state.waiting_for_clarification:
+            logger.info("Awaiting clarification; routing response.")
             await self._handle_clarification_response(user_input)
             return
 
         # Check if user is selecting from search results
         if self.state.search_results:
             if user_input.isdigit():
+                logger.info("User selecting search result index=%s", user_input)
                 await self._select_search_result(int(user_input))
                 return
 
@@ -287,6 +307,11 @@ class InteractiveShoppingCLI:
         )
 
         print(f"\n[의도 파악: {intent_result['intent']} (신뢰도: {intent_result['confidence']:.2f})]")
+        logger.info(
+            "Intent classification result intent=%s confidence=%.2f",
+            intent_result["intent"],
+            intent_result["confidence"],
+        )
 
         intent = intent_result["intent"]
 
@@ -304,6 +329,7 @@ class InteractiveShoppingCLI:
     async def _handle_question(self, question: str):
         """Handle user question about the product."""
         print("\n⏳ 리뷰와 문의를 확인하는 중...")
+        logger.info("Processing question intent: %s", question)
 
         answer = await self.product_agent.answer_user_question(question)
         print(f"\n🤖 {answer}")
@@ -317,6 +343,7 @@ class InteractiveShoppingCLI:
     async def _handle_satisfied(self):
         """Handle when user is satisfied and wants to add to cart."""
         print("\n⏳ 장바구니에 담는 중...")
+        logger.info("Processing satisfied intent (add to cart)")
 
         result = await self.product_agent.add_product_to_cart()
         print(f"\n🤖 {result}")
@@ -326,6 +353,10 @@ class InteractiveShoppingCLI:
 
     async def _handle_dissatisfied(self, intent_result: Dict):
         """Handle when user is dissatisfied with the product."""
+        logger.info(
+            "Processing dissatisfied intent has_specific_reason=%s",
+            intent_result.get("has_specific_reason"),
+        )
 
         if intent_result.get("has_specific_reason"):
             # User provided specific reason
@@ -347,6 +378,7 @@ class InteractiveShoppingCLI:
             print(f"💡 검색어: '{search_query}'")
             await self._perform_search(search_query)
             await self._select_from_search_results()
+            logger.info("Search triggered with query='%s'", search_query)
 
         else:
             # Need clarification from user
@@ -359,10 +391,12 @@ class InteractiveShoppingCLI:
             print(f"\n🤖 {clarification_msg}")
             self.state.add_message("assistant", clarification_msg)
             self.state.waiting_for_clarification = True
+            logger.info("Asked user for clarification regarding dissatisfaction.")
 
     async def _handle_clarification_response(self, user_input: str):
         """Handle user's response to clarification question."""
         self.state.waiting_for_clarification = False
+        logger.info("Received clarification response: %s", user_input)
 
         # Re-classify with the new information
         intent_result = self.llm.classify_intent(
@@ -389,25 +423,30 @@ class InteractiveShoppingCLI:
         print(f"💡 검색어: '{search_query}'")
         await self._perform_search(search_query)
         await self._select_from_search_results()
+        logger.info("Search triggered from clarification with query='%s'", search_query)
 
     async def _perform_search(self, query: str):
         """Perform a product search."""
+        logger.info("Performing search query='%s'", query)
         try:
             results = await self.search_agent.search(query, max_results=5)
             self.state.search_results = results
 
             if not results:
                 print("\n😔 검색 결과가 없습니다. 다른 검색어로 시도해주세요.")
+                logger.info("No results returned for query='%s'", query)
 
         except Exception as e:
             print(f"\n❌ 검색 중 오류 발생: {e}")
             self.state.search_results = []
+            logger.exception("Search failed for query='%s': %s", query, e)
 
     async def _select_from_search_results(self):
         """Display search results and ask user to select."""
         if not self.state.search_results:
             return
 
+        logger.info("Displaying %d search results", len(self.state.search_results))
         display_text = self.search_agent.format_results_for_display(self.state.search_results)
         print(display_text)
         print("🔢 원하는 상품의 번호를 입력하세요 (1-5):")
@@ -418,6 +457,7 @@ class InteractiveShoppingCLI:
             print(f"❌ 1부터 {len(self.state.search_results)} 사이의 번호를 입력해주세요.")
             return
 
+        logger.info("User selected result index=%d", selection)
         selected = self.state.search_results[selection - 1]
         print(f"\n✓ 선택: {selected.title}")
 

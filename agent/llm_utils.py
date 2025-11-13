@@ -187,6 +187,47 @@ JSON 형식으로 응답하세요:
         question = response.choices[0].message.content.strip()
         return question
 
+    def answer_product_question(
+        self,
+        question: str,
+        snippets: List[Dict[str, str]],
+        language: str = "ko",
+    ) -> str:
+        """
+        Generate a natural language answer grounded in the provided snippets.
+        """
+
+        if not snippets:
+            return "관련된 정보를 발견하지 못했습니다. 다른 내용을 확인해 볼까요?"
+
+        formatted_snippets = self._format_snippets_for_answer(snippets)
+        system_prompt = (
+            "너는 쿠팡 상품 페이지를 기반으로 답변하는 쇼핑 도우미다. "
+            "주어진 참고 정보만 활용해 사실에 근거한 답변을 제공하고, "
+            "추측이나 미확인 정보는 언급하지 않는다."
+        )
+        user_prompt = f"""사용자 질문 ({language}):
+{question}
+
+참고 정보:
+{formatted_snippets}
+
+지침:
+- 참고 정보에 있는 내용만 요약해서 답변하세요.
+- 정보가 상충하면 가장 최근/일반적인 표현을 우선하세요.
+- 확실한 근거가 없으면 정중히 모른다고 답하세요.
+- 답변은 {language}로 작성하세요."""
+
+        response = self.client.chat.completions.create(
+            model=self.model,
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt},
+            ],
+            temperature=0.2,
+        )
+        return response.choices[0].message.content.strip()
+
     def _artifact_context_snippet(
         self,
         artifact_summary: Optional[Dict[str, Any]],
@@ -198,3 +239,22 @@ JSON 형식으로 응답하세요:
         if len(serialized) <= limit:
             return serialized
         return serialized[:limit] + "...(생략)"
+
+    def _format_snippets_for_answer(
+        self,
+        snippets: List[Dict[str, str]],
+        *,
+        limit: int = 6,
+        max_length: int = 220,
+    ) -> str:
+        lines = []
+        for idx, snippet in enumerate(snippets[:limit], 1):
+            source = snippet.get("source") or "정보"
+            text = self._shorten(snippet.get("text", ""), max_length)
+            lines.append(f"{idx}. [{source}] {text}")
+        return "\n".join(lines)
+
+    def _shorten(self, text: str, max_length: int) -> str:
+        if len(text) <= max_length:
+            return text
+        return text[: max_length - 1].rstrip() + "…"
