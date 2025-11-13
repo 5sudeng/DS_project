@@ -9,6 +9,7 @@ from typing import Any, Dict, List, Optional
 from openai import OpenAI
 
 
+
 class ShoppingAssistantLLM:
     """LLM wrapper for shopping assistant tasks."""
 
@@ -218,6 +219,7 @@ JSON 형식으로 응답하세요:
 - 확실한 근거가 없으면 정중히 모른다고 답하세요.
 - 답변은 {language}로 작성하세요."""
 
+        print(f"user_prompt for answer_product_question:\n{user_prompt}\n")
         response = self.client.chat.completions.create(
             model=self.model,
             messages=[
@@ -226,6 +228,7 @@ JSON 형식으로 응답하세요:
             ],
             temperature=0.2,
         )
+        print(f"response from answer_product_question:\n{response}\n")
         return response.choices[0].message.content.strip()
 
     def _artifact_context_snippet(
@@ -244,8 +247,8 @@ JSON 형식으로 응답하세요:
         self,
         snippets: List[Dict[str, str]],
         *,
-        limit: int = 6,
-        max_length: int = 220,
+        limit: int = 30,
+        max_length: int = 1000,
     ) -> str:
         lines = []
         for idx, snippet in enumerate(snippets[:limit], 1):
