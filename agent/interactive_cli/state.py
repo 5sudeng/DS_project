@@ -1,0 +1,28 @@
+"""Conversation state helpers for the interactive CLI."""
+
+from __future__ import annotations
+
+from dataclasses import dataclass, field
+from typing import Dict, List, Optional, TYPE_CHECKING
+
+if TYPE_CHECKING:  # pragma: no cover - type checking only
+    from agent.coupang_search_agent import SearchResult
+
+
+@dataclass
+class ConversationState:
+    """Maintains the state of the shopping conversation."""
+
+    current_url: Optional[str] = None
+    current_product_name: Optional[str] = None
+    search_results: List["SearchResult"] = field(default_factory=list)
+    conversation_history: List[Dict[str, str]] = field(default_factory=list)
+    waiting_for_clarification: bool = False
+
+    def add_message(self, role: str, content: str) -> None:
+        """Add a message to the conversation history."""
+        self.conversation_history.append({"role": role, "content": content})
+
+    def clear_search_results(self) -> None:
+        """Reset cached search results."""
+        self.search_results = []
