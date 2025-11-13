@@ -320,11 +320,3 @@ class ConversationState:
 ## 📄 라이선스
 
 This project is for educational purposes only.
-
-## 👥 기여자
-
-- Ellie - Initial work
-
-## 📞 문의
-
-프로젝트에 대한 질문이나 제안사항이 있으시면 이슈를 등록해주세요.
