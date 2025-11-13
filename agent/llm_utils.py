@@ -21,6 +21,7 @@ class ShoppingAssistantLLM:
         user_input: str,
         conversation_history: List[Dict[str, str]],
         current_product_info: Optional[str] = None,
+        artifact_summary: Optional[Dict[str, Any]] = None,
     ) -> Dict[str, Any]:
         """
         Classify user intent into categories:
@@ -57,9 +58,13 @@ JSON 형식으로 응답하세요:
         context = "\n".join([f"{msg['role']}: {msg['content']}" for msg in conversation_history[-3:]])
         if current_product_info:
             context = f"현재 상품 정보: {current_product_info}\n\n{context}"
+        artifact_context = self._artifact_context_snippet(artifact_summary)
 
         user_prompt = f"""대화 컨텍스트:
 {context}
+
+수집된 상품 데이터 요약:
+{artifact_context or "정보 없음"}
 
 현재 사용자 발화: "{user_input}"
 
@@ -84,6 +89,7 @@ JSON 형식으로 응답하세요:
         user_feedback: str,
         extracted_keywords: List[str],
         conversation_history: List[Dict[str, str]],
+        artifact_summary: Optional[Dict[str, Any]] = None,
     ) -> str:
         """
         Generate a new Coupang search query based on user feedback.
@@ -108,10 +114,13 @@ JSON 형식으로 응답하세요:
 검색어만 출력하세요 (추가 설명 없이)."""
 
         context = "\n".join([f"{msg['role']}: {msg['content']}" for msg in conversation_history[-3:]])
+        artifact_context = self._artifact_context_snippet(artifact_summary)
 
         user_prompt = f"""원본 상품: {original_product_name}
 사용자 피드백: {user_feedback}
 추출된 키워드: {', '.join(extracted_keywords)}
+참고할 상품 데이터:
+{artifact_context or "정보 없음"}
 
 대화 컨텍스트:
 {context}
@@ -135,6 +144,7 @@ JSON 형식으로 응답하세요:
         self,
         conversation_history: List[Dict[str, str]],
         current_product_name: str,
+        artifact_summary: Optional[Dict[str, Any]] = None,
     ) -> str:
         """
         Generate a natural clarification question when user's dissatisfaction reason is unclear.
@@ -153,8 +163,11 @@ JSON 형식으로 응답하세요:
 한 문장으로 자연스럽게 질문하세요."""
 
         context = "\n".join([f"{msg['role']}: {msg['content']}" for msg in conversation_history[-3:]])
+        artifact_context = self._artifact_context_snippet(artifact_summary)
 
         user_prompt = f"""현재 상품: {current_product_name}
+참고할 상품 데이터:
+{artifact_context or "정보 없음"}
 
 대화 컨텍스트:
 {context}
@@ -173,3 +186,15 @@ JSON 형식으로 응답하세요:
 
         question = response.choices[0].message.content.strip()
         return question
+
+    def _artifact_context_snippet(
+        self,
+        artifact_summary: Optional[Dict[str, Any]],
+        limit: int = 1800,
+    ) -> str:
+        if not artifact_summary:
+            return ""
+        serialized = json.dumps(artifact_summary, ensure_ascii=False, indent=2)
+        if len(serialized) <= limit:
+            return serialized
+        return serialized[:limit] + "...(생략)"
