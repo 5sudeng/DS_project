@@ -283,6 +283,7 @@ class InteractiveShoppingCLI:
             user_input,
             self.state.conversation_history,
             self.state.current_product_name,
+            artifact_summary=self.artifact_summary,
         )
 
         print(f"\n[의도 파악: {intent_result['intent']} (신뢰도: {intent_result['confidence']:.2f})]")
@@ -340,6 +341,7 @@ class InteractiveShoppingCLI:
                 reason,
                 keywords,
                 self.state.conversation_history,
+                artifact_summary=self.artifact_summary,
             )
 
             print(f"💡 검색어: '{search_query}'")
@@ -351,6 +353,7 @@ class InteractiveShoppingCLI:
             clarification_msg = self.llm.ask_for_clarification(
                 self.state.conversation_history,
                 self.state.current_product_name,
+                artifact_summary=self.artifact_summary,
             )
 
             print(f"\n🤖 {clarification_msg}")
@@ -366,6 +369,7 @@ class InteractiveShoppingCLI:
             user_input,
             self.state.conversation_history,
             self.state.current_product_name,
+            artifact_summary=self.artifact_summary,
         )
 
         reason = intent_result.get("reason", user_input)
@@ -379,6 +383,7 @@ class InteractiveShoppingCLI:
             reason,
             keywords,
             self.state.conversation_history,
+            artifact_summary=self.artifact_summary,
         )
 
         print(f"💡 검색어: '{search_query}'")
