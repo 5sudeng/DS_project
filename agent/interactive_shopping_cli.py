@@ -80,7 +80,6 @@ class InteractiveShoppingCLI:
 
             self.product_agent = CoupangProductAgent(
                 self.page,
-                response_generator=self.llm,
             )
             self.search_agent = CoupangSearchAgent(self.page)
             logger.info("Browser session established; agents ready.")
@@ -128,8 +127,10 @@ class InteractiveShoppingCLI:
 
             # Accept various Coupang URL formats
             if "coupang.com" in url:
-                await self._load_product(url)
-                return
+                loaded = await self._load_product(url)
+                if loaded:
+                    return
+                print("❌ 상품을 불러오지 못했습니다. 다른 URL을 시도해 주세요.")
             else:
                 print("❌ 올바른 쿠팡 URL을 입력해주세요. (예: https://www.coupang.com/... 또는 https://shop.coupang.com/...)")
 
@@ -144,7 +145,7 @@ class InteractiveShoppingCLI:
         await self._perform_search(query)
         await self._select_from_search_results()
 
-    async def _load_product(self, url: str):
+    async def _load_product(self, url: str, *, _retry: bool = False) -> bool:
         """Load a product page."""
         print(f"\n⏳ 상품 페이지를 불러오는 중...")
         logger.info("Attempting to load product page: %s", url)
@@ -162,6 +163,7 @@ class InteractiveShoppingCLI:
 
             # Try to load the product page with retries
             max_retries = 3
+            loaded = False
             for attempt in range(1, max_retries + 1):
                 try:
                     print(f"시도 {attempt}/{max_retries}...")
@@ -173,6 +175,7 @@ class InteractiveShoppingCLI:
 
                     if response and response.status == 200:
                         print(f"✓ 페이지 로드 성공 (HTTP {response.status})")
+                        loaded = True
                         break
                     elif response and response.status >= 400:
                         print(f"⚠️  HTTP {response.status} 오류 발생")
@@ -191,6 +194,9 @@ class InteractiveShoppingCLI:
                     else:
                         raise
 
+            if not loaded:
+                return False
+
             # Wait for JavaScript to render
             print("⏳ 페이지 렌더링 대기 중...")
             await asyncio.sleep(2)
@@ -198,14 +204,21 @@ class InteractiveShoppingCLI:
             # Wait for key elements to be visible
             try:
                 await self.page.wait_for_selector("body", timeout=5000)
-            except:
+            except Exception:
                 pass  # Continue even if selector not found
 
-            # Check if page loaded successfully
             current_url = self.page.url
             page_content = await self.page.content()
-            if "this site can't be reached" in page_content.lower():
-                raise RuntimeError("페이지에 접근할 수 없습니다. 네트워크 연결을 확인해주세요.")
+            if current_url.startswith("chrome-error://") or "this site can't be reached" in page_content.lower():
+                logger.warning("Chrome error page loaded: %s", current_url)
+                if not _retry and await self._recover_from_chrome_error(url):
+                    return True
+                return False
+            if "coupang.com" not in current_url:
+                logger.warning("Unexpected domain after navigation: %s", current_url)
+                if not _retry and await self._recover_from_chrome_error(url):
+                    return True
+                return False
 
             # Extract product name from various sources
             title = await self.page.title()
@@ -234,34 +247,57 @@ class InteractiveShoppingCLI:
                             product_name = product_name.strip()
                             if product_name:
                                 break
-                    except:
+                    except Exception:
                         continue
 
             # Fallback
             if not product_name or len(product_name) < 2:
                 product_name = f"상품 ({current_url.split('/')[-1][:20]})"
 
-            self.state.current_url = url
+            self.state.current_url = current_url
             self.state.current_product_name = product_name
             logger.info("Product ready current_url=%s product_name=%s", current_url, product_name)
 
-            try:
-                await self._collect_structured_data(current_url)
-            except Exception as exc:  # noqa: BLE001
-                print(f"⚠️  데이터 수집 중 오류가 발생했습니다: {exc}")
-                logger.exception("Structured data collection raised from load: %s", exc)
+            data_collected = await self._collect_structured_data(current_url)
+            if not data_collected:
+                print("⚠️  상품 데이터를 수집하지 못해 다시 시도해야 합니다.")
+                return False
 
             print(f"✓ 상품: {self.state.current_product_name}")
             print(f"   URL: {current_url}")
-            print("\n❓ 무엇이 궁금하신가요? (예: 발볼 넓은 사람도 신을 수 있을까요?)")
+            print("\n❓ 무엇이 궁금하신가요? (상품에 대해 질문해 주세요!)")
+            return True
 
         except Exception as e:
             print(f"\n❌ 페이지 로드 실패: {e}")
             print("다시 시도하시겠습니까? 다른 URL을 입력하거나 'exit'로 종료하세요.")
             logger.exception("Product page load failed: %s", e)
-            raise
+            return False
 
-    async def _collect_structured_data(self, current_url: str) -> None:
+    async def _recover_from_chrome_error(self, url: str) -> bool:
+        """Attempt to recover from chrome-error page by creating a fresh page."""
+        if not self.browser:
+            return False
+        try:
+            print("🔁 브라우저 탭을 새로 열어 다시 시도합니다...")
+            context = self.page.context if self.page else None
+            if self.page:
+                try:
+                    await self.page.close()
+                except Exception:
+                    logger.warning("Failed to close current page during recovery.")
+            if context:
+                self.page = await context.new_page()
+            else:
+                self.page = await self.browser.new_page()
+            self.product_agent = CoupangProductAgent(self.page)
+            self.search_agent = CoupangSearchAgent(self.page)
+            return await self._load_product(url, _retry=True)
+        except Exception as exc:  # noqa: BLE001
+            logger.exception("Failed to recover from chrome error: %s", exc)
+            return False
+
+    async def _collect_structured_data(self, current_url: str) -> bool:
         """Collect HTML/reviews/inquiries using the crawling stack."""
 
         print("\n🗂️  상품 데이터 수집 중...")
@@ -271,15 +307,18 @@ class InteractiveShoppingCLI:
         except ValueError as exc:
             print(f"⚠️  상품 ID를 추출하지 못해 데이터 수집을 건너뜁니다: {exc}")
             logger.warning("Product ID parse failed: %s", exc)
-            return
+            return False
         except Exception as exc:  # noqa: BLE001
             print(f"⚠️  데이터 수집 중 예기치 않은 오류가 발생했습니다: {exc}")
             logger.exception("Unexpected error during data collection: %s", exc)
-            return
+            return False
 
         self.artifact_summary = result.summary
+        if result.chunk_file and self.product_agent:
+            self.product_agent.set_chunk_data_path(result.chunk_file)
         print(f"✓ 데이터 수집 완료: {result.paths.run_dir}")
         logger.info("Structured data stored under %s", result.paths.run_dir)
+        return True
 
     async def _handle_user_input(self, user_input: str):
         """Handle user input based on current state."""
@@ -328,7 +367,7 @@ class InteractiveShoppingCLI:
 
     async def _handle_question(self, question: str):
         """Handle user question about the product."""
-        print("\n⏳ 리뷰와 문의를 확인하는 중...")
+        print("\n⏳ 질문에 답변하는 중...")
         logger.info("Processing question intent: %s", question)
 
         answer = await self.product_agent.answer_user_question(question)
@@ -463,7 +502,9 @@ class InteractiveShoppingCLI:
 
         # Clear search results and load new product
         self.state.clear_search_results()
-        await self._load_product(selected.url)
+        loaded = await self._load_product(selected.url)
+        if not loaded:
+            print("⚠️  선택한 상품을 불러오지 못했습니다. 다른 상품을 선택해 주세요.")
 
 
 async def main():
