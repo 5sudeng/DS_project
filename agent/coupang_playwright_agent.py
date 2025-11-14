@@ -395,9 +395,11 @@ async def run_demo(
     from playwright.async_api import async_playwright
 
     async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=headless)
+        # browser = await p.chromium.launch(headless=headless)
+        browser = await p.firefox.launch(headless=False)  # 또는 webkit
         page = await browser.new_page()
-        await page.goto(url)
+        await page.goto("https://www.coupang.com/", wait_until="domcontentloaded")
+        print(await page.title())
 
         agent = CoupangProductAgent(page)
         system_answer = await agent.answer_user_question(initial_question)
