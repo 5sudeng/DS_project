@@ -261,3 +261,92 @@ JSON 형식으로 응답하세요:
         if len(text) <= max_length:
             return text
         return text[: max_length - 1].rstrip() + "…"
+
+
+class VoiceBrowserLLM:
+    """LLM utilities for the voice-controlled browser agent."""
+
+    def __init__(self, api_key: Optional[str] = None, model: str = "gpt-4o-mini"):
+        self.client = OpenAI(api_key=api_key or os.getenv("OPENAI_API_KEY"))
+        self.model = model
+
+    def _chat(
+        self,
+        system_prompt: str,
+        user_prompt: str,
+        *,
+        temperature: float = 0.2,
+        max_tokens: int = 400,
+    ) -> Optional[str]:
+        try:
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_prompt},
+                ],
+                temperature=temperature,
+                max_tokens=max_tokens,
+            )
+        except Exception as exc:
+            print("VoiceBrowser LLM 호출 실패:", exc)
+            return None
+
+        message = response.choices[0].message.content
+        return message.strip() if message else None
+
+    def augment_command(self, utterance: str) -> str:
+        if not utterance:
+            return utterance
+
+        system_prompt = (
+            "당신은 시각장애인을 돕는 브라우저 보조 AI입니다. "
+            "사용자의 짧거나 모호한 명령을 더 구체적으로 다듬어줍니다."
+        )
+        user_prompt = f"""
+사용자 명령: "{utterance}"
+원본 의도를 해치지 말고 필요한 세부 정보를 한 문장으로 보완하세요.
+"""
+
+        augmented = self._chat(system_prompt, user_prompt)
+        return augmented if augmented else utterance
+
+    def parse_command(self, utterance: str) -> Dict[str, Any]:
+        system_prompt = (
+            "당신은 음성 명령을 JSON 명령으로 바꾸는 브라우저 제어 AI입니다. "
+            "지원하는 action은 open_url(url), search(query), read_page(), summarize_page(), click_link(text) 입니다."
+        )
+        user_prompt = f"""
+사용자 명령: "{utterance}"
+가능한 action 중 하나를 JSON 한 개로만 출력하세요. 예: {{"action":"search","query":"고양이"}}
+"""
+
+        for attempt in range(2):
+            response = self._chat(system_prompt, user_prompt, temperature=0.0, max_tokens=300)
+            if not response:
+                continue
+            try:
+                return json.loads(response)
+            except json.JSONDecodeError:
+                print("VoiceBrowser LLM이 JSON을 반환하지 않았습니다:", response)
+                if attempt == 0:
+                    print("명령 JSON 변환 재시도 중...")
+                    continue
+                return {"action": "none", "error": "invalid_json"}
+
+        return {"action": "none", "error": "llm_failure"}
+
+    def summarize_page(self, text: str) -> str:
+        if not text:
+            return "페이지에서 요약할 수 있는 내용이 없습니다."
+
+        system_prompt = (
+            "당신은 시각장애인을 돕는 웹 페이지 요약 도우미입니다. "
+            "핵심 정보를 3-4개의 bullet로 한국어로 요약하세요."
+        )
+        user_prompt = f"웹 페이지 본문:\n{text}"
+
+        summary = self._chat(system_prompt, user_prompt, temperature=0.3, max_tokens=400)
+        if not summary:
+            return "요약을 생성하지 못했습니다. 페이지 전체를 읽어드릴 수 있습니다."
+        return summary.strip()
