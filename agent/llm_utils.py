@@ -311,13 +311,16 @@ class VoiceBrowserLLM:
         augmented = self._chat(system_prompt, user_prompt)
         return augmented if augmented else utterance
 
-    def parse_command(self, utterance: str) -> Dict[str, Any]:
+    def parse_command(self, utterance: str, current_site: Optional[str] = None) -> Dict[str, Any]:
         system_prompt = (
             "당신은 음성 명령을 JSON 명령으로 바꾸는 브라우저 제어 AI입니다. "
-            "지원하는 action은 open_url(url), search(query), read_page(), summarize_page(), click_link(text) 입니다."
+            "지원하는 action은 open_url(url), search(query), coupang_search(query), read_page(), summarize_page(), click_link(text) 입니다. "
+            "사용자가 쿠팡 내부에서 검색을 원하거나 현재 페이지가 coupang.com이면 coupang_search를 사용하세요."
         )
+        site_context = current_site or "알 수 없음"
         user_prompt = f"""
 사용자 명령: "{utterance}"
+현재 페이지: "{site_context}"
 가능한 action 중 하나를 JSON 한 개로만 출력하세요. 예: {{"action":"search","query":"고양이"}}
 """
 

@@ -7,7 +7,7 @@ import re
 from dataclasses import dataclass
 from typing import List, Optional
 
-from playwright.async_api import Page, TimeoutError as PlaywrightTimeoutError
+from playwright.async_api import Locator, Page, TimeoutError as PlaywrightTimeoutError
 
 
 @dataclass
@@ -30,12 +30,6 @@ class CoupangSearchAgent:
         "input[name='q']",
         "input[type='search']",
         "input.search-input",
-    ]
-
-    SEARCH_BUTTON_SELECTORS = [
-        "button.search-btn",
-        "button[type='submit']",
-        "button:has-text('검색')",
     ]
 
     PRODUCT_ITEM_SELECTORS = [
@@ -80,7 +74,7 @@ class CoupangSearchAgent:
 
         # Submit search
         print("⏳ 검색 실행 중...")
-        await search_input.press("Enter")
+        await self._submit_search()
 
         # Wait for navigation with extended timeout
         try:
@@ -97,7 +91,7 @@ class CoupangSearchAgent:
         print(f"✓ {len(results)}개 상품 발견")
         return results
 
-    async def _find_search_input(self):
+    async def _find_search_input(self) -> Optional[Locator]:
         """Find the search input element using multiple selectors."""
         for selector in self.SEARCH_INPUT_SELECTORS:
             try:
@@ -245,3 +239,22 @@ class CoupangSearchAgent:
             lines.append("")  # Empty line between results
 
         return "\n".join(lines)
+    async def _submit_search(self) -> None:
+        """Click the search button or use the header search form when possible."""
+        button_selectors = [
+            "form#frmSearch button.search-btn",
+            "form#frmSearch button[type='submit']",
+            "button.search-btn",
+            "button[type='submit']",
+            "button:has-text('검색')",
+        ]
+        for selector in button_selectors:
+            button = self.page.locator(selector)
+            if await button.count() > 0:
+                try:
+                    await button.first.click()
+                    return
+                except Exception:
+                    continue
+        # fallback to Enter key on input if buttons fail
+        await self.page.keyboard.press("Enter")
