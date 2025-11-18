@@ -6,10 +6,12 @@ import asyncio
 import os
 import sys
 import logging
+import argparse  # 상단으로 이동
 from typing import Any, Dict, Optional
 
 from playwright.async_api import Browser, Page, async_playwright
 
+# (아래 모듈들은 로컬 환경에 존재한다고 가정)
 from agent.coupang_playwright_agent import CoupangProductAgent
 from agent.coupang_search_agent import CoupangSearchAgent
 from agent.interactive_cli.artifacts import ProductArtifactCollector
@@ -19,48 +21,53 @@ from agent.interactive_cli.cookies import (
     load_cookie_text,
     parse_cookie_records,
 )
-from agent.interactive_cli.state import ConversationState
+
+from agent.interactive_cli import ConversationState
 from agent.llm_utils import ShoppingAssistantLLM
 
 logger = logging.getLogger(__name__)
 
 
 class InteractiveShoppingCLI:
-    """Interactive CLI for shopping with AI assistance."""
+    # [수정] 들여쓰기 오류 수정 (__init__과 같은 레벨로 맞춤)
+    async def _apply_sort_option(self, results, sort_type):
+        """Apply sort option by clicking sort button in browser and re-fetch results."""
+        # sort_type: 랭킹순, 낮은가격순, 높은가격순, 판매량순, 최신순
+        await self.search_agent.apply_sort(sort_type)
+        # 정렬 후, 결과 재파싱
+        fetch_count = self.state.results_per_page * 10
+        sorted_results = await self.search_agent._parse_search_results(fetch_count)
+        return sorted_results
 
     def __init__(
         self,
+        *,
         headless: bool = False,
         cookie_file: Optional[str] = None,
         api_key: Optional[str] = None,
         run_dir: Optional[str] = None,
     ):
         self.headless = headless
+        self.cookie_file = cookie_file
+        self.api_key = api_key
         self.run_dir = run_dir
-        self.state = ConversationState()
-        self.llm = ShoppingAssistantLLM(api_key=api_key)
 
-        # Playwright objects (initialized in run())
+        self.cookie_text = load_cookie_text(self.cookie_file) if self.cookie_file else None
+        self.cookie_header_value = build_cookie_header(self.cookie_text)
+        self.cookie_records = parse_cookie_records(self.cookie_text)
+
         self.browser: Optional[Browser] = None
         self.page: Optional[Page] = None
         self.product_agent: Optional[CoupangProductAgent] = None
         self.search_agent: Optional[CoupangSearchAgent] = None
-        self.cookie_text: Optional[str] = load_cookie_text(cookie_file)
-        self.cookie_header_value: Optional[str] = build_cookie_header(self.cookie_text)
-        self.cookie_records = parse_cookie_records(self.cookie_text)
-        self.artifact_summary: Dict[str, Any] = {}
-        self.data_collector = ProductArtifactCollector(
-            run_dir=self.run_dir,
-            cookie=self.cookie_header_value,
-        )
+
+        self.state = ConversationState()
+        self.llm = ShoppingAssistantLLM(api_key=self.api_key)
+        self.data_collector = ProductArtifactCollector(run_dir=self.run_dir, cookie=self.cookie_header_value)
+        self.artifact_summary: Optional[Dict[str, Any]] = None
 
     async def run(self):
-        """Main entry point for the interactive CLI."""
-        print("=" * 60)
-        print("🛍️  쿠팡 쇼핑 도우미에 오신 것을 환영합니다!")
-        print("=" * 60)
-        logger.info("InteractiveShoppingCLI started (headless=%s, run_dir=%s)", self.headless, self.run_dir)
-
+        logger.info("Starting InteractiveShoppingCLI.run (headless=%s)", self.headless)
         async with async_playwright() as playwright:
             session = await bootstrap_browser(
                 playwright,
@@ -78,9 +85,7 @@ class InteractiveShoppingCLI:
             elif self.cookie_text:
                 print("⚠️  쿠키 파일을 읽었지만 적용 가능한 쿠키를 찾지 못했습니다.")
 
-            self.product_agent = CoupangProductAgent(
-                self.page,
-            )
+            self.product_agent = CoupangProductAgent(self.page)
             self.search_agent = CoupangSearchAgent(self.page)
             logger.info("Browser session established; agents ready.")
 
@@ -89,7 +94,8 @@ class InteractiveShoppingCLI:
             except KeyboardInterrupt:
                 print("\n\n👋 쇼핑을 종료합니다. 감사합니다!")
             finally:
-                await self.browser.close()
+                if self.browser:
+                    await self.browser.close()
 
     async def _conversation_loop(self):
         """Main conversation loop."""
@@ -114,6 +120,7 @@ class InteractiveShoppingCLI:
             except Exception as e:
                 print(f"\n❌ 오류가 발생했습니다: {e}")
                 print("다시 시도해주세요.")
+                logger.exception("Conversation loop error")
 
     async def _get_initial_product(self):
         """Get the initial product URL from user."""
@@ -330,11 +337,43 @@ class InteractiveShoppingCLI:
             await self._handle_clarification_response(user_input)
             return
 
-        # Check if user is selecting from search results
+        # Check if user is selecting from search results or pagination
         if self.state.search_results:
-            if user_input.isdigit():
-                logger.info("User selecting search result index=%s", user_input)
-                await self._select_search_result(int(user_input))
+            # First check if user wants to see previous items in current page (most specific)
+            if user_input.lower() in ["이전"]:
+                logger.info("User wants to see previous items in current page")
+                await self._show_previous_items_in_page()
+                return
+            # Check if user wants next items in current page
+            elif user_input.lower() in ["다음상품", "다음"]:
+                logger.info("User wants to see next items in current page")
+                await self._show_next_items_in_page(user_input)
+                return
+            # Then check if user wants pagination (page navigation)
+            elif user_input.lower() in ["페이지", "다른페이지"]:
+                logger.info("User wants to navigate pages")
+                await self._ask_page_navigation()
+                return
+            elif user_input.isdigit():
+                # Could be product selection (1-5) or page number (10+)
+                num = int(user_input)
+                if num > 0 and num <= len(self.state.search_results):
+                    logger.info("User selecting search result index=%s", user_input)
+                    await self._select_search_result(num)
+                    return
+                else:
+                    # Treat as page number navigation
+                    logger.info("User wants to jump to page %d", num)
+                    if num > 0:
+                        self.state.current_page = num
+                        self.state.page_offset = 0
+                        await self._load_current_page()
+                    else:
+                        print("❌ 1 이상의 페이지 번호를 입력하세요.")
+                    return
+            elif user_input.lower() in ["search", "검색", "다른상품", "new_search"]:
+                logger.info("User wants to start new search")
+                await self._start_with_search()
                 return
 
         # Use LLM to classify intent
@@ -468,16 +507,84 @@ class InteractiveShoppingCLI:
         """Perform a product search."""
         logger.info("Performing search query='%s'", query)
         try:
-            results = await self.search_agent.search(query, max_results=5)
-            self.state.search_results = results
+            # Initialize pagination state
+            self.state.current_search_query = query
+            self.state.current_page = 1
+            self.state.page_offset = 0
+            self.state.all_search_results = []
+            self.state.search_results = []
 
-            if not results:
+            fetch_count = self.state.results_per_page * 10
+            results = await self.search_agent.search_page(query, page_num=1, max_results=fetch_count)
+
+            if results:
+                # 정렬/필터 여부 묻기
+                print("\n🔎 검색 결과가 준비되었습니다.")
+                print("정렬 또는 필터를 하시겠습니까?")
+                print("   '정렬' → 정렬 옵션 선택")
+                print("   '필터' → 필터 옵션 선택 (미구현)")
+                print("   '건너뛰기' → 바로 상품 보기")
+                sort_or_filter = input("\n👉 선택: ").strip().lower()
+
+                if sort_or_filter == "정렬":
+                    # 정렬 옵션 안내
+                    print("\n정렬 방법을 선택하세요:")
+                    print("   1. 쿠팡 랭킹순 (기본)")
+                    print("   2. 낮은가격순")
+                    print("   3. 높은가격순")
+                    print("   4. 판매량순")
+                    print("   5. 최신순")
+                    sort_input = input("\n👉 정렬 번호 입력: ").strip()
+                    sort_map = {
+                        "1": "랭킹순",
+                        "2": "낮은가격순",
+                        "3": "높은가격순",
+                        "4": "판매량순",
+                        "5": "최신순"
+                    }
+                    sort_type = sort_map.get(sort_input, "랭킹순")
+                    print(f"\n✅ '{sort_type}' 정렬을 적용합니다...")
+                    # 실제 정렬 적용 함수 호출
+                    results = await self._apply_sort_option(results, sort_type)
+                elif sort_or_filter == "필터":
+                    print("필터 기능은 아직 구현되지 않았습니다. 바로 상품을 보여드립니다.")
+                # else: 바로 상품 보여주기
+
+                # store full page results and show first batch
+                self.state.all_search_results = results
+                first_batch = results[: self.state.results_per_page]
+                self.state.search_results = first_batch
+                self.state.page_offset = len(first_batch)
+
+                # display first batch
+                lines = [f"\n📦 검색 결과 (페이지 1):\n"]
+                for idx, result in enumerate(first_batch, 1):
+                    lines.append(f"{idx}. {result.title}")
+                    lines.append(f"   가격: {result.price}")
+                    if result.rating:
+                        lines.append(f"   평점: {result.rating}")
+                    lines.append("")
+                print("\n".join(lines))
+
+                # Ask if user likes any of these items
+                print("❓ 이 중에 마음에 드는 상품이 있으신가요?")
+                if len(results) > self.state.results_per_page:
+                    print(f"🔢 상품 번호를 입력하세요 (1-{len(first_batch)}), 또는:")
+                    print("   '다음상품' → 다음 5개 상품 보기")
+                    print("   '페이지' → 다른 페이지로 이동")
+                    print("   '검색' → 새로운 상품 검색")
+                else:
+                    print(f"🔢 상품 번호를 입력하세요 (1-{len(first_batch)}), 또는:")
+                    print("   '페이지' → 다른 페이지로 이동")
+                    print("   '검색' → 새로운 상품 검색")
+            else:
                 print("\n😔 검색 결과가 없습니다. 다른 검색어로 시도해주세요.")
                 logger.info("No results returned for query='%s'", query)
 
         except Exception as e:
             print(f"\n❌ 검색 중 오류 발생: {e}")
             self.state.search_results = []
+            self.state.all_search_results = []
             logger.exception("Search failed for query='%s': %s", query, e)
 
     async def _select_from_search_results(self):
@@ -485,10 +592,10 @@ class InteractiveShoppingCLI:
         if not self.state.search_results:
             return
 
-        logger.info("Displaying %d search results", len(self.state.search_results))
+        logger.info("Displaying %d search results (Page %d)", len(self.state.search_results), self.state.current_page)
+        # This method is now less used since we display inline, but kept for compatibility
         display_text = self.search_agent.format_results_for_display(self.state.search_results)
         print(display_text)
-        print("🔢 원하는 상품의 번호를 입력하세요 (1-5):")
 
     async def _select_search_result(self, selection: int):
         """Handle user's selection from search results."""
@@ -506,15 +613,213 @@ class InteractiveShoppingCLI:
         if not loaded:
             print("⚠️  선택한 상품을 불러오지 못했습니다. 다른 상품을 선택해 주세요.")
 
+    async def _show_next_items_in_page(self, user_input: str):
+        """Show next 5 items in current page or ask for navigation if exhausted."""
+        if not self.state.current_search_query:
+            print("❌ 진행 중인 검색이 없습니다.")
+            return
+
+        logger.info("User requesting next items in page %d for query='%s'",
+                    self.state.current_page, self.state.current_search_query)
+
+        # Calculate next offset in current page
+        next_offset = self.state.page_offset + self.state.results_per_page
+
+        # Check if there are more items in current page
+        page_start = self.state.page_offset
+        page_end = next_offset
+        remaining_items = self.state.all_search_results[page_start:page_end]
+
+        if remaining_items:
+            # There are more items in current page
+            display_items = remaining_items
+            self.state.search_results = display_items
+
+            # Display items with 1-N numbering
+            lines = [f"\n📦 페이지 {self.state.current_page}의 다음 상품들:\n"]
+            for idx, result in enumerate(display_items, 1):
+                lines.append(f"{idx}. {result.title}")
+                lines.append(f"   가격: {result.price}")
+                if result.rating:
+                    lines.append(f"   평점: {result.rating}")
+                lines.append("")
+
+            print("\n".join(lines))
+            self.state.page_offset = next_offset
+
+            # Ask if user likes any of these items
+            print("❓ 이 중에 마음에 드는 상품이 있으신가요?")
+            # Check navigation options
+            has_previous = page_start > 0
+            has_next = page_end < len(self.state.all_search_results)
+
+            print(f"🔢 상품 번호를 입력하세요 (1-{len(display_items)}), 또는:")
+            if has_previous:
+                print("   '이전' → 이전 5개 상품 보기")
+            if has_next:
+                print("   '다음상품' → 다음 5개 상품 보기")
+            print("   '페이지' → 다른 페이지로 이동")
+            print("   '검색' → 새로운 상품 검색")
+        else:
+            # No more items in current page
+            print(f"\n✅ 페이지 {self.state.current_page}의 모든 상품을 확인했습니다.")
+            await self._ask_page_navigation()
+
+    async def _show_previous_items_in_page(self):
+        """Show previous 5 items in current page."""
+        if not self.state.current_search_query:
+            print("❌ 진행 중인 검색이 없습니다.")
+            return
+
+        logger.info("User requesting previous items in page %d for query='%s'",
+                    self.state.current_page, self.state.current_search_query)
+
+        # page_offset points to the END of the current batch
+        # To show previous batch: start = page_offset - 2 * results_per_page
+        # end = page_offset - results_per_page
+        previous_start = self.state.page_offset - 2 * self.state.results_per_page
+
+        # Check if there are previous items
+        if previous_start < 0:
+            print("❌ 이전 상품이 없습니다.")
+            return
+
+        previous_end = previous_start + self.state.results_per_page
+        page_start = previous_start
+        page_end = previous_end
+        previous_items = self.state.all_search_results[page_start:page_end]
+
+        if previous_items:
+            # Display previous items with 1-N numbering
+            display_items = previous_items
+            self.state.search_results = display_items
+
+            lines = [f"\n📦 페이지 {self.state.current_page}의 이전 상품들:\n"]
+            for idx, result in enumerate(display_items, 1):
+                lines.append(f"{idx}. {result.title}")
+                lines.append(f"   가격: {result.price}")
+                if result.rating:
+                    lines.append(f"   평점: {result.rating}")
+                lines.append("")
+
+            print("\n".join(lines))
+            # Update offset to point to end of previous batch (for consistent navigation)
+            self.state.page_offset = previous_end
+            # Check navigation options
+            has_previous = previous_start > 0
+            has_next = previous_end < len(self.state.all_search_results)
+
+            # Ask if user likes any of these items
+            print("❓ 이 중에 마음에 드는 상품이 있으신가요?")
+            print(f"🔢 상품 번호를 입력하세요 (1-{len(display_items)}), 또는:")
+            if has_previous:
+                print("   '이전' → 더 이전의 5개 상품 보기")
+            if has_next:
+                print("   '다음상품' → 다음 5개 상품 보기")
+            print("   '페이지' → 다른 페이지로 이동")
+            print("   '검색' → 새로운 상품 검색")
+        else:
+            print("❌ 이전 상품을 불러올 수 없습니다.")
+
+    async def _ask_page_navigation(self):
+        """Ask user to navigate: next page, specific page, previous page, or new search."""
+        print(f"\n📄 현재 페이지: {self.state.current_page}")
+        print("어떤 페이지로 이동하시겠어요?")
+        print(f"   '{self.state.current_page + 1}' → 다음 페이지")
+        if self.state.current_page > 1:
+            print(f"   '{self.state.current_page - 1}' → 이전 페이지")
+        print("   'n' → n번째 페이지 (예: '3' 입력하면 페이지 3)")
+        print("   '검색' → 새로운 상품 검색")
+
+        user_response = input("\n👉 선택: ").strip()
+
+        if user_response.lower() in ["검색", "search", "new_search"]:
+            # Start new search
+            await self._start_with_search()
+        elif user_response.isdigit():
+            page_num = int(user_response)
+            if page_num > 0:
+                self.state.current_page = page_num
+                self.state.page_offset = 0
+                await self._load_current_page()
+            else:
+                print("❌ 1 이상의 페이지 번호를 입력하세요.")
+                await self._ask_page_navigation()
+        else:
+            print("❌ 잘못된 입력입니다.")
+            await self._ask_page_navigation()
+
+    async def _load_current_page(self):
+        """Load products for the current page and display first 5."""
+        if not self.state.current_search_query:
+            print("❌ 진행 중인 검색이 없습니다.")
+            return
+
+        try:
+            print(f"\n⏳ 페이지 {self.state.current_page} 로드 중...")
+            # Clear previous page results before fetching the new page
+            self.state.all_search_results = []
+            self.state.search_results = []
+            self.state.page_offset = 0
+
+            fetch_count = self.state.results_per_page * 10
+            results = await self.search_agent.search_page(
+                self.state.current_search_query,
+                page_num=self.state.current_page,
+                max_results=fetch_count,
+            )
+
+            if results:
+                # Store all results from this page for offset-based display
+                self.state.all_search_results = results
+
+                # Display first batch
+                first_batch = results[: self.state.results_per_page]
+                self.state.search_results = first_batch
+                self.state.page_offset = len(first_batch)
+
+                # Display with 1-N numbering
+                lines = [f"\n📦 검색 결과 (페이지 {self.state.current_page}):\n"]
+                for idx, result in enumerate(first_batch, 1):
+                    lines.append(f"{idx}. {result.title}")
+                    lines.append(f"   가격: {result.price}")
+                    if result.rating:
+                        lines.append(f"   평점: {result.rating}")
+                    lines.append("")
+                print("\n".join(lines))
+
+                # Ask if user likes any of these items
+                print("❓ 이 중에 마음에 드는 상품이 있으신가요?")
+                if len(results) > self.state.results_per_page:
+                    print(f"🔢 상품 번호를 입력하세요 (1-{len(first_batch)}), 또는:")
+                    print("   '다음상품' → 다음 5개 상품 보기")
+                    print("   '페이지' → 다른 페이지로 이동")
+                    print("   '검색' → 새로운 상품 검색")
+                else:
+                    print(f"🔢 상품 번호를 입력하세요 (1-{len(first_batch)}), 또는:")
+                    print("   '페이지' → 다른 페이지로 이동")
+                    print("   '검색' → 새로운 상품 검색")
+            else:
+                print(f"\n😔 페이지 {self.state.current_page}에 상품이 없습니다.")
+                await self._ask_page_navigation()
+
+        except Exception as e:
+            logger.exception("Error loading page %d: %s", self.state.current_page, e)
+            print(f"\n❌ 페이지를 불러오는 중 오류 발생: {e}")
+            await self._ask_page_navigation()
+
 
 async def main():
     """Entry point."""
-    import argparse
+    # 로깅 설정 추가 (실행 로그 확인용)
+    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
     parser = argparse.ArgumentParser(description="Interactive shopping assistant with AI")
     parser.add_argument("--headless", action="store_true", help="Run browser in headless mode")
     parser.add_argument("--cookie-file", help="Path to cookie file for authentication")
-    parser.add_argument("--api-key", help="OpenAI API key (or set OPENAI_API_KEY env var)", default="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")
+    # [요청사항 반영] 제공해주신 API Key 유지
+    parser.add_argument("--api-key", help="OpenAI API key (or set OPENAI_API_KEY env var)",
+                        default="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")
     parser.add_argument(
         "--run-dir",
         help="Root directory to store collected product data (default: outputs/scenario_runs)",

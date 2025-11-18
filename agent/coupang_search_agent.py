@@ -22,8 +22,8 @@ class SearchResult:
     review_count: Optional[str] = None
 
 
+
 class CoupangSearchAgent:
-    """Agent for searching products on Coupang."""
 
     SEARCH_INPUT_SELECTORS = [
         "input#headerSearchKeyword",
@@ -45,9 +45,80 @@ class CoupangSearchAgent:
         "div.search-product-wrap",
     ]
 
-    def __init__(self, page: Page, search_timeout: float = 5.0):
+    SORT_BUTTON_SELECTORS = {
+        "랭킹순": [
+            "button[data-testid='sorter-tab-ranking']",
+            "a:has-text('랭킹순')",
+            "button:has-text('랭킹순')",
+            "li:has-text('랭킹순')",
+        ],
+        "낮은가격순": [
+            "button[data-testid='sorter-tab-priceAsc']",
+            "a:has-text('낮은가격순')",
+            "button:has-text('낮은가격순')",
+            "li:has-text('낮은가격순')",
+        ],
+        "높은가격순": [
+            "button[data-testid='sorter-tab-priceDesc']",
+            "a:has-text('높은가격순')",
+            "button:has-text('높은가격순')",
+            "li:has-text('높은가격순')",
+        ],
+        "판매량순": [
+            "button[data-testid='sorter-tab-saleCount']",
+            "a:has-text('판매량순')",
+            "button:has-text('판매량순')",
+            "li:has-text('판매량순')",
+        ],
+        "최신순": [
+            "button[data-testid='sorter-tab-latest']",
+            "a:has-text('최신순')",
+            "button:has-text('최신순')",
+            "li:has-text('최신순')",
+        ],
+    }
+
+    def __init__(self, page, search_timeout=5.0):
         self.page = page
         self.search_timeout = search_timeout
+
+    async def apply_sort(self, sort_type):
+        """Click the sort button in Coupang search results page."""
+        selectors = self.SORT_BUTTON_SELECTORS.get(sort_type, self.SORT_BUTTON_SELECTORS["랭킹순"])
+        print(f"⏳ '{sort_type}' 정렬 버튼 클릭 중...")
+        for selector in selectors:
+            try:
+                button = self.page.locator(selector)
+                if await button.count() > 0:
+                    await button.first.click()
+                    await self.page.wait_for_load_state("domcontentloaded", timeout=10000)
+                    await asyncio.sleep(2)
+                    print(f"✅ '{sort_type}' 정렬 적용 완료 (selector: {selector})")
+                    return True
+            except Exception as e:
+                print(f"⚠️  정렬 버튼 클릭 오류: {e}")
+        # Debug: print attempted selectors
+        print(f"⚠️  '{sort_type}' 정렬 버튼을 찾을 수 없습니다. 시도한 selectors: {selectors}")
+        # Try to print nearby sorter container text to help debugging
+        likely_containers = [
+            "div.sorter",
+            "div.sorter-group",
+            "ul.sorter",
+            "div.filter-sorter",
+            "div.sort-options",
+        ]
+        for cont in likely_containers:
+            try:
+                loc = self.page.locator(cont)
+                if await loc.count() > 0:
+                    text = await loc.first.inner_text()
+                    snippet = text.strip()[:500]
+                    print(f"정렬 컨테이너 '{cont}' 내용 (샘플): {snippet}")
+                    break
+            except Exception:
+                continue
+        return False
+        return False
 
     async def search(self, query: str, max_results: int = 5) -> List[SearchResult]:
         """
@@ -96,6 +167,82 @@ class CoupangSearchAgent:
         results = await self._parse_search_results(max_results)
         print(f"✓ {len(results)}개 상품 발견")
         return results
+
+    async def search_page(self, query: str, page_num: int = 1, max_results: int = 50) -> List[SearchResult]:
+        """
+        Search for products on a specific page of Coupang.
+        
+        Args:
+            query: Search query string
+            page_num: Page number (1-indexed)
+            max_results: Maximum number of results to return per page
+        
+        Returns:
+            List of SearchResult objects
+        """
+        print(f"\n🔍 검색 중: '{query}' (페이지 {page_num})")
+
+        # Navigate to Coupang main page if not already there
+        if "coupang.com" not in self.page.url:
+            print("📡 쿠팡 메인 페이지로 이동 중...")
+            await self.page.goto("https://www.coupang.com", wait_until="domcontentloaded", timeout=30000)
+            await asyncio.sleep(1.5)
+
+        # Find and fill search input
+        search_input = await self._find_search_input()
+        if not search_input:
+            raise RuntimeError("검색창을 찾을 수 없습니다")
+
+        print(f"🔍 검색어 입력: '{query}'")
+        await search_input.clear()
+        await search_input.fill(query)
+        await asyncio.sleep(0.5)
+
+        # Submit search
+        print("⏳ 검색 실행 중...")
+        await search_input.press("Enter")
+
+        # Wait for navigation with extended timeout
+        try:
+            await self.page.wait_for_load_state("domcontentloaded", timeout=45000)
+            print("⏳ 검색 결과 로딩 중...")
+            await asyncio.sleep(3)
+        except Exception as e:
+            print(f"⚠️  페이지 로드 경고: {e}")
+            await asyncio.sleep(2)
+
+        # Navigate to specific page if page_num > 1
+        if page_num > 1:
+            await self._navigate_to_page(page_num)
+
+        # Parse search results
+        results = await self._parse_search_results(max_results)
+        print(f"✓ {len(results)}개 상품 발견")
+        return results
+
+    async def _navigate_to_page(self, page_num: int) -> None:
+        """Navigate to a specific page in search results."""
+        print(f"⏳ 페이지 {page_num}로 이동 중...")
+        
+        try:
+            # Try to find pagination element
+            # Coupang typically uses ?q=query&page=N format or pagination buttons
+            current_url = self.page.url
+            
+            if "page=" in current_url:
+                # URL already has page parameter, update it
+                import re
+                new_url = re.sub(r"page=\d+", f"page={page_num}", current_url)
+            else:
+                # Add page parameter
+                separator = "&" if "?" in current_url else "?"
+                new_url = f"{current_url}{separator}page={page_num}"
+            
+            await self.page.goto(new_url, wait_until="domcontentloaded", timeout=45000)
+            await asyncio.sleep(2)
+        except Exception as e:
+            print(f"⚠️  페이지 이동 중 오류: {e}")
+            await asyncio.sleep(1)
 
     async def _find_search_input(self):
         """Find the search input element using multiple selectors."""

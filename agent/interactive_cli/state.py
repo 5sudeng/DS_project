@@ -18,6 +18,13 @@ class ConversationState:
     search_results: List["SearchResult"] = field(default_factory=list)
     conversation_history: List[Dict[str, str]] = field(default_factory=list)
     waiting_for_clarification: bool = False
+    
+    # Pagination fields
+    current_search_query: Optional[str] = None
+    all_search_results: List["SearchResult"] = field(default_factory=list)
+    current_page: int = 1
+    page_offset: int = 0  # Offset within current page (for 5 items per page)
+    results_per_page: int = 5
 
     def add_message(self, role: str, content: str) -> None:
         """Add a message to the conversation history."""
