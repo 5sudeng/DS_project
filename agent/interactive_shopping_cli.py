@@ -39,6 +39,15 @@ class InteractiveShoppingCLI:
         sorted_results = await self.search_agent._parse_search_results(fetch_count)
         return sorted_results
 
+    async def _apply_shipping_filter(self, results, shipping_option):
+        """Apply shipping filter by clicking filter button in browser and re-fetch results."""
+        # shipping_option: 무료배송, 전체
+        await self.search_agent.apply_shipping_filter(shipping_option)
+        # 필터 적용 후, 결과 재파싱
+        fetch_count = self.state.results_per_page * 10
+        filtered_results = await self.search_agent._parse_search_results(fetch_count)
+        return filtered_results
+
     def __init__(
         self,
         *,
@@ -513,42 +522,72 @@ class InteractiveShoppingCLI:
             self.state.page_offset = 0
             self.state.all_search_results = []
             self.state.search_results = []
+            self.state.current_sort_option = None  # 새 검색 시 정렬 옵션 초기화
+            self.state.current_shipping_filter = None  # 새 검색 시 배송비 필터 초기화
 
             fetch_count = self.state.results_per_page * 10
             results = await self.search_agent.search_page(query, page_num=1, max_results=fetch_count)
 
             if results:
-                # 정렬/필터 여부 묻기
-                print("\n🔎 검색 결과가 준비되었습니다.")
-                print("정렬 또는 필터를 하시겠습니까?")
-                print("   '정렬' → 정렬 옵션 선택")
-                print("   '필터' → 필터 옵션 선택 (미구현)")
-                print("   '건너뛰기' → 바로 상품 보기")
-                sort_or_filter = input("\n👉 선택: ").strip().lower()
+                # 정렬/필터 루프: 사용자가 "없음" 선택할 때까지 반복
+                while True:
+                    # 정렬/필터 여부 묻기
+                    print("\n🔎 검색 결과가 준비되었습니다.")
+                    print("정렬 또는 필터를 하시겠습니까?")
+                    print("   '정렬' → 정렬 옵션 선택 (배송비 옵션 포함)")
+                    print("   '없음' → 추가 정렬/필터 없이 상품 보기")
+                    sort_or_filter = input("\n👉 선택: ").strip().lower()
 
-                if sort_or_filter == "정렬":
-                    # 정렬 옵션 안내
-                    print("\n정렬 방법을 선택하세요:")
-                    print("   1. 쿠팡 랭킹순 (기본)")
-                    print("   2. 낮은가격순")
-                    print("   3. 높은가격순")
-                    print("   4. 판매량순")
-                    print("   5. 최신순")
-                    sort_input = input("\n👉 정렬 번호 입력: ").strip()
-                    sort_map = {
-                        "1": "랭킹순",
-                        "2": "낮은가격순",
-                        "3": "높은가격순",
-                        "4": "판매량순",
-                        "5": "최신순"
-                    }
-                    sort_type = sort_map.get(sort_input, "랭킹순")
-                    print(f"\n✅ '{sort_type}' 정렬을 적용합니다...")
-                    # 실제 정렬 적용 함수 호출
-                    results = await self._apply_sort_option(results, sort_type)
-                elif sort_or_filter == "필터":
-                    print("필터 기능은 아직 구현되지 않았습니다. 바로 상품을 보여드립니다.")
-                # else: 바로 상품 보여주기
+                    if sort_or_filter == "정렬":
+                        # 정렬 옵션 안내
+                        print("\n정렬 방법을 선택하세요:")
+                        print("   1. 쿠팡 랭킹순 (기본)")
+                        print("   2. 낮은가격순")
+                        print("   3. 높은가격순")
+                        print("   4. 판매량순")
+                        print("   5. 최신순")
+                        sort_input = input("\n👉 정렬 번호 입력: ").strip()
+                        sort_map = {
+                            "1": "랭킹순",
+                            "2": "낮은가격순",
+                            "3": "높은가격순",
+                            "4": "판매량순",
+                            "5": "최신순"
+                        }
+                        sort_type = sort_map.get(sort_input, "랭킹순")
+                        print(f"\n⏳ '{sort_type}' 정렬을 적용하는 중...")
+                        # 실제 정렬 적용 함수 호출 및 상태에 저장
+                        results = await self._apply_sort_option(results, sort_type)
+                        self.state.current_sort_option = sort_type  # 정렬 옵션 저장
+                        print(f"✅ '{sort_type}' 정렬이 완료되었습니다.")
+                        
+                        # 정렬 후 배송비 토글 옵션 묻기 (독립적으로)
+                        print("\n배송비 옵션을 선택하세요:")
+                        print("   1. 배송비포함")
+                        print("   2. 배송비제외")
+                        shipping_input = input("\n👉 배송비 옵션 번호 입력 (기본값: 배송비제외): ").strip()
+                        shipping_map = {
+                            "1": "배송비포함",
+                            "2": "배송비제외"
+                        }
+                        # 기본값은 배송비제외
+                        shipping_option = shipping_map.get(shipping_input, "배송비제외")
+                        print(f"\n⏳ '{shipping_option}' 배송비 옵션을 적용하는 중...")
+                        results = await self._apply_shipping_filter(results, shipping_option)
+                        self.state.current_shipping_filter = shipping_option  # 배송비 옵션 저장 (정렬별 독립적)
+                        print(f"✅ '{shipping_option}' 배송비 옵션이 적용되었습니다.")
+                        # 계속 루프: 추가 정렬/필터 여부 묻기
+                        continue
+                    elif sort_or_filter == "없음":
+                        # 정렬/필터 완료, 루프 탈출
+                        if self.state.current_sort_option:
+                            print(f"\n✅ 최종 설정: '{self.state.current_sort_option}' 정렬 + '{self.state.current_shipping_filter}' 배송비")
+                        else:
+                            print("\n✅ 기본 정렬 상태로 진행합니다.")
+                        break
+                    else:
+                        print("❌ 올바른 선택을 입력해주세요. ('정렬', '없음')")
+                        continue
 
                 # store full page results and show first batch
                 self.state.all_search_results = results
@@ -770,6 +809,16 @@ class InteractiveShoppingCLI:
             )
 
             if results:
+                # 이전에 적용된 정렬 옵션이 있으면 재적용
+                if self.state.current_sort_option:
+                    print(f"✅ 저장된 정렬 '{self.state.current_sort_option}' 적용 중...")
+                    results = await self._apply_sort_option(results, self.state.current_sort_option)
+
+                # 이전에 적용된 배송비 필터가 있으면 재적용
+                if self.state.current_shipping_filter:
+                    print(f"✅ 저장된 배송비 필터 '{self.state.current_shipping_filter}' 적용 중...")
+                    results = await self._apply_shipping_filter(results, self.state.current_shipping_filter)
+
                 # Store all results from this page for offset-based display
                 self.state.all_search_results = results
 

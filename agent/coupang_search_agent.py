@@ -120,6 +120,158 @@ class CoupangSearchAgent:
         return False
         return False
 
+    async def _get_shipping_filter_state(self) -> str:
+        """현재 배송비 토글 상태 확인 (포함/제외)."""
+        try:
+            # "배송비 포함" 버튼의 상태 확인 — 로드 지연을 고려해 재시도
+            include_selector = "div.srp_deliveryFeeToggle__6HXTR:has(label:has-text('배송비 포함')) button"
+            include_button = None
+            for attempt in range(3):
+                include_button = self.page.locator(include_selector)
+                try:
+                    count = await include_button.count()
+                except Exception:
+                    count = 0
+                if count > 0:
+                    break
+                await asyncio.sleep(0.4)
+
+            if include_button and await include_button.count() > 0:
+                include_class = await include_button.first.get_attribute("class")
+                include_aria = await include_button.first.get_attribute("aria-pressed")
+
+                print(f"\n🔍 배송비 토글 상태 확인 (재시도={attempt+1}):")
+                print(f"  포함 버튼 class: '{include_class}' | aria-pressed: '{include_aria}'")
+
+                # 우선 class에서 srp_enabled로 판단
+                if include_class and "srp_enabled" in include_class:
+                    print(f"  ✓ srp_enabled 클래스 있음 → 배송비포함 (활성)")
+                    return "배송비포함"
+                # aria-pressed가 true면 포함으로 판단
+                if include_aria and include_aria.lower() == "true":
+                    print(f"  ✓ aria-pressed='true' → 배송비포함 (활성)")
+                    return "배송비포함"
+
+                # 위 두 조건이 아니면 배송비제외로 판단
+                print(f"  ✗ 활성 표시 없음 → 배송비제외 (활성)")
+                return "배송비제외"
+
+            # 버튼을 찾을 수 없으면 기본값
+            print(f"  ⚠️  배송비 포함 버튼을 찾을 수 없음 → 기본값: 배송비제외")
+            return "배송비제외"
+
+        except Exception as e:
+            print(f"⚠️  배송비 상태 확인 중 오류: {e}")
+            return "배송비제외"
+
+    async def apply_shipping_filter(self, shipping_option: str) -> bool:
+        """Apply shipping filter next to sort options (배송비 포함/제외 토글)."""
+        # 정렬 옆의 배송비 필터 토글 - 배송비포함 또는 배송비제외만 가능
+        # HTML 구조: <div class="srp_deliveryFeeToggleWrapper__mQTRF">
+        #              <div class="srp_deliveryFeeToggle__6HXTR">
+        #                <button></button>
+        #                <label>배송비 포함</label>
+        
+        if shipping_option not in ["배송비포함", "배송비제외"]:
+            print(f"❌ 알 수 없는 배송비 옵션: {shipping_option}")
+            return False
+        
+        print(f"\n⏳ '{shipping_option}' 배송비 옵션을 적용하는 중...")
+        
+        # 현재 상태 확인
+        current_state = await self._get_shipping_filter_state()
+        print(f"📊 현재 배송비 상태: {current_state}")
+        
+        # 이미 원하는 상태면 클릭하지 않음
+        if current_state == shipping_option:
+            print(f"✅ '{shipping_option}' 배송비 옵션이 이미 적용되어 있습니다.")
+            return True
+        
+        # 원하는 상태가 아니면 토글 클릭 (토글 버튼은 하나뿐이며 클릭 시 상태 전환)
+        print(f"⏳ '{shipping_option}'로 변경하기 위해 토글 클릭 중...")
+
+        selectors = [
+            "div.srp_deliveryFeeToggle__6HXTR button",
+            "div[class*='deliveryFeeToggle'] button",
+        ]
+
+        toggle_button = None
+        used_selector = None
+        for selector in selectors:
+            try:
+                btn = self.page.locator(selector)
+                if await btn.count() > 0:
+                    toggle_button = btn.first
+                    used_selector = selector
+                    break
+            except Exception:
+                continue
+
+        if not toggle_button:
+            print(f"⚠️  '{shipping_option}' 배송비 토글을 찾을 수 없습니다. 시도한 selectors: {selectors}")
+            await self._debug_shipping_elements()
+            return False
+
+        # 클릭 후 상태가 바뀌었는지 재확인 (재시도 포함)
+        for attempt in range(3):
+            try:
+                await toggle_button.click()
+            except Exception as e:
+                print(f"⚠️  Toggle 클릭 시 오류 (시도 {attempt+1}): {e}")
+                await asyncio.sleep(0.5)
+                continue
+
+            # 기다렸다가 상태 재확인
+            try:
+                await self.page.wait_for_load_state("networkidle", timeout=5000)
+            except Exception:
+                pass
+            await asyncio.sleep(1)
+
+            new_state = await self._get_shipping_filter_state()
+            print(f"  -> 클릭 후 상태 확인: {new_state}")
+            if new_state == shipping_option:
+                print(f"✅ '{shipping_option}' 배송비 토글 적용 완료 (selector: {used_selector})")
+                return True
+
+            print(f"  ⚠️ 상태가 아직 변경되지 않음 (시도 {attempt+1})")
+
+        print(f"❌ '{shipping_option}' 배송비 토글 적용 실패 — 재시도 후에도 상태가 변경되지 않았습니다.")
+        await self._debug_shipping_elements()
+        return False
+
+    async def _debug_shipping_elements(self):
+        """디버깅용: 페이지에서 배송비 관련 요소 찾기."""
+        try:
+            print("\n🔍 배송비 관련 요소 검색 중...")
+            
+            # 다양한 방식으로 배송비 관련 요소 찾기
+            debug_selectors = [
+                "button",
+                "label",
+                "span",
+                "div[class*='shipping']",
+                "div[class*='delivery']",
+                "div[class*='sort']",
+                "div[class*='filter']",
+            ]
+            
+            for sel in debug_selectors:
+                elements = self.page.locator(sel)
+                count = await elements.count()
+                if count > 0 and count < 50:  # 너무 많으면 스킵
+                    for i in range(min(count, 10)):  # 최대 10개만 확인
+                        try:
+                            text = await elements.nth(i).inner_text()
+                            if "배송비" in text or "delivery" in text.lower() or "shipping" in text.lower():
+                                class_name = await elements.nth(i).get_attribute("class")
+                                data_testid = await elements.nth(i).get_attribute("data-testid")
+                                print(f"  [{sel}] 텍스트: '{text[:50]}' | class: {class_name} | data-testid: {data_testid}")
+                        except:
+                            pass
+        except Exception as e:
+            print(f"  디버깅 중 오류: {e}")
+
     async def search(self, query: str, max_results: int = 5) -> List[SearchResult]:
         """
         Search for products on Coupang and return top results.
