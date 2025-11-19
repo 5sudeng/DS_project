@@ -12,7 +12,7 @@ import urllib.request
 from dataclasses import dataclass
 from pathlib import Path
 import logging
-from typing import Any, Dict, List, Optional, Set
+from typing import Any, Dict, List, Optional, Set, Tuple
 from urllib.parse import parse_qs, urlparse
 
 from agent.coupang_scenario_pipeline import ScenarioPaths, parse_product_identifiers
@@ -22,6 +22,7 @@ from crawling.inquiries import fetch_inquiries
 from crawling.quantity import fetch_quantity_info
 from crawling.review import fetch_reviews
 from preprocessing.data_chunking_processor import DataChunker
+from preprocessing.clova_ocr_batch import ClovaOCR
 
 logger = logging.getLogger(__name__)
 
@@ -45,6 +46,7 @@ class _ArtifactContext:
     paths: ScenarioPaths
     btf_dir: Path
     btf_images_dir: Path
+    ocr_results_file: Path
 
     def update_ids_from_url(self, url: Optional[str]) -> None:
         if not url:
@@ -58,9 +60,22 @@ class _ArtifactContext:
 class ProductArtifactCollector:
     """Collects product artifacts using the existing crawling utilities."""
 
-    def __init__(self, *, run_dir: Optional[str], cookie: Optional[str]):
+    def __init__(
+        self,
+        *,
+        run_dir: Optional[str],
+        cookie: Optional[str],
+        clova_ocr_api_url: Optional[str] = None,
+        clova_ocr_secret_key: Optional[str] = None,
+        clova_ocr_delay: float = 0.5,
+        clova_ocr_only_btf: bool = True,
+    ):
         self.run_dir = run_dir
         self.cookie = cookie
+        self.clova_ocr_api_url = clova_ocr_api_url or os.getenv("CLOVA_OCR_API_URL")
+        self.clova_ocr_secret_key = clova_ocr_secret_key or os.getenv("CLOVA_OCR_SECRET_KEY")
+        self.clova_ocr_delay = max(clova_ocr_delay, 0.0)
+        self.clova_ocr_only_btf = clova_ocr_only_btf
 
     async def collect(self, product_url: str) -> ArtifactCollectionResult:
         ctx = self._prepare_context(product_url)
@@ -84,6 +99,7 @@ class ProductArtifactCollector:
         btf_images_dir = btf_dir / "images"
         btf_dir.mkdir(parents=True, exist_ok=True)
         btf_images_dir.mkdir(parents=True, exist_ok=True)
+        ocr_results_file = paths.run_dir / f"ocrs_{product_id}.json"
         return _ArtifactContext(
             product_url=product_url,
             product_id=product_id,
@@ -92,6 +108,7 @@ class ProductArtifactCollector:
             paths=paths,
             btf_dir=btf_dir,
             btf_images_dir=btf_images_dir,
+            ocr_results_file=ocr_results_file,
         )
 
     def _collect_sync(self, ctx: _ArtifactContext) -> Dict[str, Any]:
@@ -225,6 +242,22 @@ class ProductArtifactCollector:
         except Exception as exc:  # noqa: BLE001
             record("fetch_btf", "error", {"error": str(exc)})
 
+        try:
+            if self._clova_ocr_enabled():
+                status, details = self._run_clova_ocr(ctx)
+                record("clova_ocr", status, details)
+            else:
+                record(
+                    "clova_ocr",
+                    "skipped",
+                    {
+                        "reason": "CLOVA_OCR_API_URL/CLOVA_OCR_SECRET_KEY 미설정",
+                        "hint": "환경 변수 또는 CLI 옵션으로 설정하면 이미지 OCR을 활성화할 수 있습니다.",
+                    },
+                )
+        except Exception as exc:  # noqa: BLE001
+            record("clova_ocr", "error", {"error": str(exc)})
+
         chunk_file: Optional[str] = None
         try:
             chunk_details = self._build_chunk_dataset(ctx)
@@ -253,6 +286,7 @@ class ProductArtifactCollector:
                 "quantity_dir": str(ctx.paths.quantity_dir),
                 "btf_dir": str(ctx.btf_dir),
                 "btf_images_dir": str(ctx.btf_images_dir),
+                "ocr_file": str(ctx.ocr_results_file) if ctx.ocr_results_file.exists() else None,
             },
             "steps": steps,
             "source": "interactive_cli",
@@ -389,6 +423,62 @@ class ProductArtifactCollector:
             "downloaded_images": downloaded,
             "image_count": len(downloaded),
         }
+
+    def _run_clova_ocr(self, ctx: _ArtifactContext) -> Tuple[str, Dict[str, Any]]:
+        image_paths = [
+            path
+            for path in sorted(ctx.btf_images_dir.glob("*"))
+            if path.is_file() and path.suffix.lower() in {".jpg", ".jpeg", ".png"}
+        ]
+        if self.clova_ocr_only_btf:
+            image_paths = [p for p in image_paths if p.name.startswith("btf_")]
+
+        if not image_paths:
+            return "skipped", {"reason": "OCR 대상 이미지가 없습니다."}
+
+        ocr_client = ClovaOCR(self.clova_ocr_api_url, self.clova_ocr_secret_key)
+        success_count = 0
+        failure_count = 0
+        results: List[Dict[str, Any]] = []
+
+        for path in image_paths:
+            result = ocr_client.extract_text(str(path))
+            success = result.get("success", False)
+            if success:
+                success_count += 1
+            else:
+                failure_count += 1
+            results.append(
+                {
+                    "image_path": str(path),
+                    "image_name": path.name,
+                    "ocr_text": result.get("full_text", ""),
+                    "ocr_texts": result.get("texts", []),
+                    "success": success,
+                    "error": result.get("error"),
+                }
+            )
+            if self.clova_ocr_delay:
+                time.sleep(self.clova_ocr_delay)
+
+        ctx.ocr_results_file.write_text(
+            json.dumps(results, ensure_ascii=False, indent=2),
+            encoding="utf-8",
+        )
+
+        return (
+            "success",
+            {
+                "output_file": str(ctx.ocr_results_file),
+                "processed_images": len(image_paths),
+                "success_count": success_count,
+                "failure_count": failure_count,
+                "delay_seconds": self.clova_ocr_delay,
+            },
+        )
+
+    def _clova_ocr_enabled(self) -> bool:
+        return bool(self.clova_ocr_api_url and self.clova_ocr_secret_key)
 
     def _extract_btf_image_urls(self, ctx: _ArtifactContext, payload: Any) -> List[str]:
         urls: Set[str] = set()
