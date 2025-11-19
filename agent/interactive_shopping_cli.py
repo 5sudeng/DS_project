@@ -529,6 +529,33 @@ class InteractiveShoppingCLI:
             results = await self.search_agent.search_page(query, page_num=1, max_results=fetch_count)
 
             if results:
+                # 연관검색어 단계: 검색 직후 한 번만 사용자에게 제시
+                fetch_count = self.state.results_per_page * 10
+                while True:
+                    related = await self.search_agent.get_related_keywords()
+                    if not related:
+                        break
+
+                    print("\n🔗 연관검색어가 발견되었습니다. 원하시는 연관검색어를 선택하세요:")
+                    for idx, rk in enumerate(related, 1):
+                        print(f"   {idx}. {rk['title']}")
+                    print("   0. 계속하기 (현재 검색어로 진행)")
+
+                    sel = input("\n👉 번호 선택 (0=계속): ").strip()
+                    if sel == "" or sel == "0":
+                        break
+                    if sel.isdigit() and 1 <= int(sel) <= len(related):
+                        chosen = related[int(sel) - 1]
+                        # 이동하여 결과 재파싱
+                        results = await self.search_agent.navigate_to_url(chosen["href"], max_results=fetch_count)
+                        # 현재 검색어를 연관검색어로 갱신
+                        self.state.current_search_query = chosen["title"]
+                        # 연관검색어 단계를 다시 반복 (연쇄 선택 가능)
+                        continue
+                    else:
+                        print("❌ 올바른 번호를 입력해주세요.")
+                        continue
+
                 # 정렬/필터 루프: 사용자가 "없음" 선택할 때까지 반복
                 while True:
                     # 정렬/필터 여부 묻기

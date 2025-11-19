@@ -5,7 +5,7 @@ from __future__ import annotations
 import asyncio
 import re
 from dataclasses import dataclass
-from typing import List, Optional
+from typing import List, Optional, Dict
 
 from playwright.async_api import Page, TimeoutError as PlaywrightTimeoutError
 
@@ -271,6 +271,65 @@ class CoupangSearchAgent:
                             pass
         except Exception as e:
             print(f"  디버깅 중 오류: {e}")
+
+    async def get_related_keywords(self) -> List[Dict[str, str]]:
+        """페이지에서 연관검색어(related keywords) 링크들을 추출합니다.
+
+        Returns:
+            List of dicts with keys: 'title' and 'href'.
+        """
+        selectors = [
+            "div.srp_relatedKeywords__DJiuK a",
+            "div[class*='related'] a",
+            "div[class*='srp_related'] a",
+        ]
+        results: List[Dict[str, str]] = []
+        try:
+            for sel in selectors:
+                loc = self.page.locator(sel)
+                try:
+                    count = await loc.count()
+                except Exception:
+                    count = 0
+                if count == 0:
+                    continue
+                for i in range(count):
+                    try:
+                        a = loc.nth(i)
+                        title = (await a.inner_text()).strip()
+                        href = await a.get_attribute("href")
+                        if not href:
+                            continue
+                        if not href.startswith("http"):
+                            href = f"https://www.coupang.com{href}"
+                        results.append({"title": title, "href": href})
+                    except Exception:
+                        continue
+                # If we found related keywords using this selector, stop
+                if results:
+                    break
+        except Exception as e:
+            print(f"⚠️  연관검색어 추출 오류: {e}")
+
+        return results
+
+    async def navigate_to_url(self, url: str, max_results: int = 50) -> List[SearchResult]:
+        """주어진 검색 URL로 이동한 뒤 결과를 파싱하여 반환합니다.
+
+        This is used when the user selects a related keyword link which already
+        contains the full search URL.
+        """
+        try:
+            print(f"\n🔁 연관검색어로 이동: {url}")
+            await self.page.goto(url, wait_until="domcontentloaded", timeout=30000)
+            await asyncio.sleep(1.5)
+            # Parse search results from the new page
+            results = await self._parse_search_results(max_results)
+            print(f"✓ 연관검색어 이동 후 {len(results)}개 상품 발견")
+            return results
+        except Exception as e:
+            print(f"⚠️  연관검색어 페이지 이동/파싱 중 오류: {e}")
+            return []
 
     async def search(self, query: str, max_results: int = 5) -> List[SearchResult]:
         """
