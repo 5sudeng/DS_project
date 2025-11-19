@@ -81,8 +81,16 @@ playwright install chromium
 # OpenAI API 키 설정
 export OPENAI_API_KEY="your-api-key-here"
 
+# CLOVA OCR 키 (선택, 이미지 텍스트 분석 활성화 시 필요)
+export CLOVA_OCR_API_URL="https://clovaoocr.apigw.ntruss.com/custom/v1/..."
+export CLOVA_OCR_SECRET_KEY="your-secret-key"
+
 # 또는 .env 파일 생성
-echo "OPENAI_API_KEY=your-api-key-here" > .env
+cat <<'EOF' > .env
+OPENAI_API_KEY=your-api-key-here
+CLOVA_OCR_API_URL=https://clovaoocr.apigw.ntruss.com/custom/v1/...
+CLOVA_OCR_SECRET_KEY=your-secret-key
+EOF
 ```
 
 ### 4. 쿠키 파일 준비 (선택 사항)
@@ -103,6 +111,12 @@ echo "OPENAI_API_KEY=your-api-key-here" > .env
 ```bash
 # 쿠키 파일 사용 (권장)
 python -m agent.interactive_shopping_cli --cookie-file cookie.txt
+
+# CLOVA OCR를 즉시 활성화하고 싶을 때
+python -m agent.interactive_shopping_cli \
+  --cookie-file cookie.txt \
+  --clova-ocr-api-url $CLOVA_OCR_API_URL \
+  --clova-ocr-secret-key $CLOVA_OCR_SECRET_KEY
 
 # 브라우저 보이게 실행 (디버깅용)
 python -m agent.interactive_shopping_cli --cookie-file cookie.txt
@@ -198,6 +212,7 @@ python -m agent.coupang_scenario_pipeline \
 - Playwright 브라우저 세션 관리
 - 상품 페이지 로딩 및 상태 관리
 - 쿠키 로딩 및 안티봇 설정
+- BTF 이미지 수집 후 CLOVA OCR로 텍스트 추출 (자격 증명 설정 시)
 
 ```python
 cli = InteractiveShoppingCLI(
@@ -243,6 +258,7 @@ query = llm.generate_search_query(
 - 리뷰/문의 섹션 실시간 분석
 - 키워드 기반 정보 추출
 - 장바구니 추가 자동화
+- 질문마다 관련도가 높은 10개 청크만 선별해 QA LLM에 전달
 
 ```python
 agent = CoupangProductAgent(page)

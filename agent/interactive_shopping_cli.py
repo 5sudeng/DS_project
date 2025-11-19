@@ -34,6 +34,9 @@ class InteractiveShoppingCLI:
         cookie_file: Optional[str] = None,
         api_key: Optional[str] = None,
         run_dir: Optional[str] = None,
+        clova_ocr_api_url: Optional[str] = None,
+        clova_ocr_secret_key: Optional[str] = None,
+        clova_ocr_delay: float = 0.5,
     ):
         self.headless = headless
         self.run_dir = run_dir
@@ -52,6 +55,9 @@ class InteractiveShoppingCLI:
         self.data_collector = ProductArtifactCollector(
             run_dir=self.run_dir,
             cookie=self.cookie_header_value,
+            clova_ocr_api_url=clova_ocr_api_url,
+            clova_ocr_secret_key=clova_ocr_secret_key,
+            clova_ocr_delay=clova_ocr_delay,
         )
 
     async def run(self):
@@ -519,6 +525,20 @@ async def main():
         "--run-dir",
         help="Root directory to store collected product data (default: outputs/scenario_runs)",
     )
+    parser.add_argument(
+        "--clova-ocr-api-url",
+        help="CLOVA OCR API URL (default: 환경 변수 CLOVA_OCR_API_URL)",
+    )
+    parser.add_argument(
+        "--clova-ocr-secret-key",
+        help="CLOVA OCR Secret Key (default: 환경 변수 CLOVA_OCR_SECRET_KEY)",
+    )
+    parser.add_argument(
+        "--clova-ocr-delay",
+        type=float,
+        default=0.5,
+        help="CLOVA OCR API 호출 사이 대기 시간(초)",
+    )
 
     args = parser.parse_args()
 
@@ -534,6 +554,9 @@ async def main():
         cookie_file=args.cookie_file,
         api_key=api_key,
         run_dir=args.run_dir,
+        clova_ocr_api_url=args.clova_ocr_api_url,
+        clova_ocr_secret_key=args.clova_ocr_secret_key,
+        clova_ocr_delay=args.clova_ocr_delay,
     )
 
     await cli.run()

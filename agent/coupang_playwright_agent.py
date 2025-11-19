@@ -158,10 +158,18 @@ class CoupangProductAgent:
         if not llm:
             return "답변 생성 모델을 초기화하지 못했습니다. 잠시 후 다시 시도해 주시겠어요?"
 
+        relevant_snippets = self._select_relevant_snippets_for_question(
+            utterance,
+            snippets,
+            llm,
+            top_k=10,
+        )
+        print(f"✓ 질문과 관련 있는 {len(relevant_snippets)}개 근거만 활용합니다.")
+
         try:
             return llm.answer_product_question(
                 utterance,
-                snippets,
+                relevant_snippets,
                 language="ko",
             )
         except Exception as exc:  # noqa: BLE001
@@ -259,6 +267,28 @@ class CoupangProductAgent:
             per_source_counts[source_type] = per_source_counts.get(source_type, 0) + 1
 
         return snippets
+
+    def _select_relevant_snippets_for_question(
+        self,
+        question: str,
+        snippets: List[dict],
+        llm: ShoppingAssistantLLM,
+        *,
+        top_k: int = 10,
+    ) -> List[dict]:
+        if not snippets:
+            return []
+        try:
+            ranked = llm.rank_snippets_by_similarity(
+                question,
+                snippets,
+                top_k=top_k,
+            )
+            if ranked:
+                return ranked
+        except Exception:
+            pass
+        return snippets[:top_k]
 
     def _load_chunk_dataset(self) -> List[dict]:
         if self._chunk_dataset is not None:
