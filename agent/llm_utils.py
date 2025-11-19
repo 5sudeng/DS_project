@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import math
 import os
 from typing import Any, Dict, List, Optional
 
@@ -231,6 +232,41 @@ JSON 형식으로 응답하세요:
         print(f"response from answer_product_question:\n{response}\n")
         return response.choices[0].message.content.strip()
 
+    def rank_snippets_by_similarity(
+        self,
+        question: str,
+        snippets: List[Dict[str, Any]],
+        *,
+        top_k: int = 10,
+        embedding_model: str = "text-embedding-3-small",
+    ) -> List[Dict[str, Any]]:
+        if not snippets:
+            return []
+
+        inputs = [question] + [
+            self._shorten(snippet.get("text", ""), 2000) for snippet in snippets
+        ]
+        response = self.client.embeddings.create(
+            model=embedding_model,
+            input=inputs,
+        )
+        data = sorted(response.data, key=lambda item: getattr(item, "index", 0))
+        if len(data) < len(inputs):
+            return snippets[:top_k]
+
+        question_embedding = data[0].embedding
+        snippet_embeddings = [item.embedding for item in data[1:]]
+
+        scored: List[Dict[str, Any]] = []
+        for snippet, embedding in zip(snippets, snippet_embeddings):
+            score = self._cosine_similarity(question_embedding, embedding)
+            enriched = dict(snippet)
+            enriched["relevance_score"] = score
+            scored.append(enriched)
+
+        scored.sort(key=lambda item: item.get("relevance_score", 0), reverse=True)
+        return scored[:top_k]
+
     def _artifact_context_snippet(
         self,
         artifact_summary: Optional[Dict[str, Any]],
@@ -261,3 +297,18 @@ JSON 형식으로 응답하세요:
         if len(text) <= max_length:
             return text
         return text[: max_length - 1].rstrip() + "…"
+
+    def _cosine_similarity(self, a: List[float], b: List[float]) -> float:
+        if not a or not b:
+            return 0.0
+        dot = 0.0
+        norm_a = 0.0
+        norm_b = 0.0
+        for x, y in zip(a, b):
+            dot += x * y
+            norm_a += x * x
+            norm_b += y * y
+        denom = math.sqrt(norm_a) * math.sqrt(norm_b)
+        if denom == 0:
+            return 0.0
+        return dot / denom

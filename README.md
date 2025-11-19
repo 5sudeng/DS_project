@@ -1,322 +1,214 @@
 # 🛍️ AI-Powered Coupang Shopping Assistant
 
-LLM 기반 대화형 쿠팡 쇼핑 도우미 - Playwright를 사용한 실시간 상품 탐색 및 AI 기반 의도 파악
+This project provides a large language model (LLM)-based interactive shopping assistant for Coupang. It integrates Playwright-based product-page exploration with intent classification, search‑query generation, and multi‑turn conversational navigation.
 
-## 📋 목차
+## Table of Contents
+- Overview of Features
+- Project Structure
+- Installation
+- Usage
+- Example Interaction Flow
+- Korean Examples (Intent Classification & Search Query Generation)
+- Technology Stack
+- Module Descriptions
+- Troubleshooting
+- License
 
-- [주요 기능](#주요-기능)
-- [프로젝트 구조](#프로젝트-구조)
-- [설치 방법](#설치-방법)
-- [사용 방법](#사용-방법)
-- [대화 흐름 예시](#대화-흐름-예시)
-- [기술 스택](#기술-스택)
-- [주요 모듈 설명](#주요-모듈-설명)
+## Overview of Features
 
-## 🎯 주요 기능
+### 1. Intent Classification (LLM-Based)
+- Identifies the user’s intent such as: product inquiry, dissatisfaction, preference expression, or request for alternatives.
+- Extracts rationale and important keywords to be used for next-step decisions.
 
-### 1. **AI 기반 의도 분류**
-- OpenAI GPT를 사용한 사용자 발화 의도 자동 파악
-- 만족/불만족/질문 자동 분류
-- 룰 베이스가 아닌 LLM 기반 자연어 이해
+### 2. Real-Time Product Exploration
+- Loads Coupang product pages using Playwright.
+- Extracts reviews, Q&A content, summary information, and key metadata.
+- Produces grounded answers based strictly on the retrieved page content.
 
-### 2. **실시간 상품 정보 탐색**
-- Playwright로 쿠팡 페이지 실시간 크롤링
-- 리뷰 및 문의 섹션에서 키워드 매칭
-- 사용자 질문에 대한 자동 답변 생성
+### 3. Dynamic Search and Recommendation
+- When dissatisfaction is detected, the assistant automatically generates new search queries.
+- Searches Coupang using refined terms and ranks search results.
 
-### 3. **동적 검색 및 추천**
-- 사용자 불만족 시 자동으로 새로운 상품 검색
-- LLM이 생성한 최적화된 검색어로 검색
-- 검색 결과에서 상품 선택 및 전환
+### 4. Multi‑Turn Conversational Interface
+- Maintains conversation history across steps.
+- Supports iterative refinement of user preferences.
+- Allows optional automated cart addition.
 
-### 4. **대화형 인터페이스**
-- 티키타카 대화 지원
-- 장바구니 담기 자동화
-- 컨텍스트 기반 자연스러운 대화 흐름
-
-## 📁 프로젝트 구조
-
+## Project Structure
 ```
 DS_project/
 ├── agent/
-│   ├── interactive_shopping_cli.py      # 메인 대화형 CLI
-│   ├── llm_utils.py                     # LLM 의도 분류 및 검색어 생성
-│   ├── coupang_playwright_agent.py      # 상품 페이지 탐색 에이전트
-│   ├── coupang_search_agent.py          # 쿠팡 검색 에이전트
-│   └── coupang_scenario_pipeline.py     # 배치 처리 파이프라인
+│   ├── interactive_shopping_cli.py
+│   ├── llm_utils.py
+│   ├── coupang_playwright_agent.py
+│   ├── coupang_search_agent.py
+│   └── coupang_scenario_pipeline.py
 ├── crawling/
-│   ├── fetch_html.py                    # HTML 페이지 가져오기
-│   ├── review.py                        # 리뷰 데이터 수집
-│   ├── inquiries.py                     # 문의 데이터 수집
-│   └── quantity.py                      # 재고 정보 수집
+│   ├── fetch_html.py
+│   ├── review.py
+│   ├── inquiries.py
+│   └── quantity.py
 └── rag/
-    └── requirements.txt                 # 의존성 패키지
+    └── requirements.txt
 ```
 
-## 🔧 설치 방법
+## Installation
 
-### 1. 환경 설정
-
+### 1. Create Environment
 ```bash
-# Python 3.11 권장
 conda create -n dsproject python=3.11
 conda activate dsproject
 ```
 
-### 2. 의존성 설치
-
+### 2. Install Dependencies
 ```bash
-# 필수 패키지 설치
 pip install playwright openai langchain langchain-openai
 pip install beautifulsoup4 requests httpx
 pip install python-dotenv
-
-# Playwright 브라우저 설치
 playwright install chromium
 ```
 
-### 3. 환경 변수 설정
-
-```bash
-# OpenAI API 키 설정
-export OPENAI_API_KEY="your-api-key-here"
-
-# 또는 .env 파일 생성
-echo "OPENAI_API_KEY=your-api-key-here" > .env
+### 3. Environment Variables
+```
+export OPENAI_API_KEY="your-api-key"
+export CLOVA_OCR_API_URL="..."
+export CLOVA_OCR_SECRET_KEY="..."
 ```
 
-### 4. 쿠키 파일 준비 (선택 사항)
+### 4. Optional: Login Cookie Setup
+To reduce the chance of bot‑detection, a logged‑in session cookie may be used.
 
-쿠팡의 봇 방어를 우회하기 위해 쿠키 사용을 권장합니다:
+## Usage
 
-1. Chrome 브라우저에서 쿠팡 로그인
-2. F12 → Console 탭에서 실행:
-   ```javascript
-   copy(document.cookie)
-   ```
-3. `cookie.txt` 파일에 붙여넣기
-
-## 🚀 사용 방법
-
-### 대화형 모드 (추천)
-
+### Interactive Mode
 ```bash
-# 쿠키 파일 사용 (권장)
 python -m agent.interactive_shopping_cli --cookie-file cookie.txt
+```
 
-# 브라우저 보이게 실행 (디버깅용)
-python -m agent.interactive_shopping_cli --cookie-file cookie.txt
+OCR-enabled mode:
+```bash
+python -m agent.interactive_shopping_cli --cookie-file cookie.txt \
+  --clova-ocr-api-url $CLOVA_OCR_API_URL \
+  --clova-ocr-secret-key $CLOVA_OCR_SECRET_KEY
+```
 
-# Headless 모드
+Headless mode:
+```bash
 python -m agent.interactive_shopping_cli --cookie-file cookie.txt --headless
 ```
 
-### 배치 모드 (기존 시나리오)
-
+### Batch Scenario Runner
 ```bash
 python -m agent.coupang_scenario_pipeline \
-  --url "https://www.coupang.com/vp/products/8668543035" \
-  --question "발볼 넓은 사람도 신을 수 있대?" \
-  --follow-up "맘에 안들어" \
+  --url "https://www.coupang.com/vp/products/..." \
+  --question "Is this suitable for wide feet?" \
+  --follow-up "Show cheaper options" \
   --cookie-file cookie.txt \
-  --headless \
-  --collect-quantity
+  --headless
 ```
 
-## 💬 대화 흐름 예시
-
+## Example Interaction Flow
 ```
-🛍️  쿠팡 쇼핑 도우미에 오신 것을 환영합니다!
-
-📦 상품 URL을 입력하세요: https://www.coupang.com/vp/products/8668543035
-✓ 상품: 나이키 에어맥스 운동화
-
-❓ 무엇이 궁금하신가요?
-
-💬 > 발볼 넓은 사람도 신을 수 있을까?
-[의도 파악: question (신뢰도: 0.95)]
-⏳ 리뷰와 문의를 확인하는 중...
-
-🤖 구매 후기에서 '발볼이 넓어도 편하게 맞는다'는 평가가 있었습니다.
-   대부분 정사이즈를 추천하고 있습니다.
-
-💡 이 상품이 마음에 드시나요? 장바구니에 담아드릴까요? (예/아니오)
-
-💬 > 너무 비싸. 좀 더 저렴한 걸로
-[의도 파악: dissatisfied (신뢰도: 0.92)]
-
-🔍 이해했습니다: 가격이 너무 비싸다
-   새로운 상품을 찾아보겠습니다...
-
-💡 검색어: '운동화 발볼 넓은 저렴한 가성비'
-
-🔍 검색 중: '운동화 발볼 넓은 저렴한 가성비'
-✓ 5개 상품 발견
-
-📦 검색 결과:
-1. 뉴발란스 530 운동화
-   가격: 45,900원
-
-2. 아디다스 경량 운동화
-   가격: 39,000원
-
-3. 푸마 런닝화
-   가격: 42,000원
-
-🔢 원하는 상품의 번호를 입력하세요 (1-5):
-
-💬 > 2
-✓ 선택: 아디다스 경량 운동화
-⏳ 상품 페이지를 불러오는 중...
+User URL → Intent Classification → Review/Q&A Extraction
+→ Grounded Answer → Satisfaction Decision → Optional New Search
+→ Product Recommendation → Cart Addition
 ```
 
-## 🛠 기술 스택
+## Korean Examples
 
-### Core Technologies
-- **Python 3.11**: 메인 언어
-- **Playwright**: 브라우저 자동화 및 동적 페이지 크롤링
-- **OpenAI GPT-4**: 의도 분류 및 자연어 처리
-- **LangChain**: LLM 워크플로우 관리
+### 1. Intent Classification Example 
 
-### Web Scraping & Data
-- **BeautifulSoup4**: HTML 파싱
-- **httpx/requests**: HTTP 요청 처리
-- **asyncio**: 비동기 I/O 처리
+**사용자 입력:**  
+“발볼이 넓은 사람도 신을 수 있을까요? 리뷰에 발볼 얘기가 없어서 걱정돼요.”
 
-### Anti-Detection
-- JavaScript injection으로 `navigator.webdriver` 숨김
-- 실제 Chrome과 동일한 User-Agent 및 헤더
-- 쿠키 기반 세션 관리
-- Akamai 봇 방어 우회 전략
+**LLM 의도 분류 결과 예시:**  
+- intent: `product_question`  
+- reasoning: “발볼 적합성에 대한 정보 부족으로 인해 사용자가 추가 확인을 요청함.”  
+- extracted_keywords: `발볼`, `적합성`, `편안함`
 
-## 📚 주요 모듈 설명
+---
 
-### 1. `interactive_shopping_cli.py`
-**메인 대화형 인터페이스**
+**사용자 입력:**  
+“이건 너무 비싼데… 다른 가성비 좋은 제품 있어요?”
 
-- 사용자와의 실시간 대화 처리
-- Playwright 브라우저 세션 관리
-- 상품 페이지 로딩 및 상태 관리
-- 쿠키 로딩 및 안티봇 설정
+**LLM 의도 분류 결과 예시:**  
+- intent: `dissatisfaction_price`  
+- reasoning: “가격 불만을 명확히 표현했고 대안 요청이 포함됨.”  
+- extracted_keywords: `가성비`, `대안`, `저렴한`
 
-```python
-cli = InteractiveShoppingCLI(
-    headless=False,
-    cookie_file="cookie.txt",
-    api_key="your-api-key"
-)
-await cli.run()
-```
+### 2. Search Query Generation Example 
 
-### 2. `llm_utils.py`
-**LLM 기반 자연어 처리**
+**사용자 입력:**  
+“조용한 모터 달린 선풍기 없나요? 지금 제품은 소음이 너무 심해요.”
 
-#### 의도 분류 (Intent Classification)
-```python
-intent = llm.classify_intent(
-    user_input="너무 비싸",
-    conversation_history=[...],
-    current_product_info="나이키 운동화"
-)
-# Returns: {
-#   "intent": "dissatisfied",
-#   "confidence": 0.92,
-#   "reason": "가격이 너무 비싸다",
-#   "keywords": ["저렴한", "가성비"]
-# }
-```
+**LLM이 생성하는 검색어 예시:**  
+- “저소음 선풍기”  
+- “BLDC 선풍기 조용한”  
+- “수면용 선풍기 저소음”
 
-#### 검색어 생성 (Query Generation)
-```python
-query = llm.generate_search_query(
-    original_product_name="나이키 에어맥스",
-    user_feedback="너무 비싸",
-    extracted_keywords=["저렴한", "가성비"],
-    conversation_history=[...]
-)
-# Returns: "운동화 저렴한 가성비"
-```
+**검색 사유:**  
+- 사용자는 특정 제품의 소음 문제를 제기했고, 해결 기준이 “소음 감소/정숙성”에 있음.
 
-### 3. `coupang_playwright_agent.py`
-**상품 페이지 탐색 에이전트**
+---
 
-- 리뷰/문의 섹션 실시간 분석
-- 키워드 기반 정보 추출
-- 장바구니 추가 자동화
+**사용자 입력:**  
+“발볼 넓은 남자용 러닝화 추천해줘.”
 
-```python
-agent = CoupangProductAgent(page)
+**LLM 검색어 생성 예시:**  
+- “남성 러닝화 발볼 넓은”  
+- “4E 러닝화 남자”  
+- “와이드핏 남성 운동화”
 
-# 질문에 답변
-answer = await agent.answer_user_question("발볼 넓은 사람도 신을 수 있대?")
+## Technology Stack
 
-# 장바구니 추가
-result = await agent.add_product_to_cart()
-```
+### Core
+- Python 3.11  
+- Playwright (Coupang page automation)  
+- OpenAI GPT models  
+- LangChain orchestration  
 
-### 4. `coupang_search_agent.py`
-**검색 기능 제공**
+### Scraping and Data Handling
+- BeautifulSoup4  
+- httpx / requests  
+- asyncio  
 
-- 쿠팡 검색 자동화
-- 검색 결과 파싱
-- 상품 정보 추출
+### Anti-Bot Measures
+- Webdriver masking  
+- Cookie‑based session continuity  
+- Realistic headers and delays  
 
-```python
-search_agent = CoupangSearchAgent(page)
-results = await search_agent.search("운동화 저렴한", max_results=5)
-```
+## Module Descriptions
 
-## 🎨 주요 특징
+### interactive_shopping_cli.py
+Manages the dialogue loop, browser operations, and OCR‑optional flows.
 
-### 1. 강력한 안티봇 우회
-```python
-# JavaScript injection
-Object.defineProperty(navigator, 'webdriver', {
-    get: () => undefined
-});
+### llm_utils.py
+Performs:
+- Intent classification  
+- Rationale extraction  
+- Search‑query generation  
 
-# Akamai 쿠키 특별 처리
-if name in ['_abck', 'bm_sz', 'bm_sv']:
-    cookie_dict['secure'] = True
-    cookie_dict['httpOnly'] = True
-    cookie_dict['sameSite'] = 'None'
-```
+### coupang_playwright_agent.py
+Handles:
+- Page load & parsing  
+- Review / Q&A extraction  
+- Answer generation  
 
-### 2. 자동 재시도 및 폴백
-```python
-# httpx → requests → curl 순서로 폴백
-status, url, text = _try_httpx(candidates, headers, timeout)
-if text is None:
-    status, url, text = _try_requests(candidates, headers, timeout)
-if text is None:
-    status, url, text = _try_curl(candidates, headers, timeout)
-```
+### coupang_search_agent.py
+Executes:
+- Coupang search flows  
+- Result extraction & ranking  
 
-### 3. 컨텍스트 기반 대화
-```python
-@dataclass
-class ConversationState:
-    current_url: Optional[str] = None
-    current_product_name: Optional[str] = None
-    search_results: List[SearchResult] = field(default_factory=list)
-    conversation_history: List[Dict[str, str]] = field(default_factory=list)
-    waiting_for_clarification: bool = False
-```
+## Troubleshooting
 
-## 🐛 트러블슈팅
+### Page Unreachable
+Often caused by anti‑bot detection. Renew cookies and retry.
 
-### 1. "This site can't be reached" 오류
-- **원인**: Akamai 봇 방어 시스템
-- **해결**: 최신 쿠키를 `cookie.txt`에 저장 후 재시도
+### Timeout Issues
+Disable headless mode during debugging.
 
-### 2. Timeout 오류
-- **원인**: 네트워크 지연 또는 페이지 로딩 시간 초과
-- **해결**: `--timeout` 옵션으로 대기 시간 증가
+### No Search Results
+Open browser visually to inspect CSS selectors.
 
-### 3. 검색 결과 없음
-- **원인**: 페이지 구조 변경 또는 셀렉터 불일치
-- **해결**: 브라우저 보이게 실행하여 페이지 확인 (headless 플래그 제거)
-
-## 📄 라이선스
-
-This project is for educational purposes only.
+## License
+This project is intended for research and educational use only.
