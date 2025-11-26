@@ -24,6 +24,14 @@ from crawling.review import fetch_reviews
 from preprocessing.data_chunking_processor import DataChunker
 from preprocessing.clova_ocr_batch import ClovaOCR
 
+try:
+    from dotenv import load_dotenv
+except ImportError:  # pragma: no cover
+    load_dotenv = None  # type: ignore
+
+if load_dotenv:
+    load_dotenv()
+
 logger = logging.getLogger(__name__)
 
 
@@ -69,6 +77,7 @@ class ProductArtifactCollector:
         clova_ocr_secret_key: Optional[str] = None,
         clova_ocr_delay: float = 0.5,
         clova_ocr_only_btf: bool = True,
+        existing_run_dir: Optional[str] = None,
     ):
         self.run_dir = run_dir
         self.cookie = cookie
@@ -76,6 +85,7 @@ class ProductArtifactCollector:
         self.clova_ocr_secret_key = clova_ocr_secret_key or os.getenv("CLOVA_OCR_SECRET_KEY")
         self.clova_ocr_delay = max(clova_ocr_delay, 0.0)
         self.clova_ocr_only_btf = clova_ocr_only_btf
+        self._existing_run_dir = Path(existing_run_dir).expanduser() if existing_run_dir else None
 
     async def collect(self, product_url: str) -> ArtifactCollectionResult:
         ctx = self._prepare_context(product_url)
@@ -94,7 +104,26 @@ class ProductArtifactCollector:
 
     def _prepare_context(self, product_url: str) -> _ArtifactContext:
         product_id, item_id, vendor_item_id = parse_product_identifiers(product_url)
-        paths = ScenarioPaths.build(self.run_dir, product_id)
+
+        if self._existing_run_dir:
+            run_dir = self._existing_run_dir
+            html_dir = run_dir / "html"
+            reviews_dir = run_dir / "reviews"
+            inquiries_dir = run_dir / "inquiries"
+            quantity_dir = run_dir / "quantity"
+            for directory in (run_dir, html_dir, reviews_dir, inquiries_dir, quantity_dir):
+                directory.mkdir(parents=True, exist_ok=True)
+            paths = ScenarioPaths(
+                run_dir=run_dir,
+                html_dir=html_dir,
+                reviews_dir=reviews_dir,
+                inquiries_dir=inquiries_dir,
+                quantity_dir=quantity_dir,
+                summary_file=run_dir / "artifact_summary.json",
+            )
+        else:
+            paths = ScenarioPaths.build(self.run_dir, product_id)
+
         btf_dir = paths.run_dir / "btf"
         btf_images_dir = btf_dir / "images"
         btf_dir.mkdir(parents=True, exist_ok=True)

@@ -107,6 +107,8 @@ class CoupangScenarioPipeline:
         self.cookie_text = self._load_cookie_text(config.cookie_file)
         self.results: List[StepResult] = []
         self.dialog_result: Optional[Dict[str, Any]] = None
+        self.artifact_summary: Optional[Dict[str, Any]] = None
+        self.chunk_data_path: Optional[str] = None
 
     def _load_cookie_text(self, cookie_file: Optional[str]) -> Optional[str]:
         if not cookie_file:
@@ -136,6 +138,7 @@ class CoupangScenarioPipeline:
 
     async def run(self) -> Dict[str, Any]:
         self.collect_data()
+        await self._collect_additional_artifacts()
         self.dialog_result = await self._run_agent_dialog()
         summary = self._write_summary()
         print(f"\n✓ Scenario artifacts saved under: {self.paths.run_dir}")
@@ -234,7 +237,11 @@ class CoupangScenarioPipeline:
             page = await browser.new_page()
             await page.goto(self.config.url)
 
-            agent = CoupangProductAgent(page, search_timeout=self.config.search_timeout)
+            agent = CoupangProductAgent(
+                page,
+                search_timeout=self.config.search_timeout,
+                chunk_data_path=self.chunk_data_path,
+            )
             answer = await agent.answer_user_question(self.config.question)
             if "장바구니" in self.config.follow_up:
                 follow_up = await agent.add_product_to_cart()
@@ -286,12 +293,37 @@ class CoupangScenarioPipeline:
             },
             "steps": [asdict(result) for result in self.results],
             "dialog": self.dialog_result,
+            "artifact_summary": self.artifact_summary,
+            "chunk_data_path": self.chunk_data_path,
         }
         self.paths.summary_file.write_text(
             json.dumps(summary, ensure_ascii=False, indent=2),
             encoding="utf-8",
         )
         return summary
+
+    async def _collect_additional_artifacts(self) -> None:
+        from agent.interactive_cli.artifacts import ProductArtifactCollector
+
+        collector = ProductArtifactCollector(
+            run_dir=self.config.run_dir,
+            cookie=self.cookie_text,
+            existing_run_dir=str(self.paths.run_dir),
+        )
+        try:
+            result = await collector.collect(self.config.url)
+        except Exception as exc:  # noqa: BLE001
+            self._record_step("collect_artifacts", "error", {"error": str(exc)})
+            return
+
+        self.artifact_summary = result.summary
+        self.chunk_data_path = result.chunk_file
+        details = {
+            "chunk_file": result.chunk_file,
+            "ocr_file": result.summary.get("paths", {}).get("ocr_file"),
+            "btf_dir": result.summary.get("paths", {}).get("btf_dir"),
+        }
+        self._record_step("collect_artifacts", "success", details)
 
 
 def build_parser() -> argparse.ArgumentParser:
