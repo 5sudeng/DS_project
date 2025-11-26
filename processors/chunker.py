@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 # 최대 청크 길이 (OCR 출력 및 긴 텍스트 필드에 적용)
 MAX_TEXT_CHUNK_LENGTH = 200
 
-class DataChunker:
+class ContentChunker:
     """
     다양한 유형의 원시 데이터를 정의된 스키마에 따라 청크 단위로 처리하고 구조화하는 클래스입니다.
     """

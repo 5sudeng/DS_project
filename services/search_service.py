@@ -10,7 +10,7 @@ from typing import List, Optional
 
 from playwright.async_api import Page, TimeoutError as PlaywrightTimeoutError
 
-from agent.config import SELECTORS
+from config.selectors import SELECTORS
 
 logger = logging.getLogger(__name__)
 
@@ -27,7 +27,7 @@ class SearchResult:
     review_count: Optional[str] = None
 
 
-class CoupangSearchAgent:
+class SearchService:
     """Agent for searching products on Coupang."""
 
     def __init__(self, page: Page, search_timeout: float = 5.0):

@@ -15,3 +15,4 @@ playwright
 lxml
 beautifulsoup4
 requests
+httpx[http2]

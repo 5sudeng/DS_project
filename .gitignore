@@ -4,3 +4,4 @@ cookie.txt
 *.pyc
 __pycache__/
 outputs/scenario_runs/
+.secret
