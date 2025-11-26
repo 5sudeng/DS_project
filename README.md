@@ -37,74 +37,75 @@ This project provides a large language model (LLM)-based interactive shopping as
 ## Project Structure
 ```
 DS_project/
+├── main.py                     # Entry point
+├── run_agent.sh                # Execution wrapper script
 ├── agent/
+│   ├── config.py               # Centralized configuration (selectors, prompts)
+│   ├── utils.py                # Shared utilities
 │   ├── interactive_shopping_cli.py
-│   ├── llm_utils.py
 │   ├── coupang_playwright_agent.py
 │   ├── coupang_search_agent.py
-│   └── coupang_scenario_pipeline.py
+│   └── infra/
+│       └── llm.py              # LLM infrastructure
 ├── crawling/
 │   ├── fetch_html.py
 │   ├── review.py
 │   ├── inquiries.py
-│   └── quantity.py
-└── rag/
-    └── requirements.txt
+│   ├── quantity.py
+│   └── btf.py
+└── preprocessing/
+    ├── data_chunking_processor.py
+    └── clova_ocr_batch.py
 ```
 
 ## Installation
 
 ### 1. Create Environment
 ```bash
-conda create -n dsproject python=3.11
-conda activate dsproject
+conda create -n shopping_env python=3.10
+conda activate shopping_env
 ```
 
 ### 2. Install Dependencies
 ```bash
-pip install playwright openai langchain langchain-openai
-pip install beautifulsoup4 requests httpx
-pip install python-dotenv
+pip install -r requirements.txt
 playwright install chromium
 ```
 
 ### 3. Environment Variables
-```
+Create a `.env` file or export variables:
+```bash
 export OPENAI_API_KEY="your-api-key"
-export CLOVA_OCR_API_URL="..."
-export CLOVA_OCR_SECRET_KEY="..."
+export CLOVA_OCR_API_URL="..."       # Optional
+export CLOVA_OCR_SECRET_KEY="..."    # Optional
 ```
 
 ### 4. Optional: Login Cookie Setup
-To reduce the chance of bot‑detection, a logged‑in session cookie may be used.
+To reduce the chance of bot‑detection, a logged‑in session cookie may be used. Save it as `cookie.txt` in the project root.
 
 ## Usage
 
 ### Interactive Mode
+The recommended way to run the agent is using the wrapper script:
 ```bash
-python -m agent.interactive_shopping_cli --cookie-file cookie.txt
+./run_agent.sh
 ```
 
-OCR-enabled mode:
+Or directly via Python:
 ```bash
-python -m agent.interactive_shopping_cli --cookie-file cookie.txt \
-  --clova-ocr-api-url $CLOVA_OCR_API_URL \
-  --clova-ocr-secret-key $CLOVA_OCR_SECRET_KEY
+python main.py --cookie-file cookie.txt
 ```
 
-Headless mode:
+### Options
 ```bash
-python -m agent.interactive_shopping_cli --cookie-file cookie.txt --headless
-```
+# Run in headless mode
+./run_agent.sh --headless
 
-### Batch Scenario Runner
-```bash
-python -m agent.coupang_scenario_pipeline \
-  --url "https://www.coupang.com/vp/products/..." \
-  --question "Is this suitable for wide feet?" \
-  --follow-up "Show cheaper options" \
-  --cookie-file cookie.txt \
-  --headless
+# Specify a different cookie file
+./run_agent.sh --cookie-file my_cookies.txt
+
+# Enable OCR (requires API keys)
+./run_agent.sh --clova-ocr-api-url ... --clova-ocr-secret-key ...
 ```
 
 ## Example Interaction Flow
@@ -162,7 +163,7 @@ User URL → Intent Classification → Review/Q&A Extraction
 ## Technology Stack
 
 ### Core
-- Python 3.11  
+- Python 3.10+
 - Playwright (Coupang page automation)  
 - OpenAI GPT models  
 - LangChain orchestration  
@@ -179,22 +180,28 @@ User URL → Intent Classification → Review/Q&A Extraction
 
 ## Module Descriptions
 
-### interactive_shopping_cli.py
+### main.py
+The application entry point. Handles argument parsing and initializes the interactive CLI.
+
+### agent/config.py
+Centralized configuration file containing CSS selectors, LLM prompts, and other constants.
+
+### agent/utils.py
+Shared utility functions for file handling, URL parsing, and other common tasks.
+
+### agent/interactive_shopping_cli.py
 Manages the dialogue loop, browser operations, and OCR‑optional flows.
 
-### llm_utils.py
-Performs:
-- Intent classification  
-- Rationale extraction  
-- Search‑query generation  
+### agent/infra/llm.py
+Handles LLM initialization and interaction, including intent classification and rationale extraction.
 
-### coupang_playwright_agent.py
+### agent/coupang_playwright_agent.py
 Handles:
 - Page load & parsing  
 - Review / Q&A extraction  
 - Answer generation  
 
-### coupang_search_agent.py
+### agent/coupang_search_agent.py
 Executes:
 - Coupang search flows  
 - Result extraction & ranking  
@@ -205,7 +212,7 @@ Executes:
 Often caused by anti‑bot detection. Renew cookies and retry.
 
 ### Timeout Issues
-Disable headless mode during debugging.
+Disable headless mode during debugging to see what's happening in the browser.
 
 ### No Search Results
 Open browser visually to inspect CSS selectors.
