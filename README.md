@@ -37,74 +37,84 @@ This project provides a large language model (LLM)-based interactive shopping as
 ## Project Structure
 ```
 DS_project/
-├── agent/
-│   ├── interactive_shopping_cli.py
-│   ├── llm_utils.py
-│   ├── coupang_playwright_agent.py
-│   ├── coupang_search_agent.py
-│   └── coupang_scenario_pipeline.py
-├── crawling/
-│   ├── fetch_html.py
-│   ├── review.py
-│   ├── inquiries.py
-│   └── quantity.py
-└── rag/
-    └── requirements.txt
+├── main.py                     # Entry point
+├── run_agent.sh                # Execution wrapper script
+├── config/
+│   ├── settings.py             # LLM prompts and general settings
+│   └── selectors.py            # CSS selectors
+├── core/
+│   ├── utils.py                # Shared utilities
+│   ├── state.py                # Conversation state management
+│   └── cookies.py              # Cookie handling
+├── interface/
+│   ├── cli.py                  # Command Line Interface
+│   └── artifacts.py            # Artifact collection logic
+├── services/
+│   ├── llm_service.py          # LLM interaction service
+│   ├── browser_service.py      # Playwright browser service
+│   ├── search_service.py       # Product search service
+│   └── browser_setup.py        # Browser initialization
+├── scrapers/
+│   ├── html_fetcher.py         # HTML fetching
+│   ├── review_scraper.py       # Review scraping
+│   ├── inquiry_scraper.py      # Inquiry scraping
+│   ├── quantity_scraper.py     # Quantity/Stock scraping
+│   └── product_detail_scraper.py # BTF (Below-The-Fold) scraping
+└── processors/
+    ├── chunker.py              # Content chunking
+    └── ocr_processor.py        # OCR processing
 ```
 
 ## Installation
 
 ### 1. Create Environment
 ```bash
-conda create -n dsproject python=3.11
-conda activate dsproject
+conda create -n shopping_env python=3.10
+conda activate shopping_env
 ```
 
 ### 2. Install Dependencies
 ```bash
-pip install playwright openai langchain langchain-openai
-pip install beautifulsoup4 requests httpx
-pip install python-dotenv
+pip install -r requirements.txt
 playwright install chromium
 ```
 
 ### 3. Environment Variables
-```
+Create a `.env` file or export variables:
+```bash
 export OPENAI_API_KEY="your-api-key"
-export CLOVA_OCR_API_URL="..."
-export CLOVA_OCR_SECRET_KEY="..."
+export CLOVA_OCR_API_URL="..."       # Optional
+export CLOVA_OCR_SECRET_KEY="..."    # Optional
 ```
 
+Alternatively, you can save your OpenAI API key in a file named `.secret` in the project root directory.
+
 ### 4. Optional: Login Cookie Setup
-To reduce the chance of bot‑detection, a logged‑in session cookie may be used.
+To reduce the chance of bot‑detection, a logged‑in session cookie may be used. Save it as `cookie.txt` in the project root.
 
 ## Usage
 
 ### Interactive Mode
+The recommended way to run the agent is using the wrapper script:
 ```bash
-python -m agent.interactive_shopping_cli --cookie-file cookie.txt
+./run_agent.sh
 ```
 
-OCR-enabled mode:
+Or directly via Python:
 ```bash
-python -m agent.interactive_shopping_cli --cookie-file cookie.txt \
-  --clova-ocr-api-url $CLOVA_OCR_API_URL \
-  --clova-ocr-secret-key $CLOVA_OCR_SECRET_KEY
+python main.py --cookie-file cookie.txt
 ```
 
-Headless mode:
+### Options
 ```bash
-python -m agent.interactive_shopping_cli --cookie-file cookie.txt --headless
-```
+# Run in headless mode
+./run_agent.sh --headless
 
-### Batch Scenario Runner
-```bash
-python -m agent.coupang_scenario_pipeline \
-  --url "https://www.coupang.com/vp/products/..." \
-  --question "Is this suitable for wide feet?" \
-  --follow-up "Show cheaper options" \
-  --cookie-file cookie.txt \
-  --headless
+# Specify a different cookie file
+./run_agent.sh --cookie-file my_cookies.txt
+
+# Enable OCR (requires API keys)
+./run_agent.sh --clova-ocr-api-url ... --clova-ocr-secret-key ...
 ```
 
 ## Example Interaction Flow
@@ -162,7 +172,7 @@ User URL → Intent Classification → Review/Q&A Extraction
 ## Technology Stack
 
 ### Core
-- Python 3.11  
+- Python 3.10+
 - Playwright (Coupang page automation)  
 - OpenAI GPT models  
 - LangChain orchestration  
@@ -179,25 +189,39 @@ User URL → Intent Classification → Review/Q&A Extraction
 
 ## Module Descriptions
 
-### interactive_shopping_cli.py
-Manages the dialogue loop, browser operations, and OCR‑optional flows.
+### main.py
+The application entry point. Handles argument parsing and initializes the interactive CLI.
 
-### llm_utils.py
-Performs:
-- Intent classification  
-- Rationale extraction  
-- Search‑query generation  
+### config/
+Contains configuration files:
+- `settings.py`: LLM prompts and general settings.
+- `selectors.py`: CSS selectors for DOM interaction.
 
-### coupang_playwright_agent.py
-Handles:
-- Page load & parsing  
-- Review / Q&A extraction  
-- Answer generation  
+### core/
+Core utilities and state management:
+- `utils.py`: Shared utility functions.
+- `state.py`: Manages conversation state.
+- `cookies.py`: Handles cookie loading and parsing.
 
-### coupang_search_agent.py
-Executes:
-- Coupang search flows  
-- Result extraction & ranking  
+### interface/
+User interface and artifact collection:
+- `cli.py`: Manages the dialogue loop and user interaction.
+- `artifacts.py`: Orchestrates the collection of product data (HTML, reviews, etc.).
+
+### services/
+Business logic services:
+- `llm_service.py`: Handles LLM interactions (intent classification, query generation).
+- `browser_service.py`: Manages Playwright browser interactions for product pages.
+- `search_service.py`: Handles product search and result parsing.
+
+### scrapers/
+Atomic scraping modules for specific data types:
+- `html_fetcher.py`, `review_scraper.py`, `inquiry_scraper.py`, `quantity_scraper.py`, `product_detail_scraper.py`.
+
+### processors/
+Data processing modules:
+- `chunker.py`: Chunks text data for RAG or analysis.
+- `ocr_processor.py`: Handles OCR tasks using Clova OCR.  
 
 ## Troubleshooting
 
@@ -205,7 +229,7 @@ Executes:
 Often caused by anti‑bot detection. Renew cookies and retry.
 
 ### Timeout Issues
-Disable headless mode during debugging.
+Disable headless mode during debugging to see what's happening in the browser.
 
 ### No Search Results
 Open browser visually to inspect CSS selectors.
