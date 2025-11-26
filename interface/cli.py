@@ -34,8 +34,6 @@ class ShoppingCLI:
         cookie_file: Optional[str] = None,
         api_key: Optional[str] = None,
         run_dir: Optional[str] = None,
-        clova_ocr_api_url: Optional[str] = None,
-        clova_ocr_secret_key: Optional[str] = None,
         clova_ocr_delay: float = 0.5,
     ):
         self.headless = headless
@@ -56,8 +54,7 @@ class ShoppingCLI:
         self.data_collector = ProductArtifactCollector(
             run_dir=self.run_dir,
             cookie=self.cookie_header_value,
-            clova_ocr_api_url=clova_ocr_api_url,
-            clova_ocr_secret_key=clova_ocr_secret_key,
+            api_key=self.api_key,
             clova_ocr_delay=clova_ocr_delay,
         )
 

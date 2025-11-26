@@ -1,163 +1,137 @@
 """
-CLOVA OCR을 사용한 이미지 텍스트 추출 스크립트
-- btf_ 이미지만 선택적으로 처리 가능 (비용 절감)
-- 기존 Tesseract 방식을 대체합니다.
+OpenAI GPT-4o Vision-based OCR Processor.
+Replaces the legacy Clova OCR implementation.
 """
-import os
+import base64
 import json
-import uuid
+import logging
+import os
 import time
 import glob
-import requests
-import logging
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 from tqdm import tqdm
+
+from openai import OpenAI
 
 logger = logging.getLogger(__name__)
 
 
-class ClovaOCR:
-    """네이버 CLOVA OCR"""
-    
-    def __init__(self, api_url, secret_key):
-        self.api_url = api_url
-        self.secret_key = secret_key
-    
-    def extract_text(self, image_path):
+class OpenAIOCR:
+    """OCR implementation using OpenAI GPT-4o Vision."""
+
+    def __init__(self, api_key: Optional[str] = None, model: str = "gpt-4o"):
+        self.client = OpenAI(api_key=api_key or os.getenv("OPENAI_API_KEY"))
+        self.model = model
+
+    def extract_text(self, image_path: str) -> Dict[str, Any]:
         """
-        이미지에서 텍스트 추출
-        
-        Args:
-            image_path: 이미지 파일 경로
-            
-        Returns:
-            dict: {
-                'success': bool,
-                'texts': list,
-                'full_text': str,
-                'error': str (실패 시)
-            }
+        Extract text from an image using GPT-4o Vision.
         """
         try:
-            # 이미지 포맷 추출
-            ext = Path(image_path).suffix.lower().replace('.', '')
-            if ext == 'jpg':
-                ext = 'jpeg'
+            base64_image = self._encode_image(image_path)
             
-            # 요청 JSON 생성
-            request_json = {
-                'images': [{'format': ext, 'name': 'demo'}],
-                'requestId': str(uuid.uuid4()),
-                'version': 'V2',
-                'timestamp': int(round(time.time() * 1000))
-            }
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=[
+                    {
+                        "role": "user",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Extract all text from this image. Output only the extracted text, preserving the layout as much as possible. If there is no text, return an empty string.",
+                            },
+                            {
+                                "type": "image_url",
+                                "image_url": {
+                                    "url": f"data:image/jpeg;base64,{base64_image}",
+                                    "detail": "high"
+                                },
+                            },
+                        ],
+                    }
+                ],
+                max_tokens=1000,
+            )
             
-            payload = {'message': json.dumps(request_json).encode('UTF-8')}
-            
-            # API 호출
-            with open(image_path, 'rb') as f:
-                files = [('file', f)]
-                headers = {'X-OCR-SECRET': self.secret_key}
-                
-                response = requests.post(
-                    self.api_url,
-                    headers=headers,
-                    data=payload,
-                    files=files,
-                    timeout=30
-                )
-            
-            if response.status_code != 200:
-                return {
-                    'success': False,
-                    'texts': [],
-                    'full_text': '',
-                    'error': f"API 오류: {response.status_code}"
-                }
-            
-            result = response.json()
-            
-            # 텍스트 추출
-            texts = []
-            if 'images' in result:
-                for image in result['images']:
-                    if 'fields' in image:
-                        for field in image['fields']:
-                            texts.append(field['inferText'])
-            
+            content = response.choices[0].message.content
             return {
-                'success': True,
-                'texts': texts,
-                'full_text': ' '.join(texts),
-                'error': None
+                "success": True,
+                "full_text": content,
+                "texts": content.split('\n') if content else [],
+                "error": None
             }
-            
-        except FileNotFoundError:
-            return {
-                'success': False,
-                'texts': [],
-                'full_text': '',
-                'error': 'File not found'
-            }
-        except requests.exceptions.RequestException as e:
-            return {
-                'success': False,
-                'texts': [],
-                'full_text': '',
-                'error': f'Request error: {str(e)}'
-            }
+
         except Exception as e:
+            logger.error(f"OpenAI OCR failed for {image_path}: {e}")
             return {
-                'success': False,
-                'texts': [],
-                'full_text': '',
-                'error': f'Unknown error: {str(e)}'
+                "success": False,
+                "full_text": "",
+                "texts": [],
+                "error": str(e)
             }
+
+    def _encode_image(self, image_path: str) -> str:
+        with open(image_path, "rb") as image_file:
+            return base64.b64encode(image_file.read()).decode("utf-8")
 
 
 class OCRProcessor:
-    """OCR processing manager."""
+    """OCR processing manager using OpenAI."""
 
-    def __init__(self, api_url: str, secret_key: str, delay: float = 0.5):
-        self.ocr = ClovaOCR(api_url, secret_key)
+    def __init__(self, api_key: Optional[str] = None, delay: float = 1.0):
+        self.ocr = OpenAIOCR(api_key=api_key)
         self.delay = delay
 
     def process_product_images(self, product_id: str, data_dir: str, only_btf: bool = True) -> List[Dict[str, Any]]:
         """Process images for a specific product."""
         product_dir = os.path.join(data_dir, product_id)
-        images_dir = os.path.join(product_dir, 'images')
+        # In the new structure, images might be in run_dir/btf/images or similar.
+        # The previous logic assumed data_dir/product_id/images.
+        # Let's support the path passed from artifacts.py which seems to be run_dir.
+        # In artifacts.py: ctx.btf_images_dir = run_dir / "btf" / "images"
         
+        # If data_dir is passed as run_dir, we need to find where images are.
+        # Let's try to find the images directory dynamically or assume the standard structure.
+        
+        # Standard structure from artifacts.py:
+        # run_dir/btf/images
+        
+        images_dir = os.path.join(data_dir, "btf", "images")
         if not os.path.exists(images_dir):
-            logger.warning("  ⚠️  이미지 디렉토리 없음: %s", images_dir)
+            # Fallback to old structure if needed or check direct path
+            images_dir = os.path.join(data_dir, "images")
+            
+        if not os.path.exists(images_dir):
+            logger.warning("  ⚠️  Image directory not found: %s", images_dir)
             return []
-        
-        # 이미지 파일 찾기
+
+        # Find image files
         all_image_files = []
-        for ext in ['*.jpg', '*.jpeg', '*.png']:
+        for ext in ['*.jpg', '*.jpeg', '*.png', '*.webp']:
             all_image_files.extend(glob.glob(os.path.join(images_dir, ext)))
         
         if not all_image_files:
-            logger.warning("  ⚠️  이미지 파일 없음")
+            logger.warning("  ⚠️  No image files found in %s", images_dir)
             return []
         
-        # btf_ 필터링
+        # Filter BTF images
         if only_btf:
             image_files = [f for f in all_image_files if Path(f).name.startswith('btf_')]
-            logger.info("  🔍 필터링: 전체 %d개 → BTF %d개", len(all_image_files), len(image_files))
+            logger.info("  🔍 Filtering: Total %d -> BTF %d", len(all_image_files), len(image_files))
             
             if not image_files:
-                logger.warning("  ⚠️  btf_ 이미지가 없습니다.")
+                logger.warning("  ⚠️  No 'btf_' images found.")
                 return []
         else:
             image_files = all_image_files
-            logger.info("  📸 %d개 이미지 발견 (전체 처리)", len(image_files))
+            logger.info("  📸 Found %d images (processing all)", len(image_files))
         
         results = []
         success_count = 0
         fail_count = 0
         
-        for image_path in tqdm(image_files, desc="  OCR 처리중"):
+        for image_path in tqdm(image_files, desc="  Processing OCR (OpenAI)"):
             result = self.ocr.extract_text(image_path)
             
             if result['success']:
@@ -182,17 +156,15 @@ class OCRProcessor:
             
             time.sleep(self.delay)
         
-        logger.info("  ✅ 성공: %d개, ❌ 실패: %d개", success_count, fail_count)
+        logger.info("  ✅ Success: %d, ❌ Failed: %d", success_count, fail_count)
         return results
 
     def save_results(self, product_id: str, data_dir: str, results: List[Dict[str, Any]]) -> None:
         """Save OCR results to JSON."""
-        product_dir = os.path.join(data_dir, product_id)
-        output_file = os.path.join(product_dir, f'ocrs_{product_id}.json')
+        # Save to run_dir directly or a specific output folder
+        output_file = os.path.join(data_dir, f'ocrs_{product_id}.json')
         
         with open(output_file, 'w', encoding='utf-8') as f:
             json.dump(results, f, ensure_ascii=False, indent=2)
         
-        logger.info("  💾 저장 완료: %s", output_file)
-
-
+        logger.info("  💾 Saved OCR results to: %s", output_file)
