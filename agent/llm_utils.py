@@ -142,6 +142,50 @@ JSON 형식으로 응답하세요:
         search_query = response.choices[0].message.content.strip()
         return search_query
 
+    def generate_product_summary(
+        self,
+        product_name: str,
+        artifact_summary: Dict[str, Any],
+    ) -> str:
+        """
+        Generate a concise 3-line summary of the product based on collected data.
+        """
+        system_prompt = """당신은 쇼핑 도우미입니다.
+수집된 상품 데이터를 바탕으로 사용자에게 도움이 될 만한 핵심 정보를 3줄로 요약해 주세요.
+
+요약 포함 내용:
+1. 상품 정보: 상품명, 가격, 용량, 갯수, 모양, 색상, 사이즈 등 상품 전반에 대한 구체적인 정보
+2. 구매자 반응: 구매자들의 리뷰를 바탕으로 한 긍정/부정 반응 요약
+3. 구매 팁: 리뷰에서 알 수 있는 팁, 성분에 따른 알러지 위험, 포함 성분, 또는 상품의 특이점
+
+형식:
+- 상품 정보: ...
+- 구매자 반응: ...
+- 구매 팁: ...
+
+각 항목은 한 문장으로 간결하게 작성하되, 가능한 구체적인 정보를 포함하세요."""
+
+        artifact_context = self._artifact_context_snippet(artifact_summary)
+
+        user_prompt = f"""상품명: {product_name}
+
+수집된 데이터:
+{artifact_context}
+
+위 상품에 대한 3줄 요약을 작성해 주세요."""
+
+        response = self.client.chat.completions.create(
+            model=self.model,
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt},
+            ],
+            temperature=0.5,
+            max_tokens=200,
+        )
+
+        return response.choices[0].message.content.strip()
+
     def ask_for_clarification(
         self,
         conversation_history: List[Dict[str, str]],

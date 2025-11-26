@@ -273,6 +273,20 @@ class InteractiveShoppingCLI:
 
             print(f"✓ 상품: {self.state.current_product_name}")
             print(f"   URL: {current_url}")
+
+            # Generate and display summary
+            print("\n📝 상품 요약 정보를 생성하고 있습니다...")
+            try:
+                summary = self.llm.generate_product_summary(
+                    self.state.current_product_name,
+                    self.artifact_summary
+                )
+                print("-" * 60)
+                print(summary)
+                print("-" * 60)
+            except Exception as e:
+                logger.error("Failed to generate summary: %s", e)
+                print("⚠️  요약 정보를 생성하지 못했습니다.")
             print("\n❓ 무엇이 궁금하신가요? (상품에 대해 질문해 주세요!)")
             return True
 
