@@ -9,8 +9,11 @@ import uuid
 import time
 import glob
 import requests
+import logging
 from pathlib import Path
 from tqdm import tqdm
+
+logger = logging.getLogger(__name__)
 
 
 class ClovaOCR:
@@ -130,7 +133,7 @@ def process_product_images(product_id, data_dir, ocr, delay=0.5, only_btf=True):
     images_dir = os.path.join(product_dir, 'images')
     
     if not os.path.exists(images_dir):
-        print(f"  ⚠️  이미지 디렉토리 없음: {images_dir}")
+        logger.warning("  ⚠️  이미지 디렉토리 없음: %s", images_dir)
         return []
     
     # 이미지 파일 찾기
@@ -139,20 +142,20 @@ def process_product_images(product_id, data_dir, ocr, delay=0.5, only_btf=True):
         all_image_files.extend(glob.glob(os.path.join(images_dir, ext)))
     
     if not all_image_files:
-        print(f"  ⚠️  이미지 파일 없음")
+        logger.warning("  ⚠️  이미지 파일 없음")
         return []
     
     # btf_ 필터링
     if only_btf:
         image_files = [f for f in all_image_files if Path(f).name.startswith('btf_')]
-        print(f"  🔍 필터링: 전체 {len(all_image_files)}개 → BTF {len(image_files)}개")
+        logger.info("  🔍 필터링: 전체 %d개 → BTF %d개", len(all_image_files), len(image_files))
         
         if not image_files:
-            print(f"  ⚠️  btf_ 이미지가 없습니다. --all-images 옵션을 사용하면 모든 이미지 처리")
+            logger.warning("  ⚠️  btf_ 이미지가 없습니다. --all-images 옵션을 사용하면 모든 이미지 처리")
             return []
     else:
         image_files = all_image_files
-        print(f"  📸 {len(image_files)}개 이미지 발견 (전체 처리)")
+        logger.info("  📸 %d개 이미지 발견 (전체 처리)", len(image_files))
     
     results = []
     success_count = 0
@@ -184,7 +187,7 @@ def process_product_images(product_id, data_dir, ocr, delay=0.5, only_btf=True):
         # API 호출 제한 방지
         time.sleep(delay)
     
-    print(f"  ✅ 성공: {success_count}개, ❌ 실패: {fail_count}개")
+    logger.info("  ✅ 성공: %d개, ❌ 실패: %d개", success_count, fail_count)
     
     return results
 
@@ -197,7 +200,7 @@ def save_ocr_results(product_id, data_dir, results):
     with open(output_file, 'w', encoding='utf-8') as f:
         json.dump(results, f, ensure_ascii=False, indent=2)
     
-    print(f"  💾 저장 완료: {output_file}")
+    logger.info("  💾 저장 완료: %s", output_file)
 
 
 def process_all_products(data_dir, api_url, secret_key, delay=0.5, only_btf=True):
@@ -239,7 +242,7 @@ def process_all_products(data_dir, api_url, secret_key, delay=0.5, only_btf=True
                 total_fail += sum(1 for r in results if not r['success'])
             
         except Exception as e:
-            print(f"  ❌ 에러: {e}")
+            logger.error("  ❌ 에러: %s", e)
             continue
     
     # 최종 요약
@@ -328,102 +331,3 @@ def preview_filter(data_dir, product_id=None):
         print(f"{'='*80}\n")
 
 
-def main():
-    import argparse
-    from dotenv import load_dotenv
-    
-    load_dotenv()
-    
-    parser = argparse.ArgumentParser(
-        description='CLOVA OCR을 사용한 이미지 텍스트 추출',
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog="""
-예시:
-  # BTF 이미지만 처리 (권장, 비용 절감)
-  python clova_ocr_batch.py --product-id 8826288636
-  
-  # 모든 이미지 처리
-  python clova_ocr_batch.py --product-id 8826288636 --all-images
-  
-  # 필터링 효과 미리보기
-  python clova_ocr_batch.py --preview
-  
-  # 모든 제품 처리
-  python clova_ocr_batch.py
-        """
-    )
-    
-    parser.add_argument('--data-dir', type=str, default='../data/outputs_structured',
-                       help='데이터 디렉토리 경로')
-    parser.add_argument('--product-id', type=str,
-                       help='특정 제품 ID (지정하지 않으면 모든 제품 처리)')
-    parser.add_argument('--api-url', type=str,
-                       help='CLOVA OCR API URL (또는 환경변수 CLOVA_OCR_API_URL)')
-    parser.add_argument('--secret-key', type=str,
-                       help='CLOVA OCR Secret Key (또는 환경변수 CLOVA_OCR_SECRET_KEY)')
-    parser.add_argument('--delay', type=float, default=0.5,
-                       help='API 호출 간 대기 시간 (초, 기본값: 0.5)')
-    parser.add_argument('--all-images', action='store_true',
-                       help='모든 이미지 처리 (기본: btf_만 처리)')
-    parser.add_argument('--list-products', action='store_true',
-                       help='사용 가능한 제품 목록 출력')
-    parser.add_argument('--preview', action='store_true',
-                       help='필터링 효과 미리보기 (API 호출 없음)')
-    
-    args = parser.parse_args()
-    
-    # 제품 목록 출력
-    if args.list_products:
-        product_dirs = glob.glob(os.path.join(args.data_dir, "*/"))
-        product_ids = sorted([Path(d).name for d in product_dirs])
-        print(f"\n사용 가능한 제품 ({len(product_ids)}개):")
-        for pid in product_ids:
-            print(f"  - {pid}")
-        print()
-        return
-    
-    # 필터링 미리보기
-    if args.preview:
-        preview_filter(args.data_dir, args.product_id)
-        return
-    
-    # API 정보 확인
-    api_url = args.api_url or os.getenv('CLOVA_OCR_API_URL')
-    secret_key = args.secret_key or os.getenv('CLOVA_OCR_SECRET_KEY')
-    
-    if not api_url or not secret_key:
-        print("❌ API URL과 Secret Key가 필요합니다.")
-        print("\n옵션 1: 명령줄 인자")
-        print("  python clova_ocr_batch.py --api-url YOUR_URL --secret-key YOUR_KEY")
-        print("\n옵션 2: .env 파일에 추가")
-        print("  CLOVA_OCR_API_URL=your_url")
-        print("  CLOVA_OCR_SECRET_KEY=your_key")
-        return
-    
-    # only_btf 설정 (--all-images 플래그의 반대)
-    only_btf = not args.all_images
-    
-    # OCR 처리
-    if args.product_id:
-        # 특정 제품
-        process_single_product(
-            args.product_id,
-            args.data_dir,
-            api_url,
-            secret_key,
-            args.delay,
-            only_btf
-        )
-    else:
-        # 모든 제품
-        process_all_products(
-            args.data_dir,
-            api_url,
-            secret_key,
-            args.delay,
-            only_btf
-        )
-
-
-if __name__ == "__main__":
-    main()

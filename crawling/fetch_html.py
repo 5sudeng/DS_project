@@ -9,6 +9,7 @@ import shlex
 import socket
 import subprocess
 import time
+import logging
 from pathlib import Path
 from types import SimpleNamespace
 from typing import Iterable, List, Optional, Sequence, Tuple
@@ -23,6 +24,8 @@ UA = (
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
     "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36"
 )
+
+logger = logging.getLogger(__name__)
 
 # ─────────────────────────────────────────────────────
 # Utilities
@@ -83,9 +86,7 @@ def make_requests_session(retries: int = 2) -> requests.Session:
     return s
 
 def print_get(u: str, p: Optional[dict]):
-    print("⇒ GET", u)
-    if p:
-        print("   params:", p)
+    logger.debug("GET %s params=%s", u, p)
 
 # ─────────────────────────────────────────────────────
 # Fetch core
@@ -120,14 +121,13 @@ def _try_httpx(candidates: Sequence[Tuple[str, Optional[dict]]], headers: dict, 
                 with httpx.Client(http2=use_http2, headers=headers, timeout=timeout_cfg, follow_redirects=True) as client:
                     r = client.get(u, params=p)
                     if r.status_code == 200 and r.text:
-                        print(f"[httpx/{'h2' if use_http2 else 'h1'}] status:", r.status_code)
-                        print(f"[httpx/{'h2' if use_http2 else 'h1'}] url   :", str(r.url))
+                        logger.debug("[httpx/%s] status: %s url: %s", 'h2' if use_http2 else 'h1', r.status_code, r.url)
                         return r.status_code, str(r.url), r.text
                     else:
                         raise RuntimeError(f"httpx status {r.status_code}")
             except Exception as e:
                 delay = (2 ** (attempt - 1)) + random.uniform(0.5, 1.5)
-                print(f"[httpx] failed (attempt {attempt}/3): {e}, wait {delay:.2f}s")
+                logger.warning("[httpx] failed (attempt %d/3): %s, wait %.2fs", attempt, e, delay)
                 if attempt < 3:
                     time.sleep(delay)
     return None, None, None
@@ -140,18 +140,17 @@ def _try_requests(candidates: Sequence[Tuple[str, Optional[dict]]], headers: dic
             try:
                 r = sess.get(u, headers=headers, params=p, timeout=(10, timeout), allow_redirects=True)
                 if r.status_code == 200 and r.text:
-                    print("[requests] status:", r.status_code)
-                    print("[requests] url   :", r.url)
+                    logger.debug("[requests] status: %s url: %s", r.status_code, r.url)
                     return r.status_code, r.url, r.text
                 else:
                     raise RuntimeError(f"HTTP {r.status_code}")
             except requests.Timeout as e:
                 delay = (2 ** attempt) + random.uniform(1, 2)
-                print(f"[retry {attempt}/3] timeout, wait {delay:.2f}s")
+                logger.warning("[retry %d/3] timeout, wait %.2fs", attempt, delay)
                 time.sleep(delay)
             except requests.RequestException as e:
                 delay = (2 ** (attempt - 1)) + random.uniform(0.5, 1.5)
-                print(f"[retry {attempt}/3] request error: {e}, wait {delay:.2f}s")
+                logger.warning("[retry %d/3] request error: %s, wait %.2fs", attempt, e, delay)
                 time.sleep(delay)
     return None, None, None
 
@@ -175,11 +174,11 @@ def _try_curl(candidates: Sequence[Tuple[str, Optional[dict]]], headers: dict, t
             "--max-time", str(max(15, int(timeout))),
             *header_flags, full_url, "-o", str(tmp_path)
         ]
-        print("[fallback] curl:", " ".join(shlex.quote(c) for c in curl_cmd))
+        logger.info("[fallback] curl: %s", " ".join(shlex.quote(c) for c in curl_cmd))
         try:
             subprocess.run(curl_cmd, check=True)
         except subprocess.CalledProcessError as ce:
-            print("[fallback] curl exit:", ce.returncode)
+            logger.warning("[fallback] curl exit: %s", ce.returncode)
 
         if tmp_path.exists() and tmp_path.stat().st_size > 0:
             return 200, full_url, tmp_path.read_text(encoding="utf-8", errors="ignore")
@@ -218,124 +217,14 @@ def fetch_html(
     out_path = save_dir / f"response_{product_id}.html"
     out_path.write_text(text, encoding="utf-8")
 
-    print("status:", status)
-    print("url   :", url)
-    print("len   :", len(text))
-    print("saved →", out_path)
+    out_path.write_text(text, encoding="utf-8")
+
+    logger.info("Fetched HTML: status=%s len=%d saved=%s", status, len(text), out_path)
 
     soup = BeautifulSoup(text, "html.parser")
     title = soup.title.text.strip() if soup.title else "(no title)"
-    print("title:", title)
+    logger.debug("Page title: %s", title)
 
     resp_like = SimpleNamespace(status_code=status, url=url, text=text)
     return resp_like, soup, out_path
 
-# ─────────────────────────────────────────────────────
-# Runners
-# ─────────────────────────────────────────────────────
-def run_single(
-    product_id: str,
-    item_id: str,
-    vendor_item_id: str,
-    outdir: Path,
-    cookie_file: Optional[str],
-    timeout: int,
-) -> int:
-    cookie = load_cookie(cookie_file) if cookie_file else None
-    resp, soup, out_path = fetch_html(
-        product_id, item_id, vendor_item_id, timeout=timeout, cookie=cookie, outdir=outdir
-    )
-    print(f"saved -> {out_path}")
-    return 0
-
-def run_batch(
-    input_csv: Path,
-    outdir: Path,
-    jsonl_path: Optional[Path],
-    cookie_file: Optional[str],
-    timeout: int,
-    delay_min: float,
-    delay_max: float,
-) -> int:
-    outdir.mkdir(parents=True, exist_ok=True)
-    cookie = load_cookie(cookie_file) if cookie_file else None
-
-    rows = list(csv.DictReader(input_csv.open(newline="", encoding="utf-8")))
-    print(f"== 총 {len(rows)}개 상품 처리 ==")
-
-    stats_ok = 0
-    summary = []
-
-    for i, row in enumerate(rows, 1):
-        pid = (row.get("productId") or "").strip()
-        iid = (row.get("itemId") or "").strip()
-        vid = (row.get("vendorItemId") or "").strip()
-        if not pid:
-            print(f"[{i}/{len(rows)}] skip: empty productId")
-            continue
-
-        print(f"[{i}/{len(rows)}] productId={pid} itemId={iid} vendorItemId={vid}")
-        try:
-            resp, soup, out_path = fetch_html(pid, iid, vid, timeout=timeout, cookie=cookie, outdir=outdir)
-            title = soup.title.text.strip() if soup.title else "(no title)"
-            summary.append({
-                "productId": pid, "itemId": iid, "vendorItemId": vid,
-                "url": resp.url, "status": resp.status_code, "title": title,
-                "file": str(out_path), "ok": True,
-            })
-            stats_ok += 1
-            print(f"saved -> {out_path}")
-        except Exception as e:
-            print(f"failed: {e}")
-            summary.append({
-                "productId": pid, "itemId": iid, "vendorItemId": vid,
-                "ok": False, "error": str(e),
-            })
-
-        time.sleep(random.uniform(delay_min, delay_max))
-
-    if jsonl_path:
-        jsonl_path.parent.mkdir(parents=True, exist_ok=True)
-        with jsonl_path.open("w", encoding="utf-8") as f:
-            for rec in summary:
-                f.write(json.dumps(rec, ensure_ascii=False) + "\n")
-        print(f"summary saved → {jsonl_path}")
-
-    print(f"== 완료: 성공 {stats_ok} / 실패 {len(rows) - stats_ok} / 총 {len(rows)} ==")
-    return 0 if stats_ok > 0 else 1
-
-# ─────────────────────────────────────────────────────
-# CLI
-# ─────────────────────────────────────────────────────
-def parse_args():
-    p = argparse.ArgumentParser(description="Coupang product HTML fetcher (single & batch)")
-    m = p.add_mutually_exclusive_group(required=True)
-    m.add_argument("--input", help="CSV file (columns: productId,itemId,vendorItemId) for batch mode")
-    m.add_argument("--product-id", dest="product_id", help="single mode: productId")
-
-    p.add_argument("--item-id", dest="item_id", default="", help="single mode: itemId")
-    p.add_argument("--vendor-item-id", dest="vendor_item_id", default="", help="single mode: vendorItemId")
-    p.add_argument("--outdir", required=True, help="Output directory for HTML files")
-    p.add_argument("--jsonl", help="Summary JSONL path (batch mode)")
-    p.add_argument("--cookie-file", help="Path to cookie.txt (optional)")
-    p.add_argument("--timeout", type=int, default=40, help="read timeout seconds (default: 40)")
-    p.add_argument("--delay-min", type=float, default=0.8, help="batch: min sleep between requests")
-    p.add_argument("--delay-max", type=float, default=1.6, help="batch: max sleep between requests")
-    return p.parse_args()
-
-if __name__ == "__main__":
-    args = parse_args()
-    outdir = Path(args.outdir)
-
-    if args.input:
-        exit_code = run_batch(
-            Path(args.input), outdir,
-            Path(args.jsonl) if args.jsonl else None,
-            args.cookie_file, args.timeout, args.delay_min, args.delay_max
-        )
-    else:
-        exit_code = run_single(
-            args.product_id, args.item_id, args.vendor_item_id,
-            outdir, args.cookie_file, args.timeout
-        )
-    raise SystemExit(exit_code)

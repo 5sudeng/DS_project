@@ -15,7 +15,7 @@ import logging
 from typing import Any, Dict, List, Optional, Set, Tuple
 from urllib.parse import parse_qs, urlparse
 
-from agent.coupang_scenario_pipeline import ScenarioPaths, parse_product_identifiers
+from agent.utils import ScenarioPaths, parse_product_identifiers
 from crawling.btf import fetch_btf
 from crawling.fetch_html import fetch_html as fetch_product_html
 from crawling.inquiries import fetch_inquiries

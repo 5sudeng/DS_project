@@ -18,6 +18,9 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional, Tuple
 from urllib.parse import parse_qs, urlparse
+import logging
+
+logger = logging.getLogger(__name__)
 
 from playwright.async_api import async_playwright
 
@@ -115,7 +118,7 @@ class CoupangScenarioPipeline:
             return None
         path = Path(cookie_file).expanduser()
         if not path.is_file():
-            print(f"⚠️  Cookie file not found: {cookie_file}")
+            logger.warning("Cookie file not found: %s", cookie_file)
             return None
         return path.read_text(encoding="utf-8").strip()
 
@@ -141,7 +144,7 @@ class CoupangScenarioPipeline:
         await self._collect_additional_artifacts()
         self.dialog_result = await self._run_agent_dialog()
         summary = self._write_summary()
-        print(f"\n✓ Scenario artifacts saved under: {self.paths.run_dir}")
+        logger.info("Scenario artifacts saved under: %s", self.paths.run_dir)
         return summary
 
     def _run_step(self, name: str, func: Callable[[], Dict[str, Any]]) -> None:
@@ -262,11 +265,11 @@ class CoupangScenarioPipeline:
             "follow_up_answer": follow_up,
             "branch": branch,
         }
-        print("\n[Scenario Transcript]")
-        print(f"USER : {self.config.question}")
-        print(f"SYSTEM: {answer}")
-        print(f"USER : {self.config.follow_up}")
-        print(f"SYSTEM: {follow_up}")
+        logger.info("[Scenario Transcript]")
+        logger.info("USER : %s", self.config.question)
+        logger.info("SYSTEM: %s", answer)
+        logger.info("USER : %s", self.config.follow_up)
+        logger.info("SYSTEM: %s", follow_up)
         return transcript
 
     def _update_ids_from_url(self, url: Optional[str]) -> None:
