@@ -107,9 +107,11 @@ class CoupangProductAgent:
         search_timeout: float = 1.5,
         chunk_data_path: Optional[str] = None,
         test_mode: Optional[bool] = None,
+        api_key: Optional[str] = None,
     ) -> None:
         self.page = page
         self.search_timeout = search_timeout
+        self.api_key = api_key
         self._llm: Optional[ShoppingAssistantLLM] = None
         self._llm_initialized = False
         self.chunk_data_path = (
@@ -378,7 +380,7 @@ class CoupangProductAgent:
         if not self._llm_initialized:
             self._llm_initialized = True
             try:
-                self._llm = ShoppingAssistantLLM()
+                self._llm = ShoppingAssistantLLM(api_key=self.api_key)
             except Exception:  # noqa: BLE001
                 self._llm = None
         return self._llm
