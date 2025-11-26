@@ -41,6 +41,7 @@ class InteractiveShoppingCLI:
         self.headless = headless
         self.run_dir = run_dir
         self.state = ConversationState()
+        self.api_key = api_key
         self.llm = ShoppingAssistantLLM(api_key=api_key)
 
         # Playwright objects (initialized in run())
@@ -86,6 +87,7 @@ class InteractiveShoppingCLI:
 
             self.product_agent = CoupangProductAgent(
                 self.page,
+                api_key=self.api_key,
             )
             self.search_agent = CoupangSearchAgent(self.page)
             logger.info("Browser session established; agents ready.")
