@@ -73,16 +73,14 @@ class ProductArtifactCollector:
         *,
         run_dir: Optional[str],
         cookie: Optional[str],
-        clova_ocr_api_url: Optional[str] = None,
-        clova_ocr_secret_key: Optional[str] = None,
         clova_ocr_delay: float = 0.5,
         clova_ocr_only_btf: bool = True,
         existing_run_dir: Optional[str] = None,
+        api_key: Optional[str] = None,
     ):
         self.run_dir = run_dir
         self.cookie = cookie
-        self.clova_ocr_api_url = clova_ocr_api_url or os.getenv("CLOVA_OCR_API_URL")
-        self.clova_ocr_secret_key = clova_ocr_secret_key or os.getenv("CLOVA_OCR_SECRET_KEY")
+        self.api_key = api_key or os.getenv("OPENAI_API_KEY")
         self.clova_ocr_delay = max(clova_ocr_delay, 0.0)
         self.clova_ocr_only_btf = clova_ocr_only_btf
         self._existing_run_dir = Path(existing_run_dir).expanduser() if existing_run_dir else None
@@ -93,7 +91,8 @@ class ProductArtifactCollector:
         self.inquiry_scraper = InquiryScraper(cookie=cookie, retries=2)
         self.quantity_scraper = QuantityScraper(cookie=cookie, timeout=60)
         self.btf_scraper = ProductDetailScraper(cookie=cookie, retries=2)
-        self.ocr_processor = OCRProcessor(self.clova_ocr_api_url, self.clova_ocr_secret_key, self.clova_ocr_delay) if self.clova_ocr_api_url and self.clova_ocr_secret_key else None
+        self.btf_scraper = ProductDetailScraper(cookie=cookie, retries=2)
+        self.ocr_processor = OCRProcessor(api_key=self.api_key, delay=self.clova_ocr_delay) if self.api_key else None
 
     async def collect(self, product_url: str) -> ArtifactCollectionResult:
         ctx = self._prepare_context(product_url)
@@ -273,15 +272,15 @@ class ProductArtifactCollector:
             record("fetch_btf", "error", {"error": str(exc)})
 
         try:
-            if self._clova_ocr_enabled():
-                status, details = self._run_clova_ocr(ctx)
-                record("clova_ocr", status, details)
+            if self._ocr_enabled():
+                status, details = self._run_ocr(ctx)
+                record("ocr_processing", status, details)
             else:
                 record(
-                    "clova_ocr",
+                    "ocr_processing",
                     "skipped",
                     {
-                        "reason": "CLOVA_OCR_API_URL/CLOVA_OCR_SECRET_KEY 미설정",
+                        "reason": "OPENAI_API_KEY 미설정",
                         "hint": "환경 변수 또는 CLI 옵션으로 설정하면 이미지 OCR을 활성화할 수 있습니다.",
                     },
                 )
@@ -452,87 +451,41 @@ class ProductArtifactCollector:
             "image_count": len(downloaded),
         }
 
-    def _run_clova_ocr(self, ctx: _ArtifactContext) -> Tuple[str, Dict[str, Any]]:
-        image_paths = [
-            path
-            for path in sorted(ctx.btf_images_dir.glob("*"))
-            if path.is_file() and path.suffix.lower() in {".jpg", ".jpeg", ".png"}
-        ]
-        if self.clova_ocr_only_btf:
-            image_paths = [p for p in image_paths if p.name.startswith("btf_")]
-
-        if not image_paths:
-            return "skipped", {"reason": "OCR 대상 이미지가 없습니다."}
-
+    def _run_ocr(self, ctx: _ArtifactContext) -> Tuple[str, Dict[str, Any]]:
         if not self.ocr_processor:
              return "skipped", {"reason": "OCR Processor not initialized"}
 
+        # Use run_dir as the data_dir, assuming OCRProcessor handles the path structure
         results = self.ocr_processor.process_product_images(
              ctx.product_id,
-             str(ctx.paths.run_dir), # Assuming data_dir structure matches
+             str(ctx.paths.run_dir),
              only_btf=self.clova_ocr_only_btf
         )
         
-        # Since process_product_images returns results, we can use them directly or adapt logic.
-        # The original code iterated and extracted. The new OCRProcessor does it internally.
-        # But wait, the original code used `extract_text` on each file.
-        # The new `OCRProcessor.process_product_images` does the iteration.
-        # However, `process_product_images` expects `data_dir` and assumes `images` folder inside `product_id`.
-        # Here `ctx.btf_images_dir` is used.
-        # Let's check `process_product_images` implementation.
-        # It does: `product_dir = os.path.join(data_dir, product_id)` then `images_dir = os.path.join(product_dir, 'images')`
-        # In `_prepare_context`, `btf_images_dir = btf_dir / "images"`. `btf_dir = paths.run_dir / "btf"`.
-        # So structure is `run_dir/btf/images`.
-        # If I pass `data_dir` as `paths.run_dir` and `product_id` as "btf", it might work?
-        # No, `product_id` is the actual ID.
+        # Save results (OCRProcessor might save it, but we can also save it here if needed or verify)
+        # OCRProcessor.save_results is available but process_product_images returns results.
+        # Let's save it to the expected file location if not already done by processor.
+        # The processor's save_results saves to ocrs_{product_id}.json in data_dir.
+        # ctx.ocr_results_file is run_dir / f"ocrs_{product_id}.json".
         
-        # I should probably use the `ocr_client` directly if I want to keep the logic here, OR adapt to `OCRProcessor`.
-        # `OCRProcessor` has `self.ocr` which is `ClovaOCR`.
-        # I can access `self.ocr_processor.ocr.extract_text`.
-        
-        ocr_client = self.ocr_processor.ocr
-        success_count = 0
-        failure_count = 0
-        results: List[Dict[str, Any]] = []
+        self.ocr_processor.save_results(ctx.product_id, str(ctx.paths.run_dir), results)
 
-        for path in image_paths:
-            result = ocr_client.extract_text(str(path))
-            success = result.get("success", False)
-            if success:
-                success_count += 1
-            else:
-                failure_count += 1
-            results.append(
-                {
-                    "image_path": str(path),
-                    "image_name": path.name,
-                    "ocr_text": result.get("full_text", ""),
-                    "ocr_texts": result.get("texts", []),
-                    "success": success,
-                    "error": result.get("error"),
-                }
-            )
-            if self.clova_ocr_delay:
-                time.sleep(self.clova_ocr_delay)
-
-        ctx.ocr_results_file.write_text(
-            json.dumps(results, ensure_ascii=False, indent=2),
-            encoding="utf-8",
-        )
+        success_count = sum(1 for r in results if r['success'])
+        failure_count = len(results) - success_count
 
         return (
             "success",
             {
                 "output_file": str(ctx.ocr_results_file),
-                "processed_images": len(image_paths),
+                "processed_images": len(results),
                 "success_count": success_count,
                 "failure_count": failure_count,
                 "delay_seconds": self.clova_ocr_delay,
             },
         )
 
-    def _clova_ocr_enabled(self) -> bool:
-        return bool(self.clova_ocr_api_url and self.clova_ocr_secret_key)
+    def _ocr_enabled(self) -> bool:
+        return bool(self.api_key)
 
     def _extract_btf_image_urls(self, ctx: _ArtifactContext, payload: Any) -> List[str]:
         urls: Set[str] = set()
