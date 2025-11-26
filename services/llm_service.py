@@ -9,10 +9,10 @@ from typing import Any, Dict, List, Optional
 
 from openai import OpenAI
 
-from agent.config import PROMPTS
+from config.settings import PROMPTS
 
 
-class ShoppingAssistantLLM:
+class ShoppingLLMService:
     """LLM wrapper for shopping assistant tasks."""
 
     def __init__(self, api_key: Optional[str] = None, model: str = "gpt-4o-mini"):

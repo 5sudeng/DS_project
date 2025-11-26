@@ -15,14 +15,14 @@ import logging
 from typing import Any, Dict, List, Optional, Set, Tuple
 from urllib.parse import parse_qs, urlparse
 
-from agent.utils import ScenarioPaths, parse_product_identifiers
-from crawling.btf import fetch_btf
-from crawling.fetch_html import fetch_html as fetch_product_html
-from crawling.inquiries import fetch_inquiries
-from crawling.quantity import fetch_quantity_info
-from crawling.review import fetch_reviews
-from preprocessing.data_chunking_processor import DataChunker
-from preprocessing.clova_ocr_batch import ClovaOCR
+from core.utils import ScenarioPaths, parse_product_identifiers
+from scrapers.product_detail_scraper import ProductDetailScraper
+from scrapers.html_fetcher import HtmlFetcher
+from scrapers.inquiry_scraper import InquiryScraper
+from scrapers.quantity_scraper import QuantityScraper
+from scrapers.review_scraper import ReviewScraper
+from processors.chunker import ContentChunker
+from processors.ocr_processor import OCRProcessor
 
 try:
     from dotenv import load_dotenv
@@ -86,6 +86,14 @@ class ProductArtifactCollector:
         self.clova_ocr_delay = max(clova_ocr_delay, 0.0)
         self.clova_ocr_only_btf = clova_ocr_only_btf
         self._existing_run_dir = Path(existing_run_dir).expanduser() if existing_run_dir else None
+
+        # Initialize scrapers
+        self.html_fetcher = HtmlFetcher(timeout=40, cookie=cookie)
+        self.review_scraper = ReviewScraper(cookie=cookie, retries=2)
+        self.inquiry_scraper = InquiryScraper(cookie=cookie, retries=2)
+        self.quantity_scraper = QuantityScraper(cookie=cookie, timeout=60)
+        self.btf_scraper = ProductDetailScraper(cookie=cookie, retries=2)
+        self.ocr_processor = OCRProcessor(self.clova_ocr_api_url, self.clova_ocr_secret_key, self.clova_ocr_delay) if self.clova_ocr_api_url and self.clova_ocr_secret_key else None
 
     async def collect(self, product_url: str) -> ArtifactCollectionResult:
         ctx = self._prepare_context(product_url)
@@ -156,12 +164,10 @@ class ProductArtifactCollector:
 
         # HTML
         try:
-            resp, soup, out_path = fetch_product_html(
+            resp, soup, out_path = self.html_fetcher.fetch(
                 ctx.product_id,
                 ctx.item_id or "",
                 ctx.vendor_item_id or "",
-                cookie=self.cookie,
-                timeout=40,
                 outdir=ctx.paths.html_dir,
             )
             ctx.update_ids_from_url(resp.url)
@@ -186,15 +192,13 @@ class ProductArtifactCollector:
             review_page_size = 20
             page_records: List[Dict[str, Any]] = []
             for page_no in range(1, review_pages + 1):
-                resp, data = fetch_reviews(
+                resp, data = self.review_scraper.fetch(
                     product_id=ctx.product_id,
                     vendor_item_id=ctx.vendor_item_id,
                     item_id=ctx.item_id,
-                    cookie=self.cookie,
                     page=page_no,
                     size=review_page_size,
-                    outdir=str(ctx.paths.reviews_dir),
-                    retries=2,
+                    outdir=ctx.paths.reviews_dir,
                 )
                 page_records.append(
                     {
@@ -213,14 +217,12 @@ class ProductArtifactCollector:
 
         # Inquiries
         try:
-            resp, data = fetch_inquiries(
+            resp, data = self.inquiry_scraper.fetch(
                 product_id=ctx.product_id,
                 page_no=1,
-                cookie=self.cookie,
                 item_id=ctx.item_id,
                 vendor_item_id=ctx.vendor_item_id,
-                outdir=str(ctx.paths.inquiries_dir),
-                retries=2,
+                outdir=ctx.paths.inquiries_dir,
                 is_preview=True,
             )
             record(
@@ -239,12 +241,11 @@ class ProductArtifactCollector:
         # Quantity
         if ctx.item_id and ctx.vendor_item_id:
             try:
-                resp, data = fetch_quantity_info(
+                resp, data = self.quantity_scraper.fetch(
                     ctx.product_id,
                     ctx.item_id,
                     ctx.vendor_item_id,
-                    cookie=self.cookie,
-                    outdir=str(ctx.paths.quantity_dir),
+                    outdir=ctx.paths.quantity_dir,
                 )
                 record(
                     "fetch_quantity",
@@ -331,7 +332,7 @@ class ProductArtifactCollector:
         return summary
 
     def _build_chunk_dataset(self, ctx: _ArtifactContext) -> Optional[Dict[str, Any]]:
-        chunker = DataChunker()
+        chunker = ContentChunker()
         processed_sources: Set[str] = set()
 
         def _read_text(path: Path) -> Optional[str]:
@@ -426,13 +427,11 @@ class ProductArtifactCollector:
         }
 
     def _fetch_btf_assets(self, ctx: _ArtifactContext) -> Dict[str, Any]:
-        resp, payload = fetch_btf(
+        resp, payload = self.btf_scraper.fetch(
             ctx.product_id,
             ctx.item_id,
             ctx.vendor_item_id,
-            cookie=self.cookie,
             outdir=None,
-            retries=2,
         )
 
         json_path: Optional[Path] = None
@@ -465,7 +464,33 @@ class ProductArtifactCollector:
         if not image_paths:
             return "skipped", {"reason": "OCR 대상 이미지가 없습니다."}
 
-        ocr_client = ClovaOCR(self.clova_ocr_api_url, self.clova_ocr_secret_key)
+        if not self.ocr_processor:
+             return "skipped", {"reason": "OCR Processor not initialized"}
+
+        results = self.ocr_processor.process_product_images(
+             ctx.product_id,
+             str(ctx.paths.run_dir), # Assuming data_dir structure matches
+             only_btf=self.clova_ocr_only_btf
+        )
+        
+        # Since process_product_images returns results, we can use them directly or adapt logic.
+        # The original code iterated and extracted. The new OCRProcessor does it internally.
+        # But wait, the original code used `extract_text` on each file.
+        # The new `OCRProcessor.process_product_images` does the iteration.
+        # However, `process_product_images` expects `data_dir` and assumes `images` folder inside `product_id`.
+        # Here `ctx.btf_images_dir` is used.
+        # Let's check `process_product_images` implementation.
+        # It does: `product_dir = os.path.join(data_dir, product_id)` then `images_dir = os.path.join(product_dir, 'images')`
+        # In `_prepare_context`, `btf_images_dir = btf_dir / "images"`. `btf_dir = paths.run_dir / "btf"`.
+        # So structure is `run_dir/btf/images`.
+        # If I pass `data_dir` as `paths.run_dir` and `product_id` as "btf", it might work?
+        # No, `product_id` is the actual ID.
+        
+        # I should probably use the `ocr_client` directly if I want to keep the logic here, OR adapt to `OCRProcessor`.
+        # `OCRProcessor` has `self.ocr` which is `ClovaOCR`.
+        # I can access `self.ocr_processor.ocr.extract_text`.
+        
+        ocr_client = self.ocr_processor.ocr
         success_count = 0
         failure_count = 0
         results: List[Dict[str, Any]] = []

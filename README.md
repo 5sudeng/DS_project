@@ -39,23 +39,30 @@ This project provides a large language model (LLM)-based interactive shopping as
 DS_project/
 ├── main.py                     # Entry point
 ├── run_agent.sh                # Execution wrapper script
-├── agent/
-│   ├── config.py               # Centralized configuration (selectors, prompts)
+├── config/
+│   ├── settings.py             # LLM prompts and general settings
+│   └── selectors.py            # CSS selectors
+├── core/
 │   ├── utils.py                # Shared utilities
-│   ├── interactive_shopping_cli.py
-│   ├── coupang_playwright_agent.py
-│   ├── coupang_search_agent.py
-│   └── infra/
-│       └── llm.py              # LLM infrastructure
-├── crawling/
-│   ├── fetch_html.py
-│   ├── review.py
-│   ├── inquiries.py
-│   ├── quantity.py
-│   └── btf.py
-└── preprocessing/
-    ├── data_chunking_processor.py
-    └── clova_ocr_batch.py
+│   ├── state.py                # Conversation state management
+│   └── cookies.py              # Cookie handling
+├── interface/
+│   ├── cli.py                  # Command Line Interface
+│   └── artifacts.py            # Artifact collection logic
+├── services/
+│   ├── llm_service.py          # LLM interaction service
+│   ├── browser_service.py      # Playwright browser service
+│   ├── search_service.py       # Product search service
+│   └── browser_setup.py        # Browser initialization
+├── scrapers/
+│   ├── html_fetcher.py         # HTML fetching
+│   ├── review_scraper.py       # Review scraping
+│   ├── inquiry_scraper.py      # Inquiry scraping
+│   ├── quantity_scraper.py     # Quantity/Stock scraping
+│   └── product_detail_scraper.py # BTF (Below-The-Fold) scraping
+└── processors/
+    ├── chunker.py              # Content chunking
+    └── ocr_processor.py        # OCR processing
 ```
 
 ## Installation
@@ -79,6 +86,8 @@ export OPENAI_API_KEY="your-api-key"
 export CLOVA_OCR_API_URL="..."       # Optional
 export CLOVA_OCR_SECRET_KEY="..."    # Optional
 ```
+
+Alternatively, you can save your OpenAI API key in a file named `.secret` in the project root directory.
 
 ### 4. Optional: Login Cookie Setup
 To reduce the chance of bot‑detection, a logged‑in session cookie may be used. Save it as `cookie.txt` in the project root.
@@ -183,28 +192,36 @@ User URL → Intent Classification → Review/Q&A Extraction
 ### main.py
 The application entry point. Handles argument parsing and initializes the interactive CLI.
 
-### agent/config.py
-Centralized configuration file containing CSS selectors, LLM prompts, and other constants.
+### config/
+Contains configuration files:
+- `settings.py`: LLM prompts and general settings.
+- `selectors.py`: CSS selectors for DOM interaction.
 
-### agent/utils.py
-Shared utility functions for file handling, URL parsing, and other common tasks.
+### core/
+Core utilities and state management:
+- `utils.py`: Shared utility functions.
+- `state.py`: Manages conversation state.
+- `cookies.py`: Handles cookie loading and parsing.
 
-### agent/interactive_shopping_cli.py
-Manages the dialogue loop, browser operations, and OCR‑optional flows.
+### interface/
+User interface and artifact collection:
+- `cli.py`: Manages the dialogue loop and user interaction.
+- `artifacts.py`: Orchestrates the collection of product data (HTML, reviews, etc.).
 
-### agent/infra/llm.py
-Handles LLM initialization and interaction, including intent classification and rationale extraction.
+### services/
+Business logic services:
+- `llm_service.py`: Handles LLM interactions (intent classification, query generation).
+- `browser_service.py`: Manages Playwright browser interactions for product pages.
+- `search_service.py`: Handles product search and result parsing.
 
-### agent/coupang_playwright_agent.py
-Handles:
-- Page load & parsing  
-- Review / Q&A extraction  
-- Answer generation  
+### scrapers/
+Atomic scraping modules for specific data types:
+- `html_fetcher.py`, `review_scraper.py`, `inquiry_scraper.py`, `quantity_scraper.py`, `product_detail_scraper.py`.
 
-### agent/coupang_search_agent.py
-Executes:
-- Coupang search flows  
-- Result extraction & ranking  
+### processors/
+Data processing modules:
+- `chunker.py`: Chunks text data for RAG or analysis.
+- `ocr_processor.py`: Handles OCR tasks using Clova OCR.  
 
 ## Troubleshooting
 

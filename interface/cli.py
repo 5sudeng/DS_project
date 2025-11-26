@@ -10,22 +10,22 @@ from typing import Any, Dict, Optional
 
 from playwright.async_api import Browser, Page, async_playwright
 
-from agent.coupang_playwright_agent import CoupangProductAgent
-from agent.coupang_search_agent import CoupangSearchAgent
-from agent.interactive_cli.artifacts import ProductArtifactCollector
-from agent.interactive_cli.browser import BrowserSessionConfig, bootstrap_browser
-from agent.interactive_cli.cookies import (
+from services.browser_service import BrowserService
+from services.search_service import SearchService
+from interface.artifacts import ProductArtifactCollector
+from services.browser_setup import BrowserSessionConfig, bootstrap_browser
+from core.cookies import (
     build_cookie_header,
     load_cookie_text,
     parse_cookie_records,
 )
-from agent.interactive_cli.state import ConversationState
-from agent.infra.llm import ShoppingAssistantLLM
+from core.state import ConversationState
+from services.llm_service import ShoppingLLMService
 
 logger = logging.getLogger(__name__)
 
 
-class InteractiveShoppingCLI:
+class ShoppingCLI:
     """Interactive CLI for shopping with AI assistance."""
 
     def __init__(
@@ -42,13 +42,13 @@ class InteractiveShoppingCLI:
         self.run_dir = run_dir
         self.state = ConversationState()
         self.api_key = api_key
-        self.llm = ShoppingAssistantLLM(api_key=api_key)
+        self.llm = ShoppingLLMService(api_key=api_key)
 
         # Playwright objects (initialized in run())
         self.browser: Optional[Browser] = None
         self.page: Optional[Page] = None
-        self.product_agent: Optional[CoupangProductAgent] = None
-        self.search_agent: Optional[CoupangSearchAgent] = None
+        self.product_agent: Optional[BrowserService] = None
+        self.search_agent: Optional[SearchService] = None
         self.cookie_text: Optional[str] = load_cookie_text(cookie_file)
         self.cookie_header_value: Optional[str] = build_cookie_header(self.cookie_text)
         self.cookie_records = parse_cookie_records(self.cookie_text)
@@ -85,11 +85,11 @@ class InteractiveShoppingCLI:
             elif self.cookie_text:
                 print("⚠️  쿠키 파일을 읽었지만 적용 가능한 쿠키를 찾지 못했습니다.")
 
-            self.product_agent = CoupangProductAgent(
+            self.product_agent = BrowserService(
                 self.page,
                 llm=self.llm,
             )
-            self.search_agent = CoupangSearchAgent(self.page)
+            self.search_agent = SearchService(self.page)
             logger.info("Browser session established; agents ready.")
 
             try:
@@ -312,8 +312,8 @@ class InteractiveShoppingCLI:
                 self.page = await context.new_page()
             else:
                 self.page = await self.browser.new_page()
-            self.product_agent = CoupangProductAgent(self.page)
-            self.search_agent = CoupangSearchAgent(self.page)
+            self.product_agent = BrowserService(self.page)
+            self.search_agent = SearchService(self.page)
             return await self._load_product(url, _retry=True)
         except Exception as exc:  # noqa: BLE001
             logger.exception("Failed to recover from chrome error: %s", exc)

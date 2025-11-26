@@ -49,13 +49,13 @@ from typing import List, Optional, Sequence
 import os
 
 from playwright.async_api import Locator, Page, TimeoutError as PlaywrightTimeoutError
-from agent.infra.llm import ShoppingAssistantLLM
-from agent.config import SELECTORS
+from services.llm_service import ShoppingLLMService
+from config.selectors import SELECTORS
 
 
 @dataclass
 
-class CoupangProductAgent:
+class BrowserService:
     """Playwright-driven helper that supports the product-page dialog."""
 
     DEFAULT_CHUNK_DATA_PATH = Path("data/exports_normalized/chunked_data_output.json")
@@ -74,7 +74,7 @@ class CoupangProductAgent:
         search_timeout: float = 1.5,
         chunk_data_path: Optional[str] = None,
         test_mode: Optional[bool] = None,
-        llm: Optional[ShoppingAssistantLLM] = None,
+        llm: Optional[ShoppingLLMService] = None,
     ) -> None:
         self.page = page
         self.search_timeout = search_timeout
@@ -240,7 +240,7 @@ class CoupangProductAgent:
         self,
         question: str,
         snippets: List[dict],
-        llm: ShoppingAssistantLLM,
+        llm: ShoppingLLMService,
         *,
         top_k: int = 10,
     ) -> List[dict]:
@@ -342,12 +342,12 @@ class CoupangProductAgent:
 
         return snippets
 
-    def _ensure_llm(self) -> Optional[ShoppingAssistantLLM]:
+    def _ensure_llm(self) -> Optional[ShoppingLLMService]:
         if not self._llm_initialized:
             # Fallback for legacy usage or if not injected
             self._llm_initialized = True
             try:
-                self._llm = ShoppingAssistantLLM()
+                self._llm = ShoppingLLMService()
             except Exception:  # noqa: BLE001
                 self._llm = None
         return self._llm
@@ -368,111 +368,3 @@ class CoupangProductAgent:
 
 
 
-async def run_demo(
-    url: str,
-    *,
-    initial_question: str = "알러지 있는 사람도 먹을 수 있대?",
-    user_follow_up: str = "좋아, 장바구니 넣어줘",
-    headless: bool = True,
-) -> None:
-    """Run the scripted dialog for manual verification.
-
-    Parameters
-    ----------
-    url:
-        Product page URL to open (must be accessible from the current
-        environment).
-    initial_question:
-        The question to answer by inspecting reviews and inquiries.
-    user_follow_up:
-        The follow-up utterance.  Setting this to "맘에 안들어" will trigger the
-        dissatisfaction branch.
-    headless:
-        Forwarded to Playwright's browser launcher for debugging convenience.
-    """
-
-    from playwright.async_api import async_playwright
-
-    async with async_playwright() as p:
-        # browser = await p.chromium.launch(headless=headless)
-        browser = await p.firefox.launch(headless=False)  # 또는 webkit
-        page = await browser.new_page()
-        await page.goto("https://www.coupang.com/", wait_until="domcontentloaded")
-        print(await page.title())
-
-        agent = CoupangProductAgent(page)
-        system_answer = await agent.answer_user_question(initial_question)
-        print(f"SYSTEM: {system_answer}")
-
-        follow_up_response = None
-        intent = None
-        llm: Optional[ShoppingAssistantLLM] = None
-        try:
-            llm = ShoppingAssistantLLM()
-        except Exception as exc:  # noqa: BLE001
-            print(f"⚠️  의도 분류 LLM 초기화 실패: {exc}")
-
-        if llm:
-            try:
-                conversation = [
-                    {"role": "user", "content": initial_question},
-                    {"role": "assistant", "content": system_answer},
-                ]
-                intent_result = llm.classify_intent(
-                    user_follow_up,
-                    conversation,
-                    current_product_info=None,
-                    artifact_summary=None,
-                )
-                intent = intent_result.get("intent")
-                print(f"[intent] {intent} (confidence={intent_result.get('confidence', 0):.2f})")
-            except Exception as exc:  # noqa: BLE001
-                print(f"⚠️  의도 분류에 실패했습니다: {exc}")
-
-        if intent == "satisfied":
-            follow_up_response = await agent.add_product_to_cart()
-        elif intent == "dissatisfied":
-            follow_up_response = await agent.ask_for_preference_feedback()
-        elif intent == "question":
-            follow_up_response = await agent.answer_user_question(user_follow_up)
-        else:
-            follow_up_response = "네, 궁금하신 점이 더 있다면 말씀해 주세요."
-
-        print(f"SYSTEM(follow_up): {follow_up_response}")
-
-        await browser.close()
-
-
-if __name__ == "__main__":  # pragma: no cover - manual execution helper
-    import argparse
-
-    parser = argparse.ArgumentParser(description="Coupang product page agent demo")
-    parser.add_argument("url", help="Coupang product detail URL")
-    parser.add_argument(
-        "--follow-up",
-        dest="follow_up",
-        default="좋아, 장바구니 넣어줘",
-        help="Follow-up utterance (default: scenario A)",
-    )
-    parser.add_argument(
-        "--headless",
-        dest="headless",
-        action="store_true",
-        help="Run browser in headless mode",
-    )
-    parser.add_argument(
-        "--question",
-        dest="question",
-        default="알러지 있는 사람도 먹을 수 있대?",
-        help="Initial question to ask",
-    )
-
-    args = parser.parse_args()
-    asyncio.run(
-        run_demo(
-            url=args.url,
-            initial_question=args.question,
-            user_follow_up=args.follow_up,
-            headless=args.headless,
-        )
-    )
