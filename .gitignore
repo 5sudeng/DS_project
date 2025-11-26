@@ -1,4 +1,5 @@
 cookie.txt
+.env
 .DS_Store
 *.pyc
 __pycache__/
