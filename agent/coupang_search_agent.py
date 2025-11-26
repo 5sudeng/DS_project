@@ -4,10 +4,15 @@ from __future__ import annotations
 
 import asyncio
 import re
+import logging
 from dataclasses import dataclass
 from typing import List, Optional
 
 from playwright.async_api import Page, TimeoutError as PlaywrightTimeoutError
+
+from agent.config import SELECTORS
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -25,26 +30,6 @@ class SearchResult:
 class CoupangSearchAgent:
     """Agent for searching products on Coupang."""
 
-    SEARCH_INPUT_SELECTORS = [
-        "input#headerSearchKeyword",
-        "input[name='q']",
-        "input[type='search']",
-        "input.search-input",
-    ]
-
-    SEARCH_BUTTON_SELECTORS = [
-        "button.search-btn",
-        "button[type='submit']",
-        "button:has-text('검색')",
-    ]
-
-    PRODUCT_ITEM_SELECTORS = [
-        "li.search-product",
-        "li.baby-product",
-        "li[id^='productItem']",
-        "div.search-product-wrap",
-    ]
-
     def __init__(self, page: Page, search_timeout: float = 5.0):
         self.page = page
         self.search_timeout = search_timeout
@@ -61,16 +46,19 @@ class CoupangSearchAgent:
             List of SearchResult objects
         """
         print(f"\n🔍 검색 중: '{query}'")
+        logger.info("Searching for query: '%s'", query)
 
         # Navigate to Coupang main page if not already there
         if "coupang.com" not in self.page.url:
             print("📡 쿠팡 메인 페이지로 이동 중...")
+            logger.info("Navigating to Coupang main page")
             await self.page.goto("https://www.coupang.com", wait_until="domcontentloaded", timeout=30000)
             await asyncio.sleep(1.5)
 
         # Find and fill search input
         search_input = await self._find_search_input()
         if not search_input:
+            logger.error("Search input not found")
             raise RuntimeError("검색창을 찾을 수 없습니다")
 
         print(f"🔍 검색어 입력: '{query}'")
@@ -89,17 +77,19 @@ class CoupangSearchAgent:
             await asyncio.sleep(3)  # Wait for JavaScript rendering
         except Exception as e:
             print(f"⚠️  페이지 로드 경고: {e}")
+            logger.warning("Page load warning: %s", e)
             # Continue anyway
             await asyncio.sleep(2)
 
         # Parse search results
         results = await self._parse_search_results(max_results)
         print(f"✓ {len(results)}개 상품 발견")
+        logger.info("Found %d products", len(results))
         return results
 
     async def _find_search_input(self):
         """Find the search input element using multiple selectors."""
-        for selector in self.SEARCH_INPUT_SELECTORS:
+        for selector in SELECTORS["search_input"]:
             try:
                 locator = self.page.locator(selector)
                 if await locator.count() > 0:
@@ -114,7 +104,7 @@ class CoupangSearchAgent:
 
         # Try different selectors for product items
         product_items = None
-        for selector in self.PRODUCT_ITEM_SELECTORS:
+        for selector in SELECTORS["product_item"]:
             try:
                 locator = self.page.locator(selector)
                 count = await locator.count()
@@ -126,6 +116,7 @@ class CoupangSearchAgent:
 
         if not product_items:
             # Fallback: try to find any product links
+            logger.info("No product items found with primary selectors, using fallback")
             return await self._parse_results_fallback(max_results)
 
         # Parse each product item
@@ -138,6 +129,7 @@ class CoupangSearchAgent:
                     results.append(result)
             except Exception as e:
                 print(f"⚠️  상품 {i+1} 파싱 실패: {e}")
+                logger.warning("Failed to parse product item %d: %s", i + 1, e)
                 continue
 
         return results
@@ -181,6 +173,7 @@ class CoupangSearchAgent:
             )
         except Exception as e:
             print(f"⚠️  상품 파싱 중 오류: {e}")
+            logger.warning("Error parsing product item: %s", e)
             return None
 
     async def _parse_results_fallback(self, max_results: int) -> List[SearchResult]:

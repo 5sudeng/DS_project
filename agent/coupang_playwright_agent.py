@@ -49,7 +49,8 @@ from typing import List, Optional, Sequence
 import os
 
 from playwright.async_api import Locator, Page, TimeoutError as PlaywrightTimeoutError
-from agent.llm_utils import ShoppingAssistantLLM
+from agent.infra.llm import ShoppingAssistantLLM
+from agent.config import SELECTORS
 
 
 @dataclass
@@ -59,46 +60,12 @@ class CoupangProductAgent:
 
     DEFAULT_CHUNK_DATA_PATH = Path("data/exports_normalized/chunked_data_output.json")
 
-    REVIEW_SECTION_SELECTORS: Sequence[str] = (
-        "section[data-coupang='product-review']",
-        "div.sdp-review__article__list",
-        "div.js_reviewArticleList",
-        "section:has-text('상품평')",
-    )
-
-    INQUIRY_SECTION_SELECTORS: Sequence[str] = (
-        "section[data-coupang='product-qna']",
-        "div.sdp-review__article__list__QnA",
-        "section:has-text('상품 Q&A')",
-        "section:has-text('상품문의')",
-    )
-    DETAIL_SECTION_SELECTORS: Sequence[str] = (
-        "section[data-coupang='product-detail']",
-        "div#prodDetail",
-        "div.product-detail",
-        "div.prod-description",
-        "div.sdp-description",
-    )
-    SPEC_SECTION_SELECTORS: Sequence[str] = (
-        "section:has-text('상품정보 제공고시')",
-        "section:has-text('상품 정보')",
-        "table.prod-delivery-policy",
-        "table.prod-delivery-return-policy",
-    )
-
-    ADD_TO_CART_SELECTORS: Sequence[str] = (
-        "button[data-coupang='add-to-cart']",
-        "button[data-trigger='add-to-cart']",
-        "button:has-text('장바구니')",
-        "button:has-text('장바구니 담기')",
-        "button:has-text('장바구니에 담기')",
-    )
-
-    CART_CONFIRMATION_SELECTORS: Sequence[str] = (
-        "div.cart-confirm",
-        "div.layer-popup",
-        "div.modal:has-text('장바구니')",
-    )
+    REVIEW_SECTION_SELECTORS: Sequence[str] = SELECTORS["review_section"]
+    INQUIRY_SECTION_SELECTORS: Sequence[str] = SELECTORS["inquiry_section"]
+    DETAIL_SECTION_SELECTORS: Sequence[str] = SELECTORS["detail_section"]
+    SPEC_SECTION_SELECTORS: Sequence[str] = SELECTORS["spec_section"]
+    ADD_TO_CART_SELECTORS: Sequence[str] = SELECTORS["add_to_cart"]
+    CART_CONFIRMATION_SELECTORS: Sequence[str] = SELECTORS["cart_confirmation"]
 
     def __init__(
         self,
@@ -107,13 +74,12 @@ class CoupangProductAgent:
         search_timeout: float = 1.5,
         chunk_data_path: Optional[str] = None,
         test_mode: Optional[bool] = None,
-        api_key: Optional[str] = None,
+        llm: Optional[ShoppingAssistantLLM] = None,
     ) -> None:
         self.page = page
         self.search_timeout = search_timeout
-        self.api_key = api_key
-        self._llm: Optional[ShoppingAssistantLLM] = None
-        self._llm_initialized = False
+        self._llm = llm
+        self._llm_initialized = llm is not None
         self.chunk_data_path = (
             Path(chunk_data_path).expanduser() if chunk_data_path else self.DEFAULT_CHUNK_DATA_PATH
         )
@@ -378,9 +344,10 @@ class CoupangProductAgent:
 
     def _ensure_llm(self) -> Optional[ShoppingAssistantLLM]:
         if not self._llm_initialized:
+            # Fallback for legacy usage or if not injected
             self._llm_initialized = True
             try:
-                self._llm = ShoppingAssistantLLM(api_key=self.api_key)
+                self._llm = ShoppingAssistantLLM()
             except Exception:  # noqa: BLE001
                 self._llm = None
         return self._llm

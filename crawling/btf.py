@@ -34,7 +34,10 @@ from typing import Dict, Iterable, Optional, Tuple
 
 import requests
 from urllib3.util.retry import Retry
+import logging
 from requests.adapters import HTTPAdapter
+
+logger = logging.getLogger(__name__)
 
 # ── 기본값 ────────────────────────────────────────────
 URL = "https://www.coupang.com/next-api/products/btf"
@@ -135,7 +138,7 @@ def safe_request(url: str, headers: Dict[str, str], params: Dict[str, str], retr
                 print(f"[retry {attempt+1}/{retries}] timeout → wait {delay:.2f}s")
                 time.sleep(delay)
             elif attempt < retries:
-                print(f"[retry {attempt+1}/{retries}] error: {e}")
+                logger.warning("[retry %d/%d] error: %s", attempt + 1, retries, e)
                 time.sleep(1.0) # 일반 RequestException의 경우 1초 대기 후 재시도
             else:
                 pass # 마지막 시도는 그냥 예외 발생
@@ -156,20 +159,17 @@ def fetch_btf(product_id: str,
     headers = build_headers(referer, cookie)
     params = build_params(product_id, item_id=item_id, vendor_item_id=vendor_item_id)
 
-    print("[REQUEST]", URL)
-    print("  referer:", referer)
-    print("  params :", params)
+    logger.debug("[REQUEST] %s referer=%s params=%s", URL, referer, params)
 
     resp = safe_request(URL, headers, params, retries=retries)
-    print("status:", resp.status_code)
-    print("url   :", resp.url)
+    logger.debug("status: %s url: %s", resp.status_code, resp.url)
 
     try:
         data = resp.json()
     except Exception:
         # JSON 디코딩 실패 시 원본 텍스트를 저장
         data = {"error": "JSON Decode Failed", "status_code": resp.status_code, "raw_text_start": resp.text[:200]}
-        print("경고: 응답 본문이 JSON 형식이 아닙니다.")
+        logger.warning("경고: 응답 본문이 JSON 형식이 아닙니다.")
         
     if outdir:
         ts = int(time.time() * 1000)
@@ -179,139 +179,6 @@ def fetch_btf(product_id: str,
         if vendor_item_id: suffix.append(f"v{vendor_item_id}")
         base = f"btf_{product_id}" + (("_" + "_".join(suffix)) if suffix else "")
         p = save_json(data, Path(outdir), f"{base}_{ts}.json")
-        print(f"saved → {p}")
+        logger.info("saved → %s", p)
 
     return resp, data
-
-# ── 배치 실행 ────────────────────────────────────────
-def iter_products_from_csv(csv_path: str) -> Iterable[Dict[str, str]]:
-    with open(csv_path, newline="", encoding="utf-8") as f:
-        # csv.DictReader는 헤더를 자동으로 키로 사용합니다.
-        for row in csv.DictReader(f):
-            # 대소문자 상관없이 키를 찾고, strip()으로 공백 제거
-            pid = (row.get("productId") or row.get("PRODUCT_ID") or "").strip()
-            iid = (row.get("itemId") or row.get("ITEM_ID") or "").strip()
-            vid = (row.get("vendorItemId") or row.get("VENDOR_ITEM_ID") or "").strip()
-            
-            # productId가 없는 행은 건너뜁니다.
-            if not pid:
-                 continue
-
-            yield {
-                "productId": pid,
-                "itemId": iid if iid else None,
-                "vendorItemId": vid if vid else None,
-            }
-
-def batch_btf(csv_path: str,
-              outdir: str,
-              jsonl_path: Optional[str] = None,
-              cookie_file: Optional[str] = None,
-              retries: int = 2,
-              per_item_sleep: Tuple[float, float] = (1.0, 2.0)):
-    cookie = load_cookie(cookie_file)
-    outdir_p = Path(outdir)
-    outdir_p.mkdir(parents=True, exist_ok=True)
-
-    jsonl_fp = None
-    if jsonl_path:
-        # jsonl_path가 지정되면 파일 열기
-        Path(jsonl_path).parent.mkdir(parents=True, exist_ok=True)
-        jsonl_fp = open(jsonl_path, "a", encoding="utf-8")
-        
-    ok = fail = 0
-    # 메모리에 전체 CSV를 로드하여 총 개수를 알 수 있게 함
-    rows = list(iter_products_from_csv(csv_path)) 
-
-    for idx, row in enumerate(rows, 1):
-        pid = row["productId"]
-        iid = row["itemId"]
-        vid = row["vendorItemId"]
-
-        print(f"[{idx}/{len(rows)}] productId={pid} itemId={iid} vendorItemId={vid}")
-        try:
-            resp, data = fetch_btf(
-                product_id=pid, item_id=iid, vendor_item_id=vid,
-                cookie=cookie, outdir=str(outdir_p), retries=retries
-            )
-            
-            if resp.status_code == 200:
-                ok += 1
-                if jsonl_fp:
-                    # JSONL 파일에 결과 저장
-                    jsonl_fp.write(json.dumps({
-                        "productId": pid, "itemId": iid, "vendorItemId": vid,
-                        "response": data
-                    }, ensure_ascii=False) + "\n")
-            else:
-                # 200이 아닌 경우 실패로 처리
-                raise RuntimeError(f"HTTP {resp.status_code}")
-                
-            # 성공 또는 예상된 실패 후 지정된 범위 내에서 랜덤 대기
-            time.sleep(random.uniform(*per_item_sleep)) 
-            
-        except Exception as e:
-            print(f"실패: {e}")
-            fail += 1
-            # 실패 후에도 다음 요청을 위해 잠시 대기
-            time.sleep(random.uniform(0.5, 1.5)) 
-
-    if jsonl_fp:
-        jsonl_fp.close()
-
-    total = len(rows)
-    print(f"\n== 완료: 성공 {ok} / 실패 {fail} / 총 {total} ==")
-
-# ── CLI ─────────────────────────────────────────────
-def main():
-    ap = argparse.ArgumentParser(description="Fetch product BTF payload (single or batch)")
-    g = ap.add_mutually_exclusive_group(required=False)
-    g.add_argument("--product_id", dest="product_id", help="단일 실행: productId")
-    g.add_argument("--input", dest="csv_path", help="배치 실행: CSV 파일 경로 (컬럼: productId,itemId,vendorItemId)")
-
-    ap.add_argument("--item_id", dest="item_id", default=None, help="단일 실행용 itemId")
-    ap.add_argument("--vendor_item_id", dest="vendor_item_id", default=None, help="단일 실행용 vendorItemId")
-    ap.add_argument("--outdir", default="/Users/ansunggeun/workspace/DS_project/data/outputs_btf", help="JSON 개별 저장 폴더")
-    ap.add_argument("--jsonl", dest="jsonl_path", default=None, # 기본값을 None으로 변경하여 지정하지 않으면 JSONL 저장을 안 함
-                    help="배치: 전체 응답을 JSONL로도 누적 저장. 미지정 시 JSONL 저장 안 함.")
-    ap.add_argument("--cookie_file", dest="cookie_file", default=None, help="브라우저에서 복사한 cookie 문자열 파일 경로")
-    ap.add_argument("--retries", type=int, default=2, help="요청 재시도 횟수")
-
-    args = ap.parse_args()
-    
-    # 단일 실행
-    if args.product_id and not args.csv_path:
-        cookie = load_cookie(args.cookie_file)
-        # item_id/vendor_item_id는 None이면 None으로 전달되도록 수정
-        fetch_btf(
-            product_id=args.product_id,
-            item_id=args.item_id if args.item_id else None,
-            vendor_item_id=args.vendor_item_id if args.vendor_item_id else None,
-            cookie=cookie,
-            outdir=args.outdir,
-            retries=args.retries,
-        )
-    # 배치 실행
-    elif args.csv_path:
-        # JSONL 기본 경로 수정: 배치 실행 시 outdir 하위에 저장되도록 기본값을 조정했으므로, 
-        # 사용자가 명시하지 않았다면 outdir/all_btf.jsonl이 아닌 None으로 처리
-        jsonl_path_to_use = args.jsonl_path if args.jsonl_path else Path(args.outdir) / "all_btf.jsonl" 
-        
-        batch_btf(
-            csv_path=args.csv_path,
-            outdir=args.outdir,
-            jsonl_path=str(jsonl_path_to_use),
-            cookie_file=args.cookie_file,
-            retries=args.retries,
-        )
-    else:
-        ap.error("단일 실행(--product_id) 또는 배치(--input) 중 하나를 지정하세요.")
-
-if __name__ == "__main__":
-    # 필요시 출력 버퍼링 방지 (원래 코드 유지)
-    try:
-        import sys
-        sys.stdout.reconfigure(line_buffering=True)
-    except Exception:
-        pass
-    main()
