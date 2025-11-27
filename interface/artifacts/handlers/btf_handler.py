@@ -36,7 +36,7 @@ class BTFHandler:
 
         normalized_payload = payload.get("response", payload) if isinstance(payload, dict) else payload
         image_urls = self._extract_btf_image_urls(ctx, normalized_payload)
-        downloaded = self._download_btf_images(ctx, image_urls)
+        downloaded, url_to_path = self._download_btf_images(ctx, image_urls)
 
         return {
             "status": resp.status_code,
@@ -45,6 +45,7 @@ class BTFHandler:
             "raw_image_urls": image_urls,
             "downloaded_images": downloaded,
             "image_count": len(downloaded),
+            "image_url_to_path": url_to_path,  # For multimodal RAG
         }
 
     def _extract_btf_image_urls(self, ctx: ArtifactContext, payload: Any) -> List[str]:
@@ -72,11 +73,13 @@ class BTFHandler:
 
         return [u for u in urls if u]
 
-    def _download_btf_images(self, ctx: ArtifactContext, urls: List[str]) -> List[str]:
+    def _download_btf_images(self, ctx: ArtifactContext, urls: List[str]) -> tuple[List[str], Dict[str, str]]:
+        """Download images and return both paths and URL-to-path mapping."""
         if not urls:
-            return []
+            return [], {}
 
         saved: List[str] = []
+        url_to_path: Dict[str, str] = {}
         opener = urllib.request.build_opener()
         opener.addheaders = [("User-agent", "Mozilla/5.0")]
         urllib.request.install_opener(opener)
@@ -89,13 +92,15 @@ class BTFHandler:
             path = ctx.btf_images_dir / filename
             if path.exists():
                 saved.append(str(path))
+                url_to_path[normalized] = str(path)
                 continue
             try:
                 urllib.request.urlretrieve(normalized, path)
                 saved.append(str(path))
+                url_to_path[normalized] = str(path)
             except Exception:
                 continue
-        return saved
+        return saved, url_to_path
 
     def _btf_image_filename(self, ctx: ArtifactContext, url: str) -> str:
         ext = os.path.splitext(urlparse(url).path)[1].lower()

@@ -5,6 +5,7 @@ import json
 import logging
 import os
 import re
+import threading
 import time
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -90,6 +91,17 @@ class ProductArtifactCollector:
         # Offload the actual synchronous collection to a thread
         summary = await asyncio.to_thread(self._collect_sync, ctx, preloaded_html)
         
+        # Start background OCR processing if API key is available
+        if self.api_key:
+            ocr_thread = threading.Thread(
+                target=self._run_background_ocr,
+                args=(ctx,),
+                daemon=True,
+                name=f"OCR-{ctx.product_id}"
+            )
+            ocr_thread.start()
+            logger.info("Started background OCR thread for product_id=%s", ctx.product_id)
+        
         logger.info("Collected artifacts for product_id=%s", ctx.product_id)
         chunk_file = summary.get("chunk_dataset_file")
         return ArtifactCollectionResult(
@@ -100,8 +112,6 @@ class ProductArtifactCollector:
             paths=ctx.paths,
             chunk_file=chunk_file,
         )
-
-
 
     def _prepare_context(self, product_url: str) -> ArtifactContext:
         product_id, item_id, vendor_item_id = parse_product_identifiers(product_url)
@@ -192,14 +202,27 @@ class ProductArtifactCollector:
                 soup = BeautifulSoup(preloaded_html, "html.parser")
                 
                 # Extract IDs from HTML since we don't have a response URL
+                if not ctx.item_id or not ctx.vendor_item_id:
+                    # Try JSON-LD SKU first (format: "487322-41045")
+                    sku_match = re.search(r'"sku"\s*:\s*"(\d+)-(\d+)"', preloaded_html)
+                    if sku_match:
+                        if not ctx.item_id:
+                            ctx.item_id = sku_match.group(2)  # Second part is itemId
+                            logger.info(f"SKU에서 추출 성공: itemId={ctx.item_id}")
+                        if not ctx.vendor_item_id:
+                            ctx.vendor_item_id = sku_match.group(2)  # Often same as itemId
+                            logger.info(f"SKU에서 추출 성공: vendorItemId={ctx.vendor_item_id}")
+                
+                # Fallback: Try more specific regex patterns
                 if not ctx.item_id:
-                    m_item = re.search(r'["\']itemId["\']\s*[:=]\s*["\']?(\d+)["\']?', preloaded_html)
+                    # Look for itemId in JavaScript object/JSON with number value (not string "1")
+                    m_item = re.search(r'["\']itemId["\']\s*:\s*(\d{3,})[,}]', preloaded_html)
                     if m_item:
                         ctx.item_id = m_item.group(1)
                         logger.info(f"HTML Regex 추출 성공: itemId={ctx.item_id}")
 
                 if not ctx.vendor_item_id:
-                    m_vendor = re.search(r'["\']vendorItemId["\']\s*[:=]\s*["\']?(\d+)["\']?', preloaded_html)
+                    m_vendor = re.search(r'["\']vendorItemId["\']\s*:\s*(\d{3,})[,}]', preloaded_html)
                     if m_vendor:
                         ctx.vendor_item_id = m_vendor.group(1)
                         logger.info(f"HTML Regex 추출 성공: vendorItemId={ctx.vendor_item_id}")
@@ -230,21 +253,36 @@ class ProductArtifactCollector:
 
                 # URL에 ID가 없을 경우, HTML 본문에서 직접 추출하는 "구명조끼" 로직 추가
                 if not ctx.item_id or not ctx.vendor_item_id:
-                    logger.info("URL에 ID가 없어 HTML 본문에서 직접 추출을 시도합니다.")
-                    
-                    # itemId 추출 (JSON 패턴 또는 JS 변수 패턴)
-                    if not ctx.item_id:
-                        m_item = re.search(r'["\']itemId["\']\s*[:=]\s*["\']?(\d+)["\']?', resp.text)
-                        if m_item:
-                            ctx.item_id = m_item.group(1)
-                            logger.info(f"HTML Regex 복구 성공: itemId={ctx.item_id}")
+                    try:
+                        page_content = resp.text
+                        
+                        # 1. Try explicit itemId/vendorItemId regex first (most reliable)
+                        if not ctx.item_id:
+                            # Match: itemId, originalItemId, "itemId", "originalItemId"
+                            item_match = re.search(r'["\']?(?:originalI|i)temId["\']?\s*[:=]\s*["\']?(\d{5,})["\']?', page_content)
+                            if item_match:
+                                ctx.item_id = item_match.group(1)
+                                logger.info(f"HTML Regex 추출 성공: itemId={ctx.item_id}")
+                        
+                        if not ctx.vendor_item_id:
+                            # Match: vendorItemId, originalVendorItemId
+                            vendor_match = re.search(r'["\']?(?:originalV|v)endorItemId["\']?\s*[:=]\s*["\']?(\d{5,})["\']?', page_content)
+                            if vendor_match:
+                                ctx.vendor_item_id = vendor_match.group(1)
+                                logger.info(f"HTML Regex 추출 성공: vendorItemId={ctx.vendor_item_id}")
 
-                    # vendorItemId 추출
-                    if not ctx.vendor_item_id:
-                        m_vendor = re.search(r'["\']vendorItemId["\']\s*[:=]\s*["\']?(\d+)["\']?', resp.text)
-                        if m_vendor:
-                            ctx.vendor_item_id = m_vendor.group(1)
-                            logger.info(f"HTML Regex 복구 성공: vendorItemId={ctx.vendor_item_id}")
+                        # 2. Fallback to SKU if still missing
+                        if not ctx.item_id or not ctx.vendor_item_id:
+                            sku_match = re.search(r'"sku"\s*:\s*"(\d+)-(\d+)"', page_content)
+                            if sku_match:
+                                if not ctx.item_id:
+                                    ctx.item_id = sku_match.group(2)
+                                    logger.info(f"SKU에서 추출 성공: itemId={ctx.item_id}")
+                                if not ctx.vendor_item_id:
+                                    ctx.vendor_item_id = sku_match.group(2)
+                                    logger.info(f"SKU에서 추출 성공: vendorItemId={ctx.vendor_item_id}")
+                    except Exception as e:
+                        logger.warning(f"ID 추출 중 오류 발생: {e}")
 
                 html_success = True
                 record(
@@ -332,6 +370,15 @@ class ProductArtifactCollector:
             record("fetch_inquiries", "error", {"error": str(exc)})
 
         # Quantity
+        # ------------------------------------------------------------------
+        # [DEBUG LOG] ID 수집 상태 확인용 로그 추가
+        # ------------------------------------------------------------------
+        print(f"\n[DEBUG] Quantity 수집 시작 전 ID 확인:")
+        print(f"  - productId: {ctx.product_id}")
+        print(f"  - itemId: {ctx.item_id}")
+        print(f"  - vendorItemId: {ctx.vendor_item_id}")
+        # ------------------------------------------------------------------
+
         if ctx.item_id and ctx.vendor_item_id:
             try:
                 resp, data = self.quantity_scraper.fetch(
@@ -346,7 +393,7 @@ class ProductArtifactCollector:
                     {
                         "status": resp.status_code,
                         "output_dir": ctx.paths.quantity_dir,
-                        "keys": list(data.keys()),
+                        "keys": list(data.keys()) if isinstance(data, dict) else f"List[{len(data)}]",
                     },
                 )
             except Exception as exc:  # noqa: BLE001
@@ -361,26 +408,26 @@ class ProductArtifactCollector:
         # BTF payload + images (Delegated to BTFHandler)
         try:
             btf_details = self.btf_handler.fetch_and_process(ctx)
+            ctx.btf_image_mapping = btf_details.get("image_url_to_path", {})  # Store for chunker
             record("fetch_btf", "success", btf_details)
         except Exception as exc:  # noqa: BLE001
             record("fetch_btf", "error", {"error": str(exc)})
 
-        # OCR (Delegated to OCRHandler)
-        try:
-            if self.api_key:
-                status, details = self.ocr_handler.process(ctx)
-                record("ocr_processing", status, details)
-            else:
-                record(
-                    "ocr_processing",
-                    "skipped",
-                    {
-                        "reason": "OPENAI_API_KEY 미설정",
-                        "hint": "환경 변수 또는 CLI 옵션으로 설정하면 이미지 OCR을 활성화할 수 있습니다.",
-                    },
-                )
-        except Exception as exc:  # noqa: BLE001
-            record("ocr_processing", "error", {"error": str(exc)})
+
+        # OCR - Skip in sync collection, will run in background
+        # This allows summary generation to proceed immediately
+        if self.api_key:
+            record("ocr_processing", "pending", {"reason": "OCR processing in background"})
+        else:
+            record(
+                "ocr_processing",
+                "skipped",
+                {
+                    "reason": "OPENAI_API_KEY 미설정",
+                    "hint": "환경 변수 또는 CLI 옵션으로 설정하면 이미지 OCR을 활성화할 수 있습니다.",
+                },
+            )
+
 
         # Chunking (Delegated to ChunkingHandler)
         chunk_file: Optional[str] = None
@@ -436,3 +483,57 @@ class ProductArtifactCollector:
         except Exception:
             logger.exception("Failed to persist artifact summary for product_id=%s", ctx.product_id)
             pass
+
+    def _run_background_ocr(self, ctx: ArtifactContext) -> None:
+        """
+        Run OCR processing in background thread and update dataset.
+        
+        This method:
+        1. Runs OCR on product images
+        2. Re-generates chunks including OCR data
+        3. Updates summary file with OCR completion status
+        """
+        try:
+            logger.info("[Background OCR] Starting for product_id=%s", ctx.product_id)
+            
+            # Run OCR
+            status, details = self.ocr_handler.process(ctx)
+            logger.info("[Background OCR] OCR completed with status=%s", status)
+            
+            # Re-run chunking to include OCR data
+            chunk_details = self.chunking_handler.build_dataset(ctx)
+            if chunk_details:
+                logger.info("[Background OCR] Updated chunks with OCR data: %s", chunk_details.get("file"))
+            
+            # Update summary file with OCR completion status
+            try:
+                summary_path = ctx.paths.summary_file
+                if summary_path.exists():
+                    with summary_path.open("r", encoding="utf-8") as f:
+                        summary = json.load(f)
+                    
+                    # Update OCR step status
+                    for step in summary.get("steps", []):
+                        if step.get("name") == "ocr_processing":
+                            step["status"] = status
+                            step["details"] = details
+                            break
+                    
+                    # Add OCR completion timestamp
+                    summary["ocr_completed_at"] = int(time.time())
+                    
+                    # Update chunk file path if re-chunking succeeded
+                    if chunk_details:
+                        summary["chunk_dataset_file"] = chunk_details.get("file")
+                    
+                    with summary_path.open("w", encoding="utf-8") as f:
+                        json.dump(summary, f, ensure_ascii=False, indent=2)
+                    
+                    logger.info("[Background OCR] Updated summary file with OCR results")
+            except Exception as e:
+                logger.exception("[Background OCR] Failed to update summary file: %s", e)
+            
+            logger.info("[Background OCR] Completed for product_id=%s", ctx.product_id)
+            
+        except Exception as e:
+            logger.exception("[Background OCR] Failed for product_id=%s: %s", ctx.product_id, e)

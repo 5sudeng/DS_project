@@ -92,7 +92,12 @@ class ChunkingHandler:
                 if not isinstance(data, dict):
                     continue
                 try:
-                    chunker.process_btf_json(btf_file.name, data)
+                    # Pass image mapping for multimodal RAG
+                    chunker.process_btf_json(
+                        btf_file.name, 
+                        data,
+                        image_url_to_path=ctx.btf_image_mapping
+                    )
                     processed_sources.add("btf")
                 except Exception:  # noqa: BLE001
                     logger.exception("Chunking BTF file failed for %s", btf_file)

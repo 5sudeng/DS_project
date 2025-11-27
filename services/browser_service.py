@@ -43,6 +43,7 @@ from __future__ import annotations
 import asyncio
 import json
 import os
+import re
 from dataclasses import dataclass
 from pathlib import Path
 from typing import List, Optional, Sequence
@@ -396,22 +397,24 @@ class BrowserService:
 
     async def _extract_basic_info(self) -> Dict[str, Any]:
         """Extract basic product information from the page."""
+        import re
         info = {}
         
-        # PRIORITY 1: Parse JSON-LD Schema (most reliable)
+        # PRIORITY 1: JSON-LD Schema (most reliable)
         try:
-            import json
-            import re
             page_content = await self.page.content()
-            
-            # Find JSON-LD script tag with product info
+            # Look for JSON-LD script tag
             json_ld_match = re.search(r'<script[^>]*type="application/ld\+json"[^>]*>(.*?)</script>', page_content, re.DOTALL)
             if json_ld_match:
                 try:
-                    json_ld_data = json.loads(json_ld_match.group(1))
+                    json_ld_text = json_ld_match.group(1).strip()
+                    json_ld_data = json.loads(json_ld_text)
                     
                     # Extract from Product schema
                     if json_ld_data.get("@type") == "Product":
+                        # Product Name
+                        if "name" in json_ld_data:
+                            info["product_name"] = json_ld_data["name"]
                         # Price
                         if "offers" in json_ld_data and "price" in json_ld_data["offers"]:
                             price_val = json_ld_data["offers"]["price"]
@@ -552,7 +555,6 @@ class BrowserService:
             if "original_price" in info and "price" in info:
                 try:
                     # Extract numeric values
-                    import re
                     orig = re.sub(r'[^\d]', '', info["original_price"])
                     curr = re.sub(r'[^\d]', '', info["price"])
                     if orig and curr:
@@ -587,17 +589,16 @@ class BrowserService:
 
         # Extract itemId and vendorItemId from page HTML
         try:
-            import re
             if "page_content" not in locals():
                 page_content = await self.page.content()
             
             # Extract itemId
-            item_match = re.search(r'["\'itemId["\']\s*[:=]\s*["\']?(\d+)["\']?', page_content)
+            item_match = re.search(r'["\']?(?:originalI|i)temId["\']?\s*[:=]\s*["\']?(\d+)["\']?', page_content)
             if item_match:
                 info["item_id"] = item_match.group(1)
             
             # Extract vendorItemId  
-            vendor_match = re.search(r'["\'vendorItemId["\']\s*[:=]\s*["\']?(\d+)["\']?', page_content)
+            vendor_match = re.search(r'["\']?(?:originalV|v)endorItemId["\']?\s*[:=]\s*["\']?(\d+)["\']?', page_content)
             if vendor_match:
                 info["vendor_item_id"] = vendor_match.group(1)
         except Exception:

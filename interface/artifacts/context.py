@@ -32,6 +32,11 @@ class ArtifactContext:
     btf_dir: Path
     btf_images_dir: Path
     ocr_results_file: Path
+    btf_image_mapping: Dict[str, str] = None  # URL -> local path mapping for multimodal RAG
+
+    def __post_init__(self):
+        if self.btf_image_mapping is None:
+            self.btf_image_mapping = {}
 
     def update_ids_from_url(self, url: Optional[str]) -> None:
         """Update item_id and vendor_item_id from a resolved URL."""

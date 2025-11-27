@@ -2,14 +2,18 @@
 
 from __future__ import annotations
 
+import base64
 import json
-import math
+import logging
 import os
+from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from openai import OpenAI
 
 from config.settings import PROMPTS
+
+logger = logging.getLogger(__name__)
 
 
 class ShoppingLLMService:
@@ -179,9 +183,11 @@ class ShoppingLLMService:
         snippets: List[Dict[str, str]],
         basic_info: Optional[Dict[str, Any]] = None,
         language: str = "ko",
+        max_images: int = 3,  # Limit images to avoid token explosion
     ) -> str:
         """
         Generate a natural language answer grounded in the provided snippets and basic info.
+        Supports multimodal input with product images from snippets metadata.
         """
 
         if not snippets and not basic_info:
@@ -194,7 +200,7 @@ class ShoppingLLMService:
             basic_info_text = f"기본 상품 정보:\n{json.dumps(basic_info, ensure_ascii=False, indent=2)}\n"
 
         system_prompt = PROMPTS["answer_product_question"]
-        user_prompt = f"""사용자 질문 ({language}):
+        text_content = f"""사용자 질문 ({language}):
 {question}
 
 {basic_info_text}
@@ -207,15 +213,55 @@ class ShoppingLLMService:
 - 확실한 근거가 없으면 정중히 모른다고 답하세요.
 - 답변은 {language}로 작성하세요."""
 
-        print(f"user_prompt for answer_product_question:\n{user_prompt}\n")
-        response = self.client.chat.completions.create(
-            model=self.model,
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_prompt},
-            ],
-            temperature=0.2,
-        )
+        # Extract images from snippets (multimodal RAG)
+        image_paths = self._extract_image_paths_from_snippets(snippets)
+        
+        if image_paths:
+            # Limit number of images
+            image_paths = image_paths[:max_images]
+            logger.info(f"Including {len(image_paths)} images in multimodal prompt")
+            
+            # Create multimodal message with images
+            user_message_content = [{"type": "text", "text": text_content}]
+            
+            for img_path in image_paths:
+                base64_image = self._encode_image_to_base64(img_path)
+                if base64_image:
+                    # Determine image type from extension
+                    ext = Path(img_path).suffix.lower()
+                    mime_type = "image/jpeg" if ext in [".jpg", ".jpeg"] else f"image/{ext[1:]}"
+                    
+                    user_message_content.append({
+                        "type": "image_url",
+                        "image_url": {
+                            "url": f"data:{mime_type};base64,{base64_image}",
+                            "detail": "low"  # Use "low" to reduce token cost
+                        }
+                    })
+            
+            print(f"user_prompt for answer_product_question (multimodal with {len(image_paths)} images):\n{text_content}\n")
+            
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_message_content},
+                ],
+                temperature=0.2,
+                max_tokens=500,  # Limit response length
+            )
+        else:
+            # Text-only fallback
+            print(f"user_prompt for answer_product_question:\n{text_content}\n")
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": text_content},
+                ],
+                temperature=0.2,
+            )
+        
         print(f"response from answer_product_question:\n{response}\n")
         return response.choices[0].message.content.strip()
 
@@ -225,8 +271,21 @@ class ShoppingLLMService:
         snippets: List[Dict[str, Any]],
         *,
         top_k: int = 10,
+        similarity_threshold: float = 0.0,  # Filter out snippets with similarity <= 0
         embedding_model: str = "text-embedding-3-small",
     ) -> List[Dict[str, Any]]:
+        """Rank snippets by cosine similarity to the question.
+        
+        Args:
+            question: User's question
+            snippets: List of snippet dictionaries
+            top_k: Maximum number of snippets to return
+            similarity_threshold: Minimum similarity score (cosine similarity ranges -1 to 1)
+            embedding_model: OpenAI embedding model to use
+            
+        Returns:
+            List of snippets sorted by relevance, filtered by threshold
+        """
         if not snippets:
             return []
 
@@ -251,8 +310,12 @@ class ShoppingLLMService:
             enriched["relevance_score"] = score
             scored.append(enriched)
 
+        # Sort by relevance score (highest first)
         scored.sort(key=lambda item: item.get("relevance_score", 0), reverse=True)
-        return scored[:top_k]
+        
+        # Filter by similarity threshold and return top_k
+        filtered = [s for s in scored if s.get("relevance_score", 0) > similarity_threshold]
+        return filtered[:top_k]
 
     def _artifact_context_snippet(
         self,
@@ -273,11 +336,19 @@ class ShoppingLLMService:
         limit: int = 30,
         max_length: int = 1000,
     ) -> str:
+        """Format snippets for display in LLM prompt, including relevance scores if available."""
         lines = []
         for idx, snippet in enumerate(snippets[:limit], 1):
             source = snippet.get("source") or "정보"
             text = self._shorten(snippet.get("text", ""), max_length)
-            lines.append(f"{idx}. [{source}] {text}")
+            
+            # Add relevance score if available
+            relevance_score = snippet.get("relevance_score")
+            if relevance_score is not None:
+                score_str = f"[유사도: {relevance_score:.3f}] "
+                lines.append(f"{idx}. {score_str}[{source}] {text}")
+            else:
+                lines.append(f"{idx}. [{source}] {text}")
         return "\n".join(lines)
 
     def _shorten(self, text: str, max_length: int) -> str:
@@ -289,3 +360,22 @@ class ShoppingLLMService:
         # OpenAI 임베딩은 이미 정규화되어 있으므로 내적(Dot Product)만으로 충분합니다.
         # 단, 입력 벡터가 정규화되지 않았을 가능성이 0.1%라도 있다면 기존 코드를 유지하세요.
         return sum(x * y for x, y in zip(a, b))
+
+    def _encode_image_to_base64(self, image_path: str) -> Optional[str]:
+        """Encode image file to base64 string for OpenAI vision API."""
+        try:
+            with open(image_path, 'rb') as image_file:
+                return base64.b64encode(image_file.read()).decode('utf-8')
+        except Exception as e:
+            logger.warning(f"Failed to encode image {image_path}: {e}")
+            return None
+
+    def _extract_image_paths_from_snippets(self, snippets: List[Dict[str, Any]]) -> List[str]:
+        """Extract local image paths from snippets metadata."""
+        image_paths = []
+        for snippet in snippets:
+            metadata = snippet.get("metadata", {})
+            local_path = metadata.get("local_image_path")
+            if local_path and Path(local_path).exists():
+                image_paths.append(local_path)
+        return image_paths

@@ -45,6 +45,10 @@ DEFAULT_LAUNCH_ARGS = [
     "--disable-web-security",
     "--disable-features=IsolateOrigins,site-per-process",
     "--ignore-certificate-errors",
+    # HTTP/2 protocol error workarounds
+    "--disable-http2",  # Disable HTTP/2 protocol
+    "--disable-quic",   # Disable QUIC protocol
+    "--enable-features=NetworkService,NetworkServiceInProcess",  # Use in-process network service
 ]
 
 
