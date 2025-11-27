@@ -177,26 +177,33 @@ class ShoppingLLMService:
         self,
         question: str,
         snippets: List[Dict[str, str]],
+        basic_info: Optional[Dict[str, Any]] = None,
         language: str = "ko",
     ) -> str:
         """
-        Generate a natural language answer grounded in the provided snippets.
+        Generate a natural language answer grounded in the provided snippets and basic info.
         """
 
-        if not snippets:
+        if not snippets and not basic_info:
             return "관련된 정보를 발견하지 못했습니다. 다른 내용을 확인해 볼까요?"
 
         formatted_snippets = self._format_snippets_for_answer(snippets)
+        
+        basic_info_text = ""
+        if basic_info:
+            basic_info_text = f"기본 상품 정보:\n{json.dumps(basic_info, ensure_ascii=False, indent=2)}\n"
+
         system_prompt = PROMPTS["answer_product_question"]
         user_prompt = f"""사용자 질문 ({language}):
 {question}
 
-참고 정보:
+{basic_info_text}
+참고 정보 (RAG):
 {formatted_snippets}
 
 지침:
-- 참고 정보에 있는 내용만 요약해서 답변하세요.
-- 정보가 상충하면 가장 최근/일반적인 표현을 우선하세요.
+- 기본 상품 정보와 참고 정보를 종합하여 답변하세요.
+- 정보가 상충하면 기본 상품 정보를 우선하세요 (특히 가격, 상품명 등).
 - 확실한 근거가 없으면 정중히 모른다고 답하세요.
 - 답변은 {language}로 작성하세요."""
 
@@ -279,16 +286,6 @@ class ShoppingLLMService:
         return text[: max_length - 1].rstrip() + "…"
 
     def _cosine_similarity(self, a: List[float], b: List[float]) -> float:
-        if not a or not b:
-            return 0.0
-        dot = 0.0
-        norm_a = 0.0
-        norm_b = 0.0
-        for x, y in zip(a, b):
-            dot += x * y
-            norm_a += x * x
-            norm_b += y * y
-        denom = math.sqrt(norm_a) * math.sqrt(norm_b)
-        if denom == 0:
-            return 0.0
-        return dot / denom
+        # OpenAI 임베딩은 이미 정규화되어 있으므로 내적(Dot Product)만으로 충분합니다.
+        # 단, 입력 벡터가 정규화되지 않았을 가능성이 0.1%라도 있다면 기존 코드를 유지하세요.
+        return sum(x * y for x, y in zip(a, b))

@@ -157,14 +157,11 @@ class HtmlFetcher:
                         return r.status_code, r.url, r.text
                     else:
                         raise RuntimeError(f"HTTP {r.status_code}")
-                except requests.Timeout:
-                    delay = (2 ** attempt) + random.uniform(1, 2)
-                    logger.warning("[retry %d/3] timeout, wait %.2fs", attempt, delay)
-                    time.sleep(delay)
-                except requests.RequestException as e:
+                except Exception as e:
                     delay = (2 ** (attempt - 1)) + random.uniform(0.5, 1.5)
-                    logger.warning("[retry %d/3] request error: %s, wait %.2fs", attempt, e, delay)
-                    time.sleep(delay)
+                    logger.warning("[requests] failed (attempt %d/3): %s, wait %.2fs", attempt, e, delay)
+                    if attempt < 3:
+                        time.sleep(delay)
         return None, None, None
 
     def _try_curl(self, candidates: Sequence[Tuple[str, Optional[dict]]], headers: dict, product_id: str) -> Tuple[Optional[int], Optional[str], Optional[str]]:

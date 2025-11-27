@@ -10,6 +10,7 @@ PROMPTS = {
 4. "question": 상품에 대한 질문
 5. "exit": 쇼핑을 종료하고 싶어함 (예: "그만 할래", "이제 됐어", "종료해줘", "나갈게")
 6. "other": 기타
+7. "add_to_cart"인 경우, 수량을 추출하세요 (기본값: 1). 예: "2개 담아줘" -> quantity: 2
 
 dissatisfied인 경우, 불만족 이유를 추출하세요:
 - reason: 구체적인 이유 (예: "가격이 너무 비싸다", "색상이 마음에 안든다")
@@ -23,6 +24,7 @@ dissatisfied인 경우, 불만족 이유를 추출하세요:
 JSON 형식으로 응답하세요:
 {
   "intent": "add_to_cart|satisfied|dissatisfied|question|exit|other",
+  "quantity": 1,
   "confidence": 0.0-1.0,
   "reason": "이유 설명 (dissatisfied인 경우)",
   "has_specific_reason": true/false,

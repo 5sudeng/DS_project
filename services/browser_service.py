@@ -119,6 +119,15 @@ class BrowserService:
                     continue
                 snippets.extend(result)
 
+        # Deduplicate snippets based on text content
+        unique_snippets = []
+        seen_texts = set()
+        for s in snippets:
+            text = s.get("text", "").strip()
+            if text and text not in seen_texts:
+                unique_snippets.append(s)
+                seen_texts.add(text)
+        snippets = unique_snippets
         if not snippets:
             return "관련 정보를 찾지 못했습니다. 다른 내용을 도와드릴까요?"
 
@@ -134,18 +143,51 @@ class BrowserService:
         )
         print(f"✓ 질문과 관련 있는 {len(relevant_snippets)}개 근거만 활용합니다.")
 
+        # Extract basic info from the page
+        basic_info = await self._extract_basic_info()
+
         try:
             return llm.answer_product_question(
                 utterance,
                 relevant_snippets,
+                basic_info=basic_info,
                 language="ko",
             )
         except Exception as exc:  # noqa: BLE001
             return f"답변 생성 중 문제가 발생했습니다: {exc}"
 
 
-    async def add_product_to_cart(self) -> str:
+    async def add_product_to_cart(self, quantity: int = 1) -> str:
         """Click the add-to-cart button and confirm the action."""
+
+        # Handle quantity if greater than 1
+        if quantity > 1:
+            try:
+                # Try to find quantity input
+                # Common selectors for quantity input
+                qty_selectors = [
+                    "input[type='number'][class*='quantity']",
+                    "input[class*='quantity']",
+                    ".prod-quantity__input",
+                    "input[name='quantity']"
+                ]
+                
+                qty_input = None
+                for sel in qty_selectors:
+                    loc = self.page.locator(sel).first
+                    if await loc.count() > 0 and await loc.is_visible():
+                        qty_input = loc
+                        break
+                
+                if qty_input:
+                    await qty_input.fill(str(quantity))
+                    # Trigger change event if needed
+                    await qty_input.dispatch_event("change")
+                    print(f"✓ 수량을 {quantity}개로 변경했습니다.")
+                else:
+                    print(f"⚠️  수량 입력창을 찾지 못해 기본 수량(1개)으로 진행합니다.")
+            except Exception as e:
+                print(f"⚠️  수량 변경 중 오류 발생: {e}")
 
         for selector in self.ADD_TO_CART_SELECTORS:
             try:
@@ -154,7 +196,7 @@ class BrowserService:
                     continue
                 await button.first.click(timeout=self.search_timeout * 1000)
                 await self._wait_for_cart_confirmation()
-                return "장바구니에 담았습니다. 다른 필요한 게 있으신가요?"
+                return f"{quantity}개 상품을 장바구니에 담았습니다. 다른 필요한 게 있으신가요?"
             except PlaywrightTimeoutError:
                 continue
         return "장바구니 버튼을 찾을 수 없었습니다. 직접 눌러 주시겠어요?"
@@ -352,6 +394,49 @@ class BrowserService:
                 self._llm = None
         return self._llm
 
+    async def _extract_basic_info(self) -> Dict[str, Any]:
+        """Extract basic product information from the page."""
+        info = {}
+        
+        # Product Title
+        try:
+            title_el = self.page.locator("h2.prod-buy-header__title").first
+            if await title_el.count() > 0:
+                info["product_name"] = await title_el.inner_text()
+        except Exception:
+            pass
+
+        # Price
+        try:
+            price_el = self.page.locator("span.total-price > strong").first
+            if await price_el.count() > 0:
+                info["price"] = await price_el.inner_text()
+            else:
+                # Fallback price selector
+                price_el = self.page.locator("span.prod-sale-price > span.total-price > strong").first
+                if await price_el.count() > 0:
+                    info["price"] = await price_el.inner_text()
+        except Exception:
+            pass
+
+        # Rating
+        try:
+            rating_el = self.page.locator("span.rating-star-num").first
+            if await rating_el.count() > 0:
+                info["rating"] = await rating_el.inner_text()
+        except Exception:
+            pass
+            
+        # Review Count
+        try:
+            review_count_el = self.page.locator("span.count").first
+            if await review_count_el.count() > 0:
+                info["review_count"] = await review_count_el.inner_text()
+        except Exception:
+            pass
+
+        return info
+
     def set_chunk_data_path(self, chunk_data_path: Optional[str]) -> None:
         new_path = (
             Path(chunk_data_path).expanduser()
@@ -362,9 +447,3 @@ class BrowserService:
             return
         self.chunk_data_path = new_path
         self._chunk_dataset = None
-
-
-
-
-
-

@@ -154,10 +154,10 @@ class QuantityScraper:
                     return r.status_code, r.url, text, data
                 else:
                     raise RuntimeError(f"requests unexpected status {r.status_code}")
-            except requests.Timeout as e:
+            except Exception as e: # Changed from requests.Timeout and requests.RequestException to a general Exception
                 last_err = e
                 delay = (2 ** (attempt - 1)) + random.uniform(0, 0.7)
-                logger.warning("[requests retry %d/%d] timeout -> wait %.2fs", attempt, retries, delay)
+                logger.warning("[requests retry %d/%d] error: %s -> wait %.2fs", attempt, retries, e, delay)
                 time.sleep(delay)
             except requests.RequestException as e:
                 last_err = e
