@@ -142,18 +142,56 @@ class ContentChunker:
                 min_length=30 # 설명이 충분히 길 때만 청크
             )
 
-        # 5. JSON-LD 메타데이터 추출 (JSON 구조를 그대로 저장)
+        # 5. JSON-LD 메타데이터 추출 (유용한 정보만 필터링)
         json_ld_match = re.search(r'<script async="" src="product" type="application/ld\+json">(.*?)</script>', html_content, re.DOTALL)
         if json_ld_match:
-            # HTML 엔티티를 디코딩하고 JSON 청크로 추가 (텍스트로 저장)
-            json_ld_text = json_ld_match.group(1).replace('\n', '').replace('\r', '').strip()
-            self._add_chunk(
-                source_file=file_path,
-                source_type="HTML_META",
-                content_type="JSON_LD",
-                text_content=json_ld_text,
-                metadata={"origin_field": "json_ld_schema", "chunk_strategy": "FIELD_UNIT"}
-            )
+            try:
+                # JSON 파싱
+                json_ld_text = json_ld_match.group(1).strip()
+                json_ld_data = json.loads(json_ld_text)
+                
+                # 유용한 정보만 추출 (이미지 URL 등 불필요한 데이터 제외)
+                if json_ld_data.get("@type") == "Product":
+                    filtered_data = {
+                        "@type": "Product",
+                        "sku": json_ld_data.get("sku"),
+                        "name": json_ld_data.get("name"),
+                        "brand": json_ld_data.get("brand"),
+                        "offers": {},
+                        "aggregateRating": json_ld_data.get("aggregateRating")
+                    }
+                    
+                    # offers에서 가격 정보만 추출 (배송 정보 제외)
+                    if "offers" in json_ld_data:
+                        offers = json_ld_data["offers"]
+                        filtered_data["offers"] = {
+                            "price": offers.get("price"),
+                            "priceCurrency": offers.get("priceCurrency"),
+                            "priceSpecification": offers.get("priceSpecification"),
+                            "availability": offers.get("availability")
+                        }
+                    
+                    # 필터링된 JSON을 문자열로 변환
+                    filtered_json_str = json.dumps(filtered_data, ensure_ascii=False, separators=(',', ':'))
+                    
+                    self._add_chunk(
+                        source_file=file_path,
+                        source_type="HTML_META",
+                        content_type="JSON_LD",
+                        text_content=filtered_json_str,
+                        metadata={"origin_field": "json_ld_schema", "chunk_strategy": "FIELD_UNIT"}
+                    )
+            except json.JSONDecodeError:
+                # JSON 파싱 실패 시 원본 저장 (fallback)
+                logger.warning("Failed to parse JSON-LD, storing original")
+                json_ld_text = json_ld_match.group(1).replace('\n', '').replace('\r', '').strip()
+                self._add_chunk(
+                    source_file=file_path,
+                    source_type="HTML_META",
+                    content_type="JSON_LD",
+                    text_content=json_ld_text,
+                    metadata={"origin_field": "json_ld_schema", "chunk_strategy": "FIELD_UNIT"}
+                )
 
 
     def process_quantity_json(self, file_path: str, data: List[Dict[str, Any]]) -> None:
@@ -236,9 +274,12 @@ class ContentChunker:
                 )
 
 
-    def process_btf_json(self, file_path: str, data: Dict[str, Any]) -> None:
+    def process_btf_json(self, file_path: str, data: Dict[str, Any], image_url_to_path: Dict[str, str] = None) -> None:
         """상품 상세 정보 (JSON) 파일을 처리합니다. (필드 단위 청킹 및 긴 텍스트 분할)"""
         logger.info("--- Processing %s (Product Detail / Field Unit & Length Chunking) ---", file_path)
+        
+        if image_url_to_path is None:
+            image_url_to_path = {}
         
         # 1. 반품/교환 정보 (긴 텍스트 - HTML 포함)
         return_charge_text = data.get('returnPolicyVo', {}).get('vendorItemReturnNotice', {}).get('returnCharge', '')
@@ -281,19 +322,32 @@ class ContentChunker:
                 min_length=1 
             )
 
-        # 4. 상세 이미지 정보 (이미지 URL)
+        # 4. 상세 이미지 정보 (이미지 URL) - Add local path for multimodal RAG
         details = data.get('details', [])
         image_chunks = [d for d in details if d.get('contentType') == 'IMAGE_NO_SPACE']
         for i, img_data in enumerate(image_chunks):
             content_desc = img_data.get('vendorItemContentDescriptions', [{}])[0]
             image_url = content_desc.get('content', '')
             if image_url:
+                # Normalize URL for lookup
+                normalized_url = image_url if image_url.startswith('http') else f'https:{image_url}'
+                local_path = image_url_to_path.get(normalized_url)
+                
+                metadata = {
+                    "origin_field": "details", 
+                    "image_url": image_url, 
+                    "index": i, 
+                    "chunk_strategy": "IMAGE_REFERENCE"
+                }
+                if local_path:
+                    metadata["local_image_path"] = local_path
+                
                 self._add_chunk(
                     source_file=file_path,
                     source_type="PRODUCT_DETAIL",
                     content_type="IMAGE_URL",
                     text_content=None, # 텍스트 내용은 비워둠
-                    metadata={"origin_field": "details", "image_url": image_url, "index": i, "chunk_strategy": "IMAGE_REFERENCE"}
+                    metadata=metadata
                 )
 
     def process_reviews(self, file_path: str, data: Dict[str, Any]) -> None:

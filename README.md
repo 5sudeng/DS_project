@@ -29,7 +29,13 @@ This project provides a large language model (LLM)-based interactive shopping as
 - When dissatisfaction is detected, the assistant automatically generates new search queries.
 - Searches Coupang using refined terms and ranks search results.
 
-### 4. Multi‑Turn Conversational Interface
+### 4. Multimodal RAG with Vision API
+- **NEW**: Automatically extracts product images from detail pages.
+- Sends relevant images to GPT-4o-mini Vision API alongside text.
+- Enables answering questions about ingredients, nutrition facts, and other image-based information.
+- Smart image selection based on text similarity scores.
+
+### 5. Multi‑Turn Conversational Interface
 - Maintains conversation history across steps.
 - Supports iterative refinement of user preferences.
 - Allows optional automated cart addition.
@@ -172,7 +178,7 @@ User URL → Intent Classification → Review/Q&A Extraction
 ### Core
 - Python 3.10+
 - Playwright (Coupang page automation)  
-- OpenAI GPT models  
+- OpenAI GPT-4o-mini (Text and **Vision API**)  
 - LangChain orchestration  
 
 ### Scraping and Data Handling
@@ -222,8 +228,47 @@ Atomic scraping modules for specific data types:
 
 ### processors/
 Data processing modules:
-- `chunker.py`: Chunks text data for RAG or analysis.
-- `ocr_processor.py`: Handles OCR tasks using OpenAI GPT-4o Vision.  
+- `chunker.py`: Chunks text data for RAG or analysis. **Now includes image path metadata for multimodal RAG**.
+- `ocr_processor.py`: Handles OCR tasks using OpenAI GPT-4o Vision.
+
+## Key Features Deep Dive
+
+### Multimodal RAG System
+
+The assistant now supports **vision-enabled question answering** by automatically including relevant product images in LLM prompts.
+
+#### How It Works
+```
+1. Product images downloaded from BTF (Below-The-Fold) API
+2. Image URL → local path mapping stored in context
+3. Chunker adds image paths to metadata
+4. During Q&A:
+   - Text similarity selects relevant chunks
+   - Images from selected chunks extracted
+   - Up to 3 images encoded as base64
+   - Sent to GPT-4o-mini Vision API with question
+```
+
+#### Example Use Cases
+- **"성분을 알려줘"** (Tell me the ingredients)
+  - System includes product detail images
+  - Vision API reads ingredient list from image
+  - Provides accurate answer even if OCR failed
+
+- **"영양 성분표 보여줘"** (Show me nutrition facts)
+  - Relevant nutrition label images included
+  - LLM describes nutritional information
+
+#### Cost Optimization
+- Images sent with `detail: "low"` (~85 tokens per image)
+- Maximum 3 images per question
+- Automatic fallback to text-only if no images available
+
+#### Configuration
+No additional setup required! Images are automatically:
+- Downloaded during product data collection
+- Linked to text chunks via metadata
+- Selected and sent based on relevance  
 
 ## Troubleshooting
 
