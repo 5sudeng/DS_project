@@ -81,13 +81,7 @@ playwright install chromium
 
 ### 3. Environment Variables
 Create a `.env` file or export variables:
-```bash
-export OPENAI_API_KEY="your-api-key"
-export CLOVA_OCR_API_URL="..."       # Optional
-export CLOVA_OCR_SECRET_KEY="..."    # Optional
-```
-
-Alternatively, you can save your OpenAI API key in a file named `.secret` in the project root directory.
+- **`OPENAI_API_KEY`**: OpenAI API 키 (필수). `.secret` 파일에 저장하거나 환경 변수로 설정할 수 있습니다.
 
 ### 4. Optional: Login Cookie Setup
 To reduce the chance of bot‑detection, a logged‑in session cookie may be used. Save it as `cookie.txt` in the project root.
