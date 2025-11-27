@@ -1,6 +1,7 @@
 """Main collector class for product artifacts."""
 
 import asyncio
+import json
 import logging
 import os
 import time
@@ -132,6 +133,25 @@ class ProductArtifactCollector:
                 status,
                 serialized,
             )
+
+            # User-friendly console output
+            label_map = {
+                "fetch_html": "기본 정보",
+                "fetch_reviews": "리뷰",
+                "fetch_inquiries": "상품 문의",
+                "fetch_quantity": "가격/재고",
+                "fetch_btf": "상세 페이지",
+                "ocr_processing": "이미지 OCR",
+                "build_chunks": "데이터 청킹",
+            }
+            label = label_map.get(name, name)
+            
+            if status == "success":
+                print(f"✓ {label} 수집 성공")
+            elif status == "skipped":
+                print(f"⚠️  {label} 수집 건너뜀 ({details.get('reason', 'Unknown')})")
+            else:
+                print(f"✗ {label} 수집 실패: {details.get('error', 'Unknown')}")
 
         # HTML
         try:

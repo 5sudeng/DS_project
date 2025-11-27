@@ -45,7 +45,7 @@ class IntentMixin:
         if intent == "question":
             await self._handle_question(user_input)
         elif intent == "add_to_cart":
-            await self._handle_add_to_cart()
+            await self._handle_add_to_cart(intent_result)
         elif intent == "satisfied":
             await self._handle_satisfied()
         elif intent == "dissatisfied":
@@ -74,12 +74,16 @@ class IntentMixin:
 
         self.state.add_message("assistant", answer)
 
-    async def _handle_add_to_cart(self):
+    async def _handle_add_to_cart(self, intent_result: Dict = None):
         """Handle when user explicitly wants to add to cart."""
         print("\n⏳ 장바구니에 담는 중...")
         logger.info("Processing add_to_cart intent")
 
-        result = await self.product_agent.add_product_to_cart()
+        quantity = 1
+        if intent_result:
+            quantity = intent_result.get("quantity", 1)
+
+        result = await self.product_agent.add_product_to_cart(quantity=quantity)
         print(f"\n🤖 {result}")
         self.state.add_message("assistant", result)
 
