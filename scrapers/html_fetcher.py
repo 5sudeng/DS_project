@@ -190,7 +190,11 @@ class HtmlFetcher:
                 logger.warning("[fallback] curl exit: %s", ce.returncode)
 
             if tmp_path.exists() and tmp_path.stat().st_size > 0:
-                return 200, full_url, tmp_path.read_text(encoding="utf-8", errors="ignore")
+                text = tmp_path.read_text(encoding="utf-8", errors="ignore")
+                if "Access Denied" in text or "<TITLE>Access Denied</TITLE>" in text:
+                    logger.warning("[fallback] curl fetched Access Denied page (403 blocked)")
+                    return None, None, None
+                return 200, full_url, text
         return None, None, None
 
     def _make_requests_session(self, retries: int = 2) -> requests.Session:
