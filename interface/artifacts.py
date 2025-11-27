@@ -73,16 +73,16 @@ class ProductArtifactCollector:
         *,
         run_dir: Optional[str],
         cookie: Optional[str],
-        clova_ocr_delay: float = 0.5,
-        clova_ocr_only_btf: bool = True,
+        ocr_delay: float = 0.5,
+        ocr_only_btf: bool = True,
         existing_run_dir: Optional[str] = None,
         api_key: Optional[str] = None,
     ):
         self.run_dir = run_dir
         self.cookie = cookie
         self.api_key = api_key or os.getenv("OPENAI_API_KEY")
-        self.clova_ocr_delay = max(clova_ocr_delay, 0.0)
-        self.clova_ocr_only_btf = clova_ocr_only_btf
+        self.ocr_delay = max(ocr_delay, 0.0)
+        self.ocr_only_btf = ocr_only_btf
         self._existing_run_dir = Path(existing_run_dir).expanduser() if existing_run_dir else None
 
         # Initialize scrapers
@@ -92,7 +92,7 @@ class ProductArtifactCollector:
         self.quantity_scraper = QuantityScraper(cookie=cookie, timeout=60)
         self.btf_scraper = ProductDetailScraper(cookie=cookie, retries=2)
         self.btf_scraper = ProductDetailScraper(cookie=cookie, retries=2)
-        self.ocr_processor = OCRProcessor(api_key=self.api_key, delay=self.clova_ocr_delay) if self.api_key else None
+        self.ocr_processor = OCRProcessor(api_key=self.api_key, delay=self.ocr_delay) if self.api_key else None
 
     async def collect(self, product_url: str) -> ArtifactCollectionResult:
         ctx = self._prepare_context(product_url)
@@ -459,7 +459,7 @@ class ProductArtifactCollector:
         results = self.ocr_processor.process_product_images(
              ctx.product_id,
              str(ctx.paths.run_dir),
-             only_btf=self.clova_ocr_only_btf
+             only_btf=self.ocr_only_btf
         )
         
         # Save results (OCRProcessor might save it, but we can also save it here if needed or verify)
@@ -480,7 +480,7 @@ class ProductArtifactCollector:
                 "processed_images": len(results),
                 "success_count": success_count,
                 "failure_count": failure_count,
-                "delay_seconds": self.clova_ocr_delay,
+                "delay_seconds": self.ocr_delay,
             },
         )
 

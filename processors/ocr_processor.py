@@ -1,6 +1,5 @@
 """
 OpenAI GPT-4o Vision-based OCR Processor.
-Replaces the legacy Clova OCR implementation.
 """
 import base64
 import json

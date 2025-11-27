@@ -20,7 +20,7 @@ async def main():
         help="Root directory to store collected product data (default: outputs/scenario_runs)",
     )
     parser.add_argument(
-        "--clova-ocr-delay",
+        "--ocr-delay",
         type=float,
         default=0.5,
         help="OCR API 호출 사이 대기 시간(초)",
@@ -45,7 +45,7 @@ async def main():
         cookie_file=args.cookie_file,
         api_key=api_key,
         run_dir=args.run_dir,
-        clova_ocr_delay=args.clova_ocr_delay,
+        ocr_delay=args.ocr_delay,
     )
 
     await cli.run()

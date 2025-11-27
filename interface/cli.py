@@ -34,7 +34,7 @@ class ShoppingCLI:
         cookie_file: Optional[str] = None,
         api_key: Optional[str] = None,
         run_dir: Optional[str] = None,
-        clova_ocr_delay: float = 0.5,
+        ocr_delay: float = 0.5,
     ):
         self.headless = headless
         self.run_dir = run_dir
@@ -55,7 +55,7 @@ class ShoppingCLI:
             run_dir=self.run_dir,
             cookie=self.cookie_header_value,
             api_key=self.api_key,
-            clova_ocr_delay=clova_ocr_delay,
+            ocr_delay=ocr_delay,
         )
 
     async def run(self):
