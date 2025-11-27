@@ -7,6 +7,7 @@ import asyncio
 import os
 import sys
 import argparse
+from pathlib import Path
 from interface.cli import ShoppingCLI
 
 async def main():

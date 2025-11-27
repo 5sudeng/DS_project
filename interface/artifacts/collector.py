@@ -1,19 +1,11 @@
-"""Artifact collection helpers for the interactive shopping CLI."""
-
-from __future__ import annotations
+"""Main collector class for product artifacts."""
 
 import asyncio
-import hashlib
-import json
-import os
-import re
-import time
-import urllib.request
-from dataclasses import dataclass
-from pathlib import Path
 import logging
-from typing import Any, Dict, List, Optional, Set, Tuple
-from urllib.parse import parse_qs, urlparse
+import os
+import time
+from pathlib import Path
+from typing import Any, Dict, List, Optional
 
 from core.utils import ScenarioPaths, parse_product_identifiers
 from scrapers.product_detail_scraper import ProductDetailScraper
@@ -21,8 +13,12 @@ from scrapers.html_fetcher import HtmlFetcher
 from scrapers.inquiry_scraper import InquiryScraper
 from scrapers.quantity_scraper import QuantityScraper
 from scrapers.review_scraper import ReviewScraper
-from processors.chunker import ContentChunker
 from processors.ocr_processor import OCRProcessor
+
+from interface.artifacts.context import ArtifactContext, ArtifactCollectionResult
+from interface.artifacts.handlers.btf_handler import BTFHandler
+from interface.artifacts.handlers.ocr_handler import OCRHandler
+from interface.artifacts.handlers.chunking_handler import ChunkingHandler
 
 try:
     from dotenv import load_dotenv
@@ -33,36 +29,6 @@ if load_dotenv:
     load_dotenv()
 
 logger = logging.getLogger(__name__)
-
-
-@dataclass
-class ArtifactCollectionResult:
-    summary: Dict[str, Any]
-    product_id: str
-    item_id: Optional[str]
-    vendor_item_id: Optional[str]
-    paths: ScenarioPaths
-    chunk_file: Optional[str]
-
-
-@dataclass
-class _ArtifactContext:
-    product_url: str
-    product_id: str
-    item_id: Optional[str]
-    vendor_item_id: Optional[str]
-    paths: ScenarioPaths
-    btf_dir: Path
-    btf_images_dir: Path
-    ocr_results_file: Path
-
-    def update_ids_from_url(self, url: Optional[str]) -> None:
-        if not url:
-            return
-        parsed = urlparse(url)
-        query = parse_qs(parsed.query)
-        self.item_id = self.item_id or (query.get("itemId") or [None])[0]
-        self.vendor_item_id = self.vendor_item_id or (query.get("vendorItemId") or [None])[0]
 
 
 class ProductArtifactCollector:
@@ -91,8 +57,14 @@ class ProductArtifactCollector:
         self.inquiry_scraper = InquiryScraper(cookie=cookie, retries=2)
         self.quantity_scraper = QuantityScraper(cookie=cookie, timeout=60)
         self.btf_scraper = ProductDetailScraper(cookie=cookie, retries=2)
-        self.btf_scraper = ProductDetailScraper(cookie=cookie, retries=2)
+        
+        # Initialize processors
         self.ocr_processor = OCRProcessor(api_key=self.api_key, delay=self.ocr_delay) if self.api_key else None
+        
+        # Initialize handlers
+        self.btf_handler = BTFHandler(self.btf_scraper)
+        self.ocr_handler = OCRHandler(self.ocr_processor, delay=self.ocr_delay, only_btf=self.ocr_only_btf)
+        self.chunking_handler = ChunkingHandler()
 
     async def collect(self, product_url: str) -> ArtifactCollectionResult:
         ctx = self._prepare_context(product_url)
@@ -109,7 +81,7 @@ class ProductArtifactCollector:
             chunk_file=chunk_file,
         )
 
-    def _prepare_context(self, product_url: str) -> _ArtifactContext:
+    def _prepare_context(self, product_url: str) -> ArtifactContext:
         product_id, item_id, vendor_item_id = parse_product_identifiers(product_url)
 
         if self._existing_run_dir:
@@ -136,7 +108,7 @@ class ProductArtifactCollector:
         btf_dir.mkdir(parents=True, exist_ok=True)
         btf_images_dir.mkdir(parents=True, exist_ok=True)
         ocr_results_file = paths.run_dir / f"ocrs_{product_id}.json"
-        return _ArtifactContext(
+        return ArtifactContext(
             product_url=product_url,
             product_id=product_id,
             item_id=item_id,
@@ -147,7 +119,7 @@ class ProductArtifactCollector:
             ocr_results_file=ocr_results_file,
         )
 
-    def _collect_sync(self, ctx: _ArtifactContext) -> Dict[str, Any]:
+    def _collect_sync(self, ctx: ArtifactContext) -> Dict[str, Any]:
         steps: List[Dict[str, Any]] = []
         logger.info("Starting artifact steps for product_id=%s", ctx.product_id)
 
@@ -264,16 +236,17 @@ class ProductArtifactCollector:
                 {"reason": "itemId 또는 vendorItemId가 없어 quantity 수집을 건너뜁니다."},
             )
 
-        # BTF payload + images
+        # BTF payload + images (Delegated to BTFHandler)
         try:
-            btf_details = self._fetch_btf_assets(ctx)
+            btf_details = self.btf_handler.fetch_and_process(ctx)
             record("fetch_btf", "success", btf_details)
         except Exception as exc:  # noqa: BLE001
             record("fetch_btf", "error", {"error": str(exc)})
 
+        # OCR (Delegated to OCRHandler)
         try:
-            if self._ocr_enabled():
-                status, details = self._run_ocr(ctx)
+            if self.api_key:
+                status, details = self.ocr_handler.process(ctx)
                 record("ocr_processing", status, details)
             else:
                 record(
@@ -287,9 +260,10 @@ class ProductArtifactCollector:
         except Exception as exc:  # noqa: BLE001
             record("clova_ocr", "error", {"error": str(exc)})
 
+        # Chunking (Delegated to ChunkingHandler)
         chunk_file: Optional[str] = None
         try:
-            chunk_details = self._build_chunk_dataset(ctx)
+            chunk_details = self.chunking_handler.build_dataset(ctx)
             if chunk_details:
                 chunk_file = chunk_details.get("file")
                 record("build_chunks", "success", chunk_details)
@@ -330,229 +304,7 @@ class ProductArtifactCollector:
         )
         return summary
 
-    def _build_chunk_dataset(self, ctx: _ArtifactContext) -> Optional[Dict[str, Any]]:
-        chunker = ContentChunker()
-        processed_sources: Set[str] = set()
-
-        def _read_text(path: Path) -> Optional[str]:
-            try:
-                with path.open("r", encoding="utf-8", errors="ignore") as handle:
-                    return handle.read()
-            except Exception:  # noqa: BLE001
-                logger.exception("Failed to read text file %s", path)
-                return None
-
-        def _read_json(path: Path) -> Optional[Any]:
-            text = _read_text(path)
-            if text is None:
-                return None
-            try:
-                return json.loads(text)
-            except Exception:  # noqa: BLE001
-                logger.exception("Failed to parse JSON file %s", path)
-                return None
-
-        html_dir = ctx.paths.html_dir
-        if html_dir.exists():
-            for html_file in html_dir.glob("*.html"):
-                html_text = _read_text(html_file)
-                if not html_text:
-                    continue
-                try:
-                    chunker.process_html(html_file.name, html_text)
-                    processed_sources.add("html")
-                except Exception:  # noqa: BLE001
-                    logger.exception("Chunking HTML failed for %s", html_file)
-
-        reviews_dir = ctx.paths.reviews_dir
-        if reviews_dir.exists():
-            for review_file in reviews_dir.glob("*.json"):
-                data = _read_json(review_file)
-                if not isinstance(data, dict):
-                    continue
-                try:
-                    chunker.process_reviews(review_file.name, data)
-                    processed_sources.add("reviews")
-                except Exception:  # noqa: BLE001
-                    logger.exception("Chunking review file failed for %s", review_file)
-
-        inquiries_dir = ctx.paths.inquiries_dir
-        if inquiries_dir.exists():
-            for inquiry_file in inquiries_dir.glob("*.json"):
-                data = _read_json(inquiry_file)
-                if not isinstance(data, dict):
-                    continue
-                try:
-                    chunker.process_inquiries(inquiry_file.name, data)
-                    processed_sources.add("inquiries")
-                except Exception:  # noqa: BLE001
-                    logger.exception("Chunking inquiry file failed for %s", inquiry_file)
-
-        quantity_dir = ctx.paths.quantity_dir
-        if quantity_dir.exists():
-            for quantity_file in quantity_dir.glob("*.json"):
-                data = _read_json(quantity_file)
-                if not isinstance(data, list):
-                    continue
-                try:
-                    chunker.process_quantity_json(quantity_file.name, data)
-                    processed_sources.add("quantity")
-                except Exception:  # noqa: BLE001
-                    logger.exception("Chunking quantity file failed for %s", quantity_file)
-
-        btf_dir = ctx.btf_dir
-        if btf_dir.exists():
-            for btf_file in btf_dir.glob("*.json"):
-                data = _read_json(btf_file)
-                if not isinstance(data, dict):
-                    continue
-                try:
-                    chunker.process_btf_json(btf_file.name, data)
-                    processed_sources.add("btf")
-                except Exception:  # noqa: BLE001
-                    logger.exception("Chunking BTF file failed for %s", btf_file)
-
-        if not chunker.all_chunks:
-            return None
-
-        output_path = ctx.paths.run_dir / "chunked_data_output.json"
-        with output_path.open("w", encoding="utf-8") as handle:
-            json.dump(chunker.all_chunks, handle, ensure_ascii=False, indent=2)
-
-        return {
-            "file": str(output_path),
-            "chunk_count": len(chunker.all_chunks),
-            "sources": sorted(processed_sources),
-        }
-
-    def _fetch_btf_assets(self, ctx: _ArtifactContext) -> Dict[str, Any]:
-        resp, payload = self.btf_scraper.fetch(
-            ctx.product_id,
-            ctx.item_id,
-            ctx.vendor_item_id,
-            outdir=None,
-        )
-
-        json_path: Optional[Path] = None
-        if ctx.btf_dir:
-            json_path = ctx.btf_dir / f"btf_{ctx.product_id}_{int(time.time() * 1000)}.json"
-            json_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
-
-        normalized_payload = payload.get("response", payload) if isinstance(payload, dict) else payload
-        image_urls = self._extract_btf_image_urls(ctx, normalized_payload)
-        downloaded = self._download_btf_images(ctx, image_urls)
-
-        return {
-            "status": resp.status_code,
-            "api_url": resp.url,
-            "json_file": str(json_path) if json_path else None,
-            "raw_image_urls": image_urls,
-            "downloaded_images": downloaded,
-            "image_count": len(downloaded),
-        }
-
-    def _run_ocr(self, ctx: _ArtifactContext) -> Tuple[str, Dict[str, Any]]:
-        if not self.ocr_processor:
-             return "skipped", {"reason": "OCR Processor not initialized"}
-
-        # Use run_dir as the data_dir, assuming OCRProcessor handles the path structure
-        results = self.ocr_processor.process_product_images(
-             ctx.product_id,
-             str(ctx.paths.run_dir),
-             only_btf=self.ocr_only_btf
-        )
-        
-        # Save results (OCRProcessor might save it, but we can also save it here if needed or verify)
-        # OCRProcessor.save_results is available but process_product_images returns results.
-        # Let's save it to the expected file location if not already done by processor.
-        # The processor's save_results saves to ocrs_{product_id}.json in data_dir.
-        # ctx.ocr_results_file is run_dir / f"ocrs_{product_id}.json".
-        
-        self.ocr_processor.save_results(ctx.product_id, str(ctx.paths.run_dir), results)
-
-        success_count = sum(1 for r in results if r['success'])
-        failure_count = len(results) - success_count
-
-        return (
-            "success",
-            {
-                "output_file": str(ctx.ocr_results_file),
-                "processed_images": len(results),
-                "success_count": success_count,
-                "failure_count": failure_count,
-                "delay_seconds": self.ocr_delay,
-            },
-        )
-
-    def _ocr_enabled(self) -> bool:
-        return bool(self.api_key)
-
-    def _extract_btf_image_urls(self, ctx: _ArtifactContext, payload: Any) -> List[str]:
-        urls: Set[str] = set()
-        if isinstance(payload, dict):
-            details = payload.get("details") or []
-            for detail_block in details:
-                if not isinstance(detail_block, dict):
-                    continue
-                descriptions = detail_block.get("vendorItemContentDescriptions") or []
-                for desc in descriptions:
-                    if (
-                        isinstance(desc, dict)
-                        and desc.get("detailType") == "IMAGE"
-                        and desc.get("content")
-                    ):
-                        urls.add(self._normalize_image_url(desc["content"]))
-
-        try:
-            serialized = json.dumps(payload, ensure_ascii=False)
-            for match in re.findall(r'(//[^"\\s]+image/(?:retail|vendor|product)/[^"\\s]+)', serialized):
-                urls.add(self._normalize_image_url(match))
-        except TypeError:
-            pass
-
-        return [u for u in urls if u]
-
-    def _download_btf_images(self, ctx: _ArtifactContext, urls: List[str]) -> List[str]:
-        if not urls:
-            return []
-
-        saved: List[str] = []
-        opener = urllib.request.build_opener()
-        opener.addheaders = [("User-agent", "Mozilla/5.0")]
-        urllib.request.install_opener(opener)
-
-        for url in urls:
-            normalized = self._normalize_image_url(url)
-            if not normalized:
-                continue
-            filename = self._btf_image_filename(ctx, normalized)
-            path = ctx.btf_images_dir / filename
-            if path.exists():
-                saved.append(str(path))
-                continue
-            try:
-                urllib.request.urlretrieve(normalized, path)
-                saved.append(str(path))
-            except Exception:
-                continue
-        return saved
-
-    def _btf_image_filename(self, ctx: _ArtifactContext, url: str) -> str:
-        ext = os.path.splitext(urlparse(url).path)[1].lower()
-        if ext not in {".jpg", ".jpeg", ".png", ".webp", ".gif"}:
-            ext = ".jpg"
-        digest = hashlib.md5(url.encode("utf-8")).hexdigest()[:8]
-        return f"btf_{ctx.product_id}_{digest}{ext}"
-
-    def _normalize_image_url(self, url: str) -> str:
-        if not url:
-            return ""
-        cleaned = url.strip().rstrip("\\")
-        if cleaned.startswith("//"):
-            return "https:" + cleaned
-        return cleaned
-
-    def _persist_summary(self, ctx: _ArtifactContext, summary: Dict[str, Any]) -> None:
+    def _persist_summary(self, ctx: ArtifactContext, summary: Dict[str, Any]) -> None:
         try:
             ctx.paths.summary_file.write_text(
                 json.dumps(summary, ensure_ascii=False, indent=2),

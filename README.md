@@ -47,8 +47,12 @@ DS_project/
 │   ├── state.py                # Conversation state management
 │   └── cookies.py              # Cookie handling
 ├── interface/
-│   ├── cli.py                  # Command Line Interface
-│   └── artifacts.py            # Artifact collection logic
+│   ├── cli/                    # CLI Package
+│   │   ├── controller.py       # Main CLI controller
+│   │   └── mixins/             # Feature mixins (Browser, Search, Intent)
+│   └── artifacts/              # Artifacts Package
+│       ├── collector.py        # Main artifact collector
+│       └── handlers/           # Handlers for specific tasks (BTF, OCR, Chunking)
 ├── services/
 │   ├── llm_service.py          # LLM interaction service
 │   ├── browser_service.py      # Playwright browser service
@@ -199,8 +203,12 @@ Core utilities and state management:
 
 ### interface/
 User interface and artifact collection:
-- `cli.py`: Manages the dialogue loop and user interaction.
-- `artifacts.py`: Orchestrates the collection of product data (HTML, reviews, etc.).
+- `cli/`:
+    - `controller.py`: Main `ShoppingCLI` class orchestrating the interaction.
+    - `mixins/`: Contains `BrowserMixin`, `SearchMixin`, and `IntentMixin` for modular functionality.
+- `artifacts/`:
+    - `collector.py`: Orchestrates the collection of product data.
+    - `handlers/`: Specialized handlers for BTF content, OCR, and data chunking.
 
 ### services/
 Business logic services:
@@ -215,7 +223,7 @@ Atomic scraping modules for specific data types:
 ### processors/
 Data processing modules:
 - `chunker.py`: Chunks text data for RAG or analysis.
-- `ocr_processor.py`: Handles OCR tasks using Clova OCR.  
+- `ocr_processor.py`: Handles OCR tasks using OpenAI GPT-4o Vision.  
 
 ## Troubleshooting
 
