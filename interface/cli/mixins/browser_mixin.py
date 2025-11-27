@@ -202,10 +202,19 @@ class BrowserMixin:
 
         print("\n🗂️  상품 데이터 수집 중...")
         logger.info("Collecting structured data for %s", current_url)
+        
+        # Get HTML from Playwright page (already loaded successfully)
         try:
-            result = await self.data_collector.collect(current_url)
+            preloaded_html = await self.page.content()
+            logger.info("Retrieved HTML from Playwright page (length: %d)", len(preloaded_html))
+        except Exception as e:
+            logger.warning("Failed to get page content from Playwright: %s", e)
+            preloaded_html = None
+        
+        try:
+            result = await self.data_collector.collect(current_url, preloaded_html=preloaded_html)
         except ValueError as exc:
-            print(f"⚠️  상품 ID를 추출하지 못해 데이터 수집을 건너뜁니다: {exc}")
+            print(f"⚠️  상품 ID를 추출하지 못해 데이터 수집을 건너킵니다: {exc}")
             logger.warning("Product ID parse failed: %s", exc)
             return False
         except Exception as exc:  # noqa: BLE001

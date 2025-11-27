@@ -4,6 +4,7 @@ import asyncio
 import json
 import logging
 import os
+import re
 import time
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -44,6 +45,16 @@ class ProductArtifactCollector:
         ocr_only_btf: bool = True,
         existing_run_dir: Optional[str] = None,
         api_key: Optional[str] = None,
+        verbose: bool = True,
+        review_pages: int = 1,
+        review_page_size: int = 20,
+        source: str = "interactive_cli",
+        # Dependency Injection
+        html_fetcher: Optional[HtmlFetcher] = None,
+        review_scraper: Optional[ReviewScraper] = None,
+        inquiry_scraper: Optional[InquiryScraper] = None,
+        quantity_scraper: Optional[QuantityScraper] = None,
+        btf_scraper: Optional[ProductDetailScraper] = None,
     ):
         self.run_dir = run_dir
         self.cookie = cookie
@@ -51,13 +62,17 @@ class ProductArtifactCollector:
         self.ocr_delay = max(ocr_delay, 0.0)
         self.ocr_only_btf = ocr_only_btf
         self._existing_run_dir = Path(existing_run_dir).expanduser() if existing_run_dir else None
+        self.verbose = verbose
+        self.review_pages = review_pages
+        self.review_page_size = review_page_size
+        self.source = source
 
-        # Initialize scrapers
-        self.html_fetcher = HtmlFetcher(timeout=40, cookie=cookie)
-        self.review_scraper = ReviewScraper(cookie=cookie, retries=2)
-        self.inquiry_scraper = InquiryScraper(cookie=cookie, retries=2)
-        self.quantity_scraper = QuantityScraper(cookie=cookie, timeout=60)
-        self.btf_scraper = ProductDetailScraper(cookie=cookie, retries=2)
+        # Initialize scrapers (use injected or create new)
+        self.html_fetcher = html_fetcher or HtmlFetcher(timeout=40, cookie=cookie)
+        self.review_scraper = review_scraper or ReviewScraper(cookie=cookie, retries=2)
+        self.inquiry_scraper = inquiry_scraper or InquiryScraper(cookie=cookie, retries=2)
+        self.quantity_scraper = quantity_scraper or QuantityScraper(cookie=cookie, timeout=60)
+        self.btf_scraper = btf_scraper or ProductDetailScraper(cookie=cookie, retries=2)
         
         # Initialize processors
         self.ocr_processor = OCRProcessor(api_key=self.api_key, delay=self.ocr_delay) if self.api_key else None
@@ -67,10 +82,14 @@ class ProductArtifactCollector:
         self.ocr_handler = OCRHandler(self.ocr_processor, delay=self.ocr_delay, only_btf=self.ocr_only_btf)
         self.chunking_handler = ChunkingHandler()
 
-    async def collect(self, product_url: str) -> ArtifactCollectionResult:
+    async def collect(self, product_url: str, preloaded_html: Optional[str] = None) -> ArtifactCollectionResult:
+        """Collect artifacts for a product."""
         ctx = self._prepare_context(product_url)
         logger.info("Collecting artifacts for product_id=%s", ctx.product_id)
-        summary = await asyncio.to_thread(self._collect_sync, ctx)
+        
+        # Offload the actual synchronous collection to a thread
+        summary = await asyncio.to_thread(self._collect_sync, ctx, preloaded_html)
+        
         logger.info("Collected artifacts for product_id=%s", ctx.product_id)
         chunk_file = summary.get("chunk_dataset_file")
         return ArtifactCollectionResult(
@@ -81,6 +100,8 @@ class ProductArtifactCollector:
             paths=ctx.paths,
             chunk_file=chunk_file,
         )
+
+
 
     def _prepare_context(self, product_url: str) -> ArtifactContext:
         product_id, item_id, vendor_item_id = parse_product_identifiers(product_url)
@@ -120,7 +141,7 @@ class ProductArtifactCollector:
             ocr_results_file=ocr_results_file,
         )
 
-    def _collect_sync(self, ctx: ArtifactContext) -> Dict[str, Any]:
+    def _collect_sync(self, ctx: ArtifactContext, preloaded_html: Optional[str] = None) -> Dict[str, Any]:
         steps: List[Dict[str, Any]] = []
         logger.info("Starting artifact steps for product_id=%s", ctx.product_id)
 
@@ -146,49 +167,130 @@ class ProductArtifactCollector:
             }
             label = label_map.get(name, name)
             
-            if status == "success":
-                print(f"✓ {label} 수집 성공")
-            elif status == "skipped":
-                print(f"⚠️  {label} 수집 건너뜀 ({details.get('reason', 'Unknown')})")
-            else:
-                print(f"✗ {label} 수집 실패: {details.get('error', 'Unknown')}")
+            if self.verbose:
+                if status == "success":
+                    print(f"✓ {label} 수집 성공")
+                elif status == "skipped":
+                    print(f"⚠️  {label} 수집 건너뜀 ({details.get('reason', 'Unknown')})")
+                else:
+                    print(f"✗ {label} 수집 실패: {details.get('error', 'Unknown')}")
 
         # HTML
+        html_success = False
         try:
-            resp, soup, out_path = self.html_fetcher.fetch(
-                ctx.product_id,
-                ctx.item_id or "",
-                ctx.vendor_item_id or "",
-                outdir=ctx.paths.html_dir,
-            )
-            ctx.update_ids_from_url(resp.url)
-            record(
-                "fetch_html",
-                "success",
-                {
-                    "status": resp.status_code,
-                    "url": resp.url,
-                    "file": out_path,
-                    "title": soup.title.text.strip() if soup.title else "",
-                    "resolved_item_id": ctx.item_id,
-                    "resolved_vendor_item_id": ctx.vendor_item_id,
-                },
-            )
+            if preloaded_html:
+                # Use preloaded HTML from Playwright
+                from bs4 import BeautifulSoup
+                logger.info("Using preloaded HTML from Playwright (bypassing HTTP clients)")
+                
+                # Save the HTML
+                ctx.paths.html_dir.mkdir(parents=True, exist_ok=True)
+                out_path = ctx.paths.html_dir / f"response_{ctx.product_id}.html"
+                out_path.write_text(preloaded_html, encoding="utf-8")
+                
+                # Parse it
+                soup = BeautifulSoup(preloaded_html, "html.parser")
+                
+                # Extract IDs from HTML since we don't have a response URL
+                if not ctx.item_id:
+                    m_item = re.search(r'["\']itemId["\']\s*[:=]\s*["\']?(\d+)["\']?', preloaded_html)
+                    if m_item:
+                        ctx.item_id = m_item.group(1)
+                        logger.info(f"HTML Regex 추출 성공: itemId={ctx.item_id}")
+
+                if not ctx.vendor_item_id:
+                    m_vendor = re.search(r'["\']vendorItemId["\']\s*[:=]\s*["\']?(\d+)["\']?', preloaded_html)
+                    if m_vendor:
+                        ctx.vendor_item_id = m_vendor.group(1)
+                        logger.info(f"HTML Regex 추출 성공: vendorItemId={ctx.vendor_item_id}")
+                
+                html_success = True
+                record(
+                    "fetch_html",
+                    "success",
+                    {
+                        "status": 200,
+                        "url": ctx.product_url,
+                        "file": out_path,
+                        "title": soup.title.text.strip() if soup.title else "",
+                        "resolved_item_id": ctx.item_id,
+                        "resolved_vendor_item_id": ctx.vendor_item_id,
+                        "source": "playwright_preloaded",
+                    },
+                )
+            else:
+                # Use HTTP clients (existing logic)
+                resp, soup, out_path = self.html_fetcher.fetch(
+                    ctx.product_id,
+                    ctx.item_id or "",
+                    ctx.vendor_item_id or "",
+                    outdir=ctx.paths.html_dir,
+                )
+                ctx.update_ids_from_url(resp.url)
+
+                # URL에 ID가 없을 경우, HTML 본문에서 직접 추출하는 "구명조끼" 로직 추가
+                if not ctx.item_id or not ctx.vendor_item_id:
+                    logger.info("URL에 ID가 없어 HTML 본문에서 직접 추출을 시도합니다.")
+                    
+                    # itemId 추출 (JSON 패턴 또는 JS 변수 패턴)
+                    if not ctx.item_id:
+                        m_item = re.search(r'["\']itemId["\']\s*[:=]\s*["\']?(\d+)["\']?', resp.text)
+                        if m_item:
+                            ctx.item_id = m_item.group(1)
+                            logger.info(f"HTML Regex 복구 성공: itemId={ctx.item_id}")
+
+                    # vendorItemId 추출
+                    if not ctx.vendor_item_id:
+                        m_vendor = re.search(r'["\']vendorItemId["\']\s*[:=]\s*["\']?(\d+)["\']?', resp.text)
+                        if m_vendor:
+                            ctx.vendor_item_id = m_vendor.group(1)
+                            logger.info(f"HTML Regex 복구 성공: vendorItemId={ctx.vendor_item_id}")
+
+                html_success = True
+                record(
+                    "fetch_html",
+                    "success",
+                    {
+                        "status": resp.status_code,
+                        "url": resp.url,
+                        "file": out_path,
+                        "title": soup.title.text.strip() if soup.title else "",
+                        "resolved_item_id": ctx.item_id,
+                        "resolved_vendor_item_id": ctx.vendor_item_id,
+                    },
+                )
         except Exception as exc:  # noqa: BLE001
             record("fetch_html", "error", {"error": str(exc)})
 
+        # If HTML failed, skip everything else
+        if not html_success:
+            record("fetch_reviews", "skipped", {"reason": "HTML 수집 실패"})
+            record("fetch_inquiries", "skipped", {"reason": "HTML 수집 실패"})
+            record("fetch_quantity", "skipped", {"reason": "HTML 수집 실패"})
+            record("fetch_btf", "skipped", {"reason": "HTML 수집 실패"})
+            record("ocr_processing", "skipped", {"reason": "HTML 수집 실패"})
+            record("build_chunks", "skipped", {"reason": "HTML 수집 실패"})
+            
+            summary = {
+                "product_url": ctx.product_url,
+                "product_id": ctx.product_id,
+                "steps": steps,
+                "source": self.source,
+                "collected_at": int(time.time()),
+            }
+            self._persist_summary(ctx, summary)
+            return summary
+
         # Reviews
         try:
-            review_pages = 1
-            review_page_size = 20
             page_records: List[Dict[str, Any]] = []
-            for page_no in range(1, review_pages + 1):
+            for page_no in range(1, self.review_pages + 1):
                 resp, data = self.review_scraper.fetch(
                     product_id=ctx.product_id,
                     vendor_item_id=ctx.vendor_item_id,
                     item_id=ctx.item_id,
                     page=page_no,
-                    size=review_page_size,
+                    size=self.review_page_size,
                     outdir=ctx.paths.reviews_dir,
                 )
                 page_records.append(
@@ -278,7 +380,7 @@ class ProductArtifactCollector:
                     },
                 )
         except Exception as exc:  # noqa: BLE001
-            record("clova_ocr", "error", {"error": str(exc)})
+            record("ocr_processing", "error", {"error": str(exc)})
 
         # Chunking (Delegated to ChunkingHandler)
         chunk_file: Optional[str] = None
@@ -312,7 +414,7 @@ class ProductArtifactCollector:
                 "ocr_file": str(ctx.ocr_results_file) if ctx.ocr_results_file.exists() else None,
             },
             "steps": steps,
-            "source": "interactive_cli",
+            "source": self.source,
             "collected_at": int(time.time()),
             "chunk_dataset_file": chunk_file,
         }
