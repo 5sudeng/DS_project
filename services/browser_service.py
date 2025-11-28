@@ -426,10 +426,6 @@ class BrowserService:
                             if orig_price:
                                 info["original_price"] = f"{int(orig_price):,}원"
                         
-                        # Product Name
-                        if "name" in json_ld_data:
-                            info["product_name"] = json_ld_data["name"]
-                        
                         # Brand
                         if "brand" in json_ld_data and "name" in json_ld_data["brand"]:
                             info["brand"] = json_ld_data["brand"]["name"]
