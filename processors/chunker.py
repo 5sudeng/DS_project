@@ -24,7 +24,16 @@ class ContentChunker:
         # 청크 ID는 생성되는 순서대로 부여하여 고유성을 확보
         return f"{base_name}_c{index:05d}"
 
-    def _clean_and_chunk_text(self, text: str, source_file: str, index: int, chunk_name: str, source_type: str, min_length: int = 1) -> None:
+    def _clean_and_chunk_text(
+        self,
+        text: str,
+        source_file: str,
+        index: int,
+        chunk_name: str,
+        source_type: str,
+        min_length: int = 1,
+        extra_metadata: Optional[Dict[str, Any]] = None,
+    ) -> None:
         """
         텍스트에서 HTML 태그를 제거하고, 지정된 최대 길이에 따라 텍스트를 청크로 나눕니다.
         """
@@ -46,26 +55,36 @@ class ContentChunker:
             for i in range(0, len(cleaned_text), self.max_chunk_length):
                 chunk_content = cleaned_text[i:i + self.max_chunk_length].strip()
                 if chunk_content:
+                    metadata = {
+                        "origin_field": chunk_name,
+                        "original_length": len(text),
+                        "chunk_index": i // self.max_chunk_length,
+                        "chunk_strategy": f"LENGTH_SPLIT_{self.max_chunk_length}CHARS"
+                    }
+                    if extra_metadata:
+                        metadata.update(extra_metadata)
                     self._add_chunk(
                         source_file=source_file,
                         source_type=source_type,
                         content_type="TEXT",
                         text_content=chunk_content,
-                        metadata={
-                            "origin_field": chunk_name,
-                            "original_length": len(text),
-                            "chunk_index": i // self.max_chunk_length,
-                            "chunk_strategy": f"LENGTH_SPLIT_{self.max_chunk_length}CHARS"
-                        }
+                        metadata=metadata
                     )
         else:
-             # 짧은 텍스트는 하나의 청크로 처리 (필드 단위 청킹)
-             self._add_chunk(
+            # 짧은 텍스트는 하나의 청크로 처리 (필드 단위 청킹)
+            metadata = {
+                "origin_field": chunk_name,
+                "original_length": len(text),
+                "chunk_strategy": "FIELD_UNIT"
+            }
+            if extra_metadata:
+                metadata.update(extra_metadata)
+            self._add_chunk(
                 source_file=source_file,
                 source_type=source_type,
                 content_type="TEXT",
                 text_content=cleaned_text,
-                metadata={"origin_field": chunk_name, "original_length": len(text), "chunk_strategy": "FIELD_UNIT"}
+                metadata=metadata
             )
 
     def _add_chunk(self, source_file: str, source_type: str, content_type: str, text_content: Optional[str], metadata: Dict[str, Any]) -> None:
@@ -350,6 +369,40 @@ class ContentChunker:
                     metadata=metadata
                 )
 
+    def process_ocr_results(self, file_path: str, data: List[Dict[str, Any]]) -> None:
+        """OCR 결과(JSON 리스트)를 처리하여 모든 OCR 텍스트를 청크에 포함합니다."""
+        logger.info("--- Processing %s (OCR / Image Text Chunking) ---", file_path)
+
+        for i, result in enumerate(data):
+            success = result.get('success', False)
+            text = (result.get('ocr_text') or '').strip()
+
+            if not text:
+                text_lines = [line.strip() for line in result.get('ocr_texts') or [] if line and line.strip()]
+                text = " ".join(text_lines).strip()
+
+            if not text:
+                continue
+
+            extra_metadata = {
+                "image_name": result.get('image_name'),
+                "image_path": result.get('image_path'),
+                "success": success,
+                "chunk_strategy_detail": "OCR_TEXT"
+            }
+            if not success and result.get('error'):
+                extra_metadata['error'] = result['error']
+
+            self._clean_and_chunk_text(
+                text,
+                file_path,
+                i,
+                "ocr_text",
+                source_type="OCR_IMAGE",
+                min_length=1,
+                extra_metadata=extra_metadata,
+            )
+
     def process_reviews(self, file_path: str, data: Dict[str, Any]) -> None:
         """상품 리뷰 파일을 처리합니다. (100자 길이 단위 청킹)"""
         logger.info("--- Processing %s (Reviews / %d-Char Chunking) ---", file_path, self.max_chunk_length)
@@ -409,5 +462,3 @@ class ContentChunker:
                         source_type="INQUIRY_A",
                         min_length=20
                     )
-
-
