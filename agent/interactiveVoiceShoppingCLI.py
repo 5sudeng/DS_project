@@ -30,6 +30,7 @@ class InteractiveVoiceShoppingCLI(InteractiveShoppingCLI):
         voice_input_enabled: bool = True,
         rtzr_client_id: Optional[str] = None,
         rtzr_client_secret: Optional[str] = None,
+        ai_memory_enabled: bool = False,
     ):
         super().__init__(
             headless=headless,
@@ -45,6 +46,7 @@ class InteractiveVoiceShoppingCLI(InteractiveShoppingCLI):
         self.voice_input_enabled = voice_input_enabled
         self.rtzr_client_id = rtzr_client_id
         self.rtzr_client_secret = rtzr_client_secret
+        self.ai_memory_enabled = ai_memory_enabled
 
         self.preference_memory = PreferenceMemory()
         self.io = build_io_interface(
@@ -89,9 +91,9 @@ class InteractiveVoiceShoppingCLI(InteractiveShoppingCLI):
             text = " ".join(str(a) for a in args)
             if self.visual_enabled:
                 self._orig_print(*args, **kwargs)
-            if self.voice_enabled and text.strip():
+            if self.voice_enabled:
                 try:
-                    self.io.speak(text)
+                    self.io.speak(text.strip())
                 except Exception:
                     pass
 
@@ -135,6 +137,8 @@ class InteractiveVoiceShoppingCLI(InteractiveShoppingCLI):
 
     async def _conversation_loop(self):
         """Voice-first loop: skip initial product/search prompt and accept commands directly."""
+        await self._ask_ai_memory_preference()
+
         print("\n🗣️ 명령을 말씀하거나 입력해주세요. (예: '쿠팡 들어가줘', '검색 후드티', 'exit')")
         while True:
             user_input = input("\n💬 > ").strip()
@@ -163,12 +167,15 @@ class InteractiveVoiceShoppingCLI(InteractiveShoppingCLI):
 
         query = await self._maybe_augment_query(query)
         await self._perform_search(query)
-        await self._select_from_search_results()
 
     async def _perform_search(self, query: str):
-        await super()._perform_search(query)
-        if self.state.search_results:
-            print("   '추천' → 페이지 요약 및 추천 보기")
+        """검색만 수행 후 결과 표시."""
+        self.state.current_search_query = query
+        results = await self._search_o ㅂnly(query, page_num=1)
+        if not results:
+            print("\n😔 검색 결과가 없습니다. 다른 검색어로 시도해주세요.")
+            return
+        await self._display_results(results, page_num=1, query=query)
 
     async def _load_current_page(self):
         await super()._load_current_page()
@@ -176,31 +183,41 @@ class InteractiveVoiceShoppingCLI(InteractiveShoppingCLI):
             print("   '추천' → 페이지 요약 및 추천 보기")
 
     async def _handle_user_input(self, user_input: str):
-        # LLM 기반 액션 라우팅 (음성 명령 → URL 이동 등)
+        """Voice-first intent handler that avoids 부모 클래스의 추가 프롬프트."""
+        # 1) LLM → 액션 리스트 매핑
         try:
-            action_plan = self.llm.map_voice_command_to_action(user_input)
+            plan = self.llm.map_voice_command_to_actions(user_input)
         except Exception:
-            action_plan = {"action": "none"}
+            plan = {"actions": []}
 
-        if action_plan.get("action") == "open_url" and action_plan.get("url"):
-            target_url = action_plan["url"]
-            try:
-                print(f"📡 요청하신 사이트로 이동합니다: {target_url}")
-                await self.page.goto(target_url, wait_until="domcontentloaded", timeout=25000)
-                self.state.current_url = self.page.url
-                print("✅ 페이지에 접속했습니다.")
-                # 쿠팡 메인으로 이동했으면 바로 검색 흐름으로 유도
-                if "coupang.com" in target_url:
-                    await self._start_with_search()
-                return
-            except Exception as exc:  # noqa: BLE001
-                print(f"❌ 페이지 이동 중 오류: {exc}")
-                # 계속해서 기본 플로우 진행
+        if plan.get("actions"):
+            await self._execute_actions(plan["actions"])
+            return
 
-        if user_inㅇput.lower() in ["추천", "요약", "summary"]:
+        lower = user_input.lower()
+        # 2) 수동 명령 처리
+        if lower in ["추천", "요약", "summary"]:
             await self._summarize_current_page()
             return
-        await super()._handle_user_input(user_input)
+        if lower.startswith("정렬"):
+            await self._prompt_sort_and_apply()
+            return
+        if "배송" in lower:
+            await self._prompt_shipping_and_apply()
+            return
+        if "연관" in lower or "similar" in lower:
+            await self._show_related_keywords()
+            return
+
+        # 3) 숫자 선택(검색 결과 선택)
+        if user_input.isdigit() and self.state.search_results:
+            num = int(user_input)
+            if 1 <= num <= len(self.state.search_results):
+                await self._select_search_result(num)
+                return
+
+        # 4) 기타는 안내만
+        print("🤖 이해하지 못했습니다. 예) '후드티 검색', '정렬 낮은가격순', '추천' 등을 말씀해보세요.")
 
     async def _handle_dissatisfied(self, intent_result):
         reason = intent_result.get("reason")
@@ -228,6 +245,8 @@ class InteractiveVoiceShoppingCLI(InteractiveShoppingCLI):
     async def _maybe_augment_query(self, query: str) -> str:
         """Apply preference-based augmentation and optional re-query."""
         augmented_query = query
+        if not self.ai_memory_enabled:
+            return augmented_query
         try:
             result = self.llm.augment_user_query(query, self.preference_memory, self.state.conversation_history)
             augmented_query = result.get("query", query).strip() or query
@@ -252,6 +271,176 @@ class InteractiveVoiceShoppingCLI(InteractiveShoppingCLI):
                 augmented_query = f"{augmented_query} {answer}".strip()
 
         return augmented_query
+
+    async def _ask_ai_memory_preference(self):
+        """Ask user whether to enable AI memory (preferences/augment/re-query)."""
+        if self.ai_memory_enabled:
+            return
+        choice = input("🧠 AI 메모리(선호 반영/재질문) 기능을 켤까요? (예/아니오): ").strip().lower()
+        if choice in ["예", "y", "yes"]:
+            self.ai_memory_enabled = True
+            print("✅ AI 메모리를 활성화했습니다.")
+        else:
+            print("🚫 AI 메모리를 비활성화한 채로 진행합니다.")
+
+    async def _search_only(self, query: str, page_num: int = 1):
+        """검색만 수행하고 결과 리스트 반환."""
+        fetch_count = self.state.results_per_page * 10
+        try:
+            results = await self.search_agent.search_page(query, page_num=page_num, max_results=fetch_count)
+            self.preference_memory.append_event(f"search_page: {query} (page {page_num})")
+            return results
+        except Exception as exc:  # noqa: BLE001
+            print(f"\n❌ 검색 중 오류 발생: {exc}")
+            return []
+
+    async def _display_results(self, results, page_num: int, query: Optional[str] = None):
+        """검색 결과를 상태에 반영하고 첫 페이지를 표시."""
+        if query:
+            self.state.current_search_query = query
+        self.state.current_search_query = self.state.current_search_query or ""
+        self.state.current_page = page_num
+        self.state.page_offset = 0
+        self.state.all_search_results = results
+        first_batch = results[: self.state.results_per_page]
+        self.state.search_results = first_batch
+        self.state.page_offset = len(first_batch)
+
+        lines = [f"\n📦 검색 결과 (페이지 {page_num}):\n"]
+        for idx, result in enumerate(first_batch, 1):
+            lines.append(f"{idx}. {result.title}")
+            lines.append(f"   가격: {result.price}")
+            if result.rating:
+                lines.append(f"   평점: {result.rating}")
+            lines.append("")
+        print("\n".join(lines))
+        print("   '정렬' 또는 '배송비' 명령으로 옵션을 적용할 수 있습니다.")
+        print("   '추천' → 페이지 요약 및 추천 보기")
+
+    async def _execute_actions(self, actions: List[Dict[str, Any]]):
+        """Execute ordered actions produced by LLM mapping."""
+        for action in actions:
+            act = action.get("action")
+            if act == "open_url":
+                url = action.get("url")
+                if not url:
+                    continue
+                try:
+                    print(f"📡 요청하신 사이트로 이동합니다: {url}")
+                    await self.page.goto(url, wait_until="domcontentloaded", timeout=25000)
+                    self.state.current_url = self.page.url
+                    print("✅ 페이지에 접속했습니다.")
+                except Exception as exc:  # noqa: BLE001
+                    print(f"❌ 페이지 이동 중 오류: {exc}")
+            elif act == "search_page":
+                query = action.get("query")
+                if not query:
+                    continue
+                if self.ai_memory_enabled:
+                    query = await self._maybe_augment_query(query)
+                self.state.current_search_query = query
+                results = await self._search_only(query, page_num=1)
+                if results:
+                    await self._display_results(results, page_num=1, query=query)
+            elif act == "apply_sort":
+                sort_type = action.get("sort_type") or action.get("option")
+                if sort_type and self.state.all_search_results:
+                    sorted_results = await self._apply_sort_option(self.state.all_search_results, sort_type)
+                    self.state.all_search_results = sorted_results
+                    self.state.search_results = sorted_results[: self.state.results_per_page]
+                    self.state.current_sort_option = sort_type
+                    print(f"✅ '{sort_type}' 정렬을 적용했습니다.")
+            elif act == "apply_shipping":
+                shipping = action.get("shipping_option") or action.get("option")
+                if shipping and self.state.all_search_results:
+                    filtered = await self._apply_shipping_filter(self.state.all_search_results, shipping)
+                    self.state.all_search_results = filtered
+                    self.state.search_results = filtered[: self.state.results_per_page]
+                    self.state.current_shipping_filter = shipping
+                    print(f"✅ '{shipping}' 배송비 옵션을 적용했습니다.")
+            elif act == "summarize":
+                top_n = action.get("top_n", 3)
+                if self.state.all_search_results:
+                    summary = self.llm.summarize_products_for_user(
+                        self.state.all_search_results,
+                        self.preference_memory,
+                        top_n=top_n,
+                    )
+                    print("\n🧠 요약/추천:")
+                    print(summary)
+            elif act == "read_results":
+                top_n = action.get("top_n", self.state.results_per_page)
+                if self.state.all_search_results:
+                    items = self.state.all_search_results[:top_n]
+                    lines = [f"\n📦 상위 {len(items)}개 상품:"]
+                    for idx, res in enumerate(items, 1):
+                        lines.append(f"{idx}. {res.title}")
+                        lines.append(f"   가격: {res.price}")
+                        if res.rating:
+                            lines.append(f"   평점: {res.rating}")
+                        lines.append("")
+                    print("\n".join(lines))
+            elif act in ["similar_search", "related_keywords"]:
+                await self._show_related_keywords()
+
+    async def _prompt_sort_and_apply(self):
+        options = {
+            "1": "랭킹순",
+            "2": "낮은가격순",
+            "3": "높은가격순",
+            "4": "판매량순",
+            "5": "최신순",
+            "6": "평점순",
+        }
+        sel = input("정렬 번호를 말씀하거나 입력하세요 (1:랭킹순 2:낮은가격순 3:높은가격순 4:판매량순 5:최신순 6:평점순): ").strip()
+        sort_type = options.get(sel, "랭킹순")
+        if self.state.all_search_results:
+            sorted_results = await self._apply_sort_option(self.state.all_search_results, sort_type)
+            self.state.all_search_results = sorted_results
+            self.state.search_results = sorted_results[: self.state.results_per_page]
+            self.state.current_sort_option = sort_type
+            print(f"✅ '{sort_type}' 정렬을 적용했습니다.")
+        else:
+            print("정렬할 검색 결과가 없습니다. 먼저 검색해주세요.")
+
+    async def _prompt_shipping_and_apply(self):
+        sel = input("배송비 옵션을 말씀하거나 입력하세요 (1:배송비포함 2:배송비제외): ").strip()
+        shipping_map = {"1": "배송비포함", "2": "배송비제외"}
+        shipping = shipping_map.get(sel, "배송비제외")
+        if self.state.all_search_results:
+            filtered = await self._apply_shipping_filter(self.state.all_search_results, shipping)
+            self.state.all_search_results = filtered
+            self.state.search_results = filtered[: self.state.results_per_page]
+            self.state.current_shipping_filter = shipping
+            print(f"✅ '{shipping}' 배송비 옵션을 적용했습니다.")
+        else:
+            print("배송비 옵션을 적용할 검색 결과가 없습니다. 먼저 검색해주세요.")
+
+    async def _show_related_keywords(self):
+        related = await self.search_agent.get_related_keywords()
+        if not related:
+            print("연관검색어가 없습니다.")
+            return
+        print("\n🔗 연관검색어 목록:")
+        for idx, rk in enumerate(related, 1):
+            print(f" {idx}. {rk['title']}")
+        choice = input("선택 번호를 말씀하거나 입력하세요 (0=취소): ").strip()
+        if not choice.isdigit():
+            return
+        num = int(choice)
+        if num == 0 or num > len(related):
+            return
+        chosen = related[num - 1]
+        print(f"🔁 연관검색어로 이동: {chosen['title']}")
+        results = await self.search_agent.navigate_to_url(chosen["href"], max_results=self.state.results_per_page * 10)
+        if results:
+            self.state.current_search_query = chosen["title"]
+            self.state.all_search_results = results
+            self.state.search_results = results[: self.state.results_per_page]
+            self.state.page_offset = len(self.state.search_results)
+            print(f"✓ {len(results)}개 상품 발견")
+        else:
+            print("연관검색어 이동 결과가 없습니다.")
 
 
 async def main():
@@ -293,6 +482,11 @@ async def main():
         "--stt-model",
         help="STT model name (for openai backend)",
     )
+    parser.add_argument(
+        "--ai-memory",
+        action="store_true",
+        help="Enable AI memory based prompt augmentation and re-query",
+    )
 
     args = parser.parse_args()
 
@@ -309,6 +503,7 @@ async def main():
         voice_input_enabled=not args.text_input,
         rtzr_client_id=args.rtzr_client_id,
         rtzr_client_secret=args.rtzr_client_secret,
+        ai_memory_enabled=args.ai_memory,
     )
 
     await cli.run()

@@ -4,20 +4,72 @@ from __future__ import annotations
 
 import json
 import os
+from pathlib import Path
 from typing import Any, Dict, List, Optional, Sequence
 
 from openai import OpenAI
 
 
 class PreferenceMemory:
-    """Lightweight in-memory preference tracker (LangChain-friendly interface)."""
+    """Preference + identity storage with file-backed memory."""
 
-    def __init__(self):
+    def __init__(self, memory_path: str = "memory.txt", identity_path: str = "identity.txt"):
         self._notes: List[str] = []
+        self.memory_path = Path(memory_path)
+        self.identity_path = Path(identity_path)
+        self.identity: Optional[str] = None
+        self._load_files()
 
+    # ---------------- File helpers ----------------
+    def _load_files(self):
+        if self.memory_path.is_file():
+            try:
+                lines = self.memory_path.read_text(encoding="utf-8").splitlines()
+                self._notes.extend([ln.strip() for ln in lines if ln.strip()])
+            except Exception:
+                pass
+        if self.identity_path.is_file():
+            try:
+                self.identity = self.identity_path.read_text(encoding="utf-8").strip() or None
+            except Exception:
+                self.identity = None
+
+    def append_event(self, text: str) -> None:
+        if not text:
+            return
+        text = text.strip()
+        self._notes.append(text)
+        try:
+            with self.memory_path.open("a", encoding="utf-8") as f:
+                f.write(text + "\n")
+        except Exception:
+            pass
+
+    def clear_memory(self, clear_identity: bool = False) -> None:
+        self._notes.clear()
+        try:
+            if self.memory_path.exists():
+                self.memory_path.write_text("", encoding="utf-8")
+        except Exception:
+            pass
+        if clear_identity:
+            self.identity = None
+            try:
+                if self.identity_path.exists():
+                    self.identity_path.write_text("", encoding="utf-8")
+            except Exception:
+                pass
+
+    def save_identity(self, identity: str) -> None:
+        self.identity = identity.strip() if identity else None
+        try:
+            self.identity_path.write_text(self.identity or "", encoding="utf-8")
+        except Exception:
+            pass
+
+    # ---------------- Query helpers ----------------
     def remember(self, note: str) -> None:
-        if note:
-            self._notes.append(note.strip())
+        self.append_event(note)
 
     def summary(self, max_items: int = 5) -> str:
         if not self._notes:
@@ -31,6 +83,11 @@ class PreferenceMemory:
 
     def as_list(self) -> List[str]:
         return list(self._notes)
+
+    def memory_log(self, max_lines: int = 50) -> str:
+        if not self._notes:
+            return ""
+        return "\n".join(self._notes[-max_lines:])
 
 
 class ShoppingAssistantLLM:
@@ -305,6 +362,8 @@ JSON 형식으로 응답하세요:
             }
         """
         pref_summary = preference_memory.summary()
+        memory_log = preference_memory.memory_log()
+        identity = preference_memory.identity or ""
         system_prompt = """당신은 사용자의 과거 선호도를 기억하는 쇼핑 비서입니다.
 사용자 질문이 모호하면, 기억된 선호도를 반영해 검색어를 보강하세요.
 - 선호도가 없거나, 현재 질문이 충분히 구체적이면 그대로 둡니다.
@@ -317,6 +376,12 @@ JSON으로만 응답하세요."""
 
 저장된 선호:
 {pref_summary or "없음"}
+
+메모리 로그:
+{memory_log or "없음"}
+
+쇼핑 성향(Identity):
+{identity or "미정"}
 
 사용자 요청: "{raw_query}"
 
@@ -353,12 +418,20 @@ JSON으로만 응답하세요."""
 정보가 충분하면 빈 문자열로 응답하세요."""
 
         pref_summary = preference_memory.summary()
+        memory_log = preference_memory.memory_log()
+        identity = preference_memory.identity or ""
         history_tail = "\n".join([f"{m['role']}: {m['content']}" for m in conversation_history[-3:]])
         user_prompt = f"""최근 대화:
 {history_tail or "없음"}
 
 저장된 선호:
 {pref_summary or "없음"}
+
+메모리 로그:
+{memory_log or "없음"}
+
+쇼핑 성향(Identity):
+{identity or "미정"}
 
 사용자 요청: "{raw_query}"
 
@@ -461,6 +534,7 @@ top {top_n} 추천을 요약해줘. 각 상품당 한 줄."""
           - apply_shipping: {shipping_option}  # "배송비포함" | "배송비제외"
           - summarize: {top_n:int}
           - read_results: {top_n:int}
+          - related_keywords: {}  # 연관검색어 목록을 보여주고 선택
         """
         system_prompt = """너는 사용자의 자유로운 음성 명령을 실행 가능한 액션 리스트로 변환하는 라우터다.
 출력은 JSON 하나이며, actions 배열에 순서대로 기술한다.
@@ -471,6 +545,8 @@ top {top_n} 추천을 요약해줘. 각 상품당 한 줄."""
 - apply_shipping: "배송비포함" 또는 "배송비제외"
 - summarize: 현재 결과를 요약/추천 (top_n 지정)
 - read_results: 상위 N개 결과를 읽어줌 (top_n)
+- related_keywords: 현재 페이지의 연관검색어를 보여주고 선택 이동
+
 
 예시 변환:
 - "쿠팡 들어가줘" → [{"action":"open_url","url":"https://www.coupang.com/"}]
@@ -502,3 +578,36 @@ JSON만 응답한다."""
             return json.loads(response.choices[0].message.content)
         except Exception:
             return {"actions": [], "notes": "llm_error"}
+
+    def infer_shopping_identity(self, preference_memory: PreferenceMemory) -> Optional[str]:
+        """Infer user's shopping identity based on accumulated memory."""
+        memory_log = preference_memory.memory_log(max_lines=200)
+        if not memory_log:
+            return None
+        system_prompt = """너는 사용자의 쇼핑 행동 로그를 보고 쇼핑 성향(MBTI 스타일)을 4축으로 분류한다.
+축 정의:
+- 가격: 가성비형 | 가심비형
+- 속도: 로켓배송 고집형 | 배송 상관없음
+- 평가: 평점/리뷰 중시 | 주관적 선택
+- 충동성: 목표 구매만 | 여러 상품 즉흥 구매
+
+출력은 한 줄로 압축:
+"가격=가성비형; 속도=로켓배송; 평가=평점중시; 충동성=목표구매" 와 같이 요약.
+"""
+        user_prompt = f"""사용자 행동 로그:
+{memory_log}
+
+한 줄 요약으로 성향을 반환하세요."""
+        try:
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_prompt},
+                ],
+                temperature=0.2,
+            )
+            identity = response.choices[0].message.content.strip()
+            return identity
+        except Exception:
+            return None
