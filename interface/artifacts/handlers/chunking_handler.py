@@ -102,6 +102,16 @@ class ChunkingHandler:
                 except Exception:  # noqa: BLE001
                     logger.exception("Chunking BTF file failed for %s", btf_file)
 
+        ocr_file = ctx.ocr_results_file
+        if ocr_file.exists():
+            data = _read_json(ocr_file)
+            if isinstance(data, list):
+                try:
+                    chunker.process_ocr_results(ocr_file.name, data)
+                    processed_sources.add("ocr")
+                except Exception:  # noqa: BLE001
+                    logger.exception("Chunking OCR results failed for %s", ocr_file)
+
         if not chunker.all_chunks:
             return None
 
