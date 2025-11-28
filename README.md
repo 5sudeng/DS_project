@@ -40,6 +40,12 @@ This project provides a large language model (LLM)-based interactive shopping as
 - Supports iterative refinement of user preferences.
 - Allows optional automated cart addition.
 
+### 6. Asynchronous OCR Processing
+- **NEW**: Decouples OCR from initial data collection.
+- Provides immediate product summaries using HTML/text data.
+- Processes images in the background and updates the dataset automatically.
+- Ensures fast response times while still providing deep visual understanding.
+
 ## Project Structure
 ```
 DS_project/
@@ -190,6 +196,7 @@ User URL → Intent Classification → Review/Q&A Extraction
 - Webdriver masking  
 - Cookie‑based session continuity  
 - Realistic headers and delays  
+- **Randomized User-Agents** (via `fake-useragent`) to mitigate 403 errors.  
 
 ## Module Descriptions
 
@@ -269,6 +276,12 @@ No additional setup required! Images are automatically:
 - Downloaded during product data collection
 - Linked to text chunks via metadata
 - Selected and sent based on relevance  
+
+### Asynchronous Data Collection
+To improve user experience, the system now employs a hybrid synchronous/asynchronous collection strategy:
+1. **Immediate Feedback**: Basic product info (HTML, Reviews, Quantity) is collected synchronously to generate an initial summary instantly.
+2. **Background Processing**: Heavy tasks like OCR are offloaded to background threads.
+3. **Dynamic Updates**: The dataset is automatically updated when background tasks complete, making new information (like nutrition facts from images) available for subsequent questions without blocking the user.
 
 ## Troubleshooting
 

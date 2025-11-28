@@ -208,9 +208,9 @@ class ProductArtifactCollector:
                     if sku_match:
                         # SKU format is productId-itemId
                         if not ctx.item_id:
-                            ctx.item_id = sku_match.group(2)  # Second part is itemId
+                            ctx.item_id = sku_match.group(1)  # First part is itemId
                             logger.info(f"SKU에서 추출 성공: itemId={ctx.item_id}")
-                
+
                 # vendorItemId must be extracted separately from JavaScript
                 if not ctx.vendor_item_id:
                     # Try addToCartUrl pattern first (most reliable)

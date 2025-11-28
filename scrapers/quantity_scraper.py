@@ -13,15 +13,25 @@ from typing import Dict, List, Optional, Tuple
 
 import requests
 from urllib.parse import urlencode
+from fake_useragent import UserAgent
 
 logger = logging.getLogger(__name__)
 
 URL = "https://www.coupang.com/next-api/products/quantity-info"
-# [변경] 최신 안정 버전(Chrome 131)으로 User-Agent 현실화
-UA = (
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-    "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
-)
+
+# Initialize fake user agent generator
+try:
+    ua_generator = UserAgent()
+    # Get a random Chrome user agent at module load
+    UA = ua_generator.chrome
+    logger.info("Using randomized User-Agent: %s", UA[:50] + "...")
+except Exception as e:
+    # Fallback to static UA if fake-useragent fails
+    logger.warning("Failed to initialize FakeUserAgent, using static UA: %s", e)
+    UA = (
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+    )
 
 
 class IPv4OnlyResolver:
@@ -208,7 +218,7 @@ class QuantityScraper:
                     ctype = r.headers.get("content-type", "")
                     try:
                         data = r.json()
-                    except:
+                    except (json.JSONDecodeError, ValueError):
                         data = {"raw_text": text}
                     logger.debug("[requests] status: %s url: %s", r.status_code, r.url)
                     return r.status_code, r.url, text, data

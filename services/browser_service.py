@@ -397,7 +397,6 @@ class BrowserService:
 
     async def _extract_basic_info(self) -> Dict[str, Any]:
         """Extract basic product information from the page."""
-        import re
         info = {}
         
         # PRIORITY 1: JSON-LD Schema (most reliable)
@@ -425,10 +424,6 @@ class BrowserService:
                             orig_price = json_ld_data["offers"]["priceSpecification"].get("price")
                             if orig_price:
                                 info["original_price"] = f"{int(orig_price):,}원"
-                        
-                        # Product Name
-                        if "name" in json_ld_data:
-                            info["product_name"] = json_ld_data["name"]
                         
                         # Brand
                         if "brand" in json_ld_data and "name" in json_ld_data["brand"]:

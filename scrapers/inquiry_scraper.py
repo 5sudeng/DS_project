@@ -2,22 +2,34 @@
 
 import json
 import logging
-import random
 import time
 from pathlib import Path
-from typing import Dict, Optional, Tuple
+from typing import Any, Dict, Optional, Tuple
 
+import httpx
 import requests
+from fake_useragent import UserAgent
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
+from core.cookies import build_cookie_header
+from core.utils import get_unique_filename
+
 logger = logging.getLogger(__name__)
 
-URL = "https://www.coupang.com/next-api/products/inquiries"
-UA = (
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-    "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36"
-)
+URL = "https://www.coupang.com/vp/product/inquiry/questions"
+
+# Initialize fake user agent generator
+try:
+    ua_generator = UserAgent()
+    UA = ua_generator.chrome
+    logger.info("[Inquiry Scraper] Using randomized User-Agent: %s", UA[:50] + "...")
+except Exception as e:
+    logger.warning("[Inquiry Scraper] Failed to initialize FakeUserAgent, using static UA: %s", e)
+    UA = (
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+    )
 
 
 class InquiryScraper:
