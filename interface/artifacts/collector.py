@@ -207,10 +207,10 @@ class ProductArtifactCollector:
                     sku_match = re.search(r'"sku"\s*:\s*"(\d+)-(\d+)"', preloaded_html)
                     if sku_match:
                         if not ctx.item_id:
-                            ctx.item_id = sku_match.group(2)  # Second part is itemId
+                            ctx.item_id = sku_match.group(1)  # First part is itemId
                             logger.info(f"SKU에서 추출 성공: itemId={ctx.item_id}")
                         if not ctx.vendor_item_id:
-                            ctx.vendor_item_id = sku_match.group(2)  # Often same as itemId
+                            ctx.vendor_item_id = sku_match.group(2)  # Second part is vendorItemId
                             logger.info(f"SKU에서 추출 성공: vendorItemId={ctx.vendor_item_id}")
                 
                 # Fallback: Try more specific regex patterns
