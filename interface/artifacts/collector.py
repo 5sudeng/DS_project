@@ -203,29 +203,36 @@ class ProductArtifactCollector:
                 
                 # Extract IDs from HTML since we don't have a response URL
                 if not ctx.item_id or not ctx.vendor_item_id:
-                    # Try JSON-LD SKU first (format: "487322-41045")
+                    # Try JSON-LD SKU first (format: "productId-itemId", e.g., "487322-41045")
                     sku_match = re.search(r'"sku"\s*:\s*"(\d+)-(\d+)"', preloaded_html)
                     if sku_match:
+                        # SKU format is productId-itemId
                         if not ctx.item_id:
                             ctx.item_id = sku_match.group(2)  # Second part is itemId
                             logger.info(f"SKU에서 추출 성공: itemId={ctx.item_id}")
-                        if not ctx.vendor_item_id:
-                            ctx.vendor_item_id = sku_match.group(2)  # Often same as itemId
-                            logger.info(f"SKU에서 추출 성공: vendorItemId={ctx.vendor_item_id}")
                 
-                # Fallback: Try more specific regex patterns
+                # vendorItemId must be extracted separately from JavaScript
+                if not ctx.vendor_item_id:
+                    # Try addToCartUrl pattern first (most reliable)
+                    # Format: "addToCartUrl":"...vendorItemId=3000014845&..."
+                    m_cart_url = re.search(r'vendorItemId=(\d+)(?:[&\\"])', preloaded_html)
+                    if m_cart_url:
+                        ctx.vendor_item_id = m_cart_url.group(1)
+                        logger.info(f"addToCartUrl에서 추출 성공: vendorItemId={ctx.vendor_item_id}")
+                    else:
+                        # Look for vendorItemId in JavaScript object/JSON
+                        m_vendor = re.search(r'["\']vendorItemId["\']\s*:\s*["\']?(\d{3,})["\']?[,}]', preloaded_html)
+                        if m_vendor:
+                            ctx.vendor_item_id = m_vendor.group(1)
+                            logger.info(f"HTML Regex 추출 성공: vendorItemId={ctx.vendor_item_id}")
+                
+                # Fallback: Try more specific regex patterns for itemId
                 if not ctx.item_id:
-                    # Look for itemId in JavaScript object/JSON with number value (not string "1")
-                    m_item = re.search(r'["\']itemId["\']\s*:\s*(\d{3,})[,}]', preloaded_html)
+                    # Look for itemId in JavaScript object/JSON with number value
+                    m_item = re.search(r'["\']itemId["\']\s*:\s*["\']?(\d{3,})["\']?[,}]', preloaded_html)
                     if m_item:
                         ctx.item_id = m_item.group(1)
                         logger.info(f"HTML Regex 추출 성공: itemId={ctx.item_id}")
-
-                if not ctx.vendor_item_id:
-                    m_vendor = re.search(r'["\']vendorItemId["\']\s*:\s*(\d{3,})[,}]', preloaded_html)
-                    if m_vendor:
-                        ctx.vendor_item_id = m_vendor.group(1)
-                        logger.info(f"HTML Regex 추출 성공: vendorItemId={ctx.vendor_item_id}")
                 
                 html_success = True
                 record(
@@ -271,16 +278,34 @@ class ProductArtifactCollector:
                                 ctx.vendor_item_id = vendor_match.group(1)
                                 logger.info(f"HTML Regex 추출 성공: vendorItemId={ctx.vendor_item_id}")
 
-                        # 2. Fallback to SKU if still missing
-                        if not ctx.item_id or not ctx.vendor_item_id:
+                        # Try SKU first (format: "productId-itemId", e.g., "487322-41045")
+                        if not ctx.item_id:
                             sku_match = re.search(r'"sku"\s*:\s*"(\d+)-(\d+)"', page_content)
                             if sku_match:
-                                if not ctx.item_id:
-                                    ctx.item_id = sku_match.group(2)
-                                    logger.info(f"SKU에서 추출 성공: itemId={ctx.item_id}")
-                                if not ctx.vendor_item_id:
-                                    ctx.vendor_item_id = sku_match.group(2)
-                                    logger.info(f"SKU에서 추출 성공: vendorItemId={ctx.vendor_item_id}")
+                                ctx.item_id = sku_match.group(2)  # Second part is itemId
+                                logger.info(f"SKU에서 추출 성공: itemId={ctx.item_id}")
+                        
+                        # vendorItemId must be extracted separately from JavaScript
+                        if not ctx.vendor_item_id:
+                            # Try addToCartUrl pattern first (most reliable)
+                            # Format: "addToCartUrl":"...vendorItemId=3000014845&..."
+                            m_cart_url = re.search(r'vendorItemId=(\d+)(?:[&\\"])', page_content)
+                            if m_cart_url:
+                                ctx.vendor_item_id = m_cart_url.group(1)
+                                logger.info(f"addToCartUrl에서 추출 성공: vendorItemId={ctx.vendor_item_id}")
+                            else:
+                                m_vendor = re.search(r'["\']vendorItemId["\']\s*:\s*["\']?(\d{3,})["\']?[,}]', page_content)
+                                if m_vendor:
+                                    ctx.vendor_item_id = m_vendor.group(1)
+                                    logger.info(f"HTML Regex 추출 성공: vendorItemId={ctx.vendor_item_id}")
+                        
+                        # 1. Try explicit itemId regex if still missing
+                        if not ctx.item_id:
+                            # Match: itemId, originalItemId, "itemId", "originalItemId"
+                            item_match = re.search(r'["\']?(?:originalI|i)temId["\']?\s*[:=]\s*["\']?(\d{5,})["\']?', page_content)
+                            if item_match:
+                                ctx.item_id = item_match.group(1)
+                                logger.info(f"HTML Regex 추출 성공: itemId={ctx.item_id}")
                     except Exception as e:
                         logger.warning(f"ID 추출 중 오류 발생: {e}")
 
