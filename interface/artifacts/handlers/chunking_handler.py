@@ -76,6 +76,9 @@ class ChunkingHandler:
         quantity_dir = ctx.paths.quantity_dir
         if quantity_dir.exists():
             for quantity_file in quantity_dir.glob("*.json"):
+                # Skip temporary files (e.g., _curl_quantity_tmp.json)
+                if quantity_file.name.startswith("_"):
+                    continue
                 data = _read_json(quantity_file)
                 if not isinstance(data, list):
                     continue

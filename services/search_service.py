@@ -151,7 +151,7 @@ class SearchService:
                 url = f"https://www.coupang.com{url}"
 
             # Extract price
-            price_elem = item.locator("strong.price-value, em.sale, span.price").first
+            price_elem = item.locator("div.custom-oos, strong.price-value, em.sale, span.price").first
             price = await price_elem.inner_text() if await price_elem.count() > 0 else "가격 정보 없음"
             price = price.strip()
 
@@ -201,11 +201,48 @@ class SearchService:
                 if not title or len(title.strip()) < 3:
                     continue
 
+                # Try to find price from nearby elements or title
+                price = "가격 확인 필요"
+                
+                # Method 1: Try to find price element in parent container (우선)
+                try:
+                    # Get parent container
+                    parent = link.locator("xpath=ancestor::li[1] | xpath=ancestor::div[@class][1]").first
+                    if await parent.count() > 0:
+                        # Try various price selectors
+                        price_selectors = [
+                            "div.custom-oos",
+                            "strong.price-value",
+                            "em.sale",
+                            "span.price",
+                            "strong:has-text('원')",
+                            "em:has-text('원')",
+                            ".price:has-text('원')"
+                        ]
+                        for selector in price_selectors:
+                            price_elem = parent.locator(selector).first
+                            if await price_elem.count() > 0:
+                                price_text = await price_elem.inner_text()
+                                if price_text and '원' in price_text:
+                                    price = price_text.strip()
+                                    break
+                except Exception:
+                    pass
+                
+                # Method 2: Extract from title using regex (fallback)
+                if price == "가격 확인 필요":
+                    price_match = re.search(r'(\d{1,3}(?:,\d{3})*원)', title)
+                    if price_match:
+                        # Get the last occurrence (usually the sale price)
+                        all_prices = re.findall(r'\d{1,3}(?:,\d{3})*원', title)
+                        if all_prices:
+                            price = all_prices[-1]  # Use last price (sale price)
+
                 results.append(
                     SearchResult(
                         rank=rank,
                         title=self._clean_text(title),
-                        price="가격 확인 필요",
+                        price=price,
                         url=url,
                     )
                 )
