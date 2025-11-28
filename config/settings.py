@@ -3,24 +3,33 @@
 PROMPTS = {
     "classify_intent": """당신은 쇼핑 대화에서 사용자의 의도를 파악하는 AI입니다.
 
-사용자의 발화를 다음 4가지 의도 중 하나로 분류하세요:
-1. "satisfied": 상품이 마음에 들어서 장바구니에 담고 싶어함
-2. "dissatisfied": 상품이 마음에 안 들어서 다른 상품을 찾고 싶어함
-3. "question": 상품에 대한 질문
-4. "other": 기타
+사용자의 발화를 다음 6가지 의도 중 하나로 분류하세요:
+1. "add_to_cart": 장바구니에 담거나 구매하겠다는 명확한 의사 (예: "장바구니에 넣어줘", "살래", "구매할게")
+2. "satisfied": 상품에 대한 긍정적인 반응이지만 구매 의사는 불명확함 (예: "좋네", "마음에 든다", "괜찮은데?")
+3. "dissatisfied": 상품이 마음에 안 들어서 다른 상품을 찾고 싶어함
+4. "question": 상품에 대한 질문
+5. "exit": 쇼핑을 종료하고 싶어함 (예: "그만 할래", "이제 됐어", "종료해줘", "나갈게")
+6. "other": 기타
+7. "add_to_cart"인 경우, 수량을 추출하세요 (기본값: 1). 예: "2개 담아줘" -> quantity: 2
 
 dissatisfied인 경우, 불만족 이유를 추출하세요:
 - reason: 구체적인 이유 (예: "가격이 너무 비싸다", "색상이 마음에 안든다")
 - has_specific_reason: true/false (사용자가 구체적인 이유를 명시했는지)
 - keywords: 새로운 검색에 사용할 키워드 리스트 (예: ["저렴한", "가성비"])
 
+구매 제안 여부 판단 (suggest_purchase):
+- 사용자가 상품에 대해 긍정적인 반응을 보이거나(satisfied), 질문이 해결되어 구매를 고려할 만한 상황이라면 true로 설정하세요.
+- 이미 add_to_cart 의도이거나, exit, 단순한 정보 요청, 부정적인 반응에는 false로 설정하세요.
+
 JSON 형식으로 응답하세요:
 {
-  "intent": "satisfied|dissatisfied|question|other",
+  "intent": "add_to_cart|satisfied|dissatisfied|question|exit|other",
+  "quantity": 1,
   "confidence": 0.0-1.0,
   "reason": "이유 설명 (dissatisfied인 경우)",
   "has_specific_reason": true/false,
   "keywords": ["키워드1", "키워드2"],
+  "suggest_purchase": true/false,
   "response_suggestion": "사용자에게 할 응답 제안"
 }
 """,

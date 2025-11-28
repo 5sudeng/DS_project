@@ -13,14 +13,25 @@ from typing import Dict, List, Optional, Tuple
 
 import requests
 from urllib.parse import urlencode
+from fake_useragent import UserAgent
 
 logger = logging.getLogger(__name__)
 
 URL = "https://www.coupang.com/next-api/products/quantity-info"
-UA = (
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-    "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36"
-)
+
+# Initialize fake user agent generator
+try:
+    ua_generator = UserAgent()
+    # Get a random Chrome user agent at module load
+    UA = ua_generator.chrome
+    logger.info("Using randomized User-Agent: %s", UA[:50] + "...")
+except Exception as e:
+    # Fallback to static UA if fake-useragent fails
+    logger.warning("Failed to initialize FakeUserAgent, using static UA: %s", e)
+    UA = (
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+    )
 
 
 class IPv4OnlyResolver:
@@ -65,14 +76,23 @@ class QuantityScraper:
         save_dir.mkdir(parents=True, exist_ok=True)
 
         with IPv4OnlyResolver():
-            status, url, text, data = self._try_httpx(headers, params)
+            # [변경] 1순위: curl_cffi (가장 강력한 우회)
+            status, url, text, data = self._try_curl_cffi(headers, params)
+            
+            # 2순위: httpx
+            if data is None:
+                status, url, text, data = self._try_httpx(headers, params)
+            
+            # 3순위: requests
             if data is None:
                 status, url, text, data = self._try_requests(headers, params)
+            
+            # 4순위: curl (시스템 명령)
             if data is None:
                 status, url, text, data = self._try_curl(headers, params, save_dir)
 
         if data is None:
-            raise RuntimeError("failed to fetch quantity-info")
+            raise RuntimeError("failed to fetch quantity-info (All methods blocked)")
 
         ts = int(time.time() * 1000)
         out_path = self._save_json(data, save_dir, f"{filename_prefix}_{product_id}_{ts}.json")
@@ -96,7 +116,8 @@ class QuantityScraper:
             "sec-fetch-site": "same-origin",
             "sec-fetch-dest": "empty",
             "connection": "keep-alive",
-            "sec-ch-ua": '"Chromium";v="141", "Not?A_Brand";v="99", "Google Chrome";v="141"',
+            # [변경] Chrome 131 버전에 맞는 sec-ch-ua 헤더
+            "sec-ch-ua": '"Google Chrome";v="131", "Chromium";v="131", "Not_A Brand";v="24"',
             "sec-ch-ua-platform": '"macOS"',
             "sec-ch-ua-mobile": "?0",
             "x-coupang-target-market": "KR",
@@ -115,6 +136,50 @@ class QuantityScraper:
             "landingProductId": product_id,
             "landingVendorItemId": vendor_item_id,
         }
+
+    # [추가] curl_cffi 메서드 구현 (TLS Fingerprint 우회)
+    def _try_curl_cffi(self, headers: Dict[str, str], params: Dict[str, str]) -> Tuple[Optional[int], Optional[str], Optional[str], Optional[Dict]]:
+        try:
+            from curl_cffi import requests as cffi_requests
+        except ImportError:
+            logger.warning("curl_cffi not installed. Skipping robust TLS fetch.")
+            return None, None, None, None
+
+        try:
+            # impersonate="chrome" 옵션으로 리얼 브라우저 흉내
+            r = cffi_requests.get(
+                URL, 
+                params=params, 
+                headers=headers, 
+                impersonate="chrome", 
+                timeout=float(self.timeout)
+            )
+            
+            text = r.text or ""
+            if r.status_code == 200 and text:
+                # 403 Access Denied 페이지가 200으로 오는 경우 체크
+                if "Access Denied" in text:
+                    logger.warning("[curl_cffi] blocked (Access Denied page)")
+                    return None, None, None, None
+
+                ctype = r.headers.get("content-type", "")
+                try:
+                    data = r.json()
+                except json.JSONDecodeError:
+                    if "application/json" in ctype:
+                        logger.warning("[curl_cffi] JSON decode failed but header says JSON")
+                        return None, None, None, None
+                    data = {"raw_text": text}
+                
+                logger.debug("[curl_cffi] status: %s url: %s", r.status_code, r.url)
+                return r.status_code, r.url, text, data
+            else:
+                logger.warning(f"[curl_cffi] unexpected status {r.status_code}")
+                return None, None, None, None
+
+        except Exception as e:
+            logger.warning("[curl_cffi] failed: %s", e)
+            return None, None, None, None
 
     def _try_httpx(self, headers: Dict[str, str], params: Dict[str, str]) -> Tuple[Optional[int], Optional[str], Optional[str], Optional[Dict]]:
         try:
@@ -136,7 +201,9 @@ class QuantityScraper:
                 logger.debug("[httpx/h2] status: %s url: %s", r.status_code, r.url)
                 return r.status_code, str(r.url), text, data
             else:
-                raise RuntimeError(f"httpx/h2 unexpected status {r.status_code}")
+                # raise RuntimeError 대신 조용히 실패 처리하고 다음 단계로 넘김
+                logger.warning(f"[httpx/h2] unexpected status {r.status_code}")
+                return None, None, None, None
         except Exception as e:
             logger.warning("[httpx/h2] failed: %s", e)
             return None, None, None, None
@@ -149,21 +216,20 @@ class QuantityScraper:
                 text = r.text or ""
                 if r.status_code == 200 and text:
                     ctype = r.headers.get("content-type", "")
-                    data = r.json() if "application/json" in ctype else {"raw_text": text}
+                    try:
+                        data = r.json()
+                    except (json.JSONDecodeError, ValueError):
+                        data = {"raw_text": text}
                     logger.debug("[requests] status: %s url: %s", r.status_code, r.url)
                     return r.status_code, r.url, text, data
                 else:
                     raise RuntimeError(f"requests unexpected status {r.status_code}")
-            except requests.Timeout as e:
+            except Exception as e:
                 last_err = e
                 delay = (2 ** (attempt - 1)) + random.uniform(0, 0.7)
-                logger.warning("[requests retry %d/%d] timeout -> wait %.2fs", attempt, retries, delay)
+                logger.warning("[requests retry %d/%d] error: %s -> wait %.2fs", attempt, retries, e, delay)
                 time.sleep(delay)
-            except requests.RequestException as e:
-                last_err = e
-                logger.warning("[requests retry %d/%d] error: %s", attempt, retries, e)
-                time.sleep(1.0)
-        logger.warning("[requests] failed: %s", last_err)
+        
         return None, None, None, None
 
     def _try_curl(self, headers: Dict[str, str], params: Dict[str, str], outdir: Path) -> Tuple[Optional[int], Optional[str], Optional[str], Optional[Dict]]:
@@ -195,6 +261,11 @@ class QuantityScraper:
 
         if tmp_path.exists() and tmp_path.stat().st_size > 0:
             raw = tmp_path.read_text(encoding="utf-8", errors="ignore")
+            # 403 체크
+            if "Access Denied" in raw or "<TITLE>Access Denied</TITLE>" in raw:
+                 logger.warning("[fallback] curl also blocked (Access Denied)")
+                 return None, None, None, None
+                 
             try:
                 data = json.loads(raw)
             except Exception:

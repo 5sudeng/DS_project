@@ -29,10 +29,22 @@ This project provides a large language model (LLM)-based interactive shopping as
 - When dissatisfaction is detected, the assistant automatically generates new search queries.
 - Searches Coupang using refined terms and ranks search results.
 
-### 4. Multi‑Turn Conversational Interface
+### 4. Multimodal RAG with Vision API
+- **NEW**: Automatically extracts product images from detail pages.
+- Sends relevant images to GPT-4o-mini Vision API alongside text.
+- Enables answering questions about ingredients, nutrition facts, and other image-based information.
+- Smart image selection based on text similarity scores.
+
+### 5. Multi‑Turn Conversational Interface
 - Maintains conversation history across steps.
 - Supports iterative refinement of user preferences.
 - Allows optional automated cart addition.
+
+### 6. Asynchronous OCR Processing
+- **NEW**: Decouples OCR from initial data collection.
+- Provides immediate product summaries using HTML/text data.
+- Processes images in the background and updates the dataset automatically.
+- Ensures fast response times while still providing deep visual understanding.
 
 ## Project Structure
 ```
@@ -47,8 +59,12 @@ DS_project/
 │   ├── state.py                # Conversation state management
 │   └── cookies.py              # Cookie handling
 ├── interface/
-│   ├── cli.py                  # Command Line Interface
-│   └── artifacts.py            # Artifact collection logic
+│   ├── cli/                    # CLI Package
+│   │   ├── controller.py       # Main CLI controller
+│   │   └── mixins/             # Feature mixins (Browser, Search, Intent)
+│   └── artifacts/              # Artifacts Package
+│       ├── collector.py        # Main artifact collector
+│       └── handlers/           # Handlers for specific tasks (BTF, OCR, Chunking)
 ├── services/
 │   ├── llm_service.py          # LLM interaction service
 │   ├── browser_service.py      # Playwright browser service
@@ -81,13 +97,7 @@ playwright install chromium
 
 ### 3. Environment Variables
 Create a `.env` file or export variables:
-```bash
-export OPENAI_API_KEY="your-api-key"
-export CLOVA_OCR_API_URL="..."       # Optional
-export CLOVA_OCR_SECRET_KEY="..."    # Optional
-```
-
-Alternatively, you can save your OpenAI API key in a file named `.secret` in the project root directory.
+- **`OPENAI_API_KEY`**: OpenAI API 키 (필수). `.secret` 파일에 저장하거나 환경 변수로 설정할 수 있습니다.
 
 ### 4. Optional: Login Cookie Setup
 To reduce the chance of bot‑detection, a logged‑in session cookie may be used. Save it as `cookie.txt` in the project root.
@@ -174,7 +184,7 @@ User URL → Intent Classification → Review/Q&A Extraction
 ### Core
 - Python 3.10+
 - Playwright (Coupang page automation)  
-- OpenAI GPT models  
+- OpenAI GPT-4o-mini (Text and **Vision API**)  
 - LangChain orchestration  
 
 ### Scraping and Data Handling
@@ -186,6 +196,7 @@ User URL → Intent Classification → Review/Q&A Extraction
 - Webdriver masking  
 - Cookie‑based session continuity  
 - Realistic headers and delays  
+- **Randomized User-Agents** (via `fake-useragent`) to mitigate 403 errors.  
 
 ## Module Descriptions
 
@@ -205,8 +216,12 @@ Core utilities and state management:
 
 ### interface/
 User interface and artifact collection:
-- `cli.py`: Manages the dialogue loop and user interaction.
-- `artifacts.py`: Orchestrates the collection of product data (HTML, reviews, etc.).
+- `cli/`:
+    - `controller.py`: Main `ShoppingCLI` class orchestrating the interaction.
+    - `mixins/`: Contains `BrowserMixin`, `SearchMixin`, and `IntentMixin` for modular functionality.
+- `artifacts/`:
+    - `collector.py`: Orchestrates the collection of product data.
+    - `handlers/`: Specialized handlers for BTF content, OCR, and data chunking.
 
 ### services/
 Business logic services:
@@ -220,8 +235,53 @@ Atomic scraping modules for specific data types:
 
 ### processors/
 Data processing modules:
-- `chunker.py`: Chunks text data for RAG or analysis.
-- `ocr_processor.py`: Handles OCR tasks using Clova OCR.  
+- `chunker.py`: Chunks text data for RAG or analysis. **Now includes image path metadata for multimodal RAG**.
+- `ocr_processor.py`: Handles OCR tasks using OpenAI GPT-4o Vision.
+
+## Key Features Deep Dive
+
+### Multimodal RAG System
+
+The assistant now supports **vision-enabled question answering** by automatically including relevant product images in LLM prompts.
+
+#### How It Works
+```
+1. Product images downloaded from BTF (Below-The-Fold) API
+2. Image URL → local path mapping stored in context
+3. Chunker adds image paths to metadata
+4. During Q&A:
+   - Text similarity selects relevant chunks
+   - Images from selected chunks extracted
+   - Up to 3 images encoded as base64
+   - Sent to GPT-4o-mini Vision API with question
+```
+
+#### Example Use Cases
+- **"성분을 알려줘"** (Tell me the ingredients)
+  - System includes product detail images
+  - Vision API reads ingredient list from image
+  - Provides accurate answer even if OCR failed
+
+- **"영양 성분표 보여줘"** (Show me nutrition facts)
+  - Relevant nutrition label images included
+  - LLM describes nutritional information
+
+#### Cost Optimization
+- Images sent with `detail: "low"` (~85 tokens per image)
+- Maximum 3 images per question
+- Automatic fallback to text-only if no images available
+
+#### Configuration
+No additional setup required! Images are automatically:
+- Downloaded during product data collection
+- Linked to text chunks via metadata
+- Selected and sent based on relevance  
+
+### Asynchronous Data Collection
+To improve user experience, the system now employs a hybrid synchronous/asynchronous collection strategy:
+1. **Immediate Feedback**: Basic product info (HTML, Reviews, Quantity) is collected synchronously to generate an initial summary instantly.
+2. **Background Processing**: Heavy tasks like OCR are offloaded to background threads.
+3. **Dynamic Updates**: The dataset is automatically updated when background tasks complete, making new information (like nutrition facts from images) available for subsequent questions without blocking the user.
 
 ## Troubleshooting
 

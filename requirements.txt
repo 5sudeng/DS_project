@@ -16,3 +16,4 @@ lxml
 beautifulsoup4
 requests
 httpx[http2]
+fake-useragent

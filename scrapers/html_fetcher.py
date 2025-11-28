@@ -3,6 +3,7 @@
 import logging
 import random
 import shlex
+import re
 import socket
 import subprocess
 import time
@@ -11,17 +12,31 @@ from types import SimpleNamespace
 from typing import List, Optional, Sequence, Tuple
 from urllib.parse import urlencode
 
+import httpx
 import requests
 from bs4 import BeautifulSoup
+from fake_useragent import UserAgent
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
+from core.cookies import build_cookie_header, parse_cookie_records
+from core.utils import get_unique_filename
+
 logger = logging.getLogger(__name__)
 
-UA = (
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-    "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36"
-)
+URL = "https://www.coupang.com/vp/products/{product_id}?itemId={item_id}&vendorItemId={vendor_item_id}"
+
+# Initialize fake user agent generator
+try:
+    ua_generator = UserAgent()
+    UA = ua_generator.chrome
+    logger.info("[HTML Fetcher] Using randomized User-Agent: %s", UA[:50] + "...")
+except Exception as e:
+    logger.warning("[HTML Fetcher] Failed to initialize FakeUserAgent, using static UA: %s", e)
+    UA = (
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+    )
 
 
 class IPv4OnlyResolver:
@@ -157,14 +172,11 @@ class HtmlFetcher:
                         return r.status_code, r.url, r.text
                     else:
                         raise RuntimeError(f"HTTP {r.status_code}")
-                except requests.Timeout:
-                    delay = (2 ** attempt) + random.uniform(1, 2)
-                    logger.warning("[retry %d/3] timeout, wait %.2fs", attempt, delay)
-                    time.sleep(delay)
-                except requests.RequestException as e:
+                except Exception as e:
                     delay = (2 ** (attempt - 1)) + random.uniform(0.5, 1.5)
-                    logger.warning("[retry %d/3] request error: %s, wait %.2fs", attempt, e, delay)
-                    time.sleep(delay)
+                    logger.warning("[requests] failed (attempt %d/3): %s, wait %.2fs", attempt, e, delay)
+                    if attempt < 3:
+                        time.sleep(delay)
         return None, None, None
 
     def _try_curl(self, candidates: Sequence[Tuple[str, Optional[dict]]], headers: dict, product_id: str) -> Tuple[Optional[int], Optional[str], Optional[str]]:
@@ -193,7 +205,11 @@ class HtmlFetcher:
                 logger.warning("[fallback] curl exit: %s", ce.returncode)
 
             if tmp_path.exists() and tmp_path.stat().st_size > 0:
-                return 200, full_url, tmp_path.read_text(encoding="utf-8", errors="ignore")
+                text = tmp_path.read_text(encoding="utf-8", errors="ignore")
+                if "Access Denied" in text or "<TITLE>Access Denied</TITLE>" in text:
+                    logger.warning("[fallback] curl fetched Access Denied page (403 blocked)")
+                    return None, None, None
+                return 200, full_url, text
         return None, None, None
 
     def _make_requests_session(self, retries: int = 2) -> requests.Session:

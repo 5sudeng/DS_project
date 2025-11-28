@@ -43,6 +43,7 @@ from __future__ import annotations
 import asyncio
 import json
 import os
+import re
 from dataclasses import dataclass
 from pathlib import Path
 from typing import List, Optional, Sequence
@@ -119,6 +120,15 @@ class BrowserService:
                     continue
                 snippets.extend(result)
 
+        # Deduplicate snippets based on text content
+        unique_snippets = []
+        seen_texts = set()
+        for s in snippets:
+            text = s.get("text", "").strip()
+            if text and text not in seen_texts:
+                unique_snippets.append(s)
+                seen_texts.add(text)
+        snippets = unique_snippets
         if not snippets:
             return "관련 정보를 찾지 못했습니다. 다른 내용을 도와드릴까요?"
 
@@ -134,18 +144,51 @@ class BrowserService:
         )
         print(f"✓ 질문과 관련 있는 {len(relevant_snippets)}개 근거만 활용합니다.")
 
+        # Extract basic info from the page
+        basic_info = await self._extract_basic_info()
+
         try:
             return llm.answer_product_question(
                 utterance,
                 relevant_snippets,
+                basic_info=basic_info,
                 language="ko",
             )
         except Exception as exc:  # noqa: BLE001
             return f"답변 생성 중 문제가 발생했습니다: {exc}"
 
 
-    async def add_product_to_cart(self) -> str:
+    async def add_product_to_cart(self, quantity: int = 1) -> str:
         """Click the add-to-cart button and confirm the action."""
+
+        # Handle quantity if greater than 1
+        if quantity > 1:
+            try:
+                # Try to find quantity input
+                # Common selectors for quantity input
+                qty_selectors = [
+                    "input[type='number'][class*='quantity']",
+                    "input[class*='quantity']",
+                    ".prod-quantity__input",
+                    "input[name='quantity']"
+                ]
+                
+                qty_input = None
+                for sel in qty_selectors:
+                    loc = self.page.locator(sel).first
+                    if await loc.count() > 0 and await loc.is_visible():
+                        qty_input = loc
+                        break
+                
+                if qty_input:
+                    await qty_input.fill(str(quantity))
+                    # Trigger change event if needed
+                    await qty_input.dispatch_event("change")
+                    print(f"✓ 수량을 {quantity}개로 변경했습니다.")
+                else:
+                    print(f"⚠️  수량 입력창을 찾지 못해 기본 수량(1개)으로 진행합니다.")
+            except Exception as e:
+                print(f"⚠️  수량 변경 중 오류 발생: {e}")
 
         for selector in self.ADD_TO_CART_SELECTORS:
             try:
@@ -154,7 +197,7 @@ class BrowserService:
                     continue
                 await button.first.click(timeout=self.search_timeout * 1000)
                 await self._wait_for_cart_confirmation()
-                return "장바구니에 담았습니다. 다른 필요한 게 있으신가요?"
+                return f"{quantity}개 상품을 장바구니에 담았습니다. 다른 필요한 게 있으신가요?"
             except PlaywrightTimeoutError:
                 continue
         return "장바구니 버튼을 찾을 수 없었습니다. 직접 눌러 주시겠어요?"
@@ -352,6 +395,212 @@ class BrowserService:
                 self._llm = None
         return self._llm
 
+    async def _extract_basic_info(self) -> Dict[str, Any]:
+        """Extract basic product information from the page."""
+        info = {}
+        
+        # PRIORITY 1: JSON-LD Schema (most reliable)
+        try:
+            page_content = await self.page.content()
+            # Look for JSON-LD script tag
+            json_ld_match = re.search(r'<script[^>]*type="application/ld\+json"[^>]*>(.*?)</script>', page_content, re.DOTALL)
+            if json_ld_match:
+                try:
+                    json_ld_text = json_ld_match.group(1).strip()
+                    json_ld_data = json.loads(json_ld_text)
+                    
+                    # Extract from Product schema
+                    if json_ld_data.get("@type") == "Product":
+                        # Product Name
+                        if "name" in json_ld_data:
+                            info["product_name"] = json_ld_data["name"]
+                        # Price
+                        if "offers" in json_ld_data and "price" in json_ld_data["offers"]:
+                            price_val = json_ld_data["offers"]["price"]
+                            info["price"] = f"{int(price_val):,}원" if price_val else None
+                        
+                        # Original Price (from priceSpecification)
+                        if "offers" in json_ld_data and "priceSpecification" in json_ld_data["offers"]:
+                            orig_price = json_ld_data["offers"]["priceSpecification"].get("price")
+                            if orig_price:
+                                info["original_price"] = f"{int(orig_price):,}원"
+                        
+                        # Brand
+                        if "brand" in json_ld_data and "name" in json_ld_data["brand"]:
+                            info["brand"] = json_ld_data["brand"]["name"]
+                        
+                        # Rating
+                        if "aggregateRating" in json_ld_data:
+                            rating_data = json_ld_data["aggregateRating"]
+                            if "ratingValue" in rating_data:
+                                info["rating"] = str(rating_data["ratingValue"])
+                            if "ratingCount" in rating_data:
+                                info["review_count"] = f"({rating_data['ratingCount']:,})"
+                except Exception as e:
+                    pass  # Continue to DOM selectors if JSON-LD parsing fails
+        except Exception:
+            pass
+        
+        # PRIORITY 2: DOM Selectors (fallback if JSON-LD missing info)
+        
+        # Product Title (if not from JSON-LD)
+        if "product_name" not in info:
+            try:
+                title_el = self.page.locator("h2.prod-buy-header__title").first
+                if await title_el.count() > 0:
+                    info["product_name"] = await title_el.inner_text()
+            except Exception:
+                pass
+
+        # Price (가격) - Only if not from JSON-LD
+        if "price" not in info:
+            try:
+                # Wait for price container to be visible
+                try:
+                    await self.page.wait_for_selector("div.price-container, span.final-price-amount, span.total-price", timeout=3000)
+                except Exception:
+                    pass  # Continue even if timeout
+                
+                # Try multiple selectors for price
+                price_selectors = [
+                    "span.final-price-amount",  # New design
+                    "span.sales-price-amount",  # Alternative
+                    "span.total-price > strong",  # Old design
+                    "div.final-price span",  # Fallback
+                ]
+                
+                for selector in price_selectors:
+                    try:
+                        price_el = self.page.locator(selector).first
+                        if await price_el.count() > 0:
+                            price_text = await price_el.inner_text()
+                            if price_text and price_text.strip():
+                                info["price"] = price_text.strip()
+                                break
+                    except Exception:
+                        continue
+            except Exception:
+                pass
+
+        # Original Price (정가) - Only if not from JSON-LD
+        if "original_price" not in info:
+            try:
+                orig_price_el = self.page.locator("span.original-price-amount").first
+                if await orig_price_el.count() > 0:
+                    info["original_price"] = await orig_price_el.inner_text()
+            except Exception:
+                pass
+
+        # Rating - Only if not from JSON-LD
+        if "rating" not in info:
+            try:
+                rating_el = self.page.locator("span.rating-star-num").first
+                if await rating_el.count() > 0:
+                    info["rating"] = await rating_el.inner_text()
+            except Exception:
+                pass
+            
+        # Review Count - Only if not from JSON-LD
+        if "review_count" not in info:
+            try:
+                review_count_el = self.page.locator("span.count").first
+                if await review_count_el.count() > 0:
+                    info["review_count"] = await review_count_el.inner_text()
+            except Exception:
+                pass
+
+        # Brand (브랜드) - Only if not from JSON-LD
+        if "brand" not in info:
+            try:
+                brand_el = self.page.locator("div.brand-info, a.prod-brand-name").first
+                if await brand_el.count() > 0:
+                    info["brand"] = await brand_el.inner_text()
+            except Exception:
+                pass
+
+        # Origin (원산지)
+        try:
+            origin_el = self.page.locator("div.country-of-origin").first
+            if await origin_el.count() > 0:
+                origin_text = await origin_el.inner_text()
+                # Remove "원산지: " prefix if present
+                info["origin"] = origin_text.replace("원산지:", "").strip()
+        except Exception:
+            pass
+
+        # Delivery Info (배송 정보)
+        try:
+            delivery_el = self.page.locator("div.delivery-container, div.prod-shipping-fee-message").first
+            if await delivery_el.count() > 0:
+                info["delivery_info"] = await delivery_el.inner_text()
+        except Exception:
+            pass
+
+        # Rocket Delivery Badge (로켓배송)
+        try:
+            rocket_el = self.page.locator("[class*='rocket'], [class*='Rocket']").first
+            if await rocket_el.count() > 0:
+                info["is_rocket_delivery"] = True
+        except Exception:
+            pass
+
+        # Discount Rate (할인율)
+        try:
+            # Calculate from original price and current price if both exist
+            if "original_price" in info and "price" in info:
+                try:
+                    # Extract numeric values
+                    orig = re.sub(r'[^\d]', '', info["original_price"])
+                    curr = re.sub(r'[^\d]', '', info["price"])
+                    if orig and curr:
+                        orig_val = int(orig)
+                        curr_val = int(curr)
+                        if orig_val > curr_val:
+                            discount_rate = round(((orig_val - curr_val) / orig_val) * 100)
+                            info["discount_rate"] = f"{discount_rate}%"
+                except Exception:
+                    pass
+        except Exception:
+            pass
+
+        # Stock Status (재고 상태)
+        try:
+            # Check for out of stock message
+            stock_el = self.page.locator("[class*='sold-out'], [class*='out-of-stock']").first
+            if await stock_el.count() > 0:
+                info["stock_status"] = "품절"
+            else:
+                info["stock_status"] = "판매중"
+        except Exception:
+            pass
+
+        # Seller Info (판매자)
+        try:
+            seller_el = self.page.locator("a.prod-sale-vendor-name, div.prod-sold-by").first
+            if await seller_el.count() > 0:
+                info["seller"] = await seller_el.inner_text()
+        except Exception:
+            pass
+
+        # Extract itemId and vendorItemId from page HTML
+        try:
+            if "page_content" not in locals():
+                page_content = await self.page.content()
+            
+            # Extract itemId
+            item_match = re.search(r'["\']?(?:originalI|i)temId["\']?\s*[:=]\s*["\']?(\d+)["\']?', page_content)
+            if item_match:
+                info["item_id"] = item_match.group(1)
+            
+            # Extract vendorItemId  
+            vendor_match = re.search(r'["\']?(?:originalV|v)endorItemId["\']?\s*[:=]\s*["\']?(\d+)["\']?', page_content)
+            if vendor_match:
+                info["vendor_item_id"] = vendor_match.group(1)
+        except Exception:
+            pass
+
+        return info
+
     def set_chunk_data_path(self, chunk_data_path: Optional[str]) -> None:
         new_path = (
             Path(chunk_data_path).expanduser()
@@ -362,9 +611,3 @@ class BrowserService:
             return
         self.chunk_data_path = new_path
         self._chunk_dataset = None
-
-
-
-
-
-
