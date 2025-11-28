@@ -218,7 +218,7 @@ class QuantityScraper:
                     ctype = r.headers.get("content-type", "")
                     try:
                         data = r.json()
-                    except:
+                    except (json.JSONDecodeError, ValueError):
                         data = {"raw_text": text}
                     logger.debug("[requests] status: %s url: %s", r.status_code, r.url)
                     return r.status_code, r.url, text, data
