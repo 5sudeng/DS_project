@@ -397,7 +397,6 @@ class BrowserService:
 
     async def _extract_basic_info(self) -> Dict[str, Any]:
         """Extract basic product information from the page."""
-        import re
         info = {}
         
         # PRIORITY 1: JSON-LD Schema (most reliable)
