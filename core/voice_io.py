@@ -9,7 +9,7 @@ import sys
 import tempfile
 import time
 import wave
-from typing import Optional
+from typing import Optional, Callable
 
 import numpy as np
 import pyttsx3
@@ -25,19 +25,23 @@ import core.vito_stt_client_pb2_grpc as rtzr_pb_grpc  # type: ignore
 class KeyboardVoiceInputController:
     """Optional push-to-talk style controller using the keyboard."""
 
+    def __init__(self, raw_input: Callable[[str], str] = input):
+        # Store the original input callable to avoid recursion when builtins.input is patched.
+        self._input = raw_input
+
     def capture(self) -> Optional[str]:
         try:
-            input("\n[키보드 음성 모드] 출력이 끝났습니다. 엔터를 눌러 입력을 시작하세요.")
+            self._input("\n[키보드 음성 모드] 출력이 끝났습니다. 엔터를 눌러 입력을 시작하세요.")
         except EOFError:
             return None
 
         try:
-            text = input("[키보드 음성 모드] 명령을 입력하고 엔터를 누르세요: ").strip()
+            text = self._input("[키보드 음성 모드] 명령을 입력하고 엔터를 누르세요: ").strip()
         except EOFError:
             text = ""
 
         try:
-            input("[키보드 음성 모드] 입력을 닫으려면 다시 엔터를 눌러주세요.")
+            self._input("[키보드 음성 모드] 입력을 닫으려면 다시 엔터를 눌러주세요.")
         except EOFError:
             pass
 
@@ -87,7 +91,7 @@ class SpeechInterface:
         self.silence_duration = 1.2
         self.max_recording = 12.0
         self.use_keyboard_input = use_keyboard_input
-        self.keyboard_controller = KeyboardVoiceInputController() if use_keyboard_input else None
+        self.keyboard_controller = KeyboardVoiceInputController(raw_input=input) if use_keyboard_input else None
 
     def speak(self, text: str):
         self.engine.say(text)
@@ -213,7 +217,7 @@ class VoskSpeechInterface:
         self.silence_duration = 1.2
         self.max_recording = 12.0
         self.use_keyboard_input = use_keyboard_input
-        self.keyboard_controller = KeyboardVoiceInputController() if use_keyboard_input else None
+        self.keyboard_controller = KeyboardVoiceInputController(raw_input=input) if use_keyboard_input else None
 
         self.model = Model(model_path)
         self.recognizer = KaldiRecognizer(self.model, samplerate)
@@ -320,6 +324,8 @@ class RTZRSpeechInterface:
         samplerate: int = SAMPLE_RATE,
         chunk: int = CHUNK,
         channels: int = CHANNELS,
+        use_keyboard_input: bool = False,
+        raw_input: Callable[[str], str] = input,
     ):
         self.client_id = client_id or os.getenv("RTZR_CLIENT_ID")
         self.client_secret = client_secret or os.getenv("RTZR_CLIENT_SECRET")
@@ -335,6 +341,8 @@ class RTZRSpeechInterface:
         self._audio = pyaudio.PyAudio()
         self._buffer: queue.Queue[bytes] = queue.Queue()
         self._stream = None
+        self.use_keyboard_input = use_keyboard_input
+        self.keyboard_controller = KeyboardVoiceInputController(raw_input=raw_input) if use_keyboard_input else None
 
     # --- Token helpers -------------------------------------------------
     @property
@@ -394,6 +402,9 @@ class RTZRSpeechInterface:
 
     def listen(self) -> Optional[str]:
         """Stream audio to RTZR and return a single final transcript."""
+        if self.use_keyboard_input and self.keyboard_controller:
+            return self.keyboard_controller.capture()
+
         base_creds = grpc.ssl_channel_credentials()
         call_creds = grpc.access_token_call_credentials(self.token)
         creds = grpc.composite_channel_credentials(base_creds, call_creds)
@@ -453,6 +464,8 @@ def build_io_interface(
         return RTZRSpeechInterface(
             client_id=rtzr_client_id,
             client_secret=rtzr_client_secret,
+            use_keyboard_input=use_keyboard_input,
+            raw_input=input,
         )
 
     return SpeechInterface(
