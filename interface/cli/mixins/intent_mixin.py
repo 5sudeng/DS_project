@@ -32,7 +32,7 @@ class IntentMixin:
             self.state.current_product_name,
             artifact_summary=self.artifact_summary,
         )
-
+        ### status
         print(f"\n[의도 파악: {intent_result['intent']} (신뢰도: {intent_result['confidence']:.2f})]")
         logger.info(
             "Intent classification result intent=%s confidence=%.2f",
@@ -51,10 +51,12 @@ class IntentMixin:
         elif intent == "dissatisfied":
             await self._handle_dissatisfied(intent_result)
         elif intent == "exit":
+            ### TODO
             print("\n👋 쇼핑을 종료합니다. 감사합니다!")
             return False
         else:
             response = intent_result.get("response_suggestion", "죄송합니다. 잘 이해하지 못했습니다. 다시 말씀해주시겠어요?")
+            ### TODO
             print(f"\n🤖 {response}")
             self.state.add_message("assistant", response)
 
@@ -66,16 +68,19 @@ class IntentMixin:
 
     async def _handle_question(self, question: str):
         """Handle user question about the product."""
+        ### TODO
         print("\n⏳ 질문에 답변하는 중...")
         logger.info("Processing question intent: %s", question)
 
         answer = await self.product_agent.answer_user_question(question)
+        ### TODO
         print(f"\n🤖 {answer}")
 
         self.state.add_message("assistant", answer)
 
     async def _handle_add_to_cart(self, intent_result: Dict = None):
         """Handle when user explicitly wants to add to cart."""
+        ### TODO
         print("\n⏳ 장바구니에 담는 중...")
         logger.info("Processing add_to_cart intent")
 
@@ -84,9 +89,11 @@ class IntentMixin:
             quantity = intent_result.get("quantity", 1)
 
         result = await self.product_agent.add_product_to_cart(quantity=quantity)
+        ### TODO
         print(f"\n🤖 {result}")
         self.state.add_message("assistant", result)
 
+        ### TODO
         print("\n💡 다른 상품을 더 찾아보시겠어요? (검색어 입력 또는 'exit'로 종료)")
 
     async def _handle_satisfied(self):
@@ -94,6 +101,7 @@ class IntentMixin:
         logger.info("Processing satisfied intent")
         
         response = "마음에 드신다니 다행이네요! 더 궁금한 점이 있으신가요?"
+        ### TODO
         print(f"\n🤖 {response}")
         self.state.add_message("assistant", response)
 
@@ -109,7 +117,9 @@ class IntentMixin:
             reason = intent_result["reason"]
             keywords = intent_result.get("keywords", [])
 
+            ### TODO
             print(f"\n🔍 이해했습니다: {reason}")
+            ### TODO
             print("새로운 상품을 찾아보겠습니다...")
 
             # Generate search query using LLM
@@ -121,6 +131,7 @@ class IntentMixin:
                 artifact_summary=self.artifact_summary,
             )
 
+            ### TODO
             print(f"💡 검색어: '{search_query}'")
             await self._perform_search(search_query)
             await self._select_from_search_results()
@@ -133,7 +144,7 @@ class IntentMixin:
                 self.state.current_product_name,
                 artifact_summary=self.artifact_summary,
             )
-
+            ### TODO
             print(f"\n🤖 {clarification_msg}")
             self.state.add_message("assistant", clarification_msg)
             self.state.waiting_for_clarification = True
@@ -155,7 +166,9 @@ class IntentMixin:
         reason = intent_result.get("reason", user_input)
         keywords = intent_result.get("keywords", [])
 
+        ### TODO
         print(f"\n🔍 알겠습니다: {reason}")
+        ### TODO
         print("새로운 상품을 찾아보겠습니다...")
 
         search_query = self.llm.generate_search_query(
@@ -166,6 +179,7 @@ class IntentMixin:
             artifact_summary=self.artifact_summary,
         )
 
+        ### TODO
         print(f"💡 검색어: '{search_query}'")
         await self._perform_search(search_query)
         await self._select_from_search_results()
@@ -174,5 +188,6 @@ class IntentMixin:
     async def _suggest_add_to_cart(self):
         """Suggest adding the product to cart."""
         suggestion = "\n\n💡 이 상품이 마음에 드시나요? 장바구니에 담아드릴까요? (예/아니오)"
+        ### TODO
         print(suggestion)
         self.state.add_message("assistant", suggestion)

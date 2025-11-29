@@ -179,10 +179,13 @@ class ProductArtifactCollector:
             
             if self.verbose:
                 if status == "success":
+                    ### status
                     print(f"✓ {label} 수집 성공")
                 elif status == "skipped":
+                    ### status
                     print(f"⚠️  {label} 수집 건너뜀 ({details.get('reason', 'Unknown')})")
                 else:
+                    ### status
                     print(f"✗ {label} 수집 실패: {details.get('error', 'Unknown')}")
 
         # HTML
@@ -398,9 +401,13 @@ class ProductArtifactCollector:
         # ------------------------------------------------------------------
         # [DEBUG LOG] ID 수집 상태 확인용 로그 추가
         # ------------------------------------------------------------------
+        ### status
         print(f"\n[DEBUG] Quantity 수집 시작 전 ID 확인:")
+        ### status
         print(f"  - productId: {ctx.product_id}")
+        ### status
         print(f"  - itemId: {ctx.item_id}")
+        ### status
         print(f"  - vendorItemId: {ctx.vendor_item_id}")
         # ------------------------------------------------------------------
 
