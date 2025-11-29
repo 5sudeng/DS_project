@@ -62,8 +62,11 @@ class ShoppingCLI(BrowserMixin, SearchMixin, IntentMixin):
 
     async def run(self):
         """Main entry point for the interactive CLI."""
+        ### status
         print("=" * 60)
+        ### TODO
         print("🛍️  쿠팡 쇼핑 도우미에 오신 것을 환영합니다!")
+        ### status
         print("=" * 60)
         logger.info("InteractiveShoppingCLI started (headless=%s, run_dir=%s)", self.headless, self.run_dir)
 
@@ -80,8 +83,10 @@ class ShoppingCLI(BrowserMixin, SearchMixin, IntentMixin):
             self.page = session.page
 
             if session.applied_cookie_count:
+                ### status
                 print(f"✓ {session.applied_cookie_count}개의 쿠키 로드됨 (봇 방어 쿠키 포함)")
             elif self.cookie_text:
+                ### status
                 print("⚠️  쿠키 파일을 읽었지만 적용 가능한 쿠키를 찾지 못했습니다.")
 
             self.product_agent = BrowserService(
@@ -94,6 +99,7 @@ class ShoppingCLI(BrowserMixin, SearchMixin, IntentMixin):
             try:
                 await self._conversation_loop()
             except KeyboardInterrupt:
+                ### TODO
                 print("\n\n👋 쇼핑을 종료합니다. 감사합니다!")
             finally:
                 await self.browser.close()
@@ -105,6 +111,7 @@ class ShoppingCLI(BrowserMixin, SearchMixin, IntentMixin):
 
         # Step 2: Conversation loop
         while True:
+            ### voiceinput
             user_input = input("\n💬 > ").strip()
 
             if not user_input:
@@ -117,5 +124,7 @@ class ShoppingCLI(BrowserMixin, SearchMixin, IntentMixin):
                 if not should_continue:
                     break
             except Exception as e:
+                ### TODO
                 print(f"\n❌ 오류가 발생했습니다: {e}")
+                ### TODO
                 print("다시 시도해주세요.")

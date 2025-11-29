@@ -37,7 +37,9 @@ async def main():
             api_key = secret_file.read_text().strip()
 
     if not api_key:
-        print("Error: OpenAI API Key is required.")
+        ### check
+        print("Error: OpenAI API Key is required.") 
+        ### check
         print("Please provide it via --api-key, OPENAI_API_KEY env var, or .secret file.")
         sys.exit(1)
 
@@ -55,4 +57,5 @@ if __name__ == "__main__":
     try:
         asyncio.run(main())
     except KeyboardInterrupt:
+        ### TODO
         print("\n👋 종료합니다.")
