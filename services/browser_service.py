@@ -202,6 +202,55 @@ class BrowserService:
                 continue
         return "장바구니 버튼을 찾을 수 없었습니다. 직접 눌러 주시겠어요?"
 
+    async def navigate_to_cart(self) -> str:
+        """상단 헤더의 장바구니 아이콘을 클릭하여 장바구니 페이지로 이동."""
+        
+        cart_icon_selectors = [
+            "a[href*='/cart'], a[href*='/shopping-cart']",  # 장바구니 링크
+            "button.cart-icon, a.cart-icon",  # 장바구니 아이콘 버튼
+            "[class*='cart-button']",  # cart-button 클래스 포함
+            "a:has-text('장바구니')",  # "장바구니" 텍스트 포함 링크
+        ]
+        
+        print("🛒 장바구니 페이지로 이동 중...")
+        
+        # 먼저 헤더에서 장바구니 버튼/링크 찾기
+        for selector in cart_icon_selectors:
+            try:
+                cart_element = self.page.locator(selector).first
+                if await cart_element.count() > 0:
+                    # 클릭하여 장바구니 페이지로 이동
+                    await cart_element.click(timeout=3000)
+                    
+                    # 페이지 로딩 대기
+                    try:
+                        await self.page.wait_for_load_state("domcontentloaded", timeout=10000)
+                        await asyncio.sleep(1.5)  # 렌더링 대기
+                    except Exception:
+                        pass
+                    
+                    # URL 확인
+                    current_url = self.page.url
+                    if "cart" in current_url or "shopping" in current_url:
+                        print("✓ 장바구니 페이지로 이동했습니다.")
+                        return "장바구니 페이지로 이동했습니다."
+                    
+            except PlaywrightTimeoutError:
+                continue
+            except Exception as e:
+                print(f"⚠️  selector '{selector}' 시도 중 오류: {e}")
+                continue
+        
+        # 장바구니 버튼을 찾지 못한 경우, 직접 URL로 이동
+        try:
+            print("⚠️  장바구니 버튼을 찾지 못해 직접 URL로 이동합니다...")
+            await self.page.goto("https://www.coupang.com/cart", wait_until="domcontentloaded", timeout=10000)
+            await asyncio.sleep(2)
+            print("✓ 장바구니 페이지로 이동했습니다.")
+            return "장바구니 페이지로 이동했습니다."
+        except Exception as e:
+            return f"장바구니 페이지로 이동하지 못했습니다: {e}"
+
     async def ask_for_preference_feedback(self) -> str:
         """Prompt the user for specific dissatisfaction feedback."""
 
