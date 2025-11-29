@@ -1,0 +1,496 @@
+"""Input/output helpers for the voice browser."""
+
+from __future__ import annotations
+
+import base64
+import os
+import queue
+import sys
+import tempfile
+import time
+import wave
+from typing import Optional
+
+import numpy as np
+import pyttsx3
+import sounddevice as sd
+from openai import OpenAI
+import grpc  # type: ignore
+import requests  # type: ignore
+import pyaudio  # type: ignore
+import core.vito_stt_client_pb2 as rtzr_pb  # type: ignore
+import core.vito_stt_client_pb2_grpc as rtzr_pb_grpc  # type: ignore
+
+
+class KeyboardVoiceInputController:
+    """Optional push-to-talk style controller using the keyboard."""
+
+    def capture(self) -> Optional[str]:
+        try:
+            input("\n[키보드 음성 모드] 출력이 끝났습니다. 엔터를 눌러 입력을 시작하세요.")
+        except EOFError:
+            return None
+
+        try:
+            text = input("[키보드 음성 모드] 명령을 입력하고 엔터를 누르세요: ").strip()
+        except EOFError:
+            text = ""
+
+        try:
+            input("[키보드 음성 모드] 입력을 닫으려면 다시 엔터를 눌러주세요.")
+        except EOFError:
+            pass
+
+        return text or None
+
+
+class TextInterface:
+    """Simple text-based replacement for speech IO."""
+
+    def speak(self, text: str):
+        print(f"[Assistant] {text}")
+
+    def listen(self) -> Optional[str]:
+        try:
+            user_input = input("\n[텍스트 모드] 명령을 입력하세요 (exit로 종료): ").strip()
+        except EOFError:
+            return None
+        return user_input or None
+
+
+class SpeechInterface:
+    """Handles TTS and STT for the voice browser (OpenAI Whisper API)."""
+
+    def __init__(
+        self,
+        *,
+        openai_api_key: Optional[str] = "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",
+        stt_model: str = "whisper-1",
+        samplerate: int = 16000,
+        block_duration: float = 0.5,
+        use_keyboard_input: bool = False,
+        base_url: Optional[str] = None,
+    ):
+        self.engine = pyttsx3.init()
+        self.queue: queue.Queue[bytes] = queue.Queue()
+        # 기본 base_url을 명시적으로 넣어 404(Invalid URL) 방지
+        resolved_base = base_url or os.getenv("OPENAI_BASE_URL") or "https://api.openai.com/v1"
+        self.client = OpenAI(
+            api_key=openai_api_key or os.getenv("OPENAI_API_KEY"),
+            base_url=resolved_base,
+        )
+        self.stt_model = stt_model
+        self.samplerate = samplerate
+        self.block_duration = block_duration
+        self.blocksize = max(1, int(samplerate * block_duration))
+        self.silence_threshold = 600.0
+        self.silence_duration = 1.2
+        self.max_recording = 12.0
+        self.use_keyboard_input = use_keyboard_input
+        self.keyboard_controller = KeyboardVoiceInputController() if use_keyboard_input else None
+
+    def speak(self, text: str):
+        self.engine.say(text)
+        self.engine.runAndWait()
+
+    def _audio_callback(self, indata, frames, time, status):
+        self.queue.put(bytes(indata))
+
+    def listen(self) -> Optional[str]:
+        if self.use_keyboard_input and self.keyboard_controller:
+            return self.keyboard_controller.capture()
+        audio_bytes = self._record_audio()
+        if not audio_bytes:
+            return None
+        return self._transcribe_audio(audio_bytes)
+
+    def _record_audio(self) -> Optional[bytes]:
+        while not self.queue.empty():
+            try:
+                self.queue.get_nowait()
+            except queue.Empty:
+                break
+
+        chunk_duration = self.blocksize / float(self.samplerate)
+        silence_chunks_required = max(1, int(self.silence_duration / chunk_duration))
+        max_chunks = max(1, int(self.max_recording / chunk_duration))
+        collected = bytearray()
+        heard_voice = False
+        silence_chunks = 0
+
+        with sd.RawInputStream(
+            samplerate=self.samplerate,
+            blocksize=self.blocksize,
+            dtype="int16",
+            channels=1,
+            callback=self._audio_callback,
+        ):
+            for _ in range(max_chunks):
+                try:
+                    data = self.queue.get(timeout=self.block_duration)
+                except queue.Empty:
+                    continue
+
+                audio = np.frombuffer(data, dtype=np.int16)
+                if not audio.size:
+                    continue
+
+                rms = np.sqrt(np.mean(audio.astype(np.float32) ** 2))
+                if not heard_voice:
+                    if rms > self.silence_threshold:
+                        heard_voice = True
+                        print("🎙️ 음성 감지됨 (녹음 중)")
+                        collected.extend(data)
+                    continue
+
+                collected.extend(data)
+                if rms > self.silence_threshold:
+                    silence_chunks = 0
+                else:
+                    silence_chunks += 1
+                    if silence_chunks >= silence_chunks_required:
+                        break
+
+        return bytes(collected) if collected else None
+
+    def _transcribe_audio(self, audio_bytes: bytes) -> Optional[str]:
+        tmp_path = None
+        try:
+            with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as tmp:
+                tmp_path = tmp.name
+
+            with wave.open(tmp_path, "wb") as wf:
+                wf.setnchannels(1)
+                wf.setsampwidth(2)
+                wf.setframerate(self.samplerate)
+                wf.writeframes(audio_bytes)
+
+            # 표준 STT (whisper-1 또는 지정 모델)
+            try:
+                with open(tmp_path, "rb") as audio_file:
+                    transcript = self.client.audio.transcriptions.create(
+                        model=self.stt_model or "whisper-1",
+                        file=audio_file,
+                        language="ko",
+                        response_format="text",
+                        temperature=0,
+                    )
+                text = getattr(transcript, "text", "") or ""
+                if text.strip():
+                    return text.strip()
+            except Exception as primary_exc:  # noqa: BLE001
+                print("OpenAI 음성 인식 실패:", primary_exc)
+                print("ℹ️  OPENAI_BASE_URL/KEY와 stt_model(예: whisper-1)을 확인하거나 '--voice-backend vosk'로 전환하세요.")
+
+            return None
+        finally:
+            if tmp_path and os.path.exists(tmp_path):
+                os.remove(tmp_path)
+
+
+class VoskSpeechInterface:
+    """Local STT using vosk-small-ko (offline)."""
+
+    def __init__(
+        self,
+        *,
+        model_path: str = "vosk-model-small-ko-0.22/",
+        samplerate: int = 16000,
+        block_duration: float = 0.5,
+        use_keyboard_input: bool = False,
+    ):
+        try:
+            from vosk import KaldiRecognizer, Model  # type: ignore
+        except Exception as exc:  # noqa: BLE001
+            raise RuntimeError("vosk가 설치되어 있지 않습니다. pip install vosk 로 설치해주세요.") from exc
+
+        self.engine = pyttsx3.init()
+        self.queue: queue.Queue[bytes] = queue.Queue()
+        self.samplerate = samplerate
+        self.block_duration = block_duration
+        self.blocksize = max(1, int(samplerate * block_duration))
+        self.silence_threshold = 600.0
+        self.silence_duration = 1.2
+        self.max_recording = 12.0
+        self.use_keyboard_input = use_keyboard_input
+        self.keyboard_controller = KeyboardVoiceInputController() if use_keyboard_input else None
+
+        self.model = Model(model_path)
+        self.recognizer = KaldiRecognizer(self.model, samplerate)
+
+    def speak(self, text: str):
+        self.engine.say(text)
+        self.engine.runAndWait()
+
+    def _audio_callback(self, indata, frames, time, status):
+        self.queue.put(bytes(indata))
+
+    def listen(self) -> Optional[str]:
+        if self.use_keyboard_input and self.keyboard_controller:
+            return self.keyboard_controller.capture()
+        audio_bytes = self._record_audio()
+        if not audio_bytes:
+            return None
+        return self._transcribe(audio_bytes)
+
+    def _record_audio(self) -> Optional[bytes]:
+        while not self.queue.empty():
+            try:
+                self.queue.get_nowait()
+            except queue.Empty:
+                break
+
+        chunk_duration = self.blocksize / float(self.samplerate)
+        silence_chunks_required = max(1, int(self.silence_duration / chunk_duration))
+        max_chunks = max(1, int(self.max_recording / chunk_duration))
+        collected = bytearray()
+        heard_voice = False
+        silence_chunks = 0
+
+        with sd.RawInputStream(
+            samplerate=self.samplerate,
+            blocksize=self.blocksize,
+            dtype="int16",
+            channels=1,
+            callback=self._audio_callback,
+        ):
+            for _ in range(max_chunks):
+                try:
+                    data = self.queue.get(timeout=self.block_duration)
+                except queue.Empty:
+                    continue
+
+                audio = np.frombuffer(data, dtype=np.int16)
+                if not audio.size:
+                    continue
+
+                rms = np.sqrt(np.mean(audio.astype(np.float32) ** 2))
+                if not heard_voice:
+                    if rms > self.silence_threshold:
+                        heard_voice = True
+                        collected.extend(data)
+                        print("🎙️ 음성 감지됨 (녹음 중)")
+                    continue
+
+                collected.extend(data)
+                if rms > self.silence_threshold:
+                    silence_chunks = 0
+                else:
+                    silence_chunks += 1
+                    if silence_chunks >= silence_chunks_required:
+                        break
+
+        return bytes(collected) if collected else None
+
+    def _transcribe(self, audio_bytes: bytes) -> Optional[str]:
+        try:
+            self.recognizer.Reset()
+            self.recognizer.AcceptWaveform(audio_bytes)
+            result = self.recognizer.Result()
+            import json
+
+            text = json.loads(result).get("text", "").strip()
+            return text or None
+        except Exception as exc:  # noqa: BLE001
+            print("vosk 음성 인식 실패:", exc)
+            return None
+
+
+class RTZRSpeechInterface:
+    """
+    RTZR(OpenAPI) 기반 STT/TTS 인터페이스 (gRPC 스트리밍).
+    - STT: vito_stt_client_pb2/_grpc 사용
+    - TTS: pyttsx3 로 로컬 출력 (RTZR TTS가 필요하면 확장)
+    필요한 환경변수:
+      RTZR_CLIENT_ID, RTZR_CLIENT_SECRET
+    """
+
+    API_BASE = "https://openapi.vito.ai"
+    GRPC_SERVER_URL = "grpc-openapi.vito.ai:443"
+    SAMPLE_RATE = 16000
+    CHUNK = int(SAMPLE_RATE / 10)  # 100ms
+    CHANNELS = 1 if sys.platform == "darwin" else 2
+    ENCODING = rtzr_pb.DecoderConfig.AudioEncoding.LINEAR16
+
+    def __init__(
+        self,
+        *,
+        client_id: Optional[str] = None,
+        client_secret: Optional[str] = None,
+        samplerate: int = SAMPLE_RATE,
+        chunk: int = CHUNK,
+        channels: int = CHANNELS,
+    ):
+        self.client_id = client_id or os.getenv("RTZR_CLIENT_ID")
+        self.client_secret = client_secret or os.getenv("RTZR_CLIENT_SECRET")
+        if not self.client_id or not self.client_secret:
+            raise RuntimeError("RTZR_CLIENT_ID/RTZR_CLIENT_SECRET 가 필요합니다.")
+
+        self.samplerate = samplerate
+        self.chunk = chunk
+        self.channels = channels
+        self.engine = pyttsx3.init()
+        self._sess = requests.Session()
+        self._token = None
+        self._audio = pyaudio.PyAudio()
+        self._buffer: queue.Queue[bytes] = queue.Queue()
+        self._stream = None
+
+    # --- Token helpers -------------------------------------------------
+    @property
+    def token(self) -> str:
+        if not self._token or self._token.get("expire_at", 0) < time.time():
+            resp = self._sess.post(
+                f"{self.API_BASE}/v1/authenticate",
+                data={"client_id": self.client_id, "client_secret": self.client_secret},
+            )
+            resp.raise_for_status()
+            self._token = resp.json()
+        return self._token["access_token"]
+
+    # --- IO helpers ----------------------------------------------------
+    def speak(self, text: str):
+        self.engine.say(text)
+        self.engine.runAndWait()
+
+    def _microphone_stream(self):
+        """Generator yielding raw audio bytes from microphone."""
+        self._buffer = queue.Queue()
+
+        def _callback(in_data, frame_count, time_info, status):
+            self._buffer.put(in_data)
+            return (None, pyaudio.paContinue)
+
+        self._stream = self._audio.open(
+            format=pyaudio.paInt16,
+            channels=1,
+            rate=self.samplerate,
+            input=True,
+            frames_per_buffer=self.chunk,
+            stream_callback=_callback,
+        )
+        self._stream.start_stream()
+
+        try:
+            while True:
+                chunk = self._buffer.get()
+                if chunk is None:
+                    break
+                yield chunk
+        finally:
+            self._stream.stop_stream()
+            self._stream.close()
+            self._stream = None
+
+    def _decoder_config(self):
+        return rtzr_pb.DecoderConfig(
+            sample_rate=self.samplerate,
+            encoding=self.ENCODING,
+            use_itn=True,
+            use_disfluency_filter=False,
+            use_profanity_filter=False,
+            keywords=[],
+        )
+
+    def listen(self) -> Optional[str]:
+        """Stream audio to RTZR and return a single final transcript."""
+        base_creds = grpc.ssl_channel_credentials()
+        call_creds = grpc.access_token_call_credentials(self.token)
+        creds = grpc.composite_channel_credentials(base_creds, call_creds)
+        with grpc.secure_channel(self.GRPC_SERVER_URL, credentials=creds) as channel:
+            stub = rtzr_pb_grpc.OnlineDecoderStub(channel)
+
+            def request_iterator():
+                # Send config first
+                yield rtzr_pb.DecoderRequest(streaming_config=self._decoder_config())
+                # Then audio chunks
+                for chunk in self._microphone_stream():
+                    yield rtzr_pb.DecoderRequest(audio_content=chunk)
+
+            final_text = None
+            try:
+                responses = stub.Decode(request_iterator())
+                for resp in responses:
+                    for res in resp.results:
+                        text = res.alternatives[0].text
+                        if res.is_final:
+                            final_text = text
+                            # Stop mic
+                            self._buffer.put(None)
+                            return final_text.strip() or None
+            except Exception as exc:  # noqa: BLE001
+                print("RTZR 음성 인식 실패:", exc)
+            finally:
+                # ensure mic closed
+                try:
+                    self._buffer.put(None)
+                except Exception:
+                    pass
+            return final_text
+
+def build_io_interface(
+    *,
+    voice_enabled: bool,
+    stt_backend: str = "openai",
+    openai_api_key: Optional[str] = None,
+    stt_model: Optional[str] = None,
+    use_keyboard_input: bool = False,
+    base_url: Optional[str] = None,
+    rtzr_token: Optional[str] = None,
+    rtzr_client_id: Optional[str] = None,
+    rtzr_client_secret: Optional[str] = None,
+):
+    if not voice_enabled:
+        return TextInterface()
+
+    backend = (stt_backend or "openai").lower()
+
+    if backend == "vosk":
+        return VoskSpeechInterface(use_keyboard_input=use_keyboard_input)
+
+    if backend == "rtzr":
+        # 새 RTZR gRPC 기반 인터페이스
+        return RTZRSpeechInterface(
+            client_id=rtzr_client_id,
+            client_secret=rtzr_client_secret,
+        )
+
+    return SpeechInterface(
+        openai_api_key=openai_api_key,
+        stt_model=stt_model or "whisper-1",
+        use_keyboard_input=use_keyboard_input,
+        base_url=base_url,
+    )
+
+
+def microphone_available() -> bool:
+    """Check if an input-capable audio device exists."""
+    try:
+        devices = sd.query_devices()
+    except Exception as exc:  # noqa: BLE001
+        print(f"⚠️  마이크 장치를 확인하지 못했습니다: {exc}")
+        return False
+
+    default_index = sd.default.device[0] if isinstance(sd.default.device, (list, tuple)) else sd.default.device
+    has_input_device = False
+
+    # Prefer default input device if valid
+    try:
+        if default_index is not None and default_index >= 0:
+            info = sd.query_devices(default_index)
+            if info.get("max_input_channels", 0) > 0:
+                print(f"🎧 기본 입력 장치: {info.get('name', 'unknown')}")
+                return True
+    except Exception:
+        pass
+
+    # Fallback: any device with input channels
+    for dev in devices:
+        if dev.get("max_input_channels", 0) > 0:
+            print(f"🎧 사용 가능한 입력 장치 감지: {dev.get('name', 'unknown')}")
+            has_input_device = True
+            break
+
+    if not has_input_device:
+        print("⚠️  입력 가능한 마이크 장치를 찾지 못했습니다.")
+    return has_input_device

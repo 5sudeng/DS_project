@@ -87,6 +87,42 @@ class SearchService:
         logger.info("Found %d products", len(results))
         return results
 
+    async def search_page(self, query: str, *, page_num: int = 1, max_results: int = 50) -> List[SearchResult]:
+        """
+        Perform a search that optionally targets a specific page.
+        Currently reuses the standard search flow but allows higher result counts.
+        """
+        # page_num is kept for API compatibility; Coupang paging via form entry is not yet wired.
+        _ = page_num
+        return await self.search(query, max_results=max_results)
+
+    async def navigate_to_url(self, url: str, *, max_results: int = 50) -> List[SearchResult]:
+        """Open a search/result URL directly and parse results."""
+        try:
+            await self.page.goto(url, wait_until="domcontentloaded", timeout=30000)
+            await asyncio.sleep(2.0)
+        except Exception as exc:  # noqa: BLE001
+            print(f"⚠️  페이지 이동 중 오류: {exc}")
+            logger.warning("Failed to navigate to %s: %s", url, exc)
+            return []
+
+        try:
+            results = await self._parse_search_results(max_results)
+            print(f"✓ {len(results)}개 상품 발견")
+            return results
+        except Exception as exc:  # noqa: BLE001
+            logger.warning("Failed to parse results after navigation: %s", exc)
+            return []
+
+    async def get_related_keywords(self) -> List[dict]:
+        """
+        Placeholder for related keyword scraping.
+        Returns a list of {"title": str, "href": str}.
+        """
+        # TODO: Implement by scraping the related keyword widget when available.
+        logger.info("Related keyword scraping not implemented; returning empty list.")
+        return []
+
     async def _find_search_input(self):
         """Find the search input element using multiple selectors."""
         for selector in SELECTORS["search_input"]:

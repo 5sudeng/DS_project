@@ -7,13 +7,93 @@ import json
 import logging
 import os
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Sequence
 
 from openai import OpenAI
 
 from config.settings import PROMPTS
 
 logger = logging.getLogger(__name__)
+
+
+class PreferenceMemory:
+    """Preference + identity storage with file-backed memory."""
+
+    def __init__(self, memory_path: str = "memory.txt", identity_path: str = "identity.txt"):
+        self._notes: List[str] = []
+        self.memory_path = Path(memory_path)
+        self.identity_path = Path(identity_path)
+        self.identity: Optional[str] = None
+        self._load_files()
+
+    # ---------------- File helpers ----------------
+    def _load_files(self):
+        if self.memory_path.is_file():
+            try:
+                lines = self.memory_path.read_text(encoding="utf-8").splitlines()
+                self._notes.extend([ln.strip() for ln in lines if ln.strip()])
+            except Exception:
+                pass
+        if self.identity_path.is_file():
+            try:
+                self.identity = self.identity_path.read_text(encoding="utf-8").strip() or None
+            except Exception:
+                self.identity = None
+
+    def append_event(self, text: str) -> None:
+        if not text:
+            return
+        text = text.strip()
+        self._notes.append(text)
+        try:
+            with self.memory_path.open("a", encoding="utf-8") as f:
+                f.write(text + "\n")
+        except Exception:
+            pass
+
+    def clear_memory(self, clear_identity: bool = False) -> None:
+        self._notes.clear()
+        try:
+            if self.memory_path.exists():
+                self.memory_path.write_text("", encoding="utf-8")
+        except Exception:
+            pass
+        if clear_identity:
+            self.identity = None
+            try:
+                if self.identity_path.exists():
+                    self.identity_path.write_text("", encoding="utf-8")
+            except Exception:
+                pass
+
+    def save_identity(self, identity: str) -> None:
+        self.identity = identity.strip() if identity else None
+        try:
+            self.identity_path.write_text(self.identity or "", encoding="utf-8")
+        except Exception:
+            pass
+
+    # ---------------- Query helpers ----------------
+    def remember(self, note: str) -> None:
+        self.append_event(note)
+
+    def summary(self, max_items: int = 5) -> str:
+        if not self._notes:
+            return ""
+        recent = self._notes[-max_items:]
+        bullets = "\n".join(f"- {item}" for item in recent if item)
+        return bullets
+
+    def has_preferences(self) -> bool:
+        return bool(self._notes)
+
+    def as_list(self) -> List[str]:
+        return list(self._notes)
+
+    def memory_log(self, max_lines: int = 50) -> str:
+        if not self._notes:
+            return ""
+        return "\n".join(self._notes[-max_lines:])
 
 
 class ShoppingLLMService:
@@ -265,6 +345,263 @@ class ShoppingLLMService:
         print(f"response from answer_product_question:\n{response}\n")
         return response.choices[0].message.content.strip()
 
+    # ─────────────────────────────────────────────────────
+    # Prompt augmentation & re-query helpers
+    # ─────────────────────────────────────────────────────
+    def augment_user_query(
+        self,
+        raw_query: str,
+        preference_memory: PreferenceMemory,
+        conversation_history: List[Dict[str, str]],
+    ) -> Dict[str, Any]:
+        """
+        Augment a vague user query using stored preferences.
+
+        Returns:
+            {
+              "query": "<augmented or original>",
+              "augmented": bool,
+              "rationale": "<why it was changed>"
+            }
+        """
+        pref_summary = preference_memory.summary()
+        memory_log = preference_memory.memory_log()
+        identity = preference_memory.identity or ""
+        system_prompt = """당신은 사용자의 과거 선호도를 기억하는 쇼핑 비서입니다.
+사용자 질문이 모호하면, 기억된 선호도를 반영해 검색어를 보강하세요.
+- 선호도가 없거나, 현재 질문이 충분히 구체적이면 그대로 둡니다.
+- 가격 민감, 브랜드, 색상, 배송 조건 등 과거 맥락을 반영합니다.
+JSON으로만 응답하세요."""
+
+        history_tail = "\n".join([f"{m['role']}: {m['content']}" for m in conversation_history[-4:]])
+        user_prompt = f"""최근 대화:
+{history_tail or "없음"}
+
+저장된 선호:
+{pref_summary or "없음"}
+
+메모리 로그:
+{memory_log or "없음"}
+
+쇼핑 성향(Identity):
+{identity or "미정"}
+
+사용자 요청: "{raw_query}"
+
+응답 형식:
+{{
+  "query": "<검색어>",
+  "augmented": true/false,
+  "rationale": "<보강한 이유 또는 그대로 둔 이유>"
+}}"""
+
+        response = self.client.chat.completions.create(
+            model=self.model,
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt},
+            ],
+            temperature=0.4,
+            response_format={"type": "json_object"},
+        )
+        return json.loads(response.choices[0].message.content)
+
+    def generate_requery_question(
+        self,
+        raw_query: str,
+        preference_memory: PreferenceMemory,
+        conversation_history: List[Dict[str, str]],
+    ) -> str:
+        """
+        Ask a clarifying follow-up when we still lack context.
+        """
+        system_prompt = """당신은 쇼핑 도우미입니다.
+사용자 요청이 모호하고, 저장된 선호만으로는 충분하지 않을 때 추가 질문을 한 문장으로 하세요.
+가격/브랜드/색상/스타일/배송 조건 등 핵심 한두 가지만 물어보세요.
+정보가 충분하면 빈 문자열로 응답하세요."""
+
+        pref_summary = preference_memory.summary()
+        memory_log = preference_memory.memory_log()
+        identity = preference_memory.identity or ""
+        history_tail = "\n".join([f"{m['role']}: {m['content']}" for m in conversation_history[-3:]])
+        user_prompt = f"""최근 대화:
+{history_tail or "없음"}
+
+저장된 선호:
+{pref_summary or "없음"}
+
+메모리 로그:
+{memory_log or "없음"}
+
+쇼핑 성향(Identity):
+{identity or "미정"}
+
+사용자 요청: "{raw_query}"
+
+추가 질문(필요 없으면 빈 문자열):"""
+
+        response = self.client.chat.completions.create(
+            model=self.model,
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt},
+            ],
+            temperature=0.6,
+        )
+        return response.choices[0].message.content.strip()
+
+    def summarize_products_for_user(
+        self,
+        products: Sequence[Any],
+        preference_memory: PreferenceMemory,
+        top_n: int = 3,
+    ) -> str:
+        """
+        Summarize and rerank products on the page for the user.
+
+        Args:
+            products: iterable of objects with title/price/rating attrs or dict keys
+            preference_memory: stored preferences
+            top_n: how many items to highlight
+        """
+        pref_summary = preference_memory.summary() or "선호 정보 없음"
+        product_text = self._format_products(products, limit=30)
+        system_prompt = """너는 쇼핑 페이지의 여러 상품을 사용자 취향에 맞게 추천하는 AI다.
+입력으로 상품 목록과 사용자 선호 요약이 주어진다.
+- 가격, 평점, 특징을 고려해 간단히 재정렬한다.
+- top_n개 상품을 번호 매겨 제안하고, 각 상품의 핵심 이유를 한 줄로 요약한다.
+- 확신이 없으면 가볍게 제안한다."""
+
+        user_prompt = f"""사용자 선호:
+{pref_summary}
+
+상품 목록:
+{product_text}
+
+top {top_n} 추천을 요약해줘. 각 상품당 한 줄."""
+
+        response = self.client.chat.completions.create(
+            model=self.model,
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt},
+            ],
+            temperature=0.5,
+        )
+        return response.choices[0].message.content.strip()
+
+    # ─────────────────────────────────────────────────────
+    # Voice command → action routing
+    # ─────────────────────────────────────────────────────
+    def map_voice_command_to_action(self, command: str) -> Dict[str, Any]:
+        """
+        Map a free-form voice command to a simple navigation action.
+
+        Returns (best-effort):
+        {
+          "action": "open_url" | "none",
+          "url": "https://...",
+          "notes": "...reasoning..."
+        }
+        """
+        plan = self.map_voice_command_to_actions(command)
+        for act in plan.get("actions", []):
+            if act.get("action") == "open_url":
+                return {"action": "open_url", "url": act.get("url"), "notes": act.get("notes", "")}
+        if plan.get("actions"):
+            first = plan["actions"][0]
+            return {"action": first.get("action", "none"), "url": first.get("url"), "notes": plan.get("notes", "")}
+        return {"action": "none", "url": None, "notes": plan.get("notes", "")}
+
+    def map_voice_command_to_actions(self, command: str) -> Dict[str, Any]:
+        """
+        Map free-form voice command to an ordered list of actions.
+
+        Actions supported:
+          - open_url: {url}
+          - search_page: {query}
+          - apply_sort: {sort_type}  # e.g., "낮은가격순", "높은가격순", "평점순"
+          - apply_shipping: {shipping_option}  # "배송비포함" | "배송비제외"
+          - summarize: {top_n:int}
+          - read_results: {top_n:int}
+          - related_keywords: {}  # 연관검색어 목록을 보여주고 선택
+        """
+        system_prompt = """너는 사용자의 자유로운 음성 명령을 실행 가능한 액션 리스트로 변환하는 라우터다.
+출력은 JSON 하나이며, actions 배열에 순서대로 기술한다.
+지원 액션:
+- open_url: 특정 사이트로 이동 (예: coupang.com, shopping.naver.com)
+- search_page: 쿠팡 검색어 입력
+- apply_sort: 쿠팡 정렬 ("낮은가격순", "높은가격순", "판매량순", "랭킹순", "최신순", "평점순")
+- apply_shipping: "배송비포함" 또는 "배송비제외"
+- summarize: 현재 결과를 요약/추천 (top_n 지정)
+- read_results: 상위 N개 결과를 읽어줌 (top_n)
+- related_keywords: 현재 페이지의 연관검색어를 보여주고 선택 이동
+
+
+예시 변환:
+- "쿠팡 들어가줘" → [{"action":"open_url","url":"https://www.coupang.com/"}]
+- "후드티를 사고싶어" → [{"action":"search_page","query":"후드티"}]
+- "최저가 사과를 사고싶어" → [{"action":"search_page","query":"사과"},{"action":"apply_sort","sort_type":"낮은가격순"},{"action":"read_results","top_n":3}]
+- "검은색 모자를 추천해주고 별점순으로 보여줘" → [{"action":"search_page","query":"검은색 모자"},{"action":"summarize","top_n":3},{"action":"apply_sort","sort_type":"평점순"},{"action":"read_results","top_n":3}]
+
+출력 형식:
+{
+  "actions": [
+    {"action": "...", "...": "..."},
+    ...
+  ],
+  "notes": "선택 근거를 짧게"
+}
+JSON만 응답한다."""
+
+        user_prompt = f'사용자 명령: "{command}"\nJSON만 응답하세요.'
+        try:
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_prompt},
+                ],
+                temperature=0.3,
+                response_format={"type": "json_object"},
+            )
+            return json.loads(response.choices[0].message.content)
+        except Exception:
+            return {"actions": [], "notes": "llm_error"}
+
+    def infer_shopping_identity(self, preference_memory: PreferenceMemory) -> Optional[str]:
+        """Infer user's shopping identity based on accumulated memory."""
+        memory_log = preference_memory.memory_log(max_lines=200)
+        if not memory_log:
+            return None
+        system_prompt = """너는 사용자의 쇼핑 행동 로그를 보고 쇼핑 성향(MBTI 스타일)을 4축으로 분류한다.
+축 정의:
+- 가격: 가성비형 | 가심비형
+- 속도: 로켓배송 고집형 | 배송 상관없음
+- 평가: 평점/리뷰 중시 | 주관적 선택
+- 충동성: 목표 구매만 | 여러 상품 즉흥 구매
+
+출력은 한 줄로 압축:
+"가격=가성비형; 속도=로켓배송; 평가=평점중시; 충동성=목표구매" 와 같이 요약.
+"""
+        user_prompt = f"""사용자 행동 로그:
+{memory_log}
+
+한 줄 요약으로 성향을 반환하세요."""
+        try:
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_prompt},
+                ],
+                temperature=0.2,
+            )
+            identity = response.choices[0].message.content.strip()
+            return identity
+        except Exception:
+            return None
+
     def rank_snippets_by_similarity(
         self,
         question: str,
@@ -316,6 +653,24 @@ class ShoppingLLMService:
         # Filter by similarity threshold and return top_k
         filtered = [s for s in scored if s.get("relevance_score", 0) > similarity_threshold]
         return filtered[:top_k]
+
+    def _format_products(self, products: Sequence[Any], *, limit: int = 20) -> str:
+        lines: List[str] = []
+        for idx, prod in enumerate(list(products)[:limit], 1):
+            title = (
+                getattr(prod, "title", None)
+                or getattr(prod, "name", None)
+                or (prod.get("title") if isinstance(prod, dict) else "상품")
+            )
+            price = getattr(prod, "price", None) or (prod.get("price") if isinstance(prod, dict) else None)
+            rating = getattr(prod, "rating", None) or (prod.get("rating") if isinstance(prod, dict) else None)
+            parts = [f"{idx}. {title}"]
+            if price:
+                parts.append(f"가격 {price}")
+            if rating:
+                parts.append(f"평점 {rating}")
+            lines.append(" | ".join(parts))
+        return "\n".join(lines)
 
     def _artifact_context_snippet(
         self,
