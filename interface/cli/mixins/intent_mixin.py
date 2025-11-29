@@ -46,6 +46,8 @@ class IntentMixin:
             await self._handle_question(user_input)
         elif intent == "add_to_cart":
             await self._handle_add_to_cart(intent_result)
+        elif intent == "navigate_to_cart":
+            await self._handle_navigate_to_cart()
         elif intent == "satisfied":
             await self._handle_satisfied()
         elif intent == "dissatisfied":
@@ -59,7 +61,7 @@ class IntentMixin:
             self.state.add_message("assistant", response)
 
         # Check if we should suggest adding to cart (unless already adding to cart or exiting)
-        if intent not in ["add_to_cart", "exit"] and intent_result.get("suggest_purchase"):
+        if intent not in ["add_to_cart", "navigate_to_cart", "exit"] and intent_result.get("suggest_purchase"):
             await self._suggest_add_to_cart()
             
         return True
@@ -88,6 +90,15 @@ class IntentMixin:
         self.state.add_message("assistant", result)
 
         print("\n💡 다른 상품을 더 찾아보시겠어요? (검색어 입력 또는 'exit'로 종료)")
+
+    async def _handle_navigate_to_cart(self):
+        """Handle when user wants to navigate to cart page."""
+        print("\n⏳ 장바구니 페이지로 이동 중...")
+        logger.info("Processing navigate_to_cart intent")
+
+        result = await self.product_agent.navigate_to_cart()
+        print(f"\n🤖 {result}")
+        self.state.add_message("assistant", result)
 
     async def _handle_satisfied(self):
         """Handle when user expresses satisfaction but not explicit buy command."""
