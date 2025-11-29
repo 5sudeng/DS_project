@@ -57,5 +57,4 @@ if __name__ == "__main__":
     try:
         asyncio.run(main())
     except KeyboardInterrupt:
-        ### TODO
         print("\n👋 종료합니다.")

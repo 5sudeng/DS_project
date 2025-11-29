@@ -18,16 +18,17 @@ from core.cookies import (
     parse_cookie_records,
 )
 from core.state import ConversationState
-from services.llm_service import ShoppingLLMService
+from services.llm_service import PreferenceMemory, ShoppingLLMService
 
 from interface.cli.mixins.browser_mixin import BrowserMixin
 from interface.cli.mixins.search_mixin import SearchMixin
 from interface.cli.mixins.intent_mixin import IntentMixin
+from interface.cli.mixins.io_mixin import IOMixin
 
 logger = logging.getLogger(__name__)
 
 
-class ShoppingCLI(BrowserMixin, SearchMixin, IntentMixin):
+class ShoppingCLI(IOMixin, BrowserMixin, SearchMixin, IntentMixin):
     """Interactive CLI for shopping with AI assistance."""
 
     def __init__(
@@ -37,12 +38,36 @@ class ShoppingCLI(BrowserMixin, SearchMixin, IntentMixin):
         api_key: Optional[str] = None,
         run_dir: Optional[str] = None,
         ocr_delay: float = 0.5,
+        text_output_enabled: bool = True,
+        voice_output_enabled: bool = False,
+        text_input_enabled: bool = True,
+        voice_input_enabled: bool = False,
+        keyboard_voice: bool = False,
+        voice_backend: str = "openai",
+        voice_base_url: Optional[str] = None,
+        voice_stt_model: Optional[str] = None,
+        rtzr_client_id: Optional[str] = None,
+        rtzr_client_secret: Optional[str] = None,
     ):
+        super().__init__(
+            text_output_enabled=text_output_enabled,
+            voice_output_enabled=voice_output_enabled,
+            text_input_enabled=text_input_enabled,
+            voice_input_enabled=voice_input_enabled,
+            keyboard_voice=keyboard_voice,
+            voice_backend=voice_backend,
+            voice_base_url=voice_base_url,
+            voice_stt_model=voice_stt_model,
+            rtzr_client_id=rtzr_client_id,
+            rtzr_client_secret=rtzr_client_secret,
+        )
         self.headless = headless
         self.run_dir = run_dir
         self.state = ConversationState()
         self.api_key = api_key
         self.llm = ShoppingLLMService(api_key=api_key)
+        self.preference_memory = PreferenceMemory()
+        self.ai_memory_enabled = False
 
         # Playwright objects (initialized in run())
         self.browser: Optional[Browser] = None
@@ -60,13 +85,10 @@ class ShoppingCLI(BrowserMixin, SearchMixin, IntentMixin):
             ocr_delay=ocr_delay,
         )
 
-    async def run(self):
+    async def _run_cli(self):
         """Main entry point for the interactive CLI."""
-        ### status
         print("=" * 60)
-        ### TODO
-        print("🛍️  쿠팡 쇼핑 도우미에 오신 것을 환영합니다!")
-        ### status
+        self._io_output("🛍️  쿠팡 쇼핑 도우미에 오신 것을 환영합니다!")
         print("=" * 60)
         logger.info("InteractiveShoppingCLI started (headless=%s, run_dir=%s)", self.headless, self.run_dir)
 
@@ -83,10 +105,8 @@ class ShoppingCLI(BrowserMixin, SearchMixin, IntentMixin):
             self.page = session.page
 
             if session.applied_cookie_count:
-                ### status
                 print(f"✓ {session.applied_cookie_count}개의 쿠키 로드됨 (봇 방어 쿠키 포함)")
             elif self.cookie_text:
-                ### status
                 print("⚠️  쿠키 파일을 읽었지만 적용 가능한 쿠키를 찾지 못했습니다.")
 
             self.product_agent = BrowserService(
@@ -99,15 +119,14 @@ class ShoppingCLI(BrowserMixin, SearchMixin, IntentMixin):
             try:
                 await self._conversation_loop()
             except KeyboardInterrupt:
-                ### TODO
-                print("\n\n👋 쇼핑을 종료합니다. 감사합니다!")
+                self._io_output("\n\n👋 쇼핑을 종료합니다. 감사합니다!")
             finally:
                 await self.browser.close()
 
     async def _conversation_loop(self):
         """Main conversation loop."""
         # Step 1: Get initial product URL
-        await self._get_initial_product()
+        await self._ask_ai_memory_preference()
 
         # Step 2: Conversation loop
         while True:
@@ -120,11 +139,9 @@ class ShoppingCLI(BrowserMixin, SearchMixin, IntentMixin):
             self.state.add_message("user", user_input)
 
             try:
-                should_continue = await self._handle_user_input(user_input)
+                should_continue = await self._hanle_user_input(user_input)
                 if not should_continue:
                     break
             except Exception as e:
-                ### TODO
                 print(f"\n❌ 오류가 발생했습니다: {e}")
-                ### TODO
                 print("다시 시도해주세요.")

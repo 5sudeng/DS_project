@@ -101,57 +101,6 @@ class ShoppingLLMService:
         self.client = OpenAI(api_key=api_key or os.getenv("OPENAI_API_KEY"))
         self.model = model
     
-    def map_command_to_actions(self, command: str) -> Dict[str, Any]:
-        """
-        Map free-form natural language to an ordered list of supported actions.
-        """
-        allowed_actions = """
-open_url url
-search_page query
-apply_sort sort_type
-apply_shipping shipping_option
-read_results top_n
-select_result index
-load_product url_or_index
-question query
-add_to_cart quantity
-navigate_to_cart
-exit
-"""
-        prompt = f"""
-당신은 쇼핑 CLI의 명령 플래너입니다.
-다음 액션만 사용하세요 (필요한 파라미터 포함):
-{allowed_actions}
-
-자연어 입력을 읽고 필요한 액션들을 순서대로 만드세요.
-JSON 객체만 출력합니다. 형식:
-{{"actions":[{{"action":"...", "param_key":"value", ...}}]}}
-
-예시:
-"쿠팡 열어줘" -> {{"actions":[{{"action":"open_url","url":"https://www.coupang.com"}}]}}
-"사람들이 많이 산 좋은 헤드셋 사고싶어" -> {{"actions":[{{"action":"search_page","query":"헤드셋"}},{{"action":"apply_sort","sort_type":"판매량순"}},{{"action":"read_results","top_n":3}}]}}
-"3번째 거 아이템 사고싶어" -> {{"actions":[{{"action":"select_result","index":3}},{{"action":"add_to_cart","quantity":1}}]}}
-"상품 정보에 음식 칼로리가 얼마니?" -> {{"actions":[{{"action":"question","query":"음식 칼로리가 얼마니?"}}]}}
-"오키 장바구니에 넣어줘" -> {{"actions":[{{"action":"add_to_cart","quantity":1}}]}}
-
-입력: "{command}"
-출력(JSON만):
-"""
-        try:
-            resp = self.client.responses.create(
-                model=self.model,
-                input=prompt,
-                response_format={"type": "json_object"},
-            )
-            text = resp.output[0].content[0].text
-            parsed = json.loads(text)
-            if isinstance(parsed, dict) and "actions" in parsed:
-                return parsed
-        except Exception as exc:  # noqa: BLE001
-            logger.error("map_command_to_actions failed: %s", exc)
-
-        return {"actions": []}
-    
     def map_voice_command_to_action(self, command: str) -> Dict[str, Any]:
         """
         Map a free-form voice command to a simple navigation action.
@@ -272,6 +221,8 @@ JSON만 응답한다."""
         result = json.loads(response.choices[0].message.content)
         return result
         
+    ### 위 3개 
+
     def infer_shopping_identity(self, preference_memory: PreferenceMemory) -> Optional[str]:
         """Infer user's shopping identity based on accumulated memory."""
         memory_log = preference_memory.memory_log(max_lines=200)
@@ -448,6 +399,7 @@ JSON으로만 응답하세요."""
         search_query = response.choices[0].message.content.strip()
         return search_query
 
+    ### TODO : gen_product_summary - load product하고 분리시키기
     def generate_product_summary(
         self,
         product_name: str,
