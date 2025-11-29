@@ -161,7 +161,7 @@ class VoiceIOMixin(IOMixin):
         text_output_enabled: bool = True,
         voice_input_enabled: bool = True,
         keyboard_voice: bool = False,
-        voice_backend: str = "openai",
+        voice_backend: str = "rtzr",
         voice_base_url: Optional[str] = None,
         voice_stt_model: Optional[str] = None,
         **kwargs,
