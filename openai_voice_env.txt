@@ -1,0 +1,4 @@
+# OpenAI voice configuration
+OPENAI_API_KEY=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
+OPENAI_BASE_URL=https://api.openai.com/v1
+OPENAI_STT_MODEL=whisper-1

@@ -26,6 +26,22 @@ async def main():
         default=0.5,
         help="OCR API 호출 사이 대기 시간(초)",
     )
+    parser.add_argument(
+        "--voice",
+        action="store_true",
+        help="Enable voice input/output mode (text input disabled).",
+    )
+    parser.add_argument(
+        "--keyboard-voice",
+        action="store_true",
+        help="Use keyboard push-to-talk style voice input.",
+    )
+    parser.add_argument(
+        "--voice-backend",
+        choices=["openai", "vosk", "rtzr"],
+        default="rtzr",
+        help="Voice STT backend.",
+    )
 
     args = parser.parse_args()
 
@@ -49,6 +65,12 @@ async def main():
         api_key=api_key,
         run_dir=args.run_dir,
         ocr_delay=args.ocr_delay,
+        text_output_enabled=True,
+        voice_output_enabled=bool(args.voice),
+        text_input_enabled=not args.voice,
+        voice_input_enabled=bool(args.voice),
+        keyboard_voice=args.keyboard_voice,
+        voice_backend=args.voice_backend,
     )
 
     await cli.run()
@@ -57,5 +79,4 @@ if __name__ == "__main__":
     try:
         asyncio.run(main())
     except KeyboardInterrupt:
-        ### TODO
         print("\n👋 종료합니다.")

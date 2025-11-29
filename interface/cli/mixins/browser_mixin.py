@@ -12,27 +12,25 @@ logger = logging.getLogger(__name__)
 class BrowserMixin:
     """Mixin for handling browser interactions."""
 
-    async def _get_initial_product(self):
-        """Get the initial product URL from user."""
-        while True:
-            ### voiceinput
-            url = input("\n📦 상품 URL을 입력하세요 (또는 'search'로 검색 시작): ").strip().lstrip("\\")
-            logger.info("Initial product input received: %s", url)
+    # async def _get_initial_product(self):
+    #     """Get the initial product URL from user."""
+    #     while True:
+    #         ### voiceinput
+    #         url = input("\n📦 상품 URL을 입력하세요 (또는 'search'로 검색 시작): ").strip().lstrip("\\")
+    #         logger.info("Initial product input received: %s", url)
 
-            if url.lower() == "search":
-                await self._start_with_search()
-                return
+    #         if url.lower() == "search":
+    #             await self._start_with_search()
+    #             return
 
-            # Accept various Coupang URL formats
-            if "coupang.com" in url:
-                loaded = await self._load_product(url)
-                if loaded:
-                    return
-                ### TODO
-                print("❌ 상품을 불러오지 못했습니다. 다른 URL을 시도해 주세요.")
-            else:
-                ### TODO
-                print("❌ 올바른 쿠팡 URL을 입력해주세요. (예: https://www.coupang.com/... 또는 https://shop.coupang.com/...)")
+    #         # Accept various Coupang URL formats
+    #         if "coupang.com" in url:
+    #             loaded = await self._load_product(url)
+    #             if loaded:
+    #                 return
+    #             self._io_output("❌ 상품을 불러오지 못했습니다. 다른 URL을 시도해 주세요.")
+    #         else:
+    #             self._io_output("❌ 올바른 쿠팡 URL을 입력해주세요. (예: https://www.coupang.com/... 또는 https://shop.coupang.com/...)")
 
     async def _load_product(self, url: str, *, _retry: bool = False) -> bool:
         """Load a product page (Legacy wrapper - calls workflow)."""
@@ -109,14 +107,11 @@ class BrowserMixin:
                         loaded = True
                         break
                     elif response and response.status >= 400:
-                        ### status
                         print(f"⚠️  HTTP {response.status} 오류 발생")
                         if attempt < max_retries:
-                            ### status
                             print(f"재시도 중... ({attempt}/{max_retries})")
                             await asyncio.sleep(2)
                         else:
-                            ### status
                             raise RuntimeError(f"페이지 로드 실패: HTTP {response.status}")
                     elif response is None:
                         ### status
@@ -203,10 +198,8 @@ class BrowserMixin:
             return True
 
         except Exception as e:
-            ### TODO
-            print(f"\n❌ 페이지 로드 실패: {e}")
-            ### TODO
-            print("다시 시도하시겠습니까? 다른 URL을 입력하거나 'exit'로 종료하세요.")
+            self._io_output(f"\n❌ 페이지 로드 실패: {e}")
+            self._io_output("다시 시도하시겠습니까? 다른 URL을 입력하거나 'exit'로 종료하세요.")
             logger.exception("Product page load failed: %s", e)
             return False
 
@@ -261,8 +254,7 @@ class BrowserMixin:
         if not self.browser:
             return False
         try:
-            ### TODO
-            print("🔁 브라우저 탭을 새로 열어 다시 시도합니다...")
+            self._io_output("🔁 브라우저 탭을 새로 열어 다시 시도합니다...")
             context = self.page.context if self.page else None
             if self.page:
                 try:

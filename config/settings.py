@@ -10,7 +10,7 @@ PROMPTS = {
 4. "dissatisfied": 상품이 마음에 안 들어서 다른 상품을 찾고 싶어함
 5. "question": 상품에 대한 질문
 6. "exit": 쇼핑을 종료하고 싶어함 (예: "그만 할래", "이제 됐어", "종료해줘", "나갈게")
-7. "other": 기타
+7. "other": 기타(exception)
 8. "add_to_cart"인 경우, 수량을 추출하세요 (기본값: 1). 예: "2개 담아줘" -> quantity: 2
 
 dissatisfied인 경우, 불만족 이유를 추출하세요:
