@@ -35,7 +35,42 @@ class BrowserMixin:
                 print("❌ 올바른 쿠팡 URL을 입력해주세요. (예: https://www.coupang.com/... 또는 https://shop.coupang.com/...)")
 
     async def _load_product(self, url: str, *, _retry: bool = False) -> bool:
-        """Load a product page."""
+        """Load a product page (Legacy wrapper - calls workflow)."""
+        return await self.load_product_workflow(url, _retry=_retry)
+
+    async def load_product_workflow(self, url: str, *, _retry: bool = False) -> bool:
+        """
+        상품 로딩 워크플로우: 3단계로 구성
+        1. 상품 상세 페이지 접속
+        2. 상품 상세페이지 정보 수집
+        3. 상품 요약 정보 생성
+        """
+        # Step 1: Navigate to product page
+        navigation_success = await self._navigate_to_product(url, _retry=_retry)
+        if not navigation_success:
+            return False
+
+        # Step 2: Collect product data
+        collection_success = await self._collect_product_data()
+        if not collection_success:
+            ### TODO
+            print("⚠️  상품 데이터를 수집하지 못해 다시 시도해야 합니다.")
+            return False
+
+        # Step 3: Generate product summary
+        await self._generate_product_summary()
+        
+        ### TODO
+        print("\n❓ 무엇이 궁금하신가요? (상품에 대해 질문해 주세요!)")
+        return True
+
+    async def _navigate_to_product(self, url: str, *, _retry: bool = False) -> bool:
+        """
+        Step 1: 상품 상세 페이지 접속
+        
+        Returns:
+            bool: 페이지 접속 성공 여부
+        """
         ### status
         print(f"\n⏳ 상품 페이지를 불러오는 중...")
         logger.info("Attempting to load product page: %s", url)
@@ -160,37 +195,11 @@ class BrowserMixin:
             self.state.current_url = current_url
             self.state.current_product_name = product_name
             logger.info("Product ready current_url=%s product_name=%s", current_url, product_name)
-
-            data_collected = await self._collect_structured_data(current_url)
-            if not data_collected:
-                ### TODO
-                print("⚠️  상품 데이터를 수집하지 못해 다시 시도해야 합니다.")
-                return False
+            
             ### status
             print(f"✓ 상품: {self.state.current_product_name}")
             ### status
             print(f"   URL: {current_url}")
-
-            # Generate and display summary
-            ### TODO
-            print("\n📝 상품 요약 정보를 생성하고 있습니다...")
-            try:
-                summary = self.llm.generate_product_summary(
-                    self.state.current_product_name,
-                    self.artifact_summary
-                )
-                ### status
-                print("-" * 60)
-                ### TODO
-                print(summary)
-                ### status
-                print("-" * 60)
-            except Exception as e:
-                logger.error("Failed to generate summary: %s", e)
-                ### TODO
-                print("⚠️  요약 정보를 생성하지 못했습니다.")
-            ### TODO
-            print("\n❓ 무엇이 궁금하신가요? (상품에 대해 질문해 주세요!)")
             return True
 
         except Exception as e:
@@ -200,6 +209,52 @@ class BrowserMixin:
             print("다시 시도하시겠습니까? 다른 URL을 입력하거나 'exit'로 종료하세요.")
             logger.exception("Product page load failed: %s", e)
             return False
+
+    async def _collect_product_data(self) -> bool:
+        """
+        Step 2: 상품 상세페이지 정보 수집
+        
+        HTML, 리뷰, 문의, BTF 등 모든 구조화된 데이터 수집
+        
+        Returns:
+            bool: 데이터 수집 성공 여부
+        """
+        if not self.state.current_url:
+            logger.error("No current URL set for data collection")
+            return False
+        
+        data_collected = await self._collect_structured_data(self.state.current_url)
+        return data_collected
+
+    async def _generate_product_summary(self) -> Optional[str]:
+        """
+        Step 3: 상품 요약 정보 생성
+        
+        수집된 데이터를 바탕으로 LLM을 사용하여 상품 요약 생성
+        
+        Returns:
+            Optional[str]: 생성된 요약 문자열, 실패 시 None
+        """
+        ### TODO
+        print("\n📝 상품 요약 정보를 생성하고 있습니다...")
+        try:
+            summary = self.llm.generate_product_summary(
+                self.state.current_product_name,
+                self.artifact_summary
+            )
+            ### status
+            print("-" * 60)
+            ### TODO
+            print(summary)
+            ### status
+            print("-" * 60)
+            return summary
+        except Exception as e:
+            logger.error("Failed to generate summary: %s", e)
+            ### TODO
+            print("⚠️  요약 정보를 생성하지 못했습니다.")
+            return None
+
 
     async def _recover_from_chrome_error(self, url: str) -> bool:
         """Attempt to recover from chrome-error page by creating a fresh page."""
