@@ -24,7 +24,8 @@ class IOMixin:
         voice_stt_model: Optional[str] = None,
         **kwargs,
     ):
-        super().__init__(**kwargs)
+        # We do not forward kwargs since upstream mixins don't expect them.
+        super().__init__()
 
         if voice_input_enabled == text_input_enabled:
             raise ValueError("Exactly one of voice_input_enabled or text_input_enabled must be True.")

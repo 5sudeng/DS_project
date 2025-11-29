@@ -127,11 +127,12 @@ class ShoppingCLI(IOMixin, BrowserMixin, SearchMixin, IntentMixin):
         """Main conversation loop."""
         # Step 1: Get initial product URL
         await self._ask_ai_memory_preference()
-
+        
         # Step 2: Conversation loop
         while True:
             ### voiceinput
-            user_input = input("\n💬 > ").strip()
+
+            user_input = input("삐\n > ").strip()
 
             if not user_input:
                 continue
@@ -139,7 +140,7 @@ class ShoppingCLI(IOMixin, BrowserMixin, SearchMixin, IntentMixin):
             self.state.add_message("user", user_input)
 
             try:
-                should_continue = await self._hanle_user_input(user_input)
+                should_continue = await self._handle_user_input(user_input)
                 if not should_continue:
                     break
             except Exception as e:

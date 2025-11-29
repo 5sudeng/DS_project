@@ -39,7 +39,7 @@ async def main():
     parser.add_argument(
         "--voice-backend",
         choices=["openai", "vosk", "rtzr"],
-        default="openai",
+        default="rtzr",
         help="Voice STT backend.",
     )
 

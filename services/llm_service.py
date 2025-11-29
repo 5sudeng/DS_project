@@ -100,6 +100,58 @@ class ShoppingLLMService:
     def __init__(self, api_key: Optional[str] = None, model: str = "gpt-4o-mini"):
         self.client = OpenAI(api_key=api_key or os.getenv("OPENAI_API_KEY"))
         self.model = model
+
+    def map_command_to_actions(self, command: str) -> Dict[str, Any]:
+        """
+        Map free-form natural language to an ordered list of supported actions.
+        """
+        allowed_actions = """
+open_url url
+search_page query
+apply_sort sort_type
+apply_shipping shipping_option
+read_results top_n
+select_result index
+load_product url_or_index
+question query
+add_to_cart quantity
+navigate_to_cart
+summarize top_n
+exit
+"""
+        prompt = f"""
+당신은 쇼핑 CLI의 명령 플래너입니다.
+다음 액션만 사용하세요 (필요한 파라미터 포함):
+{allowed_actions}
+
+자연어 입력을 읽고 필요한 액션들을 순서대로 만드세요.
+JSON 객체만 출력합니다. 형식:
+{{"actions":[{{"action":"...", "param_key":"value", ...}}]}}
+
+예시:
+"쿠팡 열어줘" -> {{"actions":[{{"action":"open_url","url":"https://www.coupang.com"}}]}}
+"사람들이 많이 산 좋은 헤드셋 사고싶어" -> {{"actions":[{{"action":"search_page","query":"헤드셋"}},{{"action":"apply_sort","sort_type":"판매량순"}},{{"action":"read_results","top_n":3}}]}}
+"3번째 거 아이템 사고싶어" -> {{"actions":[{{"action":"select_result","index":3}},{{"action":"add_to_cart","quantity":1}}]}}
+"상품 정보에 음식 칼로리가 얼마니?" -> {{"actions":[{{"action":"question","query":"음식 칼로리가 얼마니?"}}]}}
+"오키 장바구니에 넣어줘" -> {{"actions":[{{"action":"add_to_cart","quantity":1}}]}}
+
+입력: "{command}"
+출력(JSON만):
+"""
+        try:
+            resp = self.client.responses.create(
+                model=self.model,
+                input=prompt,
+                response_format={"type": "json_object"},
+            )
+            text = resp.output[0].content[0].text
+            parsed = json.loads(text)
+            if isinstance(parsed, dict) and "actions" in parsed:
+                return parsed
+        except Exception as exc:  # noqa: BLE001
+            logger.error("map_command_to_actions failed: %s", exc)
+
+        return {"actions": []}
     
     def map_voice_command_to_action(self, command: str) -> Dict[str, Any]:
         """
@@ -124,57 +176,9 @@ class ShoppingLLMService:
         """
         Map free-form voice command to an ordered list of actions.
 
-        Actions supported:
-          - open_url: {url}
-          - search_page: {query}
-          - apply_sort: {sort_type}  # e.g., "낮은가격순", "높은가격순", "평점순"
-          - apply_shipping: {shipping_option}  # "배송비포함" | "배송비제외"
-          - summarize: {top_n:int}
-          - read_results: {top_n:int}
-          - related_keywords: {}  # 연관검색어 목록을 보여주고 선택
+        Delegates to map_command_to_actions for unified handling.
         """
-        system_prompt = """너는 사용자의 자유로운 음성 명령을 실행 가능한 액션 리스트로 변환하는 라우터다.
-출력은 JSON 하나이며, actions 배열에 순서대로 기술한다.
-지원 액션:
-- open_url: 특정 사이트로 이동 (예: coupang.com, shopping.naver.com)
-- search_page: 쿠팡 검색어 입력
-- apply_sort: 쿠팡 정렬 ("낮은가격순", "높은가격순", "판매량순", "랭킹순", "최신순", "평점순")
-- apply_shipping: "배송비포함" 또는 "배송비제외"
-- summarize: 현재 결과를 요약/추천 (top_n 지정)
-- read_results: 상위 N개 결과를 읽어줌 (top_n)
-- related_keywords: 현재 페이지의 연관검색어를 보여주고 선택 이동
-
-
-예시 변환:
-- "쿠팡 들어가줘" → [{"action":"open_url","url":"https://www.coupang.com/"}]
-- "후드티를 사고싶어" → [{"action":"search_page","query":"후드티"}]
-- "최저가 사과를 사고싶어" → [{"action":"search_page","query":"사과"},{"action":"apply_sort","sort_type":"낮은가격순"},{"action":"read_results","top_n":3}]
-- "검은색 모자를 추천해주고 별점순으로 보여줘" → [{"action":"search_page","query":"검은색 모자"},{"action":"summarize","top_n":3},{"action":"apply_sort","sort_type":"평점순"},{"action":"read_results","top_n":3}]
-
-출력 형식:
-{
-  "actions": [
-    {"action": "...", "...": "..."},
-    ...
-  ],
-  "notes": "선택 근거를 짧게"
-}
-JSON만 응답한다."""
-
-        user_prompt = f'사용자 명령: "{command}"\nJSON만 응답하세요.'
-        try:
-            response = self.client.chat.completions.create(
-                model=self.model,
-                messages=[
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": user_prompt},
-                ],
-                temperature=0.3,
-                response_format={"type": "json_object"},
-            )
-            return json.loads(response.choices[0].message.content)
-        except Exception:
-            return {"actions": [], "notes": "llm_error"}
+        return self.map_command_to_actions(command)
 
     def classify_intent(
         self,
