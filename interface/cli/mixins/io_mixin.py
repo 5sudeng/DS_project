@@ -40,11 +40,13 @@ class IOMixin:
 
     def io_output(self, msg: str):
         """Public helper to emit user-facing output based on output mode."""
+        # When we expect immediate voice input, wait for TTS to finish to avoid feedback.
+        wait_for_tts = self.input_mode == "voice"
         if self.output_mode in ("text", "both"):
             self.console_print(msg)
         if self.output_mode in ("voice", "both") and self.io:
             try:
-                self.io.speak(msg)
+                self.io.speak(msg, wait=wait_for_tts)
             except Exception:
                 pass
 

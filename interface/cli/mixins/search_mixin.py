@@ -94,7 +94,7 @@ class SearchMixin:
                 lines.append(f"   평점: {result.rating}")
             lines.append("")
         
-        self.console_output("\n".join(lines))
+        self.console_print("\n".join(lines))
 
         # Generate and display summary
         self.console_print("검색 결과 요약을 생성 중입니다...")
@@ -360,7 +360,7 @@ class SearchMixin:
             if result.rating:
                 lines.append(f"   평점: {result.rating}")
             lines.append("")
-        self.console_output("\n".join(lines))
+        self.console_print("\n".join(lines))
 
         # Ask if user likes any of these items
         print_lines = ["\n이 중에 마음에 드는 상품이 있으신가요?"]
