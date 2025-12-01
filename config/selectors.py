@@ -57,10 +57,12 @@ SELECTORS: Dict[str, Sequence[str]] = {
         "button:has-text('검색')",
     ),
     "product_item": (
-        "li.search-product",
-        "li.baby-product",
+        # 실제 검색 결과만 선택 (광고, 추천, 특가 제외)
+        "ul.search-product-list > li.search-product:not(:has-text('AD')):not(:has-text('광고')):not(:has-text('특가진행중'))",
+        "ul.search-product-list > li.search-product",  # 메인 검색 결과 리스트
+        "div.search-product-wrap-list > li.search-product",
+        "li.search-product:not([class*='ad']):not([class*='recommend']):not([class*='promotion'])",
         "li[id^='productItem']",
-        "div.search-product-wrap",
     ),
     "sort_buttons": {
         "랭킹순": [
@@ -95,8 +97,12 @@ SELECTORS: Dict[str, Sequence[str]] = {
         ],
     },
     "shipping_filter": (
+        # 배송비 포함/제외 토글 버튼 (최신 쿠팡 구조)
+        "button[data-testid='delivery-fee-toggle']",
         "div.srp_deliveryFeeToggle__6HXTR button",
         "div[class*='deliveryFeeToggle'] button",
+        "button:has-text('배송비')",
+        "label:has-text('배송비') button",
     ),
     "related_keywords": (
         "div.srp_relatedKeywords__DJiuK a",

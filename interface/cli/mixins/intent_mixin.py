@@ -43,7 +43,7 @@ class IntentMixin:
         if self.ai_memory_enabled:
             self.preference_memory.remember(f"User: {user_input}")
 
-        # Map command to actions using LLM
+        # 2. Map command to actions using LLM (자연어 처리)
         result = self.llm.map_command_to_actions(user_input)
         actions = result.get("actions", [])
         notes = result.get("notes", "")
@@ -143,7 +143,7 @@ class IntentMixin:
                         self.console_print(f"⚠️  {warning}")
                         
                     if result.success:
-                        # Update state with new results
+                        # Update state with new results and save sort option
                         from services.search_service import SearchResult
                         converted_results = [
                             SearchResult(
@@ -154,9 +154,21 @@ class IntentMixin:
                                 rating=r.rating
                             ) for r in result.results
                         ]
-                        self.state.search_results = converted_results
+                        self.state.all_search_results = converted_results
+                        self.state.search_results = converted_results[:self.state.results_per_page]
+                        self.state.page_offset = len(self.state.search_results)
+                        self.state.current_sort_option = sort_type  # 정렬 옵션 저장
                         self.io_output(f"✓ 정렬 완료 ({len(converted_results)}개 상품)")
-                        await self._read_search_results(3)
+                        
+                        # 첫 배치 표시
+                        lines = [f"\n📦 정렬된 결과 (페이지 {self.state.current_page}):\n"]
+                        for idx, res in enumerate(self.state.search_results, 1):
+                            lines.append(f"{idx}. {res.title}")
+                            lines.append(f"   가격: {res.price}")
+                            if res.rating:
+                                lines.append(f"   평점: {res.rating}")
+                            lines.append("")
+                        self.io_output("\n".join(lines))
                     else:
                         self.io_output(f"❌ {result.error}")
             
@@ -170,7 +182,7 @@ class IntentMixin:
                         self.console_print(f"⚠️  {warning}")
                         
                     if result.success:
-                        # Update state with new results
+                        # Update state with new results and save shipping filter
                         from services.search_service import SearchResult
                         converted_results = [
                             SearchResult(
@@ -181,15 +193,133 @@ class IntentMixin:
                                 rating=r.rating
                             ) for r in result.results
                         ]
-                        self.state.search_results = converted_results
+                        self.state.all_search_results = converted_results
+                        self.state.search_results = converted_results[:self.state.results_per_page]
+                        self.state.page_offset = len(self.state.search_results)
+                        self.state.current_shipping_filter = option  # 배송비 필터 저장
                         self.io_output(f"✓ 필터 적용 완료 ({len(converted_results)}개 상품)")
-                        await self._read_search_results(3)
+                        
+                        # 첫 배치 표시
+                        lines = [f"\n📦 필터된 결과 (페이지 {self.state.current_page}):\n"]
+                        for idx, res in enumerate(self.state.search_results, 1):
+                            lines.append(f"{idx}. {res.title}")
+                            lines.append(f"   가격: {res.price}")
+                            if res.rating:
+                                lines.append(f"   평점: {res.rating}")
+                            lines.append("")
+                        self.io_output("\n".join(lines))
                     else:
                         self.io_output(f"❌ {result.error}")
             
             elif act == "read_results":
                 top_n = action.get("top_n", 3)
                 await self._read_search_results(top_n)
+            
+            elif act == "next_items":
+                count = action.get("count", 3)
+                await self._show_next_results(count)
+            
+            elif act == "prev_items":
+                count = action.get("count", 3)
+                await self._show_prev_results(count)
+            
+            elif act == "next_page":
+                if not self.state.current_search_query:
+                    self.io_output("❌ 진행 중인 검색이 없습니다.")
+                else:
+                    # 실제 쿠팡 다음 페이지 이동
+                    result = await self.search_agent.go_to_next_page()
+                    if result.success:
+                        self.state.current_page += 1
+                        self.state.page_offset = 0
+                        
+                        # Convert results
+                        from services.search_service import SearchResult
+                        converted_results = [
+                            SearchResult(
+                                rank=r.index,
+                                title=r.title,
+                                price=r.price,
+                                url=r.url,
+                                rating=r.rating
+                            ) for r in result.results
+                        ]
+                        
+                        self.state.all_search_results = converted_results
+                        first_batch = converted_results[:self.state.results_per_page]
+                        self.state.search_results = first_batch
+                        self.state.page_offset = len(first_batch)
+                        
+                        # Display results
+                        self._display_current_results()
+                    else:
+                        self.io_output(f"❌ {result.error}")
+
+            elif act == "prev_page":
+                if not self.state.current_search_query:
+                    self.io_output("❌ 진행 중인 검색이 없습니다.")
+                elif self.state.current_page > 1:
+                    # 실제 쿠팡 이전 페이지 이동
+                    result = await self.search_agent.go_to_prev_page()
+                    if result.success:
+                        self.state.current_page -= 1
+                        self.state.page_offset = 0
+                        
+                        # Convert results
+                        from services.search_service import SearchResult
+                        converted_results = [
+                            SearchResult(
+                                rank=r.index,
+                                title=r.title,
+                                price=r.price,
+                                url=r.url,
+                                rating=r.rating
+                            ) for r in result.results
+                        ]
+                        
+                        self.state.all_search_results = converted_results
+                        first_batch = converted_results[:self.state.results_per_page]
+                        self.state.search_results = first_batch
+                        self.state.page_offset = len(first_batch)
+                        
+                        # Display results
+                        self._display_current_results()
+                    else:
+                        self.io_output(f"❌ {result.error}")
+                else:
+                    self.io_output("❌ 첫 번째 페이지입니다. 이전 페이지가 없습니다.")
+
+            elif act == "goto_page":
+                page_num = action.get("page_num")
+                if page_num:
+                    if not self.state.current_search_query:
+                        self.io_output("❌ 진행 중인 검색이 없습니다.")
+                    elif int(page_num) < 1:
+                        self.io_output("❌ 1 이상의 페이지 번호를 입력하세요.")
+                    else:
+                        self.state.current_page = int(page_num)
+                        self.state.page_offset = 0
+                        await self._load_current_page()
+            
+            elif act == "show_sort_options":
+                # 정렬 옵션 안내
+                sort_options = [
+                    "쿠팡랭킹순",
+                    "낮은가격순",
+                    "높은가격순",
+                    "판매량순",
+                    "최신순",
+                ]
+                message = "\n 사용 가능한 정렬 옵션:\n\n" + "\n".join([f"  • {opt}" for opt in sort_options])
+                self.io_output(message)
+            
+            elif act == "show_related_keywords":
+                await self._handle_related_keywords()
+            
+            elif act == "select_related_keyword":
+                keyword = action.get("keyword")
+                if keyword:
+                    await self._select_related_keyword(keyword)
             
             elif act == "question":
                 query = action.get("query")
@@ -210,24 +340,6 @@ class IntentMixin:
             elif act == "exit":
                 self.io_output("\n👋 쇼핑을 종료합니다. 감사합니다!")
 
-    async def _read_search_results(self, top_n: int):
-        """Read out the top N search results."""
-        if not self.state.search_results:
-            self.io_output("❌ 읽어드릴 검색 결과가 없습니다.")
-            return
-
-        items = self.state.search_results[:top_n]
-        lines = [f"\n📦 상위 {len(items)}개 상품:"]
-        for idx, res in enumerate(items, 1):
-            lines.append(f"{idx}. {res.title}")
-            lines.append(f"   가격: {res.price}")
-            if res.rating:
-                lines.append(f"   평점: {res.rating}")
-            lines.append("")
-        
-        message = "\n".join(lines)
-        self.io_output(message)
-
     async def _summarize_search_results(self, top_n: int):
         """Summarize the search results using LLM."""
         if not self.state.search_results:
@@ -243,23 +355,8 @@ class IntentMixin:
             for i, item in enumerate(items)
         ])
         
-        # Use LLM to generate summary (using existing method or new one)
-        # For now, we'll use a simple prompt via direct client access or add a method to LLM service
-        # Assuming we can add a method to LLM service later, for now we'll use a simple implementation
-        
         try:
-            # This would ideally be in LLMService
-            prompt = f"""다음 쿠팡 검색 결과 상위 {len(items)}개를 분석해서 사용자에게 추천할 만한 포인트와 특징을 3줄로 요약해줘:
-            
-{items_text}
-
-요약:"""
-            
-            # We don't have direct access to LLM client here easily without adding a method to LLMService
-            # So we'll use a placeholder or if LLMService has a generic method
-            # Let's assume we need to add summarize_products to LLMService
-            
-            # For now, just display the items as a "summary"
+            # Display items as summary
             self.io_output(f"\n[검색 결과 요약]\n{items_text}")
             self.io_output("\n(상세한 AI 요약 기능은 준비 중입니다)")
             
@@ -269,19 +366,15 @@ class IntentMixin:
 
     async def _handle_question(self, question: str):
         """Handle user question about the product."""
-        ### TODO
         self.io_output("\n⏳ 질문에 답변하는 중...")
         logger.info("Processing question intent: %s", question)
 
         answer = await self.product_agent.answer_user_question(question)
-        ### TODO
         self.io_output(f"\n🤖 {answer}")
-
         self.state.add_message("assistant", answer)
 
     async def _handle_add_to_cart(self, intent_result: Dict = None):
         """Handle when user explicitly wants to add to cart."""
-        ### TODO
         self.io_output("\n⏳ 장바구니에 담는 중...")
         logger.info("Processing add_to_cart intent")
 
@@ -293,23 +386,18 @@ class IntentMixin:
         
         # Handle warnings
         for warning in result.warnings:
-            ### status
             self.console_print(f"⚠️  {warning}")
         
         if result.success:
-            ### TODO
             self.io_output(f"\n🤖 {result.message}")
             self.state.add_message("assistant", result.message)
-            ### TODO
             self.io_output("\n💡 다른 상품을 더 찾아보시겠어요? (검색어 입력 또는 'exit'로 종료)")
         else:
-            ### TODO
             self.io_output(f"\n❌ {result.error}")
             self.state.add_message("assistant", result.error)
 
     async def _handle_navigate_to_cart(self):
         """Handle when user wants to navigate to cart page."""
-        ### status
         self.console_print("\n⏳ 장바구니 페이지로 이동 중...")
         logger.info("Processing navigate_to_cart intent")
 
@@ -317,15 +405,12 @@ class IntentMixin:
         
         # Handle warnings
         for warning in result.warnings:
-            ### status
             self.console_print(f"⚠️  {warning}")
         
         if result.success:
-            ### TODO
             self.io_output(f"\n🤖 {result.message}")
             self.state.add_message("assistant", result.message)
         else:
-            ### TODO
             self.io_output(f"\n❌ {result.error}")
             self.state.add_message("assistant", result.error)
 
@@ -334,7 +419,6 @@ class IntentMixin:
         logger.info("Processing satisfied intent")
         
         response = "마음에 드신다니 다행이네요! 더 궁금한 점이 있으신가요?"
-        ### TODO
         self.io_output(f"\n🤖 {response}")
         self.state.add_message("assistant", response)
 
@@ -350,9 +434,7 @@ class IntentMixin:
             reason = intent_result["reason"]
             keywords = intent_result.get("keywords", [])
 
-            ### TODO
             self.io_output(f"\n🔍 이해했습니다: {reason}")
-            ### TODO
             self.io_output("새로운 상품을 찾아보겠습니다...")
 
             # Generate search query using LLM
@@ -364,7 +446,6 @@ class IntentMixin:
                 artifact_summary=self.artifact_summary,
             )
 
-            ### TODO
             self.io_output(f"💡 검색어: '{search_query}'")
             await self._perform_search(search_query)
             await self._select_from_search_results()
@@ -377,7 +458,6 @@ class IntentMixin:
                 self.state.current_product_name,
                 artifact_summary=self.artifact_summary,
             )
-            ### TODO
             self.io_output(f"\n🤖 {clarification_msg}")
             self.state.add_message("assistant", clarification_msg)
             self.state.waiting_for_clarification = True
@@ -399,9 +479,7 @@ class IntentMixin:
         reason = intent_result.get("reason", user_input)
         keywords = intent_result.get("keywords", [])
 
-        ### TODO
         self.io_output(f"\n🔍 알겠습니다: {reason}")
-        ### TODO
         self.io_output("새로운 상품을 찾아보겠습니다...")
 
         search_query = self.llm.generate_search_query(
@@ -412,7 +490,6 @@ class IntentMixin:
             artifact_summary=self.artifact_summary,
         )
 
-        ### TODO
         self.io_output(f"💡 검색어: '{search_query}'")
         await self._perform_search(search_query)
         await self._select_from_search_results()
@@ -421,6 +498,5 @@ class IntentMixin:
     async def _suggest_add_to_cart(self):
         """Suggest adding the product to cart."""
         suggestion = "\n\n💡 이 상품이 마음에 드시나요? 장바구니에 담아드릴까요? (예/아니오)"
-        ### TODO
         self.io_output(suggestion)
         self.state.add_message("assistant", suggestion)

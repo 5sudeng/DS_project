@@ -60,7 +60,7 @@ class IOMixin:
             max_attempts = 3
             while attempt < max_attempts:
                 if self.output_mode in ("text", "both"):
-                    self.console_print("🎤 음성 입력 대기 중...")
+                    self.console_print("🎤 음성 입력 대기중...")
                 heard = self.io.listen()
                 if heard:
                     if self.output_mode in ("text", "both"):
@@ -68,7 +68,7 @@ class IOMixin:
                     return heard
                 attempt += 1
                 if attempt < max_attempts and self.output_mode in ("text", "both"):
-                    self.console_print("🔁 음성이 감지되지 않았습니다. 다시 말씀해주세요.")
+                    self.console_print("🎤 음성을 감지하지 못했습니다. 다시 말씀해주세요.")
             if self.keyboard_voice and self.output_mode in ("text", "both"):
                 try:
                     return self._orig_input()
@@ -92,12 +92,12 @@ class IOMixin:
             "--output-mode",
             choices=["text", "voice", "both"],
             default="both",
-            help="출력 모드 선택 (텍스트/음성/둘 다)",
+            help="출력 모드 선택 (텍스트/음성/둘다)",
         )
         parser.add_argument(
             "--keyboard-voice",
             action="store_true",
-            help="음성 입력 실패 시 키보드 푸시투토크 모드 사용",
+            help="음성 입력 실패 시 폴백으로 키보드 모드 활용",
         )
         parser.add_argument(
             "--stt-backend",
@@ -114,14 +114,14 @@ class IOMixin:
             if not mic_ok:
                 self.console_print("⚠️  마이크를 감지하지 못했습니다.")
                 if self.keyboard_voice:
-                    self.console_print("⌨️  키보드 푸시투토크 모드로 진행합니다.")
+                    self.console_print("⚠️  폴백으로 키보드 모드로 진행합니다.")
                 else:
-                    self.console_print("✏️  텍스트 입력으로 전환합니다.")
+                    self.console_print("⚠️  텍스트 입력으로 전환합니다.")
                     self.input_mode = "text"
 
         if self.output_mode == "both":
-            self.io_output("🔊 음성 출력 + 텍스트 출력 활성화.")
+            self.io_output("🔊 음성 출력 + 텍스트 출력 활성화")
         elif self.output_mode == "voice":
-            self.io_output("🔊 음성 출력만 활성화.")
+            self.io_output("🔊 음성 출력만 활성화")
         elif self.output_mode == "text":
-            self.io_output("✏️  텍스트 출력만 활성화.")
+            self.io_output("📝 텍스트 출력만 활성화")
