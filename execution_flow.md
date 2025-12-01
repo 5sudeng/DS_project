@@ -1,6 +1,7 @@
-# Execution Flow Documentation
+# Execution Flow Documentation (`junha_1` branch)
 
-This document outlines the execution flow of the Coupang Shopping Assistant, specifically focusing on the "Search" functionality.
+This document outlines the execution flow of the Coupang Shopping Assistant on the `junha_1` branch.
+**Note**: This branch uses an LLM-driven intent mapping system (`map_command_to_actions`) instead of hardcoded state transitions.
 
 ## 1. Entry Point: `run_agent.sh`
 - **File**: `run_agent.sh`
@@ -13,110 +14,73 @@ This document outlines the execution flow of the Coupang Shopping Assistant, spe
 - **File**: `main.py`
 - **Role**: Application entry point.
 - **Action**:
-    - Parses command-line arguments (e.g., `--headless`, `--cookie-file`).
+    - Parses command-line arguments.
     - Initializes `ShoppingCLI`.
     - Calls `cli.run()`.
 
 ## 3. CLI Controller: `ShoppingCLI`
 - **File**: `interface/cli/controller.py`
-- **Class**: `ShoppingCLI` (inherits from `BrowserMixin`, `SearchMixin`, `IntentMixin`)
+- **Class**: `ShoppingCLI` (inherits from `IOMixin`, `BrowserMixin`, `SearchMixin`, `IntentMixin`)
 - **Action**:
     - **`run()`**:
         - Prints welcome message.
         - Initializes Playwright browser session (`bootstrap_browser`).
-        - Initializes services: `BrowserService` (product agent) and `SearchService` (search agent).
+        - Initializes services.
         - Enters the conversation loop: `_conversation_loop()`.
     - **`_conversation_loop()`**:
-        - Calls `_get_initial_product()` to start the interaction.
+        - Calls `_ask_ai_memory_preference()` to toggle AI memory.
+        - Enters `while True` loop.
+        - **Input**: Waits for user input via `input("삐\n > ")`.
+        - **Handling**: Calls `_handle_user_input(user_input)`.
 
-## 4. Initial Input Handling: `BrowserMixin`
-- **File**: `interface/cli/mixins/browser_mixin.py`
-- **Method**: `_get_initial_product()`
-- **Action**:
-    - Prompts user: `📦 상품 URL을 입력하세요 (또는 'search'로 검색 시작):`
-    - **User Input**: `"search"`
-    - Detects "search" keyword and calls `self._start_with_search()`.
-
-## 5. Search Initiation: `SearchMixin`
-- **File**: `interface/cli/mixins/search_mixin.py`
-- **Method**: `_start_with_search()`
-- **Action**:
-    - Prompts user: `🔍 검색어를 입력하세요:`
-    - **User Input**: `"온습도계"`
-    - Calls `self._perform_search("온습도계")`.
-
-## 6. Search Execution: `SearchService`
-- **File**: `services/search_service.py`
-- **Method**: `search(query="온습도계", max_results=5)`
-- **Action**:
-    1.  **Navigation**: Checks if on Coupang main page; if not, navigates to `https://www.coupang.com`.
-    2.  **Input**: Finds the search bar (`_find_search_input`), clears it, and types "온습도계".
-    3.  **Submit**: Presses "Enter" to submit the search.
-    4.  **Wait**: Waits for results to load (`wait_for_load_state`).
-    5.  **Parse**: Calls `_parse_search_results` to extract product data (title, price, url, etc.) from the DOM.
-    6.  **Return**: Returns a list of `SearchResult` objects.
-
-## 7. Result Display: `SearchMixin`
-- **File**: `interface/cli/mixins/search_mixin.py`
-- **Method**: `_select_from_search_results()`
-- **Action**:
-    - Formats the `SearchResult` list into a readable string.
-    - Prints the results to the console.
-    - Prompts user: `🔢 원하는 상품의 번호를 입력하세요 (1-5):`
-
-## 8. Product Selection: `SearchMixin` & `BrowserMixin`
-- **File**: `interface/cli/mixins/search_mixin.py`
-- **Method**: `_select_search_result(selection=5)`
-- **Action**:
-    - **User Input**: `"5"`
-    - Identifies the selected product from `self.state.search_results`.
-    - Calls `self._load_product(selected.url)`.
-- **File**: `interface/cli/mixins/browser_mixin.py`
-- **Method**: `_load_product` -> `load_product_workflow`
-- **Action**:
-    1.  **Navigate**: `_navigate_to_product` loads the product page.
-    2.  **Collect**: `_collect_product_data` extracts HTML, reviews, etc.
-    3.  **Summary**: `_generate_product_summary` creates a summary using LLM.
-    - Prompts user: `❓ 무엇이 궁금하신가요? (상품에 대해 질문해 주세요!)`
-
-## 9. User Question (Price): `IntentMixin` & `BrowserService`
+## 4. Intent & Action Mapping: `IntentMixin`
 - **File**: `interface/cli/mixins/intent_mixin.py`
-- **Method**: `_handle_user_input`
+- **Method**: `_handle_user_input(user_input)`
 - **Action**:
-    - **User Input**: `"가격이 얼마야?"`
-    - **Intent Classification**: LLM classifies as `"question"`.
+    1.  **Plan**: Calls `self.llm.map_command_to_actions(user_input)` to convert natural language into a structured plan (JSON).
+    2.  **Execute**: Calls `_execute_actions(actions)` to run the planned actions.
+
+## 5. Search Execution (Scenario: "search 온습도계")
+- **User Input**: `"search 온습도계"` (or similar natural language)
+- **LLM Mapping**: Maps to `{"action": "search_page", "query": "온습도계"}`.
+- **Method**: `_execute_actions` -> `search_page` block.
+- **Action**:
+    - Calls `_search_only("온습도계")` in `SearchMixin`.
+    - Calls `SearchService.search_page`.
+    - Calls `_display_results` to print the list.
+
+## 6. Product Selection (Scenario: "5")
+- **User Input**: `"5"`
+- **LLM Mapping**: Maps to `{"action": "select_result", "index": 5}`.
+- **Method**: `_execute_actions` -> `select_result` block.
+- **Action**:
+    - Calls `_select_search_result(5)` in `SearchMixin`.
+    - Calls `_load_product(url)` in `BrowserMixin`.
+    - **BrowserMixin**:
+        - Navigates to product page.
+        - Collects data (`_collect_structured_data`).
+        - Generates summary (`generate_product_summary`).
+
+## 7. User Question (Scenario: "가격이 얼마야?")
+- **User Input**: `"가격이 얼마야?"`
+- **LLM Mapping**: Maps to `{"action": "question", "query": "가격이 얼마야?"}`.
+- **Method**: `_execute_actions` -> `question` block.
+- **Action**:
     - Calls `_handle_question("가격이 얼마야?")`.
-- **File**: `services/browser_service.py`
-- **Method**: `answer_user_question`
-- **Action**:
-    - Uses RAG (Retrieval Augmented Generation) or direct context to answer.
-    - Returns answer (e.g., "이 상품의 가격은 165,000원입니다.").
-    - Prints answer to console.
+    - Calls `BrowserService.answer_user_question`.
 
-## 10. Add to Cart: `IntentMixin` & `BrowserService`
-- **File**: `interface/cli/mixins/intent_mixin.py`
-- **Method**: `_handle_user_input`
+## 8. Add to Cart (Scenario: "장바구니에 담아줘")
+- **User Input**: `"장바구니에 담아줘"`
+- **LLM Mapping**: Maps to `{"action": "add_to_cart"}`.
+- **Method**: `_execute_actions` -> `add_to_cart` block.
 - **Action**:
-    - **User Input**: `"장바구니에 담아줘"`
-    - **Intent Classification**: LLM classifies as `"add_to_cart"`.
     - Calls `_handle_add_to_cart`.
-- **File**: `services/browser_service.py`
-- **Method**: `add_product_to_cart`
-- **Action**:
-    - Locates "Add to Cart" button on the page.
-    - Clicks the button.
-    - Verifies success (e.g., checks for confirmation modal or message).
-    - Returns success message.
+    - Calls `BrowserService.add_product_to_cart`.
 
-## 11. Navigate to Cart: `IntentMixin` & `BrowserService`
-- **File**: `interface/cli/mixins/intent_mixin.py`
-- **Method**: `_handle_user_input`
+## 9. Navigate to Cart (Scenario: "장바구니로 이동해줘")
+- **User Input**: `"장바구니로 이동해줘"`
+- **LLM Mapping**: Maps to `{"action": "navigate_to_cart"}`.
+- **Method**: `_execute_actions` -> `navigate_to_cart` block.
 - **Action**:
-    - **User Input**: `"장바구니로 이동해줘"`
-    - **Intent Classification**: LLM classifies as `"navigate_to_cart"`.
     - Calls `_handle_navigate_to_cart`.
-- **File**: `services/browser_service.py`
-- **Method**: `navigate_to_cart`
-- **Action**:
-    - Navigates to `https://cart.coupang.com` (or clicks cart icon).
-    - Returns confirmation message.
+    - Calls `BrowserService.navigate_to_cart`.
