@@ -136,6 +136,8 @@ class TextInterface:
 
     def speak(self, text: str):
         global _current_tts_process
+        if text.startswith("-"):
+            text = " " + text
         print(f"[Assistant] {text}")
         try:
             # Wait for previous TTS to finish
@@ -193,6 +195,8 @@ class OpenAIVoiceInterface:
 
     def speak(self, text: str):
         global _current_tts_process
+        if text.startswith("-"):
+            text = " " + text
         try:
             # Wait for previous TTS to finish
             if _current_tts_process:
@@ -333,6 +337,8 @@ class VoskSpeechInterface:
 
     def speak(self, text: str):
         global _current_tts_process
+        if text.startswith("-"):
+            text = " " + text
         try:
             # Wait for previous TTS to finish
             if _current_tts_process:
@@ -482,6 +488,8 @@ class RTZRSpeechInterface:
     # --- IO helpers ----------------------------------------------------
     def speak(self, text: str):
         global _current_tts_process
+        if text.startswith("-"):
+            text = " " + text
         try:
             # Wait for previous TTS to finish
             if _current_tts_process:
