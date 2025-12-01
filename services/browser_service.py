@@ -46,11 +46,12 @@ import os
 import re
 from dataclasses import dataclass
 from pathlib import Path
-from typing import List, Optional, Sequence
+from typing import Any, Dict, List, Optional, Sequence
 import os
 
 from playwright.async_api import Locator, Page, TimeoutError as PlaywrightTimeoutError
 from services.llm_service import ShoppingLLMService
+from services.result_types import CartOperationResult, NavigationResult
 from config.selectors import SELECTORS
 
 
@@ -158,14 +159,18 @@ class BrowserService:
             return f"답변 생성 중 문제가 발생했습니다: {exc}"
 
 
-    async def add_product_to_cart(self, quantity: int = 1) -> str:
-        """Click the add-to-cart button and confirm the action."""
+    async def add_product_to_cart(self, quantity: int = 1) -> CartOperationResult:
+        """Click the add-to-cart button and confirm the action.
+        
+        Returns CartOperationResult with success status and details.
+        """
+        warnings = []
+        quantity_set = False
 
         # Handle quantity if greater than 1
         if quantity > 1:
             try:
                 # Try to find quantity input
-                # Common selectors for quantity input
                 qty_selectors = [
                     "input[type='number'][class*='quantity']",
                     "input[class*='quantity']",
@@ -182,13 +187,12 @@ class BrowserService:
                 
                 if qty_input:
                     await qty_input.fill(str(quantity))
-                    # Trigger change event if needed
                     await qty_input.dispatch_event("change")
-                    print(f"✓ 수량을 {quantity}개로 변경했습니다.")
+                    quantity_set = True
                 else:
-                    print(f"⚠️  수량 입력창을 찾지 못해 기본 수량(1개)으로 진행합니다.")
+                    warnings.append(f"수량 입력창을 찾지 못해 기본 수량(1개)으로 진행합니다.")
             except Exception as e:
-                print(f"⚠️  수량 변경 중 오류 발생: {e}")
+                warnings.append(f"수량 변경 중 오류 발생: {str(e)}")
 
         for selector in self.ADD_TO_CART_SELECTORS:
             try:
@@ -197,13 +201,28 @@ class BrowserService:
                     continue
                 await button.first.click(timeout=self.search_timeout * 1000)
                 await self._wait_for_cart_confirmation()
-                return f"{quantity}개 상품을 장바구니에 담았습니다. 다른 필요한 게 있으신가요?"
+                return CartOperationResult(
+                    success=True,
+                    message=f"{quantity if quantity_set else 1}개 상품을 장바구니에 담았습니다. 다른 필요한 게 있으신가요?",
+                    quantity_added=quantity if quantity_set else 1,
+                    warnings=warnings
+                )
             except PlaywrightTimeoutError:
                 continue
-        return "장바구니 버튼을 찾을 수 없었습니다. 직접 눌러 주시겠어요?"
+        
+        return CartOperationResult(
+            success=False,
+            message="장바구니 버튼을 찾을 수 없었습니다.",
+            error="장바구니 버튼을 찾을 수 없었습니다. 직접 눌러 주시겠어요?",
+            warnings=warnings
+        )
 
-    async def navigate_to_cart(self) -> str:
-        """상단 헤더의 장바구니 아이콘을 클릭하여 장바구니 페이지로 이동."""
+    async def navigate_to_cart(self) -> NavigationResult:
+        """상단 헤더의 장바구니 아이콘을 클릭하여 장바구니 페이지로 이동.
+        
+        Returns NavigationResult with success status and details.
+        """
+        warnings = []
         
         cart_icon_selectors = [
             "a[href*='/cart'], a[href*='/shopping-cart']",  # 장바구니 링크
@@ -211,8 +230,6 @@ class BrowserService:
             "[class*='cart-button']",  # cart-button 클래스 포함
             "a:has-text('장바구니')",  # "장바구니" 텍스트 포함 링크
         ]
-        
-        print("🛒 장바구니 페이지로 이동 중...")
         
         # 먼저 헤더에서 장바구니 버튼/링크 찾기
         for selector in cart_icon_selectors:
@@ -232,24 +249,37 @@ class BrowserService:
                     # URL 확인
                     current_url = self.page.url
                     if "cart" in current_url or "shopping" in current_url:
-                        print("✓ 장바구니 페이지로 이동했습니다.")
-                        return "장바구니 페이지로 이동했습니다."
+                        return NavigationResult(
+                            success=True,
+                            message="장바구니 페이지로 이동했습니다.",
+                            url=current_url,
+                            warnings=warnings
+                        )
                     
             except PlaywrightTimeoutError:
                 continue
             except Exception as e:
-                print(f"⚠️  selector '{selector}' 시도 중 오류: {e}")
+                warnings.append(f"selector '{selector}' 시도 중 오류: {str(e)}")
                 continue
         
         # 장바구니 버튼을 찾지 못한 경우, 직접 URL로 이동
         try:
-            print("⚠️  장바구니 버튼을 찾지 못해 직접 URL로 이동합니다...")
+            warnings.append("장바구니 버튼을 찾지 못해 직접 URL로 이동합니다.")
             await self.page.goto("https://www.coupang.com/cart", wait_until="domcontentloaded", timeout=10000)
             await asyncio.sleep(2)
-            print("✓ 장바구니 페이지로 이동했습니다.")
-            return "장바구니 페이지로 이동했습니다."
+            return NavigationResult(
+                success=True,
+                message="장바구니 페이지로 이동했습니다.",
+                url=self.page.url,
+                warnings=warnings
+            )
         except Exception as e:
-            return f"장바구니 페이지로 이동하지 못했습니다: {e}"
+            return NavigationResult(
+                success=False,
+                message="장바구니 페이지로 이동하지 못했습니다.",
+                error=str(e),
+                warnings=warnings
+            )
 
     async def ask_for_preference_feedback(self) -> str:
         """Prompt the user for specific dissatisfaction feedback."""
@@ -297,9 +327,6 @@ class BrowserService:
         per_source_limit: int = 100,
     ) -> List[dict]:
         dataset = self._load_chunk_dataset()
-        print(f"✓ 청크 데이터셋에서 {len(dataset)}개 청크 로드됨")
-        print(f"✓ 최대 {limit}개 청크에서 대표 텍스트 추출 시도")
-        print(f"✓ 출처별 최대 {per_source_limit}개 청크 허용됨")
         if not dataset:
             return []
 

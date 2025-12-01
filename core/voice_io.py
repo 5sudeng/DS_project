@@ -9,7 +9,8 @@ import sys
 import tempfile
 import time
 import wave
-from typing import Optional
+from pathlib import Path
+from typing import Dict, Optional
 
 import numpy as np
 import pyttsx3
@@ -18,8 +19,43 @@ from openai import OpenAI
 import grpc  # type: ignore
 import requests  # type: ignore
 import pyaudio  # type: ignore
-import vito_stt_client_pb2 as rtzr_pb  # type: ignore
-import vito_stt_client_pb2_grpc as rtzr_pb_grpc  # type: ignore
+import core.vito_stt_client_pb2 as rtzr_pb  # type: ignore
+import core.vito_stt_client_pb2_grpc as rtzr_pb_grpc  # type: ignore
+
+
+OPENAI_ENV_FILE =  "openai_voice_env.txt"
+RTZR_ENV_FILE = "rtzr_voice_env.txt"
+
+
+def _load_env_file(path: Path) -> Dict[str, str]:
+    """Simple key=value parser that ignores comments and blank lines."""
+    if not path.exists():
+        return {}
+    entries: Dict[str, str] = {}
+    for line in path.read_text().splitlines():
+        line = line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, value = line.split("=", 1)
+        entries[key.strip()] = value.strip()
+    return entries
+
+
+def load_openai_voice_config() -> Dict[str, Optional[str]]:
+    file_env = _load_env_file(OPENAI_ENV_FILE)
+    return {
+        "api_key": os.getenv("OPENAI_API_KEY") or file_env.get("OPENAI_API_KEY"),
+        "base_url": os.getenv("OPENAI_BASE_URL") or file_env.get("OPENAI_BASE_URL"),
+        "stt_model": os.getenv("STT_MODEL") or file_env.get("STT_MODEL"),
+    }
+
+
+def load_rtzr_voice_config() -> Dict[str, Optional[str]]:
+    file_env = _load_env_file(RTZR_ENV_FILE)
+    return {
+        "client_id": os.getenv("RTZR_CLIENT_ID") or file_env.get("RTZR_CLIENT_ID"),
+        "client_secret": os.getenv("RTZR_CLIENT_SECRET") or file_env.get("RTZR_CLIENT_SECRET"),
+    }
 
 
 class KeyboardVoiceInputController:
@@ -58,14 +94,14 @@ class TextInterface:
         return user_input or None
 
 
-class SpeechInterface:
+class OpenAIVoiceInterface:
     """Handles TTS and STT for the voice browser (OpenAI Whisper API)."""
 
     def __init__(
         self,
         *,
-        openai_api_key: Optional[str] = "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",
-        stt_model: str = "whisper-1",
+        openai_api_key: Optional[str] = None,
+        stt_model: Optional[str] = None,
         samplerate: int = 16000,
         block_duration: float = 0.5,
         use_keyboard_input: bool = False,
@@ -73,13 +109,17 @@ class SpeechInterface:
     ):
         self.engine = pyttsx3.init()
         self.queue: queue.Queue[bytes] = queue.Queue()
+        config = load_openai_voice_config()
         # 기본 base_url을 명시적으로 넣어 404(Invalid URL) 방지
-        resolved_base = base_url or os.getenv("OPENAI_BASE_URL") or "https://api.openai.com/v1"
+        resolved_base = base_url or config["base_url"] or "https://api.openai.com/v1"
+        resolved_key = openai_api_key or config["api_key"]
+        if not resolved_key:
+            raise RuntimeError("OPENAI_API_KEY가 설정되지 않았습니다. openai_voice_env.txt 또는 환경 변수를 확인하세요.")
         self.client = OpenAI(
-            api_key=openai_api_key or os.getenv("OPENAI_API_KEY"),
+            api_key=resolved_key,
             base_url=resolved_base,
         )
-        self.stt_model = stt_model
+        self.stt_model = stt_model or config["stt_model"] or "whisper-1"
         self.samplerate = samplerate
         self.block_duration = block_duration
         self.blocksize = max(1, int(samplerate * block_duration))
@@ -321,10 +361,11 @@ class RTZRSpeechInterface:
         chunk: int = CHUNK,
         channels: int = CHANNELS,
     ):
-        self.client_id = client_id or os.getenv("RTZR_CLIENT_ID")
-        self.client_secret = client_secret or os.getenv("RTZR_CLIENT_SECRET")
+        cfg = load_rtzr_voice_config()
+        self.client_id = client_id or cfg["client_id"]
+        self.client_secret = client_secret or cfg["client_secret"]
         if not self.client_id or not self.client_secret:
-            raise RuntimeError("RTZR_CLIENT_ID/RTZR_CLIENT_SECRET 가 필요합니다.")
+            raise RuntimeError("RTZR_CLIENT_ID/RTZR_CLIENT_SECRET 가 필요합니다. rtzr_voice_env.txt 또는 환경 변수를 확인하세요.")
 
         self.samplerate = samplerate
         self.chunk = chunk
@@ -431,35 +472,27 @@ class RTZRSpeechInterface:
 def build_io_interface(
     *,
     voice_enabled: bool,
-    stt_backend: str = "openai",
-    openai_api_key: Optional[str] = None,
-    stt_model: Optional[str] = None,
+    stt_backend: str = "rtzr",
     use_keyboard_input: bool = False,
-    base_url: Optional[str] = None,
-    rtzr_token: Optional[str] = None,
-    rtzr_client_id: Optional[str] = None,
-    rtzr_client_secret: Optional[str] = None,
 ):
     if not voice_enabled:
         return TextInterface()
 
-    backend = (stt_backend or "openai").lower()
+    backend = (stt_backend or "rtzr").lower()
 
     if backend == "vosk":
-        return VoskSpeechInterface(use_keyboard_input=use_keyboard_input)
+        return VoskSpeechInterface(
+            use_keyboard_input=use_keyboard_input
+            )
 
     if backend == "rtzr":
         # 새 RTZR gRPC 기반 인터페이스
         return RTZRSpeechInterface(
-            client_id=rtzr_client_id,
-            client_secret=rtzr_client_secret,
+            use_keyboard_input=use_keyboard_input
         )
 
-    return SpeechInterface(
-        openai_api_key=openai_api_key,
-        stt_model=stt_model or "whisper-1",
+    return OpenAIVoiceInterface(
         use_keyboard_input=use_keyboard_input,
-        base_url=base_url,
     )
 
 

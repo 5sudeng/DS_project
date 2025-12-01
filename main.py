@@ -30,7 +30,6 @@ async def main():
     IOMixin.add_io_arguments(parser)
 
     args = parser.parse_args()
-    IOMixin.validate_io_args(args)
 
     # Load API Key
     api_key = args.api_key or os.getenv("OPENAI_API_KEY")
@@ -57,11 +56,10 @@ async def main():
         keyboard_voice=args.keyboard_voice,
     )
 
-    await cli.run()
+    try:
+        await cli.run()
+    except KeyboardInterrupt:
+        cli.io_output("\n👋 종료합니다.")
 
 if __name__ == "__main__":
-    try:
-        asyncio.run(main())
-    except KeyboardInterrupt:
-        ### TODO
-        print("\n👋 종료합니다.")
+    asyncio.run(main())

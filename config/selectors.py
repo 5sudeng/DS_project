@@ -57,4 +57,45 @@ SELECTORS: Dict[str, Sequence[str]] = {
         "li[id^='productItem']",
         "div.search-product-wrap",
     ),
+    "sort_buttons": {
+        "랭킹순": [
+            "button[data-testid='sorter-tab-ranking']",
+            "a:has-text('랭킹순')",
+            "button:has-text('랭킹순')",
+            "li:has-text('랭킹순')",
+        ],
+        "낮은가격순": [
+            "button[data-testid='sorter-tab-priceAsc']",
+            "a:has-text('낮은가격순')",
+            "button:has-text('낮은가격순')",
+            "li:has-text('낮은가격순')",
+        ],
+        "높은가격순": [
+            "button[data-testid='sorter-tab-priceDesc']",
+            "a:has-text('높은가격순')",
+            "button:has-text('높은가격순')",
+            "li:has-text('높은가격순')",
+        ],
+        "판매량순": [
+            "button[data-testid='sorter-tab-saleCount']",
+            "a:has-text('판매량순')",
+            "button:has-text('판매량순')",
+            "li:has-text('판매량순')",
+        ],
+        "최신순": [
+            "button[data-testid='sorter-tab-latest']",
+            "a:has-text('최신순')",
+            "button:has-text('최신순')",
+            "li:has-text('최신순')",
+        ],
+    },
+    "shipping_filter": (
+        "div.srp_deliveryFeeToggle__6HXTR button",
+        "div[class*='deliveryFeeToggle'] button",
+    ),
+    "related_keywords": (
+        "div.srp_relatedKeywords__DJiuK a",
+        "div[class*='related'] a",
+        "div[class*='srp_related'] a",
+    )
 }

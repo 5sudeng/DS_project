@@ -5,12 +5,14 @@ from __future__ import annotations
 import asyncio
 import re
 import logging
+import random
 from dataclasses import dataclass
 from typing import List, Optional
 
 from playwright.async_api import Page, TimeoutError as PlaywrightTimeoutError
 
 from config.selectors import SELECTORS
+from services.result_types import SearchOperationResult, SearchResult as SearchResultType
 
 logger = logging.getLogger(__name__)
 
@@ -34,7 +36,7 @@ class SearchService:
         self.page = page
         self.search_timeout = search_timeout
 
-    async def search(self, query: str, max_results: int = 5) -> List[SearchResult]:
+    async def search(self, query: str, max_results: int = 5) -> SearchOperationResult:
         """
         Search for products on Coupang and return top results.
 
@@ -43,48 +45,203 @@ class SearchService:
             max_results: Maximum number of results to return
 
         Returns:
-            List of SearchResult objects
+            SearchOperationResult with search results and status
         """
-        print(f"\n🔍 검색 중: '{query}'")
+        warnings = []
         logger.info("Searching for query: '%s'", query)
 
         # Navigate to Coupang main page if not already there
         if "coupang.com" not in self.page.url:
-            print("📡 쿠팡 메인 페이지로 이동 중...")
             logger.info("Navigating to Coupang main page")
-            await self.page.goto("https://www.coupang.com", wait_until="domcontentloaded", timeout=30000)
-            await asyncio.sleep(1.5)
+            try:
+                await self.page.goto("https://www.coupang.com", wait_until="domcontentloaded", timeout=30000)
+                await asyncio.sleep(1.5)
+            except Exception as e:
+                return SearchOperationResult(
+                    success=False,
+                    error=f"쿠팡 메인 페이지로 이동하지 못했습니다: {str(e)}",
+                    query=query
+                )
 
         # Find and fill search input
         search_input = await self._find_search_input()
         if not search_input:
             logger.error("Search input not found")
-            raise RuntimeError("검색창을 찾을 수 없습니다")
+            return SearchOperationResult(
+                success=False,
+                error="검색창을 찾을 수 없습니다",
+                query=query
+            )
 
-        print(f"🔍 검색어 입력: '{query}'")
         await search_input.clear()
-        await search_input.fill(query)
-        await asyncio.sleep(0.5)
+        # Human-like typing to avoid bot detection
+        await search_input.press_sequentially(query, delay=random.randint(100, 200))
+        await asyncio.sleep(random.uniform(0.5, 1.5))
 
         # Submit search
-        print("⏳ 검색 실행 중...")
         await search_input.press("Enter")
 
         # Wait for navigation with extended timeout
         try:
             await self.page.wait_for_load_state("domcontentloaded", timeout=45000)
-            print("⏳ 검색 결과 로딩 중...")
             await asyncio.sleep(3)  # Wait for JavaScript rendering
         except Exception as e:
-            print(f"⚠️  페이지 로드 경고: {e}")
+            warnings.append(f"페이지 로드 경고: {str(e)}")
             logger.warning("Page load warning: %s", e)
             # Continue anyway
             await asyncio.sleep(2)
 
         # Parse search results
         results = await self._parse_search_results(max_results)
-        print(f"✓ {len(results)}개 상품 발견")
         logger.info("Found %d products", len(results))
+        
+        # Convert to SearchResultType for result_types
+        result_list = [
+            SearchResultType(
+                index=r.rank,
+                title=r.title,
+                price=r.price,
+                url=r.url,
+                rating=r.rating
+            ) for r in results
+        ]
+        
+        return SearchOperationResult(
+            success=True,
+            results=result_list,
+            query=query,
+            warnings=warnings
+        )
+
+    async def apply_sort(self, sort_type: str) -> SearchOperationResult:
+        """Click the sort button in Coupang search results page."""
+        sort_selectors = SELECTORS.get("sort_buttons", {}).get(sort_type, SELECTORS.get("sort_buttons", {}).get("랭킹순"))
+        if not sort_selectors:
+            return SearchOperationResult(success=False, error=f"지원하지 않는 정렬 방식입니다: {sort_type}")
+
+        logger.info("Applying sort type: %s", sort_type)
+        for selector in sort_selectors:
+            try:
+                button = self.page.locator(selector)
+                if await button.count() > 0:
+                    await button.first.click()
+                    await self.page.wait_for_load_state("domcontentloaded", timeout=10000)
+                    await asyncio.sleep(2)
+                    
+                    # Re-parse results after sort
+                    results = await self._parse_search_results(max_results=5)
+                    result_list = [
+                        SearchResultType(
+                            index=r.rank,
+                            title=r.title,
+                            price=r.price,
+                            url=r.url,
+                            rating=r.rating
+                        ) for r in results
+                    ]
+                    return SearchOperationResult(
+                        success=True,
+                        results=result_list,
+                        warnings=[f"'{sort_type}' 정렬이 적용되었습니다."]
+                    )
+            except Exception as e:
+                logger.warning("Sort button click failed for selector %s: %s", selector, e)
+        
+        return SearchOperationResult(success=False, error=f"'{sort_type}' 정렬 버튼을 찾을 수 없습니다.")
+
+    async def apply_shipping_filter(self, shipping_option: str) -> SearchOperationResult:
+        """Apply shipping filter (배송비 포함/제외)."""
+        if shipping_option not in ["배송비포함", "배송비제외"]:
+            return SearchOperationResult(success=False, error=f"알 수 없는 배송비 옵션: {shipping_option}")
+
+        logger.info("Applying shipping filter: %s", shipping_option)
+        
+        # Check current state
+        current_state = await self._get_shipping_filter_state()
+        if current_state == shipping_option:
+            return SearchOperationResult(
+                success=True, 
+                warnings=[f"이미 '{shipping_option}' 상태입니다."]
+            )
+
+        # Toggle filter
+        selectors = SELECTORS.get("shipping_filter", [])
+        for selector in selectors:
+            try:
+                btn = self.page.locator(selector)
+                if await btn.count() > 0:
+                    await btn.first.click()
+                    await self.page.wait_for_load_state("networkidle", timeout=5000)
+                    await asyncio.sleep(1)
+                    
+                    # Verify state change
+                    new_state = await self._get_shipping_filter_state()
+                    if new_state == shipping_option:
+                        # Re-parse results
+                        results = await self._parse_search_results(max_results=5)
+                        result_list = [
+                            SearchResultType(
+                                index=r.rank,
+                                title=r.title,
+                                price=r.price,
+                                url=r.url,
+                                rating=r.rating
+                            ) for r in results
+                        ]
+                        return SearchOperationResult(
+                            success=True,
+                            results=result_list,
+                            warnings=[f"'{shipping_option}' 필터가 적용되었습니다."]
+                        )
+            except Exception as e:
+                logger.warning("Shipping filter toggle failed: %s", e)
+
+        return SearchOperationResult(success=False, error=f"'{shipping_option}' 필터 적용에 실패했습니다.")
+
+    async def _get_shipping_filter_state(self) -> str:
+        """Check current shipping filter state."""
+        try:
+            include_selector = "div.srp_deliveryFeeToggle__6HXTR:has(label:has-text('배송비 포함')) button"
+            include_button = self.page.locator(include_selector)
+            
+            if await include_button.count() > 0:
+                include_class = await include_button.first.get_attribute("class")
+                include_aria = await include_button.first.get_attribute("aria-pressed")
+                
+                if (include_class and "srp_enabled" in include_class) or \
+                   (include_aria and include_aria.lower() == "true"):
+                    return "배송비포함"
+            
+            return "배송비제외"
+        except Exception:
+            return "배송비제외"
+
+    async def get_related_keywords(self) -> List[Dict[str, str]]:
+        """Get related keywords from the page."""
+        selectors = SELECTORS.get("related_keywords", [])
+        results = []
+        
+        for sel in selectors:
+            try:
+                loc = self.page.locator(sel)
+                count = await loc.count()
+                if count == 0:
+                    continue
+                    
+                for i in range(count):
+                    a = loc.nth(i)
+                    title = (await a.inner_text()).strip()
+                    href = await a.get_attribute("href")
+                    if href:
+                        if not href.startswith("http"):
+                            href = f"https://www.coupang.com{href}"
+                        results.append({"title": title, "href": href})
+                
+                if results:
+                    break
+            except Exception:
+                continue
+                
         return results
 
     async def _find_search_input(self):
