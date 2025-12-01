@@ -30,13 +30,16 @@ class BrowserMixin:
                 loaded = await self._load_product(url)
                 if loaded:
                     return
-                self.io_output("입력하신 URL로 상품을 불러오지 못했습니다. 다른 URL을 입력하시거나, 검색으로 상품을 찾아보세요.")
+                ### TODO
+                self.io_output("상품을 불러오지 못했습니다. 다른 URL을 시도해 주세요.")
             else:
-                self.io_output("올바른 쿠팡 URL을 입력해주세요. URL은 https://www.coupang.com 또는 https://shop.coupang.com으로 시작해야 합니다. 또는 검색이라고 말씀하시면 상품을 검색할 수 있습니다.")
+                ### TODO
+                self.io_output("올바른 쿠팡 URL을 입력해주세요. (예: https://www.coupang.com/... 또는 https://shop.coupang.com/...)")
 
     async def _load_product(self, url: str, *, _retry: bool = False) -> bool:
         """Load a product page using navigator, parser, and data collector."""
-        self.io_output("상품 페이지를 불러오고 있습니다. 잠시만 기다려 주세요.")
+        self.io_output(f"상품 페이지를 불러오는 중...")
+
         logger.info("Attempting to load product page: %s", url)
 
         try:
@@ -54,11 +57,11 @@ class BrowserMixin:
                 if not _retry and nav_result.error and "Chrome 오류" in nav_result.error:
                     if await self._recover_from_chrome_error(url):
                         return True
-                self.io_output(f"상품 페이지로 이동하는 데 실패했습니다. {nav_result.error}")
+                self.io_output(f"{nav_result.error}")
                 return False
             
             current_url = nav_result.url
-            self.io_output("상품 페이지가 로드되었습니다. 상품 정보를 불러오고 있습니다.")
+            # self.io_output("상품 페이지가 로드되었습니다. 상품 정보를 불러오고 있습니다.")
             
             # Step 2: Extract product information
             parser = ProductInfoParser(self.page)
@@ -79,7 +82,7 @@ class BrowserMixin:
             self.console_print(f"   URL: {current_url}")
 
             # Step 4: Generate and display summary
-            self.io_output("상품 정보를 분석하고 요약을 생성하고 있습니다. 잠시만 기다려 주세요.")
+            self.io_output("상품 요약 정보를 생성하고 있습니다...")
             try:
                 summary = self.llm.generate_product_summary(
                     self.state.current_product_name,
@@ -92,11 +95,11 @@ class BrowserMixin:
                 logger.error("Failed to generate summary: %s", e)
                 self.io_output("요약 정보를 생성하지 못했습니다. 하지만 상품에 대해 질문하실 수 있습니다.")
             
-            self.io_output("상품에 대해 궁금하신 점이 있으신가요? 예를 들어 가격, 배송, 평점, 리뷰 등 무엇이든 물어보세요. 또는 장바구니에 담기라고 말씀하시면 장바구니에 추가할 수 있습니다.")
+            self.io_output("무엇이 궁금하신가요? (상품에 대해 질문해 주세요!)")
             return True
 
         except Exception as e:
-            self.io_output(f"상품 페이지 로드에 실패했습니다. 다시 시도해주세요.")
+            self.io_output(f"페이지 로드 실패: {e}")
             self.io_output("다시 시도하시겠습니까? 다른 URL을 입력하거나 'exit'로 종료하세요.")
             logger.exception("Product page load failed: %s", e)
             return False
@@ -128,7 +131,7 @@ class BrowserMixin:
     async def _collect_structured_data(self, current_url: str) -> bool:
         """Collect HTML/reviews/inquiries using the crawling stack."""
         ### status
-        print("\n🗂️  상품 데이터 수집 중...")
+        print("상품 데이터 수집 중...")
         logger.info("Collecting structured data for %s", current_url)
         
         # Get HTML from Playwright page (already loaded successfully)

@@ -838,7 +838,7 @@ class SearchService:
         if not results:
             return "검색 결과가 없습니다."
 
-        lines = ["\n📦 검색 결과:\n"]
+        lines = ["검색 결과:\n"]
         for result in results:
             lines.append(f"{result.rank}. {result.title}")
             lines.append(f"   가격: {result.price}")

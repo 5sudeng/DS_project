@@ -11,7 +11,7 @@ class SearchMixin:
 
     async def _start_with_search(self):
         """Start with a product search."""
-        self.io_output("어떤 상품을 찾으시나요? 검색어를 말씀해주세요.")
+        self.io_output("검색어를 입력하세요: ")
         query = (self.io_input() or "").strip()
         if not query:
             self.io_output("검색어가 입력되지 않았습니다. 다시 검색어를 말씀해주세요.")
@@ -24,7 +24,8 @@ class SearchMixin:
     async def _perform_search(self, query: str):
         """Perform a product search."""
         logger.info("Performing search query='%s'", query)
-        self.io_output(f"{query}를 검색하고 있습니다. 잠시만 기다려 주세요.")
+        ### status
+        self.io_output(f"\n 검색 중: '{query}'")
         
         try:
             # 페이지 내 최대 36개 상품만 가져오기
@@ -85,7 +86,7 @@ class SearchMixin:
         logger.info("Displaying %d search results", len(self.state.search_results))
         
         # 첫 배치 표시
-        lines = [f"\n📦 검색 결과 (페이지 {self.state.current_page}):\n"]
+        lines = [f"검색 결과 (페이지 {self.state.current_page}):\n"]
         for idx, result in enumerate(self.state.search_results, 1):
             lines.append(f"{idx}. {result.title}")
             lines.append(f"   가격: {result.price}")
@@ -96,7 +97,7 @@ class SearchMixin:
         self.io_output("\n".join(lines))
 
         # Generate and display summary
-        self.io_output("\n🤖 검색 결과 요약을 생성 중입니다...")
+        self.console_print("검색 결과 요약을 생성 중입니다...")
         summary = await asyncio.to_thread(self.llm.summarize_search_results, self.state.search_results)
         
         # Print to console with emojis
@@ -122,35 +123,14 @@ class SearchMixin:
                 logger.error("TTS failed: %s", e)
                 self.console_print(f"⚠️  음성 출력 오류: {e}")
 
-        # 네비게이션 옵션 표시
-        print_lines = ["\n❓ 이 중에 마음에 드는 상품이 있으신가요?"]
-        print_lines.append(f"🔢 상품 번호를 입력하세요 (1-{len(self.state.search_results)}), 또는:")
-        
-        # 페이지 내에서 더 많은 상품이 있으면 다음 상품 보기 가능
-        if self.state.page_offset < len(self.state.all_search_results):
-            print_lines.append("   '다음상품' → 다음 {0}개 상품 보기".format(self.state.results_per_page))
-        
-        # 페이지 네비게이션 옵션
-        print_lines.append("   '페이지' → 다른 페이지로 이동")
-        print_lines.append("   '검색' → 새로운 상품 검색")
-        
-        self.io_output("\n".join(print_lines))
-        
-        # Voice output for navigation
-        if self.output_mode in ("voice", "both") and self.io:
-            try:
-                nav_text = f"이 중에 마음에 드는 상품이 있으신가요? 상품을 선택하시려면 1번부터 {len(self.state.search_results)}번까지 번호를 말씀해주세요"
-                if self.state.page_offset < len(self.state.all_search_results):
-                    nav_text += f". 다음 {self.state.results_per_page}개 상품을 더 보시려면 다음상품이라고 말씀해주세요"
-                nav_text += ". 다른 페이지로 이동하시려면 페이지라고 말씀해주세요. 새로운 검색을 하시려면 검색이라고 말씀해주세요"
-                self.io.speak(nav_text)
-            except Exception as e:
-                logger.error("Voice navigation output failed: %s", e)
+        ### TODO
+        self.io_output(f"원하는 상품의 번호를 입력하세요 (1번 부터 {len(self.state.search_results)}번까지):")
 
     async def _select_search_result(self, selection: int):
         """Handle user's selection from search results."""
         if not (1 <= selection <= len(self.state.search_results)):
-            self.io_output(f"잘못된 번호입니다. 1번부터 {len(self.state.search_results)}번 사이의 번호를 말씀해주세요.")
+            ### TODO
+            self.io_output(f" 1부터 {len(self.state.search_results)} 사이의 번호를 입력해주세요.")
             return
 
         logger.info("User selected result index=%d", selection)
@@ -183,7 +163,7 @@ class SearchMixin:
         self.state.search_results = items
         self.state.page_offset = end_idx
         
-        lines = [f"\n📦 {start_idx + 1}번부터 {end_idx}번 상품:"]
+        lines = [f"\n{start_idx + 1}번부터 {end_idx}번 상품:"]
         for idx, res in enumerate(items, start_idx + 1):
             lines.append(f"{idx}. {res.title}")
             lines.append(f"   가격: {res.price}")
@@ -222,7 +202,7 @@ class SearchMixin:
             self.state.search_results = display_items
 
             # Display items with 1-N numbering
-            lines = [f"\n📦 페이지 {self.state.current_page}의 다음 상품들:\n"]
+            lines = [f"\페이지 {self.state.current_page}의 다음 상품들:\n"]
             for idx, result in enumerate(display_items, 1):
                 lines.append(f"{idx}. {result.title}")
                 lines.append(f"   가격: {result.price}")
@@ -239,7 +219,7 @@ class SearchMixin:
             has_previous = page_start > 0
             has_next = page_end < len(self.state.all_search_results)
 
-            print_lines = [f"🔢 상품 번호를 입력하세요 (1-{len(display_items)}), 또는:"]
+            print_lines = [f"상품 번호를 입력하세요 (1번에서 {len(display_items)}번까지), 또는:"]
             if has_previous:
                 print_lines.append("   '이전' → 이전 상품 보기")
             if has_next:
@@ -281,7 +261,7 @@ class SearchMixin:
             display_items = previous_items
             self.state.search_results = display_items
 
-            lines = [f"\n📦 페이지 {self.state.current_page}의 이전 상품들:\n"]
+            lines = [f"\페이지 {self.state.current_page}의 이전 상품들:\n"]
             for idx, result in enumerate(display_items, 1):
                 lines.append(f"{idx}. {result.title}")
                 lines.append(f"   가격: {result.price}")
@@ -298,7 +278,7 @@ class SearchMixin:
 
             # Ask if user likes any of these items
             self.io_output("❓ 이 중에 마음에 드는 상품이 있으신가요?")
-            print_lines = [f"🔢 상품 번호를 입력하세요 (1-{len(display_items)}), 또는:"]
+            print_lines = [f"상품 번호를 입력하세요 (1번에서 {len(display_items)}번까지), 또는:"]
             if has_previous:
                 print_lines.append("   '이전' → 더 이전의 5개 상품 보기")
             if has_next:
@@ -318,7 +298,7 @@ class SearchMixin:
             return
 
         try:
-            self.io_output(f"\n⏳ 페이지 {self.state.current_page} 로드 중...")
+            self.io_output(f"\n페이지 {self.state.current_page} 로드 중...")
             
             # 실제 쿠팡 페이지 이동 (SearchService.go_to_page 사용)
             result = await self.search_agent.go_to_page(self.state.current_page)
@@ -373,7 +353,7 @@ class SearchMixin:
         if not self.state.search_results:
             return
         
-        lines = [f"\n📦 검색 결과 (페이지 {self.state.current_page}):\n"]
+        lines = [f"\n검색 결과 (페이지 {self.state.current_page}):\n"]
         for idx, result in enumerate(self.state.search_results, 1):
             lines.append(f"{idx}. {result.title}")
             lines.append(f"   가격: {result.price}")
@@ -384,7 +364,7 @@ class SearchMixin:
 
         # Ask if user likes any of these items
         print_lines = ["\n❓ 이 중에 마음에 드는 상품이 있으신가요?"]
-        print_lines.append(f"🔢 상품 번호를 입력하세요 (1-{len(self.state.search_results)}), 또는:")
+        print_lines.append(f"상품 번호를 입력하세요 (1번에서 {len(self.state.search_results)}번까지), 또는:")
         
         if self.state.page_offset < len(self.state.all_search_results):
             print_lines.append("   '다음상품' → 다음 {0}개 상품 보기".format(self.state.results_per_page))
