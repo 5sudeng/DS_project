@@ -94,7 +94,7 @@ class SearchMixin:
                 lines.append(f"   평점: {result.rating}")
             lines.append("")
         
-        self.io_output("\n".join(lines))
+        self.console_output("\n".join(lines))
 
         # Generate and display summary
         self.console_print("검색 결과 요약을 생성 중입니다...")
@@ -353,14 +353,14 @@ class SearchMixin:
         if not self.state.search_results:
             return
         
-        lines = [f"\n검색 결과 (페이지 {self.state.current_page}):\n"]
+        lines = [f"검색 결과 (페이지 {self.state.current_page}):\n"]
         for idx, result in enumerate(self.state.search_results, 1):
             lines.append(f"{idx}. {result.title}")
             lines.append(f"   가격: {result.price}")
             if result.rating:
                 lines.append(f"   평점: {result.rating}")
             lines.append("")
-        self.io_output("\n".join(lines))
+        self.console_output("\n".join(lines))
 
         # Ask if user likes any of these items
         print_lines = ["\n❓ 이 중에 마음에 드는 상품이 있으신가요?"]
