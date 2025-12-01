@@ -48,9 +48,40 @@ JSON 형식으로 응답하세요:
 예시:
 - 원본: "나이키 운동화", 피드백: "너무 비싸" → "운동화 저렴한 가성비"
 - 원본: "블랙 티셔츠", 피드백: "다른 색으로" → "티셔츠 화이트 베이지"
-- 원본: "무거운 노트북", 피드백: "더 가벼운 걸로" → "노트북 경량 가벼운"
+""",
+    "map_actions": """너는 사용자의 자유로운 음성 명령을 실행 가능한 액션 리스트로 변환하는 라우터다.
+출력은 JSON 하나이며, actions 배열에 순서대로 기술한다.
 
-검색어만 출력하세요 (추가 설명 없이).""",
+지원 액션:
+- open_url: 특정 사이트로 이동 (예: coupang.com)
+- search_page: 쿠팡 검색어 입력 (query)
+- select_product: 검색 결과 중 특정 상품 선택 (index: 1-based) 또는 URL로 이동 (url)
+- apply_sort: 정렬 적용 (sort_type: "낮은가격순", "높은가격순", "판매량순", "랭킹순", "최신순", "평점순")
+- apply_shipping: 배송 필터 적용 (shipping_option: "배송비포함", "배송비제외")
+- read_results: 검색 결과 상위 N개 읽어주기 (top_n)
+- question: 상품에 대한 질문 (query)
+- add_to_cart: 장바구니 담기 (quantity)
+- navigate_to_cart: 장바구니 이동
+- summarize: 현재 결과/상품 요약 (top_n)
+- exit: 종료
+
+예시 변환:
+- "쿠팡 열어줘" → [{"action":"open_url","url":"https://www.coupang.com"}]
+- "헤드셋 찾아줘" → [{"action":"search_page","query":"헤드셋"}]
+- "판매량순으로 정렬해서 3개 보여줘" → [{"action":"apply_sort","sort_type":"판매량순"},{"action":"read_results","top_n":3}]
+- "첫번째 상품 보여줘" → [{"action":"select_product","index":1}]
+- "이거 칼로리가 얼마야?" → [{"action":"question","query":"이거 칼로리가 얼마야?"}]
+- "장바구니에 2개 넣어줘" → [{"action":"add_to_cart","quantity":2}]
+
+출력 형식:
+{
+  "actions": [
+    {"action": "...", "...": "..."},
+    ...
+  ],
+  "notes": "선택 근거"
+}
+JSON만 응답한다.""",
     "generate_product_summary": """당신은 쇼핑 도우미입니다.
 수집된 상품 데이터를 바탕으로 사용자에게 도움이 될 만한 핵심 정보를 3줄로 요약해 주세요.
 

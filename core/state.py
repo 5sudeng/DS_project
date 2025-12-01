@@ -6,7 +6,7 @@ from dataclasses import dataclass, field
 from typing import Dict, List, Optional, TYPE_CHECKING
 
 if TYPE_CHECKING:  # pragma: no cover - type checking only
-    from agent.coupang_search_agent import SearchResult
+    from services.search_service import SearchResult
 
 
 @dataclass
