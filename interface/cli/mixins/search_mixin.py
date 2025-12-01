@@ -11,11 +11,10 @@ class SearchMixin:
 
     async def _start_with_search(self):
         """Start with a product search."""
-        self.io_output("🔍 검색어를 입력하세요: ")
+        self.io_output("어떤 상품을 찾으시나요? 검색어를 말씀해주세요.")
         query = (self.io_input() or "").strip()
         if not query:
-            ### TODO
-            self.io_output("❌ 검색어를 입력해주세요.")
+            self.io_output("검색어가 입력되지 않았습니다. 다시 검색어를 말씀해주세요.")
             await self._get_initial_product()
             return
 
@@ -25,8 +24,7 @@ class SearchMixin:
     async def _perform_search(self, query: str):
         """Perform a product search."""
         logger.info("Performing search query='%s'", query)
-        ### status
-        self.io_output(f"\n🔍 검색 중: '{query}'")
+        self.io_output(f"{query}를 검색하고 있습니다. 잠시만 기다려 주세요.")
         
         try:
             # 페이지 내 최대 36개 상품만 가져오기
@@ -34,12 +32,10 @@ class SearchMixin:
             
             # Handle warnings
             for warning in result.warnings:
-                ### status
                 self.console_print(f"⚠️  {warning}")
             
             if not result.success:
-                ### TODO
-                self.io_output(f"\n❌ {result.error}")
+                self.io_output(f"검색에 실패했습니다. {result.error}. 다른 검색어로 다시 시도해주세요.")
                 self.state.clear_search_results()
                 logger.error("Search failed for query='%s': %s", query, result.error)
                 return
@@ -64,12 +60,11 @@ class SearchMixin:
             self.state.current_sort_option = None
             self.state.current_shipping_filter = None
             
-            ### status
-            self.io_output(f"✓ 검색 결과: {result.total_count or len(converted_results)}개")
+            total_count = result.total_count or len(converted_results)
+            self.io_output(f"검색이 완료되었습니다. 총 {total_count}개의 상품을 찾았습니다.")
 
             if not converted_results:
-                ### TODO
-                self.io_output("\n😔 검색 결과가 없습니다. 다른 검색어로 시도해주세요.")
+                self.io_output("검색 결과가 없습니다. 다른 검색어로 다시 시도해주세요. 예를 들어, 더 간단한 단어나 브랜드 이름으로 검색해보세요.")
                 logger.info("No results returned for query='%s'", query)
             
             # 첫 배치를 표시 (results_per_page개)
@@ -78,8 +73,7 @@ class SearchMixin:
             self.state.page_offset = len(first_batch)
 
         except Exception as e:
-            ### TODO
-            self.io_output(f"\n❌ 검색 중 예상치 못한 오류 발생: {e}")
+            self.io_output(f"검색 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.")
             self.state.clear_search_results()
             logger.exception("Search failed for query='%s': %s", query, e)
 
@@ -145,10 +139,10 @@ class SearchMixin:
         # Voice output for navigation
         if self.output_mode in ("voice", "both") and self.io:
             try:
-                nav_text = "상품 번호를 입력해주세요"
+                nav_text = f"이 중에 마음에 드는 상품이 있으신가요? 상품을 선택하시려면 1번부터 {len(self.state.search_results)}번까지 번호를 말씀해주세요"
                 if self.state.page_offset < len(self.state.all_search_results):
-                    nav_text += ". 다음 상품을 보려면 다음상품이라고 하세요"
-                nav_text += ". 다른 페이지로 이동하려면 페이지라고 하세요"
+                    nav_text += f". 다음 {self.state.results_per_page}개 상품을 더 보시려면 다음상품이라고 말씀해주세요"
+                nav_text += ". 다른 페이지로 이동하시려면 페이지라고 말씀해주세요. 새로운 검색을 하시려면 검색이라고 말씀해주세요"
                 self.io.speak(nav_text)
             except Exception as e:
                 logger.error("Voice navigation output failed: %s", e)
@@ -156,21 +150,18 @@ class SearchMixin:
     async def _select_search_result(self, selection: int):
         """Handle user's selection from search results."""
         if not (1 <= selection <= len(self.state.search_results)):
-            ### TODO
-            self.io_output(f"❌ 1부터 {len(self.state.search_results)} 사이의 번호를 입력해주세요.")
+            self.io_output(f"잘못된 번호입니다. 1번부터 {len(self.state.search_results)}번 사이의 번호를 말씀해주세요.")
             return
 
         logger.info("User selected result index=%d", selection)
         selected = self.state.search_results[selection - 1]
-        ### TODO
-        self.io_output(f"\n✓ 선택: {selected.title}")
+        self.io_output(f"{selection}번 상품, {selected.title}를 선택하셨습니다. 상품 페이지를 불러오고 있습니다.")
 
         # Clear search results and load new product
         self.state.clear_search_results()
         loaded = await self._load_product(selected.url)
         if not loaded:
-            ### TODO
-            self.io_output("⚠️  선택한 상품을 불러오지 못했습니다. 다른 상품을 선택해 주세요.")
+            self.io_output("선택한 상품 페이지를 불러오지 못했습니다. 다른 상품을 선택해주시거나, 다시 시도해주세요.")
 
     async def _read_search_results(self, top_n: int):
         """Read out the top N search results from the current offset."""
