@@ -131,8 +131,7 @@ class ShoppingCLI(IOMixin, BrowserMixin, SearchMixin, IntentMixin):
         # Step 2: Conversation loop
         while True:
             ### voiceinput
-
-            user_input = input("삐\n > ").strip()
+            user_input = input("\n > ").strip()
 
             if not user_input:
                 continue

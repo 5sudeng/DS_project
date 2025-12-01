@@ -135,7 +135,7 @@ class SearchMixin:
         """검색만 수행하고 결과 리스트 반환."""
         fetch_count = self.state.results_per_page * 10
         try:
-            results = await self.search_agent.search_page(query, page_num=page_num, max_results=fetch_count)
+            results = await self.search_agent.search(query, max_results=fetch_count)
             self.preference_memory.append_event(f"search_page: {query} (page {page_num})")
             return results
         except Exception as exc:  # noqa: BLE001

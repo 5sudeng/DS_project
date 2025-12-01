@@ -139,12 +139,14 @@ JSON 객체만 출력합니다. 형식:
 출력(JSON만):
 """
         try:
-            resp = self.client.responses.create(
+            resp = self.client.chat.completions.create(
                 model=self.model,
-                input=prompt,
+                messages=[
+                    {"role": "system", "content": prompt},
+                ],
                 response_format={"type": "json_object"},
             )
-            text = resp.output[0].content[0].text
+            text = resp.choices[0].message.content
             parsed = json.loads(text)
             if isinstance(parsed, dict) and "actions" in parsed:
                 return parsed

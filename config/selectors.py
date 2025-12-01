@@ -42,6 +42,8 @@ SELECTORS: Dict[str, Sequence[str]] = {
     ),
     "search_input": (
         "input#headerSearchKeyword",
+        "input[id='headerSearchKeyword']",
+        "form#headerSearchForm input",
         "input[name='q']",
         "input[type='search']",
         "input.search-input",

@@ -63,28 +63,6 @@ def load_rtzr_voice_env() -> dict:
     }
 
 
-class KeyboardVoiceInputController:
-    """Optional push-to-talk style controller using the keyboard."""
-
-    def capture(self) -> Optional[str]:
-        try:
-            input("\n[키보드 음성 모드] 출력이 끝났습니다. 엔터를 눌러 입력을 시작하세요.")
-        except EOFError:
-            return None
-
-        try:
-            text = input("[키보드 음성 모드] 명령을 입력하고 엔터를 누르세요: ").strip()
-        except EOFError:
-            text = ""
-
-        try:
-            input("[키보드 음성 모드] 입력을 닫으려면 다시 엔터를 눌러주세요.")
-        except EOFError:
-            pass
-
-        return text or None
-
-
 class TextInterface:
     """Simple text-based replacement for speech IO."""
 
@@ -137,7 +115,6 @@ class SpeechInterface:
         self.silence_duration = 1.2
         self.max_recording = 12.0
         self.use_keyboard_input = use_keyboard_input
-        self.keyboard_controller = KeyboardVoiceInputController() if use_keyboard_input else None
 
     def speak(self, text: str):
         self.engine.say(text)
@@ -147,14 +124,54 @@ class SpeechInterface:
         self.queue.put(bytes(indata))
 
     def listen(self) -> Optional[str]:
-        if self.use_keyboard_input and self.keyboard_controller:
-            return self.keyboard_controller.capture()
-        audio_bytes = self._record_audio()
+        if self.use_keyboard_input:
+            audio_bytes = self._record_audio_ptt()
+        else:
+            audio_bytes = self._record_audio_vad()
+            
         if not audio_bytes:
             return None
         return self._transcribe_audio(audio_bytes)
 
-    def _record_audio(self) -> Optional[bytes]:
+    def _record_audio_ptt(self) -> Optional[bytes]:
+        """Push-to-Talk recording controlled by keyboard."""
+        try:
+            input("\n🎙️  [Push-to-Talk] 엔터를 누르면 녹음을 시작합니다...")
+        except EOFError:
+            return None
+
+        # Clear queue
+        while not self.queue.empty():
+            self.queue.get()
+
+        collected = bytearray()
+        print("🔴 녹음 중... (종료하려면 엔터를 누르세요)")
+
+        # Start recording in background
+        stream = sd.RawInputStream(
+            samplerate=self.samplerate,
+            blocksize=self.blocksize,
+            dtype="int16",
+            channels=1,
+            callback=self._audio_callback,
+        )
+        
+        with stream:
+            # Wait for user to press Enter to stop
+            try:
+                input()
+            except EOFError:
+                pass
+        
+        # Collect all data from queue
+        while not self.queue.empty():
+            collected.extend(self.queue.get())
+            
+        print("✓ 녹음 완료")
+        return bytes(collected) if collected else None
+
+    def _record_audio_vad(self) -> Optional[bytes]:
+        """Voice Activity Detection (VAD) recording."""
         while not self.queue.empty():
             try:
                 self.queue.get_nowait()
@@ -263,7 +280,6 @@ class VoskSpeechInterface:
         self.silence_duration = 1.2
         self.max_recording = 12.0
         self.use_keyboard_input = use_keyboard_input
-        self.keyboard_controller = KeyboardVoiceInputController() if use_keyboard_input else None
 
         self.model = Model(model_path)
         self.recognizer = KaldiRecognizer(self.model, samplerate)
@@ -276,14 +292,54 @@ class VoskSpeechInterface:
         self.queue.put(bytes(indata))
 
     def listen(self) -> Optional[str]:
-        if self.use_keyboard_input and self.keyboard_controller:
-            return self.keyboard_controller.capture()
-        audio_bytes = self._record_audio()
+        if self.use_keyboard_input:
+            audio_bytes = self._record_audio_ptt()
+        else:
+            audio_bytes = self._record_audio_vad()
+            
         if not audio_bytes:
             return None
         return self._transcribe(audio_bytes)
 
-    def _record_audio(self) -> Optional[bytes]:
+    def _record_audio_ptt(self) -> Optional[bytes]:
+        """Push-to-Talk recording controlled by keyboard."""
+        try:
+            input("\n🎙️  [Push-to-Talk] 엔터를 누르면 녹음을 시작합니다...")
+        except EOFError:
+            return None
+
+        # Clear queue
+        while not self.queue.empty():
+            self.queue.get()
+
+        collected = bytearray()
+        print("🔴 녹음 중... (종료하려면 엔터를 누르세요)")
+
+        # Start recording in background
+        stream = sd.RawInputStream(
+            samplerate=self.samplerate,
+            blocksize=self.blocksize,
+            dtype="int16",
+            channels=1,
+            callback=self._audio_callback,
+        )
+        
+        with stream:
+            # Wait for user to press Enter to stop
+            try:
+                input()
+            except EOFError:
+                pass
+        
+        # Collect all data from queue
+        while not self.queue.empty():
+            collected.extend(self.queue.get())
+            
+        print("✓ 녹음 완료")
+        return bytes(collected) if collected else None
+
+    def _record_audio_vad(self) -> Optional[bytes]:
+        """Voice Activity Detection (VAD) recording."""
         while not self.queue.empty():
             try:
                 self.queue.get_nowait()
@@ -318,8 +374,8 @@ class VoskSpeechInterface:
                 if not heard_voice:
                     if rms > self.silence_threshold:
                         heard_voice = True
-                        collected.extend(data)
                         print("🎙️ 음성 감지됨 (녹음 중)")
+                        collected.extend(data)
                     continue
 
                 collected.extend(data)
