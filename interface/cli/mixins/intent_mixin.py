@@ -22,18 +22,18 @@ class IntentMixin:
         if self.ai_memory_enabled:
             return
         
-        self.io_output("\n🧠 AI 메모리(선호 반영/재질문) 기능을 켤까요? (예/아니오): ")
+        self.io_output("AI 메모리(선호 반영/재질문) 기능을 켤까요? (예/아니오): ")
         choice = (self.io_input() or "").strip().lower()
         
         if choice in ["예", "y", "yes", "네", "ㅇㅇ"]:
             self.ai_memory_enabled = True
-            self.io_output("✅ AI 메모리를 활성화했습니다. 이제 당신의 취향을 기억합니다!")
+            self.io_output("AI 메모리를 활성화했습니다. 이제 당신의 취향을 기억합니다!")
             
             # Load identity if exists
             if self.preference_memory.identity:
-                self.io_output(f"📝 기억된 쇼핑 성향: {self.preference_memory.identity}")
+                self.io_output(f"기억된 쇼핑 성향: {self.preference_memory.identity}")
         else:
-            self.io_output("🚫 AI 메모리를 비활성화한 채로 진행합니다.")
+            self.io_output("AI 메모리를 비활성화한 채로 진행합니다.")
 
     async def _handle_user_input(self, user_input: str) -> bool:
         """Handle user input by mapping to actions and executing them."""
@@ -54,7 +54,7 @@ class IntentMixin:
         if not actions:
             # Fallback to simple conversation or error message
             response = "죄송합니다. 명령을 이해하지 못했습니다. 다시 말씀해주시겠어요?"
-            self.io_output(f"\n🤖 {response}")
+            self.io_output(f" {response}")
             self.state.add_message("assistant", response)
             return True
 
@@ -83,10 +83,10 @@ class IntentMixin:
             if act == "open_url":
                 url = action.get("url")
                 if url:
-                    self.io_output(f"📡 {url}로 이동합니다...")
+                    self.io_output(f"{url}로 이동합니다...")
                     await self.page.goto(url, wait_until="domcontentloaded", timeout=25000)
                     self.state.current_url = self.page.url
-                    self.io_output("✅ 페이지에 접속했습니다.")
+                    self.io_output("페이지에 접속했습니다.")
             
             elif act == "search_page":
                 query = action.get("query")
@@ -102,7 +102,7 @@ class IntentMixin:
                         
                         if augmented_result.get("augmented") and augmented_query != query:
                             rationale = augmented_result.get("rationale", "")
-                            self.io_output(f"🧠 선호를 반영해 검색어를 보강했습니다: '{augmented_query}'")
+                            self.io_output(f"선호를 반영해 검색어를 보강했습니다: '{augmented_query}'")
                             if rationale:
                                 self.io_output(f"   (이유: {rationale})")
                             query = augmented_query
@@ -115,7 +115,7 @@ class IntentMixin:
                             )
                             
                             if follow_up:
-                                self.io_output(f"\n🤔 {follow_up}")
+                                self.io_output(f"\n{follow_up}")
                                 answer = (self.io_input() or "").strip()
                                 if answer:
                                     self.preference_memory.remember(f"Answer to '{follow_up}': {answer}")
@@ -136,11 +136,11 @@ class IntentMixin:
             elif act == "apply_sort":
                 sort_type = action.get("sort_type")
                 if sort_type:
-                    self.io_output(f"{sort_type} 정렬을 적용하고 있습니다. 잠시만 기다려 주세요.")
+                    self.io_output(f" '{sort_type}' 정렬을 적용합니다...")
                     result = await self.search_agent.apply_sort(sort_type)
                     
                     for warning in result.warnings:
-                        self.console_print(f"⚠️  {warning}")
+                        self.console_print(f"  {warning}")
                         
                     if result.success:
                         # Update state with new results and save sort option
@@ -161,7 +161,7 @@ class IntentMixin:
                         self.io_output(f"{sort_type} 정렬이 완료되었습니다. 총 {len(converted_results)}개의 상품이 있습니다. 상위 {len(self.state.search_results)}개 상품을 보여드리겠습니다.")
                         
                         # 첫 배치 표시
-                        lines = [f"\n📦 정렬된 결과 (페이지 {self.state.current_page}):\n"]
+                        lines = [f"\n정렬된 결과 (페이지 {self.state.current_page}):\n"]
                         for idx, res in enumerate(self.state.search_results, 1):
                             lines.append(f"{idx}. {res.title}")
                             lines.append(f"   가격: {res.price}")
@@ -170,13 +170,12 @@ class IntentMixin:
                             lines.append("")
                         self.io_output("\n".join(lines))
                     else:
-                        self.io_output(f"정렬 적용에 실패했습니다. {result.error}")
+                        self.io_output(f" {result.error}")
             
             elif act == "apply_shipping":
                 option = action.get("shipping_option")
                 if option:
-                    option_text = "배송비를 포함한" if option == "배송비포함" else "배송비를 제외한"
-                    self.io_output(f"{option_text} 가격으로 필터링하고 있습니다. 잠시만 기다려 주세요.")
+                    self.io_output(f" '{option}' 필터를 적용합니다...")
                     result = await self.search_agent.apply_shipping_filter(option)
                     
                     for warning in result.warnings:
@@ -201,7 +200,7 @@ class IntentMixin:
                         self.io_output(f"{option_text} 가격으로 필터링이 완료되었습니다. 총 {len(converted_results)}개의 상품이 있습니다. 상위 {len(self.state.search_results)}개 상품을 보여드리겠습니다.")
                         
                         # 첫 배치 표시
-                        lines = [f"\n📦 필터된 결과 (페이지 {self.state.current_page}):\n"]
+                        lines = [f"\필터된 결과 (페이지 {self.state.current_page}):\n"]
                         for idx, res in enumerate(self.state.search_results, 1):
                             lines.append(f"{idx}. {res.title}")
                             lines.append(f"   가격: {res.price}")
@@ -210,7 +209,7 @@ class IntentMixin:
                             lines.append("")
                         self.io_output("\n".join(lines))
                     else:
-                        self.io_output(f"❌ {result.error}")
+                        self.io_output(f" {result.error}")
             
             elif act == "read_results":
                 top_n = action.get("top_n", 3)
@@ -346,8 +345,25 @@ class IntentMixin:
                 await self._summarize_search_results(top_n)
             
             elif act == "exit":
-                self.io_output("\n👋 쇼핑을 종료합니다. 감사합니다!")
+                self.io_output("\n 쇼핑을 종료합니다. 감사합니다!")
 
+    async def _read_search_results(self, top_n: int):
+        """Read out the top N search results."""
+        if not self.state.search_results:
+            self.io_output(" 읽어드릴 검색 결과가 없습니다.")
+            return
+
+        items = self.state.search_results[:top_n]
+        lines = [f"\n상위 {len(items)}개 상품:"]
+        for idx, res in enumerate(items, 1):
+            lines.append(f"{idx}. {res.title}")
+            lines.append(f"   가격: {res.price}")
+            if res.rating:
+                lines.append(f"   평점: {res.rating}")
+            lines.append("")
+        
+        message = "\n".join(lines)
+        self.io_output(message)
     async def _summarize_search_results(self, top_n: int):
         """Summarize the search results using LLM."""
         if not self.state.search_results:
@@ -374,16 +390,19 @@ class IntentMixin:
 
     async def _handle_question(self, question: str):
         """Handle user question about the product."""
-        self.io_output("\n⏳ 질문에 답변하는 중...")
+        ### TODO
+        self.io_output("\n질문에 답변하는 중...")
         logger.info("Processing question intent: %s", question)
 
         answer = await self.product_agent.answer_user_question(question)
-        self.io_output(f"\n🤖 {answer}")
+        ### TODO
+        self.io_output(f"\n {answer}")
         self.state.add_message("assistant", answer)
 
     async def _handle_add_to_cart(self, intent_result: Dict = None):
         """Handle when user explicitly wants to add to cart."""
-        self.io_output("\n⏳ 장바구니에 담는 중...")
+        ### TODO
+        self.io_output("\n 장바구니에 담는 중...")
         logger.info("Processing add_to_cart intent")
 
         quantity = 1
@@ -397,16 +416,19 @@ class IntentMixin:
             self.console_print(f"⚠️  {warning}")
         
         if result.success:
-            self.io_output(f"\n🤖 {result.message}")
+            ### TODO
+            self.io_output(f"\n {result.message}")
             self.state.add_message("assistant", result.message)
-            self.io_output("\n💡 다른 상품을 더 찾아보시겠어요? (검색어 입력 또는 'exit'로 종료)")
+            ### TODO
+            self.io_output("\n 다른 상품을 더 찾아보시겠어요? (검색어 입력 또는 장바구니로 이동 또는 종료)")
         else:
             self.io_output(f"\n❌ {result.error}")
             self.state.add_message("assistant", result.error)
 
     async def _handle_navigate_to_cart(self):
         """Handle when user wants to navigate to cart page."""
-        self.console_print("\n⏳ 장바구니 페이지로 이동 중...")
+        ### status
+        self.console_print("\n 장바구니 페이지로 이동 중...")
         logger.info("Processing navigate_to_cart intent")
 
         result = await self.product_agent.navigate_to_cart()
@@ -416,7 +438,8 @@ class IntentMixin:
             self.console_print(f"⚠️  {warning}")
         
         if result.success:
-            self.io_output(f"\n🤖 {result.message}")
+            ### TODO
+            self.io_output(f"\n {result.message}")
             self.state.add_message("assistant", result.message)
         else:
             self.io_output(f"\n❌ {result.error}")
@@ -427,7 +450,8 @@ class IntentMixin:
         logger.info("Processing satisfied intent")
         
         response = "마음에 드신다니 다행이네요! 더 궁금한 점이 있으신가요?"
-        self.io_output(f"\n🤖 {response}")
+        ### TODO
+        self.io_output(f"\n {response}")
         self.state.add_message("assistant", response)
 
     async def _handle_dissatisfied(self, intent_result: Dict):
@@ -442,7 +466,9 @@ class IntentMixin:
             reason = intent_result["reason"]
             keywords = intent_result.get("keywords", [])
 
-            self.io_output(f"\n🔍 이해했습니다: {reason}")
+            ### TODO
+            self.io_output(f"\n 이해했습니다: {reason}")
+            ### TODO
             self.io_output("새로운 상품을 찾아보겠습니다...")
 
             # Generate search query using LLM
@@ -466,7 +492,8 @@ class IntentMixin:
                 self.state.current_product_name,
                 artifact_summary=self.artifact_summary,
             )
-            self.io_output(f"\n🤖 {clarification_msg}")
+            ### TODO
+            self.io_output(f"\n {clarification_msg}")
             self.state.add_message("assistant", clarification_msg)
             self.state.waiting_for_clarification = True
             logger.info("Asked user for clarification regarding dissatisfaction.")
@@ -487,7 +514,9 @@ class IntentMixin:
         reason = intent_result.get("reason", user_input)
         keywords = intent_result.get("keywords", [])
 
-        self.io_output(f"\n🔍 알겠습니다: {reason}")
+        ### TODO
+        self.io_output(f"\n 알겠습니다: {reason}")
+        ### TODO
         self.io_output("새로운 상품을 찾아보겠습니다...")
 
         search_query = self.llm.generate_search_query(

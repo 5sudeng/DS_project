@@ -111,6 +111,7 @@ class OCRProcessor:
             all_image_files.extend(glob.glob(os.path.join(images_dir, ext)))
         
         if not all_image_files:
+            
             logger.warning("  ⚠️  No image files found in %s", images_dir)
             return []
         

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import base64
+import platform
 import os
 import queue
 import subprocess
@@ -28,6 +29,44 @@ except ImportError:
 
 # Global TTS process tracker for sequential playback
 _current_tts_process = None
+
+def _speak_text(text: str, wait: bool = False):
+    global _current_tts_process
+    if not text:
+        return
+
+    # Sanitize for 'say' command (macOS)
+    if text.startswith("-"):
+        text = " " + text
+        
+    try:
+        # Wait for previous TTS to finish
+        if _current_tts_process:
+            try:
+                _current_tts_process.wait(timeout=30)
+            except:
+                pass
+        
+        system = platform.system()
+        if system == "Darwin":
+            cmd = ['say', text]
+        elif system == "Windows":
+            # Escape single quotes for PowerShell
+            safe_text = text.replace("'", "''")
+            cmd = ['powershell', '-Command', f"Add-Type –AssemblyName System.Speech; (New-Object System.Speech.Synthesis.SpeechSynthesizer).Speak('{safe_text}')"]
+        else:
+            # Fallback or ignore
+            return
+
+        _current_tts_process = subprocess.Popen(cmd)
+        
+        if wait:
+            try:
+                _current_tts_process.wait(timeout=30)
+            except:
+                pass
+    except Exception:
+        pass
 
 
 OPENAI_ENV_FILE =  "openai_voice_env.txt"
@@ -78,14 +117,7 @@ class KeyboardVoiceInputController:
         global _current_tts_process
         try:
             msg = "엔터를 누르면 녹음을 시작합니다"
-            # Wait for previous TTS to finish
-            if _current_tts_process:
-                try:
-                    _current_tts_process.wait(timeout=30)
-                except:
-                    pass
-            # Start new TTS
-            _current_tts_process = subprocess.Popen(['say', msg])
+            _speak_text(msg)
             input("\n⌨️  [PTT] 엔터를 누르면 녹음을 시작합니다...")
         except EOFError:
             return None
@@ -108,16 +140,10 @@ class KeyboardVoiceInputController:
         )
         
         collected = bytearray()
+        msg = "녹음 중입니다. 종료하려면 엔터를 누르세요"
+        _speak_text(msg, wait=True)
+        
         with stream:
-            msg = "녹음 중입니다. 종료하려면 엔터를 누르세요"
-            # Wait for previous TTS to finish
-            if _current_tts_process:
-                try:
-                    _current_tts_process.wait(timeout=30)
-                except:
-                    pass
-            # Start new TTS
-            _current_tts_process = subprocess.Popen(['say', msg])
             print("🔴 녹음 중... (종료하려면 엔터를 누르세요)")
             try:
                 input()
@@ -135,21 +161,8 @@ class TextInterface:
     """Simple text-based replacement for speech IO."""
 
     def speak(self, text: str):
-        global _current_tts_process
-        if text.startswith("-"):
-            text = " " + text
         print(f"[Assistant] {text}")
-        try:
-            # Wait for previous TTS to finish
-            if _current_tts_process:
-                try:
-                    _current_tts_process.wait(timeout=30)
-                except:
-                    pass
-            # Start new TTS
-            _current_tts_process = subprocess.Popen(['say', text])
-        except Exception:
-            pass
+        _speak_text(text)
 
     def listen(self) -> Optional[str]:
         try:
@@ -194,20 +207,7 @@ class OpenAIVoiceInterface:
         self.keyboard_controller = KeyboardVoiceInputController(samplerate) if use_keyboard_input else None
 
     def speak(self, text: str):
-        global _current_tts_process
-        if text.startswith("-"):
-            text = " " + text
-        try:
-            # Wait for previous TTS to finish
-            if _current_tts_process:
-                try:
-                    _current_tts_process.wait(timeout=30)
-                except:
-                    pass
-            # Start new TTS
-            _current_tts_process = subprocess.Popen(['say', text])
-        except Exception:
-            pass
+        _speak_text(text)
 
     def _audio_callback(self, indata, frames, time, status):
         self.queue.put(bytes(indata))
@@ -336,20 +336,7 @@ class VoskSpeechInterface:
         self.recognizer = KaldiRecognizer(self.model, samplerate)
 
     def speak(self, text: str):
-        global _current_tts_process
-        if text.startswith("-"):
-            text = " " + text
-        try:
-            # Wait for previous TTS to finish
-            if _current_tts_process:
-                try:
-                    _current_tts_process.wait(timeout=30)
-                except:
-                    pass
-            # Start new TTS
-            _current_tts_process = subprocess.Popen(['say', text])
-        except Exception:
-            pass
+        _speak_text(text)
 
     def _audio_callback(self, indata, frames, time, status):
         self.queue.put(bytes(indata))
@@ -487,20 +474,7 @@ class RTZRSpeechInterface:
 
     # --- IO helpers ----------------------------------------------------
     def speak(self, text: str):
-        global _current_tts_process
-        if text.startswith("-"):
-            text = " " + text
-        try:
-            # Wait for previous TTS to finish
-            if _current_tts_process:
-                try:
-                    _current_tts_process.wait(timeout=30)
-                except:
-                    pass
-            # Start new TTS
-            _current_tts_process = subprocess.Popen(['say', text])
-        except Exception:
-            pass
+        _speak_text(text)
 
 
     def _microphone_stream(self):
