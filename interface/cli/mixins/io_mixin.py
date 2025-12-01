@@ -125,4 +125,3 @@ class IOMixin:
             self.console_print("🔊 음성 출력만 활성화.")
         elif self.output_mode == "text":
             self.console_print("✏️  텍스트 출력만 활성화.")
-
