@@ -77,7 +77,7 @@ async def bootstrap_browser(playwright: Playwright, config: BrowserSessionConfig
         extra_headers["Cookie"] = config.cookie_header
 
     context = await browser.new_context(
-        viewport={"width": 1920, "height": 1080},
+        viewport=None,
         user_agent=(
             "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
             "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36"
