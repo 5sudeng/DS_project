@@ -15,8 +15,10 @@ class BrowserMixin:
     async def _get_initial_product(self):
         """Get the initial product URL from user."""
         while True:
-            ### voiceinput
-            url = input("\n📦 상품 URL을 입력하세요 (또는 'search'로 검색 시작): ").strip().lstrip("\\")
+            prompt = "\n📦 상품 URL을 입력하세요 (또는 'search'로 검색 시작): "
+            if getattr(self, "output_mode", "text") in ("voice", "both"):
+                self.io_speak(prompt.strip())
+            url = (self.io_listen(prompt) or "").strip().lstrip("\\")
             logger.info("Initial product input received: %s", url)
 
             if url.lower() == "search":

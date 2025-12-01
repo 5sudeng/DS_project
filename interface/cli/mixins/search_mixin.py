@@ -9,8 +9,10 @@ class SearchMixin:
 
     async def _start_with_search(self):
         """Start with a product search."""
-        ### voiceinput
-        query = input("🔍 검색어를 입력하세요: ").strip()
+        prompt = "🔍 검색어를 입력하세요: "
+        if getattr(self, "output_mode", "text") in ("voice", "both"):
+            self.io_speak(prompt.strip())
+        query = (self.io_listen(prompt) or "").strip()
         if not query:
             ### TODO
             print("❌ 검색어를 입력해주세요.")
