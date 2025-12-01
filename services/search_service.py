@@ -7,7 +7,7 @@ import re
 import logging
 import random
 from dataclasses import dataclass
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 from playwright.async_api import Page, TimeoutError as PlaywrightTimeoutError
 
@@ -65,35 +65,50 @@ class SearchService:
 
         # Find and fill search input
         search_input = await self._find_search_input()
+        
         if not search_input:
-            logger.error("Search input not found")
-            return SearchOperationResult(
-                success=False,
-                error="검색창을 찾을 수 없습니다",
-                query=query
-            )
+            # Fallback: Use URL-based search
+            logger.warning("Search input not found, using URL-based search")
+            try:
+                import urllib.parse
+                encoded_query = urllib.parse.quote(query)
+                search_url = f"https://www.coupang.com/np/search?q={encoded_query}"
+                logger.info(f"Navigating to search URL: {search_url}")
+                await self.page.goto(search_url, wait_until="domcontentloaded", timeout=30000)
+                await asyncio.sleep(3)
+                warnings.append("검색창 대신 URL로 검색했습니다")
+            except Exception as e:
+                logger.error("URL-based search failed: %s", e)
+                return SearchOperationResult(
+                    success=False,
+                    error="검색창을 찾을 수 없고 URL 검색도 실패했습니다",
+                    query=query
+                )
+        else:
+            # Normal search using input field
+            await search_input.clear()
+            # Human-like typing to avoid bot detection
+            await search_input.press_sequentially(query, delay=random.randint(100, 200))
+            await asyncio.sleep(random.uniform(0.5, 1.5))
 
-        await search_input.clear()
-        # Human-like typing to avoid bot detection
-        await search_input.press_sequentially(query, delay=random.randint(100, 200))
-        await asyncio.sleep(random.uniform(0.5, 1.5))
+            # Submit search
+            await search_input.press("Enter")
 
-        # Submit search
-        await search_input.press("Enter")
+            # Wait for navigation with extended timeout
+            try:
+                await self.page.wait_for_load_state("domcontentloaded", timeout=45000)
+                await asyncio.sleep(3)  # Wait for JavaScript rendering
+            except Exception as e:
+                warnings.append(f"페이지 로드 경고: {str(e)}")
+                logger.warning("Page load warning: %s", e)
+                # Continue anyway
+                await asyncio.sleep(2)
 
-        # Wait for navigation with extended timeout
-        try:
-            await self.page.wait_for_load_state("domcontentloaded", timeout=45000)
-            await asyncio.sleep(3)  # Wait for JavaScript rendering
-        except Exception as e:
-            warnings.append(f"페이지 로드 경고: {str(e)}")
-            logger.warning("Page load warning: %s", e)
-            # Continue anyway
-            await asyncio.sleep(2)
+
 
         # Parse search results
-        results = await self._parse_search_results(max_results)
-        logger.info("Found %d products", len(results))
+        results, total_found = await self._parse_search_results(max_results)
+        logger.info("Found %d products (total: %d)", len(results), total_found)
         
         # Convert to SearchResultType for result_types
         result_list = [
@@ -103,13 +118,14 @@ class SearchService:
                 price=r.price,
                 url=r.url,
                 rating=r.rating
-            ) for r in results
+            ) for r in results[:max_results]
         ]
         
         return SearchOperationResult(
             success=True,
             results=result_list,
             query=query,
+            total_count=total_found,
             warnings=warnings
         )
 
@@ -129,7 +145,7 @@ class SearchService:
                     await asyncio.sleep(2)
                     
                     # Re-parse results after sort
-                    results = await self._parse_search_results(max_results=5)
+                    results, _ = await self._parse_search_results(max_results=5)
                     result_list = [
                         SearchResultType(
                             index=r.rank,
@@ -178,7 +194,7 @@ class SearchService:
                     new_state = await self._get_shipping_filter_state()
                     if new_state == shipping_option:
                         # Re-parse results
-                        results = await self._parse_search_results(max_results=5)
+                        results, _ = await self._parse_search_results(max_results=5)
                         result_list = [
                             SearchResultType(
                                 index=r.rank,
@@ -246,16 +262,41 @@ class SearchService:
 
     async def _find_search_input(self):
         """Find the search input element using multiple selectors."""
+        logger.info(f"Current page URL: {self.page.url}")
+        
         for selector in SELECTORS["search_input"]:
             try:
+                logger.debug(f"Trying selector: {selector}")
                 locator = self.page.locator(selector)
                 if await locator.count() > 0:
+                    logger.info(f"Found search input with selector: {selector}")
                     return locator.first
             except PlaywrightTimeoutError:
                 continue
+            except Exception as e:
+                logger.warning(f"Error with selector {selector}: {e}")
+                continue
+        
+        # Try to find any visible input that might be a search box
+        logger.warning("Standard selectors failed, trying generic input search")
+        try:
+            all_inputs = self.page.locator("input[type='text'], input[type='search'], input:not([type])")
+            count = await all_inputs.count()
+            logger.info(f"Found {count} generic input elements")
+            for i in range(min(count, 10)):  # Check first 10 inputs
+                inp = all_inputs.nth(i)
+                if await inp.is_visible():
+                    placeholder = await inp.get_attribute("placeholder") or ""
+                    if "검색" in placeholder or "search" in placeholder.lower():
+                        logger.info(f"Found search input via placeholder: {placeholder}")
+                        return inp
+        except Exception as e:
+            logger.error(f"Generic input search failed: {e}")
+        
+        logger.error("Could not find search input element")
         return None
 
-    async def _parse_search_results(self, max_results: int) -> List[SearchResult]:
+    async def _parse_search_results(self, max_results: int) -> Tuple[List[SearchResult], int]:
         """Parse search results from the page."""
         results = []
 
@@ -277,7 +318,9 @@ class SearchService:
             return await self._parse_results_fallback(max_results)
 
         # Parse each product item
-        count = min(await product_items.count(), max_results)
+        # We parse ALL items to get accurate count, but only return full details for max_results if needed
+        # Actually, for performance, we should probably parse all to get the count of valid items
+        count = await product_items.count()
         for i in range(count):
             try:
                 item = product_items.nth(i)
@@ -289,7 +332,7 @@ class SearchService:
                 logger.warning("Failed to parse product item %d: %s", i + 1, e)
                 continue
 
-        return results
+        return results, count
 
     async def _parse_product_item(self, item, rank: int) -> Optional[SearchResult]:
         """Parse a single product item."""
@@ -333,11 +376,12 @@ class SearchService:
             logger.warning("Error parsing product item: %s", e)
             return None
 
-    async def _parse_results_fallback(self, max_results: int) -> List[SearchResult]:
+    async def _parse_results_fallback(self, max_results: int) -> Tuple[List[SearchResult], int]:
         """Fallback method to parse search results."""
         results = []
         links = self.page.locator("a[href*='/vp/products/'], a[href*='/products/']")
-        count = min(await links.count(), max_results * 2)  # Get more to filter
+        total_count = await links.count()
+        count = min(total_count, max_results * 2)  # Get more to filter
 
         seen_urls = set()
         rank = 1
@@ -411,7 +455,7 @@ class SearchService:
             except Exception:
                 continue
 
-        return results
+        return results, total_count
 
     def _clean_text(self, text: str) -> str:
         """Clean and normalize text."""

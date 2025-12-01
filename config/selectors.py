@@ -45,6 +45,11 @@ SELECTORS: Dict[str, Sequence[str]] = {
         "input[name='q']",
         "input[type='search']",
         "input.search-input",
+        "input[placeholder*='검색']",
+        "input[placeholder*='Search']",
+        "input.search__input",
+        ".search-input-wrapper input",
+        "header input[type='text']",
     ),
     "search_button": (
         "button.search-btn",

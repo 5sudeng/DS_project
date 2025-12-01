@@ -622,3 +622,37 @@ JSON으로만 응답하세요."""
             if local_path and Path(local_path).exists():
                 image_paths.append(local_path)
         return image_paths
+
+    def summarize_search_results(self, results: List[Any]) -> str:
+        """
+        Summarize the top search results.
+        """
+        system_prompt = PROMPTS["summarize_search_results"]
+        
+        # Format results for the prompt
+        lines = []
+        for i, r in enumerate(results[:3], 1):
+            # Handle both object and dict
+            title = getattr(r, "title", None) or r.get("title", "제목 없음") if isinstance(r, dict) else getattr(r, "title", "제목 없음")
+            price = getattr(r, "price", None) or r.get("price", "가격 없음") if isinstance(r, dict) else getattr(r, "price", "가격 없음")
+            rating = getattr(r, "rating", None) or r.get("rating", "평점 없음") if isinstance(r, dict) else getattr(r, "rating", "평점 없음")
+            review_count = getattr(r, "review_count", None) or r.get("review_count", "리뷰 없음") if isinstance(r, dict) else getattr(r, "review_count", "리뷰 없음")
+            
+            lines.append(f"{i}. {title} | 가격: {price} | 평점: {rating} | 리뷰수: {review_count}")
+            
+        user_prompt = "검색 결과:\n" + "\n".join(lines)
+
+        try:
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_prompt},
+                ],
+                temperature=0.5,
+                max_tokens=400,
+            )
+            return response.choices[0].message.content.strip()
+        except Exception as e:
+            logger.error("Failed to summarize search results: %s", e)
+            return "검색 결과 요약을 생성하지 못했습니다."

@@ -123,6 +123,7 @@ class IntentMixin:
                                     self.io_output(f"✓ '{query}'(으)로 검색합니다.")
 
                     await self._perform_search(query)
+                    await self._select_from_search_results()
             
             elif act == "select_product":
                 index = action.get("index")

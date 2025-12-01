@@ -38,7 +38,7 @@ class BrowserMixin:
 
     async def _load_product(self, url: str, *, _retry: bool = False) -> bool:
         """Load a product page using navigator, parser, and data collector."""
-        self.console_print(f"\n⏳ 상품 페이지를 불러오는 중...")
+        self.io_output(f"\n⏳ 상품 페이지를 불러오는 중...")
         logger.info("Attempting to load product page: %s", url)
 
         try:

@@ -5,6 +5,7 @@ from __future__ import annotations
 import base64
 import os
 import queue
+import subprocess
 import sys
 import tempfile
 import time
@@ -13,7 +14,6 @@ from pathlib import Path
 from typing import Dict, Optional
 
 import numpy as np
-import pyttsx3
 import sounddevice as sd
 from openai import OpenAI
 import grpc  # type: ignore
@@ -25,6 +25,9 @@ try:
 except ImportError:
     rtzr_pb = None
     rtzr_pb_grpc = None
+
+# Global TTS process tracker for sequential playback
+_current_tts_process = None
 
 
 OPENAI_ENV_FILE =  "openai_voice_env.txt"
@@ -72,7 +75,17 @@ class KeyboardVoiceInputController:
 
     def record(self) -> Optional[bytes]:
         """Record audio between two Enter key presses."""
+        global _current_tts_process
         try:
+            msg = "엔터를 누르면 녹음을 시작합니다"
+            # Wait for previous TTS to finish
+            if _current_tts_process:
+                try:
+                    _current_tts_process.wait(timeout=30)
+                except:
+                    pass
+            # Start new TTS
+            _current_tts_process = subprocess.Popen(['say', msg])
             input("\n⌨️  [PTT] 엔터를 누르면 녹음을 시작합니다...")
         except EOFError:
             return None
@@ -96,6 +109,15 @@ class KeyboardVoiceInputController:
         
         collected = bytearray()
         with stream:
+            msg = "녹음 중입니다. 종료하려면 엔터를 누르세요"
+            # Wait for previous TTS to finish
+            if _current_tts_process:
+                try:
+                    _current_tts_process.wait(timeout=30)
+                except:
+                    pass
+            # Start new TTS
+            _current_tts_process = subprocess.Popen(['say', msg])
             print("🔴 녹음 중... (종료하려면 엔터를 누르세요)")
             try:
                 input()
@@ -113,7 +135,19 @@ class TextInterface:
     """Simple text-based replacement for speech IO."""
 
     def speak(self, text: str):
+        global _current_tts_process
         print(f"[Assistant] {text}")
+        try:
+            # Wait for previous TTS to finish
+            if _current_tts_process:
+                try:
+                    _current_tts_process.wait(timeout=30)
+                except:
+                    pass
+            # Start new TTS
+            _current_tts_process = subprocess.Popen(['say', text])
+        except Exception:
+            pass
 
     def listen(self) -> Optional[str]:
         try:
@@ -136,7 +170,7 @@ class OpenAIVoiceInterface:
         use_keyboard_input: bool = False,
         base_url: Optional[str] = None,
     ):
-        self.engine = pyttsx3.init()
+        # Removed pyttsx3 - using system say command
         self.queue: queue.Queue[bytes] = queue.Queue()
         config = load_openai_voice_config()
         resolved_base = base_url or config["base_url"] or "https://api.openai.com/v1"
@@ -158,8 +192,18 @@ class OpenAIVoiceInterface:
         self.keyboard_controller = KeyboardVoiceInputController(samplerate) if use_keyboard_input else None
 
     def speak(self, text: str):
-        self.engine.say(text)
-        self.engine.runAndWait()
+        global _current_tts_process
+        try:
+            # Wait for previous TTS to finish
+            if _current_tts_process:
+                try:
+                    _current_tts_process.wait(timeout=30)
+                except:
+                    pass
+            # Start new TTS
+            _current_tts_process = subprocess.Popen(['say', text])
+        except Exception:
+            pass
 
     def _audio_callback(self, indata, frames, time, status):
         self.queue.put(bytes(indata))
@@ -273,7 +317,7 @@ class VoskSpeechInterface:
         except Exception as exc:  # noqa: BLE001
             raise RuntimeError("vosk가 설치되어 있지 않습니다. pip install vosk 로 설치해주세요.") from exc
 
-        self.engine = pyttsx3.init()
+        # Removed pyttsx3 - using system say command
         self.queue: queue.Queue[bytes] = queue.Queue()
         self.samplerate = samplerate
         self.block_duration = block_duration
@@ -288,8 +332,18 @@ class VoskSpeechInterface:
         self.recognizer = KaldiRecognizer(self.model, samplerate)
 
     def speak(self, text: str):
-        self.engine.say(text)
-        self.engine.runAndWait()
+        global _current_tts_process
+        try:
+            # Wait for previous TTS to finish
+            if _current_tts_process:
+                try:
+                    _current_tts_process.wait(timeout=30)
+                except:
+                    pass
+            # Start new TTS
+            _current_tts_process = subprocess.Popen(['say', text])
+        except Exception:
+            pass
 
     def _audio_callback(self, indata, frames, time, status):
         self.queue.put(bytes(indata))
@@ -406,7 +460,7 @@ class RTZRSpeechInterface:
         self.samplerate = samplerate
         self.chunk = chunk
         self.channels = channels
-        self.engine = pyttsx3.init()
+        # Removed pyttsx3 - using system say command
         self._sess = requests.Session()
         self._token = None
         self._audio = pyaudio.PyAudio()
@@ -427,8 +481,19 @@ class RTZRSpeechInterface:
 
     # --- IO helpers ----------------------------------------------------
     def speak(self, text: str):
-        self.engine.say(text)
-        self.engine.runAndWait()
+        global _current_tts_process
+        try:
+            # Wait for previous TTS to finish
+            if _current_tts_process:
+                try:
+                    _current_tts_process.wait(timeout=30)
+                except:
+                    pass
+            # Start new TTS
+            _current_tts_process = subprocess.Popen(['say', text])
+        except Exception:
+            pass
+
 
     def _microphone_stream(self):
         """Generator yielding raw audio bytes from microphone."""

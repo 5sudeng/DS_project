@@ -120,8 +120,8 @@ class IOMixin:
                     self.input_mode = "text"
 
         if self.output_mode == "both":
-            self.console_print("🔊 음성 출력 + 텍스트 출력 활성화.")
+            self.io_output("🔊 음성 출력 + 텍스트 출력 활성화.")
         elif self.output_mode == "voice":
-            self.console_print("🔊 음성 출력만 활성화.")
+            self.io_output("🔊 음성 출력만 활성화.")
         elif self.output_mode == "text":
-            self.console_print("✏️  텍스트 출력만 활성화.")
+            self.io_output("✏️  텍스트 출력만 활성화.")
