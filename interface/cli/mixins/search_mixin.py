@@ -1,6 +1,8 @@
 """Mixin for search functionality."""
 
 import logging
+import asyncio
+import re
 
 logger = logging.getLogger(__name__)
 
@@ -24,10 +26,10 @@ class SearchMixin:
         """Perform a product search."""
         logger.info("Performing search query='%s'", query)
         ### status
-        self.console_print(f"\n🔍 검색 중: '{query}'")
+        self.io_output(f"\n🔍 검색 중: '{query}'")
         
         try:
-            result = await self.search_agent.search(query, max_results=5)
+            result = await self.search_agent.search(query, max_results=self.state.results_per_page)
             
             # Handle warnings
             for warning in result.warnings:
@@ -55,7 +57,7 @@ class SearchMixin:
             
             self.state.search_results = converted_results
             ### status
-            self.console_print(f"✓ {len(converted_results)}개 상품 발견")
+            self.io_output(f"✓ 이번 페이지 검색 결과 수: {result.total_count or len(converted_results)}개")
 
             if not converted_results:
                 ### TODO
@@ -75,10 +77,37 @@ class SearchMixin:
 
         logger.info("Displaying %d search results", len(self.state.search_results))
         display_text = self.search_agent.format_results_for_display(self.state.search_results)
+        self.console_print(display_text)
+
+        # Generate and display summary
+        self.io_output("\n🤖 검색 결과 요약을 생성 중입니다...")
+        summary = await asyncio.to_thread(self.llm.summarize_search_results, self.state.search_results)
+        
+        # Print to console with emojis
+        self.console_print(f"\n{summary}\n")
+        
+        # Speak without emojis (for better TTS)
+        if self.output_mode in ("voice", "both") and self.io:
+            # Remove emojis and special markers for TTS
+            # Replace newlines with period for pauses
+            clean_summary = summary.replace("\n", ". ")
+            # Remove characters that are NOT word chars, whitespace, comma, dot, or Korean
+            clean_summary = re.sub(r'[^\w\s,.\d가-힣]', ' ', clean_summary)
+            # Collapse multiple spaces
+            clean_summary = re.sub(r'\s+', ' ', clean_summary).strip()
+            
+            logger.info("TTS Text: %s", clean_summary)
+            try:
+                # Speak chunk by chunk to avoid issues with long text
+                chunks = [c.strip() for c in clean_summary.split('.') if c.strip()]
+                for chunk in chunks:
+                    self.io.speak(chunk)
+            except Exception as e:
+                logger.error("TTS failed: %s", e)
+                self.console_print(f"⚠️  음성 출력 오류: {e}")
+
         ### TODO
-        self.io_output(display_text)
-        ### TODO
-        self.io_output("🔢 원하는 상품의 번호를 입력하세요 (1-5):")
+        self.io_output(f"🔢 원하는 상품의 번호를 입력하세요 (1번 부터 {len(self.state.search_results)}번까지):")
 
     async def _select_search_result(self, selection: int):
         """Handle user's selection from search results."""

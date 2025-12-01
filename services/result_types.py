@@ -40,6 +40,7 @@ class SearchOperationResult:
     success: bool
     results: List[SearchResult] = field(default_factory=list)
     query: Optional[str] = None
+    total_count: Optional[int] = None
     warnings: List[str] = field(default_factory=list)
     error: Optional[str] = None
 

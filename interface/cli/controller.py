@@ -107,11 +107,9 @@ class ShoppingCLI(BrowserMixin, SearchMixin, IntentMixin, IOMixin):
             self.page = session.page
 
             if session.applied_cookie_count:
-                ### status
-                self.console_print(f"✓ {session.applied_cookie_count}개의 쿠키 로드됨 (봇 방어 쿠키 포함)")
+                self.io_output(f"✓ {session.applied_cookie_count}개의 쿠키 로드됨 (봇 방어 쿠키 포함)")
             elif self.cookie_text:
-                ### status
-                self.console_print("⚠️  쿠키 파일을 읽었지만 적용 가능한 쿠키를 찾지 못했습니다.")
+                self.io_output("⚠️  쿠키 파일을 읽었지만 적용 가능한 쿠키를 찾지 못했습니다.")
 
             self.product_agent = BrowserService(
                 self.page,
