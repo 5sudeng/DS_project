@@ -89,7 +89,7 @@ class ShoppingCLI(BrowserMixin, SearchMixin, IntentMixin, IOMixin):
         ### status
         self.console_print("=" * 60)
         ### TODO
-        self.io_output("🛍️  쿠팡 쇼핑 도우미에 오신 것을 환영합니다!")
+        self.io_output("쿠팡 쇼핑 도우미에 오신 것을 환영합니다. 음성으로 상품을 검색하고, 리뷰를 확인하고, 장바구니에 담을 수 있습니다. 편안하게 쇼핑하세요.")
         ### status
         self.console_print("=" * 60)
         logger.info("InteractiveShoppingCLI started (headless=%s, run_dir=%s)", self.headless, self.run_dir)
@@ -107,9 +107,9 @@ class ShoppingCLI(BrowserMixin, SearchMixin, IntentMixin, IOMixin):
             self.page = session.page
 
             if session.applied_cookie_count:
-                self.io_output(f"✓ {session.applied_cookie_count}개의 쿠키 로드됨 (봇 방어 쿠키 포함)")
+                self.io_output(f"{session.applied_cookie_count}개의 쿠키를 불러왔습니다. 로그인 정보가 저장되었습니다.")
             elif self.cookie_text:
-                self.io_output("⚠️  쿠키 파일을 읽었지만 적용 가능한 쿠키를 찾지 못했습니다.")
+                self.io_output("쿠키 파일을 찾았지만, 사용 가능한 쿠키가 없습니다. 로그인이 필요할 수 있습니다.")
 
             self.product_agent = BrowserService(
                 self.page,
@@ -121,8 +121,7 @@ class ShoppingCLI(BrowserMixin, SearchMixin, IntentMixin, IOMixin):
             try:
                 await self._conversation_loop()
             except KeyboardInterrupt:
-                ### TODO
-                self.io_output("\n\n👋 쇼핑을 종료합니다. 감사합니다!")
+                self.io_output("쇼핑을 종료합니다. 이용해 주셔서 감사합니다. 즐거운 쇼핑 되세요!")
             finally:
                 await self.browser.close()
 
@@ -133,7 +132,7 @@ class ShoppingCLI(BrowserMixin, SearchMixin, IntentMixin, IOMixin):
 
         # Step 1: Conversation loop
         while True:
-            self.io_output("명령을 말씀해주세요.\n > ")
+            self.io_output("무엇을 도와드릴까요?")
             user_input = (self.io_input() or "").strip()
 
             if not user_input:
@@ -146,7 +145,6 @@ class ShoppingCLI(BrowserMixin, SearchMixin, IntentMixin, IOMixin):
                 if not should_continue:
                     break
             except Exception as e:
-                ### TODO
-                self.io_output(f"\n❌ 오류가 발생했습니다: {e}")
+                self.io_output(f"문제가 발생했습니다. 다시 시도해주세요. 오류 내용: {e}")
                 ### TODO
                 self.io_output("다시 시도해주세요.")

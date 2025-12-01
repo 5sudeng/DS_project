@@ -136,7 +136,7 @@ class IntentMixin:
             elif act == "apply_sort":
                 sort_type = action.get("sort_type")
                 if sort_type:
-                    self.io_output(f"⏳ '{sort_type}' 정렬을 적용합니다...")
+                    self.io_output(f"{sort_type} 정렬을 적용하고 있습니다. 잠시만 기다려 주세요.")
                     result = await self.search_agent.apply_sort(sort_type)
                     
                     for warning in result.warnings:
@@ -158,7 +158,7 @@ class IntentMixin:
                         self.state.search_results = converted_results[:self.state.results_per_page]
                         self.state.page_offset = len(self.state.search_results)
                         self.state.current_sort_option = sort_type  # 정렬 옵션 저장
-                        self.io_output(f"✓ 정렬 완료 ({len(converted_results)}개 상품)")
+                        self.io_output(f"{sort_type} 정렬이 완료되었습니다. 총 {len(converted_results)}개의 상품이 있습니다. 상위 {len(self.state.search_results)}개 상품을 보여드리겠습니다.")
                         
                         # 첫 배치 표시
                         lines = [f"\n📦 정렬된 결과 (페이지 {self.state.current_page}):\n"]
@@ -170,12 +170,13 @@ class IntentMixin:
                             lines.append("")
                         self.io_output("\n".join(lines))
                     else:
-                        self.io_output(f"❌ {result.error}")
+                        self.io_output(f"정렬 적용에 실패했습니다. {result.error}")
             
             elif act == "apply_shipping":
                 option = action.get("shipping_option")
                 if option:
-                    self.io_output(f"⏳ '{option}' 필터를 적용합니다...")
+                    option_text = "배송비를 포함한" if option == "배송비포함" else "배송비를 제외한"
+                    self.io_output(f"{option_text} 가격으로 필터링하고 있습니다. 잠시만 기다려 주세요.")
                     result = await self.search_agent.apply_shipping_filter(option)
                     
                     for warning in result.warnings:
@@ -197,7 +198,7 @@ class IntentMixin:
                         self.state.search_results = converted_results[:self.state.results_per_page]
                         self.state.page_offset = len(self.state.search_results)
                         self.state.current_shipping_filter = option  # 배송비 필터 저장
-                        self.io_output(f"✓ 필터 적용 완료 ({len(converted_results)}개 상품)")
+                        self.io_output(f"{option_text} 가격으로 필터링이 완료되었습니다. 총 {len(converted_results)}개의 상품이 있습니다. 상위 {len(self.state.search_results)}개 상품을 보여드리겠습니다.")
                         
                         # 첫 배치 표시
                         lines = [f"\n📦 필터된 결과 (페이지 {self.state.current_page}):\n"]
@@ -225,8 +226,9 @@ class IntentMixin:
             
             elif act == "next_page":
                 if not self.state.current_search_query:
-                    self.io_output("❌ 진행 중인 검색이 없습니다.")
+                    self.io_output("진행 중인 검색이 없습니다. 먼저 상품을 검색해주세요.")
                 else:
+                    self.io_output(f"다음 페이지로 이동하고 있습니다. 잠시만 기다려 주세요.")
                     # 실제 쿠팡 다음 페이지 이동
                     result = await self.search_agent.go_to_next_page()
                     if result.success:
@@ -250,15 +252,17 @@ class IntentMixin:
                         self.state.search_results = first_batch
                         self.state.page_offset = len(first_batch)
                         
+                        self.io_output(f"{self.state.current_page}페이지로 이동했습니다. 상위 {len(first_batch)}개 상품을 보여드리겠습니다.")
                         # Display results
                         self._display_current_results()
                     else:
-                        self.io_output(f"❌ {result.error}")
+                        self.io_output(f"페이지 이동에 실패했습니다. {result.error}")
 
             elif act == "prev_page":
                 if not self.state.current_search_query:
-                    self.io_output("❌ 진행 중인 검색이 없습니다.")
+                    self.io_output("진행 중인 검색이 없습니다. 먼저 상품을 검색해주세요.")
                 elif self.state.current_page > 1:
+                    self.io_output(f"이전 페이지로 이동하고 있습니다. 잠시만 기다려 주세요.")
                     # 실제 쿠팡 이전 페이지 이동
                     result = await self.search_agent.go_to_prev_page()
                     if result.success:
@@ -282,21 +286,23 @@ class IntentMixin:
                         self.state.search_results = first_batch
                         self.state.page_offset = len(first_batch)
                         
+                        self.io_output(f"{self.state.current_page}페이지로 이동했습니다. 상위 {len(first_batch)}개 상품을 보여드리겠습니다.")
                         # Display results
                         self._display_current_results()
                     else:
-                        self.io_output(f"❌ {result.error}")
+                        self.io_output(f"페이지 이동에 실패했습니다. {result.error}")
                 else:
-                    self.io_output("❌ 첫 번째 페이지입니다. 이전 페이지가 없습니다.")
+                    self.io_output("현재 첫 번째 페이지입니다. 이전 페이지가 없습니다.")
 
             elif act == "goto_page":
                 page_num = action.get("page_num")
                 if page_num:
                     if not self.state.current_search_query:
-                        self.io_output("❌ 진행 중인 검색이 없습니다.")
+                        self.io_output("진행 중인 검색이 없습니다. 먼저 상품을 검색해주세요.")
                     elif int(page_num) < 1:
-                        self.io_output("❌ 1 이상의 페이지 번호를 입력하세요.")
+                        self.io_output("1 이상의 페이지 번호를 입력해주세요.")
                     else:
+                        self.io_output(f"{page_num}페이지로 이동하고 있습니다. 잠시만 기다려 주세요.")
                         self.state.current_page = int(page_num)
                         self.state.page_offset = 0
                         await self._load_current_page()
@@ -304,13 +310,15 @@ class IntentMixin:
             elif act == "show_sort_options":
                 # 정렬 옵션 안내
                 sort_options = [
-                    "쿠팡랭킹순",
-                    "낮은가격순",
-                    "높은가격순",
-                    "판매량순",
-                    "최신순",
+                    "쿠팡랭킹순 - 쿠팡에서 추천하는 순서대로 정렬합니다",
+                    "낮은가격순 - 가격이 낮은 상품부터 보여줍니다",
+                    "높은가격순 - 가격이 높은 상품부터 보여줍니다",
+                    "판매량순 - 많이 팔린 상품부터 보여줍니다",
+                    "최신순 - 최근에 등록된 상품부터 보여줍니다",
+                    "평점순 - 평점이 높은 상품부터 보여줍니다"
                 ]
-                message = "\n 사용 가능한 정렬 옵션은\n\n" + "\n".join([f"  • {opt}" for opt in sort_options])
+                message = "사용 가능한 정렬 방법은 다음과 같습니다. " + ", ".join([opt.split(" - ")[0] for opt in sort_options])
+                message += ". 예를 들어 낮은가격순으로 정렬해줘, 또는 판매량 많은 순으로 라고 말씀해주세요."
                 self.io_output(message)
             
             elif act == "show_related_keywords":
