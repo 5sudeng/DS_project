@@ -202,7 +202,7 @@ class SearchMixin:
             self.state.search_results = display_items
 
             # Display items with 1-N numbering
-            lines = [f"\페이지 {self.state.current_page}의 다음 상품들:\n"]
+            lines = [f"페이지 {self.state.current_page}의 다음 상품들:\n"]
             for idx, result in enumerate(display_items, 1):
                 lines.append(f"{idx}. {result.title}")
                 lines.append(f"   가격: {result.price}")
@@ -214,7 +214,7 @@ class SearchMixin:
             self.state.page_offset = next_offset
 
             # Ask if user likes any of these items
-            self.io_output("❓ 이 중에 마음에 드는 상품이 있으신가요?")
+            self.io_output("이 중에 마음에 드는 상품이 있으신가요?")
             # Check navigation options
             has_previous = page_start > 0
             has_next = page_end < len(self.state.all_search_results)
@@ -261,7 +261,7 @@ class SearchMixin:
             display_items = previous_items
             self.state.search_results = display_items
 
-            lines = [f"\페이지 {self.state.current_page}의 이전 상품들:\n"]
+            lines = [f"페이지 {self.state.current_page}의 이전 상품들:\n"]
             for idx, result in enumerate(display_items, 1):
                 lines.append(f"{idx}. {result.title}")
                 lines.append(f"   가격: {result.price}")
@@ -277,7 +277,7 @@ class SearchMixin:
             has_next = previous_end < len(self.state.all_search_results)
 
             # Ask if user likes any of these items
-            self.io_output("❓ 이 중에 마음에 드는 상품이 있으신가요?")
+            self.io_output("이 중에 마음에 드는 상품이 있으신가요?")
             print_lines = [f"상품 번호를 입력하세요 (1번에서 {len(display_items)}번까지), 또는:"]
             if has_previous:
                 print_lines.append("   '이전' → 더 이전의 5개 상품 보기")
@@ -363,7 +363,7 @@ class SearchMixin:
         self.console_output("\n".join(lines))
 
         # Ask if user likes any of these items
-        print_lines = ["\n❓ 이 중에 마음에 드는 상품이 있으신가요?"]
+        print_lines = ["\n이 중에 마음에 드는 상품이 있으신가요?"]
         print_lines.append(f"상품 번호를 입력하세요 (1번에서 {len(self.state.search_results)}번까지), 또는:")
         
         if self.state.page_offset < len(self.state.all_search_results):
