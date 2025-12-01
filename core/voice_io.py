@@ -160,9 +160,9 @@ class KeyboardVoiceInputController:
 class TextInterface:
     """Simple text-based replacement for speech IO."""
 
-    def speak(self, text: str):
+    def speak(self, text: str, wait: bool = False):
         print(f"[Assistant] {text}")
-        _speak_text(text)
+        _speak_text(text, wait=wait)
 
     def listen(self) -> Optional[str]:
         try:
@@ -206,8 +206,8 @@ class OpenAIVoiceInterface:
         self.use_keyboard_input = use_keyboard_input
         self.keyboard_controller = KeyboardVoiceInputController(samplerate) if use_keyboard_input else None
 
-    def speak(self, text: str):
-        _speak_text(text)
+    def speak(self, text: str, wait: bool = False):
+        _speak_text(text, wait=wait)
 
     def _audio_callback(self, indata, frames, time, status):
         self.queue.put(bytes(indata))
@@ -335,8 +335,8 @@ class VoskSpeechInterface:
         self.model = Model(model_path)
         self.recognizer = KaldiRecognizer(self.model, samplerate)
 
-    def speak(self, text: str):
-        _speak_text(text)
+    def speak(self, text: str, wait: bool = False):
+        _speak_text(text, wait=wait)
 
     def _audio_callback(self, indata, frames, time, status):
         self.queue.put(bytes(indata))
@@ -473,8 +473,8 @@ class RTZRSpeechInterface:
         return self._token["access_token"]
 
     # --- IO helpers ----------------------------------------------------
-    def speak(self, text: str):
-        _speak_text(text)
+    def speak(self, text: str, wait: bool = False):
+        _speak_text(text, wait=wait)
 
 
     def _microphone_stream(self):
