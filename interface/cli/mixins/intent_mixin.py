@@ -310,7 +310,7 @@ class IntentMixin:
                     "판매량순",
                     "최신순",
                 ]
-                message = "\n 사용 가능한 정렬 옵션:\n\n" + "\n".join([f"  • {opt}" for opt in sort_options])
+                message = "\n 사용 가능한 정렬 옵션은\n\n" + "\n".join([f"  • {opt}" for opt in sort_options])
                 self.io_output(message)
             
             elif act == "show_related_keywords":
