@@ -54,6 +54,7 @@ async def main():
         input_mode=args.input_mode,
         output_mode=args.output_mode,
         keyboard_voice=args.keyboard_voice,
+        stt_backend=args.stt_backend,
     )
 
     try:

@@ -19,8 +19,12 @@ from openai import OpenAI
 import grpc  # type: ignore
 import requests  # type: ignore
 import pyaudio  # type: ignore
-import core.vito_stt_client_pb2 as rtzr_pb  # type: ignore
-import core.vito_stt_client_pb2_grpc as rtzr_pb_grpc  # type: ignore
+try:
+    import core.vito_stt_client_pb2 as rtzr_pb  # type: ignore
+    import core.vito_stt_client_pb2_grpc as rtzr_pb_grpc  # type: ignore
+except ImportError:
+    rtzr_pb = None
+    rtzr_pb_grpc = None
 
 
 OPENAI_ENV_FILE =  "openai_voice_env.txt"
@@ -42,7 +46,7 @@ def _load_env_file(path: Path) -> Dict[str, str]:
 
 
 def load_openai_voice_config() -> Dict[str, Optional[str]]:
-    file_env = _load_env_file(OPENAI_ENV_FILE)
+    file_env = _load_env_file(Path(OPENAI_ENV_FILE))
     return {
         "api_key": os.getenv("OPENAI_API_KEY") or file_env.get("OPENAI_API_KEY"),
         "base_url": os.getenv("OPENAI_BASE_URL") or file_env.get("OPENAI_BASE_URL"),
@@ -51,33 +55,58 @@ def load_openai_voice_config() -> Dict[str, Optional[str]]:
 
 
 def load_rtzr_voice_config() -> Dict[str, Optional[str]]:
-    file_env = _load_env_file(RTZR_ENV_FILE)
+    file_env = _load_env_file(Path(RTZR_ENV_FILE))
     return {
         "client_id": os.getenv("RTZR_CLIENT_ID") or file_env.get("RTZR_CLIENT_ID"),
         "client_secret": os.getenv("RTZR_CLIENT_SECRET") or file_env.get("RTZR_CLIENT_SECRET"),
     }
 
 
-class KeyboardVoiceInputController:
-    """Optional push-to-talk style controller using the keyboard."""
 
-    def capture(self) -> Optional[str]:
+class KeyboardVoiceInputController:
+    """Push-to-talk controller using keyboard (Enter to start/stop)."""
+
+    def __init__(self, samplerate: int = 16000, channels: int = 1):
+        self.samplerate = samplerate
+        self.channels = channels
+
+    def record(self) -> Optional[bytes]:
+        """Record audio between two Enter key presses."""
         try:
-            input("\n[키보드 음성 모드] 출력이 끝났습니다. 엔터를 눌러 입력을 시작하세요.")
+            input("\n⌨️  [PTT] 엔터를 누르면 녹음을 시작합니다...")
         except EOFError:
             return None
 
-        try:
-            text = input("[키보드 음성 모드] 명령을 입력하고 엔터를 누르세요: ").strip()
-        except EOFError:
-            text = ""
+        q = queue.Queue()
 
-        try:
-            input("[키보드 음성 모드] 입력을 닫으려면 다시 엔터를 눌러주세요.")
-        except EOFError:
-            pass
+        def callback(indata, frames, time, status):
+            if status:
+                print(status, file=sys.stderr)
+            q.put(bytes(indata))
 
-        return text or None
+        # Start recording
+        stream = sd.RawInputStream(
+            samplerate=self.samplerate,
+            blocksize=1024,
+            device=None,
+            dtype="int16",
+            channels=self.channels,
+            callback=callback,
+        )
+        
+        collected = bytearray()
+        with stream:
+            print("🔴 녹음 중... (종료하려면 엔터를 누르세요)")
+            try:
+                input()
+            except EOFError:
+                pass
+        
+        # Drain queue
+        while not q.empty():
+            collected.extend(q.get())
+
+        return bytes(collected) if collected else None
 
 
 class TextInterface:
@@ -110,7 +139,6 @@ class OpenAIVoiceInterface:
         self.engine = pyttsx3.init()
         self.queue: queue.Queue[bytes] = queue.Queue()
         config = load_openai_voice_config()
-        # 기본 base_url을 명시적으로 넣어 404(Invalid URL) 방지
         resolved_base = base_url or config["base_url"] or "https://api.openai.com/v1"
         resolved_key = openai_api_key or config["api_key"]
         if not resolved_key:
@@ -127,7 +155,7 @@ class OpenAIVoiceInterface:
         self.silence_duration = 1.2
         self.max_recording = 12.0
         self.use_keyboard_input = use_keyboard_input
-        self.keyboard_controller = KeyboardVoiceInputController() if use_keyboard_input else None
+        self.keyboard_controller = KeyboardVoiceInputController(samplerate) if use_keyboard_input else None
 
     def speak(self, text: str):
         self.engine.say(text)
@@ -138,8 +166,10 @@ class OpenAIVoiceInterface:
 
     def listen(self) -> Optional[str]:
         if self.use_keyboard_input and self.keyboard_controller:
-            return self.keyboard_controller.capture()
-        audio_bytes = self._record_audio()
+            audio_bytes = self.keyboard_controller.record()
+        else:
+            audio_bytes = self._record_audio()
+            
         if not audio_bytes:
             return None
         return self._transcribe_audio(audio_bytes)
@@ -205,7 +235,6 @@ class OpenAIVoiceInterface:
                 wf.setframerate(self.samplerate)
                 wf.writeframes(audio_bytes)
 
-            # 표준 STT (whisper-1 또는 지정 모델)
             try:
                 with open(tmp_path, "rb") as audio_file:
                     transcript = self.client.audio.transcriptions.create(
@@ -253,7 +282,7 @@ class VoskSpeechInterface:
         self.silence_duration = 1.2
         self.max_recording = 12.0
         self.use_keyboard_input = use_keyboard_input
-        self.keyboard_controller = KeyboardVoiceInputController() if use_keyboard_input else None
+        self.keyboard_controller = KeyboardVoiceInputController(samplerate) if use_keyboard_input else None
 
         self.model = Model(model_path)
         self.recognizer = KaldiRecognizer(self.model, samplerate)
@@ -267,8 +296,10 @@ class VoskSpeechInterface:
 
     def listen(self) -> Optional[str]:
         if self.use_keyboard_input and self.keyboard_controller:
-            return self.keyboard_controller.capture()
-        audio_bytes = self._record_audio()
+            audio_bytes = self.keyboard_controller.record()
+        else:
+            audio_bytes = self._record_audio()
+            
         if not audio_bytes:
             return None
         return self._transcribe(audio_bytes)
@@ -350,7 +381,7 @@ class RTZRSpeechInterface:
     SAMPLE_RATE = 16000
     CHUNK = int(SAMPLE_RATE / 10)  # 100ms
     CHANNELS = 1 if sys.platform == "darwin" else 2
-    ENCODING = rtzr_pb.DecoderConfig.AudioEncoding.LINEAR16
+    ENCODING = rtzr_pb.DecoderConfig.AudioEncoding.LINEAR16 if rtzr_pb else None
 
     def __init__(
         self,
@@ -360,7 +391,12 @@ class RTZRSpeechInterface:
         samplerate: int = SAMPLE_RATE,
         chunk: int = CHUNK,
         channels: int = CHANNELS,
+        use_keyboard_input: bool = False,
     ):
+        self.use_keyboard_input = use_keyboard_input
+        self.keyboard_controller = KeyboardVoiceInputController(samplerate, channels) if use_keyboard_input else None
+        if not rtzr_pb:
+            raise ImportError("vito_stt_client_pb2 module not found. Please install generated protobuf files.")
         cfg = load_rtzr_voice_config()
         self.client_id = client_id or cfg["client_id"]
         self.client_secret = client_secret or cfg["client_secret"]
@@ -435,6 +471,44 @@ class RTZRSpeechInterface:
 
     def listen(self) -> Optional[str]:
         """Stream audio to RTZR and return a single final transcript."""
+        if self.use_keyboard_input and self.keyboard_controller:
+            # PTT recording
+            audio_bytes = self.keyboard_controller.record()
+            if not audio_bytes:
+                return None
+            
+            # For RTZR, we need to stream this audio buffer
+            # We can create a generator that yields chunks from audio_bytes
+            def _byte_stream():
+                offset = 0
+                while offset < len(audio_bytes):
+                    yield audio_bytes[offset:offset+self.chunk*2] # 2 bytes per sample
+                    offset += self.chunk*2
+
+            # Now use the existing gRPC logic but with _byte_stream instead of _microphone_stream
+            base_creds = grpc.ssl_channel_credentials()
+            call_creds = grpc.access_token_call_credentials(self.token)
+            creds = grpc.composite_channel_credentials(base_creds, call_creds)
+            
+            with grpc.secure_channel(self.GRPC_SERVER_URL, credentials=creds) as channel:
+                stub = rtzr_pb_grpc.OnlineDecoderStub(channel)
+
+                def request_iterator():
+                    yield rtzr_pb.DecoderRequest(streaming_config=self._decoder_config())
+                    for chunk in _byte_stream():
+                        yield rtzr_pb.DecoderRequest(audio_content=chunk)
+
+                try:
+                    responses = stub.Decode(request_iterator())
+                    for resp in responses:
+                        for res in resp.results:
+                            if res.is_final:
+                                return res.alternatives[0].text.strip() or None
+                except Exception as exc:
+                    print("RTZR PTT 인식 실패:", exc)
+                return None
+
+        # Normal microphone streaming
         base_creds = grpc.ssl_channel_credentials()
         call_creds = grpc.access_token_call_credentials(self.token)
         creds = grpc.composite_channel_credentials(base_creds, call_creds)
@@ -468,6 +542,7 @@ class RTZRSpeechInterface:
                 except Exception:
                     pass
             return final_text
+
 
 def build_io_interface(
     *,

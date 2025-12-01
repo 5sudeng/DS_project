@@ -42,6 +42,7 @@ class ShoppingCLI(BrowserMixin, SearchMixin, IntentMixin, IOMixin):
         input_mode: str = "voice",
         output_mode: str = "both",
         keyboard_voice: bool = False,
+        stt_backend: str = "rtzr",
     ):
         self.headless = headless
         self.run_dir = run_dir
@@ -56,6 +57,7 @@ class ShoppingCLI(BrowserMixin, SearchMixin, IntentMixin, IOMixin):
             input_mode=input_mode,
             output_mode=output_mode,
             keyboard_voice=keyboard_voice,
+            voice_backend=stt_backend,
         )
 
         # Playwright objects (initialized in run())
