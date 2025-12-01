@@ -57,19 +57,59 @@ JSON 형식으로 응답하세요:
 - search_page: 쿠팡 검색어 입력 (query)
 - select_product: 검색 결과 중 특정 상품 선택 (index: 1-based) 또는 URL로 이동 (url)
 - apply_sort: 정렬 적용 (sort_type: "낮은가격순", "높은가격순", "판매량순", "랭킹순", "최신순", "평점순")
+- show_sort_options: 사용 가능한 정렬 옵션 목록 보여주기
 - apply_shipping: 배송 필터 적용 (shipping_option: "배송비포함", "배송비제외")
 - read_results: 검색 결과 상위 N개 읽어주기 (top_n)
+- next_items: 다음 N개 상품 보여주기 (count: 기본 3)
+- prev_items: 이전 N개 상품 보여주기 (count: 기본 3)
+- next_page: 다음 검색 결과 페이지로 이동
+- prev_page: 이전 검색 결과 페이지로 이동
+- goto_page: 특정 페이지로 이동 (page_num)
+- show_related_keywords: 연관 검색어 보여주기
+- select_related_keyword: 연관 검색어 선택 (keyword)
 - question: 상품에 대한 질문 (query)
 - add_to_cart: 장바구니 담기 (quantity)
 - navigate_to_cart: 장바구니 이동
 - summarize: 현재 결과/상품 요약 (top_n)
 - exit: 종료
 
+🔍 중요: 다음 상품(within-page) vs 다음 페이지(page change) vs 상품 선택 구분:
+- "다음", "다음 거", "다음 상품", "더 보여줘" → next_items (현재 페이지 내에서 다음 상품들)
+- "이전", "이전 거", "이전 상품", "아까 거" → prev_items (현재 페이지 내에서 이전 상품들)
+- "페이지", "다른 페이지", "페이지 이동", "페이지 바꿔줘" → goto_page (페이지 번호 물어봄)
+- "다음 페이지", "다음 장", "넘어가줘", "페이지 넘겨" → next_page (다음 페이지로)
+- "이전 페이지", "이전 장", "페이지 뒤로" → prev_page (이전 페이지로)
+- "2페이지", "3번 페이지", "5페이지로", "2 페이지", "페이지 2" → goto_page (특정 페이지로 직접 이동)
+- "첫번째 상품 들어가줘", "세번째 상품 더 볼래","2번 상품", "3번째 상품", "첫번째 상품", "2번 들어가줘", "3번 보여줘" → select_product (상품 선택)
+
 예시 변환:
 - "쿠팡 열어줘" → [{"action":"open_url","url":"https://www.coupang.com"}]
 - "헤드셋 찾아줘" → [{"action":"search_page","query":"헤드셋"}]
 - "판매량순으로 정렬해서 3개 보여줘" → [{"action":"apply_sort","sort_type":"판매량순"},{"action":"read_results","top_n":3}]
 - "첫번째 상품 보여줘" → [{"action":"select_product","index":1}]
+- "다음 거 보여줘" → [{"action":"next_items","count":3}]
+- "이전 거 다시 보여줘" → [{"action":"prev_items","count":3}]
+- "다음 페이지로 가줘" → [{"action":"next_page"}]
+- "페이지 넘겨줘" → [{"action":"next_page"}]
+- "이전 페이지로 가줘" → [{"action":"prev_page"}]
+- "페이지 뒤로 가줘" → [{"action":"prev_page"}]
+- "페이지 바꿔줘" → [{"action":"goto_page"}]
+- "다른 페이지 보여줘" → [{"action":"goto_page"}]
+- "3페이지로 이동해줘" → [{"action":"goto_page","page_num":3}]
+- "5페이지" → [{"action":"goto_page","page_num":5}]
+- "2번 페이지로" → [{"action":"goto_page","page_num":2}]
+- "2 페이지로 가줘" → [{"action":"goto_page","page_num":2}]
+- "2 페이지" → [{"action":"goto_page","page_num":2}]
+- "페이지 2" → [{"action":"goto_page","page_num":2}]
+- "2번 상품 들어가줘" → [{"action":"select_product","index":2}]
+- "3번째 상품 보여줘" → [{"action":"select_product","index":3}]
+- "첫번째 상품" → [{"action":"select_product","index":1}]
+- "2번 보여줘" → [{"action":"select_product","index":2}]
+- "연관 검색어 뭐 있어?" → [{"action":"show_related_keywords"}]
+- "첫번째 연관 검색어로 검색해줘" → [{"action":"select_related_keyword","keyword":"첫번째 연관 검색어"}]
+- "어떤 정렬 방법이 있어?" → [{"action":"show_sort_options"}]
+- "정렬 옵션 알려줘" → [{"action":"show_sort_options"}]
+- "정렬 어떻게 해?" → [{"action":"show_sort_options"}]
 - "이거 칼로리가 얼마야?" → [{"action":"question","query":"이거 칼로리가 얼마야?"}]
 - "장바구니에 2개 넣어줘" → [{"action":"add_to_cart","quantity":2}]
 

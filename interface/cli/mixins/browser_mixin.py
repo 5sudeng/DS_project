@@ -80,7 +80,7 @@ class BrowserMixin:
             self.console_print(f"   URL: {current_url}")
 
             # Step 4: Generate and display summary
-            self.io_output("\n📝 상품 요약 정보를 생성하고 있습니다...")
+            self.io_output("\n🧠 상품 요약 정보를 생성하고 있습니다...")
             try:
                 summary = self.llm.generate_product_summary(
                     self.state.current_product_name,
