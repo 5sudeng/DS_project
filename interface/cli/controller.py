@@ -23,11 +23,12 @@ from services.llm_service import ShoppingLLMService
 from interface.cli.mixins.browser_mixin import BrowserMixin
 from interface.cli.mixins.search_mixin import SearchMixin
 from interface.cli.mixins.intent_mixin import IntentMixin
+from interface.cli.mixins.io_mixin import IOMixin
 
 logger = logging.getLogger(__name__)
 
 
-class ShoppingCLI(BrowserMixin, SearchMixin, IntentMixin):
+class ShoppingCLI(BrowserMixin, SearchMixin, IntentMixin, IOMixin):
     """Interactive CLI for shopping with AI assistance."""
 
     def __init__(
@@ -37,12 +38,22 @@ class ShoppingCLI(BrowserMixin, SearchMixin, IntentMixin):
         api_key: Optional[str] = None,
         run_dir: Optional[str] = None,
         ocr_delay: float = 0.5,
+        input_mode: str = "text",
+        output_mode: str = "text",
+        keyboard_voice: bool = False,
+        stt_backend: str = "openai",
     ):
         self.headless = headless
         self.run_dir = run_dir
         self.state = ConversationState()
         self.api_key = api_key
         self.llm = ShoppingLLMService(api_key=api_key)
+        self.configure_io(
+            input_mode=input_mode,
+            output_mode=output_mode,
+            keyboard_voice=keyboard_voice,
+            stt_backend=stt_backend,
+        )
 
         # Playwright objects (initialized in run())
         self.browser: Optional[Browser] = None
@@ -111,8 +122,10 @@ class ShoppingCLI(BrowserMixin, SearchMixin, IntentMixin):
 
         # Step 2: Conversation loop
         while True:
-            ### voiceinput
-            user_input = input("\n💬 > ").strip()
+            prompt = "\n💬 > "
+            if getattr(self, "output_mode", "text") in ("voice", "both"):
+                self.io_speak(prompt.strip())
+            user_input = (self.io_listen(prompt) or "").strip()
 
             if not user_input:
                 continue

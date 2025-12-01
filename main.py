@@ -9,6 +9,7 @@ import sys
 import argparse
 from pathlib import Path
 from interface.cli import ShoppingCLI
+from interface.cli.mixins.io_mixin import IOMixin
 
 async def main():
     """Entry point."""
@@ -26,8 +27,10 @@ async def main():
         default=0.5,
         help="OCR API 호출 사이 대기 시간(초)",
     )
+    IOMixin.add_io_arguments(parser)
 
     args = parser.parse_args()
+    IOMixin.validate_io_args(args)
 
     # Load API Key
     api_key = args.api_key or os.getenv("OPENAI_API_KEY")
@@ -49,6 +52,9 @@ async def main():
         api_key=api_key,
         run_dir=args.run_dir,
         ocr_delay=args.ocr_delay,
+        input_mode=args.input_mode,
+        output_mode=args.output_mode,
+        keyboard_voice=args.keyboard_voice,
     )
 
     await cli.run()
