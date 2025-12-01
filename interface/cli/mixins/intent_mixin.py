@@ -168,7 +168,7 @@ class IntentMixin:
                             if res.rating:
                                 lines.append(f"   평점: {res.rating}")
                             lines.append("")
-                        self.io_output("\n".join(lines))
+                        self.console_print("\n".join(lines))
                     else:
                         self.io_output(f" {result.error}")
             
