@@ -49,7 +49,7 @@ def _speak_text(text: str, wait: bool = False):
         
         system = platform.system()
         if system == "Darwin":
-            cmd = ['say', text]
+            cmd = ['say', '-r', '210', text]
         elif system == "Windows":
             # Escape single quotes for PowerShell
             safe_text = text.replace("'", "''")
