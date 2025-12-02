@@ -87,6 +87,7 @@ class IntentMixin:
             elif act == "search_page":
                 query = action.get("query")
                 if query:
+                    post_search_actions = []
                     # Augment query if memory enabled
                     if self.ai_memory_enabled:
                         augmented_result = self.llm.augment_user_query(
@@ -104,6 +105,7 @@ class IntentMixin:
                             if consent in ["y", "yes", "예", "네", "ㅇ", "ㅇㅇ"]:
                                 query = augmented_query
                                 self.io_output(f"✓ 보강된 검색어로 진행합니다: '{query}'")
+                                post_search_actions = augmented_result.get("actions", []) or []
                             else:
                                 self.io_output("기존 검색어로 진행합니다.")
                             
@@ -128,6 +130,8 @@ class IntentMixin:
 
                     await self._perform_search(query)
                     await self._select_from_search_results()
+                    if post_search_actions:
+                        await self._execute_actions(post_search_actions)
             
             elif act == "select_product":
                 index = action.get("index")
