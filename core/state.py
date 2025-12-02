@@ -31,6 +31,9 @@ class ConversationState:
     # 정렬/필터 상태 유지
     current_sort_option: Optional[str] = None  # 예: "랭킹순", "낮은가격순"
     current_shipping_filter: Optional[str] = None  # 예: "배송비포함", "배송비제외"
+
+    # 사용자 안내 문구 제어
+    guidance_shown_for_page: bool = False  # 현재 페이지에서 일반 안내를 이미 표시했는지 여부
     
     def add_message(self, role: str, content: str) -> None:
         """Add a message to the conversation history."""

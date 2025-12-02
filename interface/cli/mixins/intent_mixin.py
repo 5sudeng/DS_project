@@ -136,7 +136,7 @@ class IntentMixin:
             elif act == "apply_sort":
                 sort_type = action.get("sort_type")
                 if sort_type:
-                    self.io_output(f" '{sort_type}' 정렬을 적용합니다...")
+                    self.io_output(f"'{sort_type}' 정렬을 적용합니다. 잠시만 기다려 주세요.")
                     result = await self.search_agent.apply_sort(sort_type)
                     
                     for warning in result.warnings:
@@ -158,24 +158,16 @@ class IntentMixin:
                         self.state.search_results = converted_results[:self.state.results_per_page]
                         self.state.page_offset = len(self.state.search_results)
                         self.state.current_sort_option = sort_type  # 정렬 옵션 저장
-                        self.io_output(f"{sort_type} 정렬이 완료되었습니다. 총 {len(converted_results)}개의 상품이 있습니다. 상위 {len(self.state.search_results)}개 상품을 보여드리겠습니다.")
-                        
-                        # 첫 배치 표시
-                        lines = [f"\n정렬된 결과 (페이지 {self.state.current_page}):\n"]
-                        for idx, res in enumerate(self.state.search_results, 1):
-                            lines.append(f"{idx}. {res.title}")
-                            lines.append(f"   가격: {res.price}")
-                            if res.rating:
-                                lines.append(f"   평점: {res.rating}")
-                            lines.append("")
-                        self.console_print("\n".join(lines))
+                        self.io_output(f"{sort_type} 정렬이 완료되었습니다. 요약을 알려드릴게요.")
+                        if hasattr(self, '_output_results_summary'):
+                            await self._output_results_summary(self.state.search_results)
                     else:
-                        self.io_output(f" {result.error}")
+                        self.io_output(f"정렬 적용 실패: {result.error}")
             
             elif act == "apply_shipping":
                 option = action.get("shipping_option")
                 if option:
-                    self.io_output(f" '{option}' 필터를 적용합니다...")
+                    self.io_output(f"'{option}' 필터를 적용합니다. 잠시만 기다려 주세요.")
                     result = await self.search_agent.apply_shipping_filter(option)
                     
                     for warning in result.warnings:
@@ -197,19 +189,11 @@ class IntentMixin:
                         self.state.search_results = converted_results[:self.state.results_per_page]
                         self.state.page_offset = len(self.state.search_results)
                         self.state.current_shipping_filter = option  # 배송비 필터 저장
-                        self.io_output(f"{option_text} 가격으로 필터링이 완료되었습니다. 총 {len(converted_results)}개의 상품이 있습니다. 상위 {len(self.state.search_results)}개 상품을 보여드리겠습니다.")
-                        
-                        # 첫 배치 표시
-                        lines = [f"\필터된 결과 (페이지 {self.state.current_page}):\n"]
-                        for idx, res in enumerate(self.state.search_results, 1):
-                            lines.append(f"{idx}. {res.title}")
-                            lines.append(f"   가격: {res.price}")
-                            if res.rating:
-                                lines.append(f"   평점: {res.rating}")
-                            lines.append("")
-                        self.io_output("\n".join(lines))
+                        self.io_output(f"'{option}' 필터가 적용되었습니다. 요약을 알려드릴게요.")
+                        if hasattr(self, '_output_results_summary'):
+                            await self._output_results_summary(self.state.search_results)
                     else:
-                        self.io_output(f" {result.error}")
+                        self.io_output(f"배송비 필터 적용 실패: {result.error}")
             
             elif act == "read_results":
                 top_n = action.get("top_n", 3)
@@ -251,9 +235,9 @@ class IntentMixin:
                         self.state.search_results = first_batch
                         self.state.page_offset = len(first_batch)
                         
-                        self.io_output(f"{self.state.current_page}페이지로 이동했습니다. 상위 {len(first_batch)}개 상품을 보여드리겠습니다.")
+                        self.io_output(f"{self.state.current_page}페이지로 이동했습니다. 요약을 알려드릴게요.")
                         # Display results
-                        self._display_current_results()
+                        await self._display_current_results()
                     else:
                         self.io_output(f"페이지 이동에 실패했습니다. {result.error}")
 
@@ -285,9 +269,9 @@ class IntentMixin:
                         self.state.search_results = first_batch
                         self.state.page_offset = len(first_batch)
                         
-                        self.io_output(f"{self.state.current_page}페이지로 이동했습니다. 상위 {len(first_batch)}개 상품을 보여드리겠습니다.")
+                        self.io_output(f"{self.state.current_page}페이지로 이동했습니다. 요약을 알려드릴게요.")
                         # Display results
-                        self._display_current_results()
+                        await self._display_current_results()
                     else:
                         self.io_output(f"페이지 이동에 실패했습니다. {result.error}")
                 else:
