@@ -19,6 +19,7 @@ class ConversationState:
     conversation_history: List[Dict[str, str]] = field(default_factory=list)
     waiting_for_clarification: bool = False
     results_per_page: int = 3
+    current_category: Optional[str] = None
 
     # 페이지 내 상품 탐색 관련
     all_search_results: List["SearchResult"] = field(default_factory=list)  # 현재 페이지의 모든 상품

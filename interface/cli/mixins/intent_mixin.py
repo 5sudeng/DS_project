@@ -38,10 +38,6 @@ class IntentMixin:
     async def _handle_user_input(self, user_input: str) -> bool:
         """Handle user input by mapping to actions and executing them."""
         logger.info("Handling user input: %s", user_input)
-        
-        # 1. Save to memory if enabled
-        if self.ai_memory_enabled:
-            self.preference_memory.remember(f"User: {user_input}")
 
         # 2. Map command to actions using LLM (자연어 처리)
         result = self.llm.map_command_to_actions(user_input)
@@ -99,13 +95,17 @@ class IntentMixin:
                             self.state.conversation_history
                         )
                         augmented_query = augmented_result.get("query", query)
-                        
                         if augmented_result.get("augmented") and augmented_query != query:
                             rationale = augmented_result.get("rationale", "")
-                            self.io_output(f"선호를 반영해 검색어를 보강했습니다: '{augmented_query}'")
+                            self.io_output(f"'{query}'을(를) 찾고 계신데 '{augmented_query}'로 검색해볼까요?")
                             if rationale:
-                                self.io_output(f"   (이유: {rationale})")
-                            query = augmented_query
+                                self.io_output(f"(보강 이유: {rationale})")
+                            consent = (self.io_input() or "").strip().lower()
+                            if consent in ["y", "yes", "예", "네", "ㅇ", "ㅇㅇ"]:
+                                query = augmented_query
+                                self.io_output(f"✓ 보강된 검색어로 진행합니다: '{query}'")
+                            else:
+                                self.io_output("기존 검색어로 진행합니다.")
                             
                             # Check if we need more info (Re-query)
                             follow_up = self.llm.generate_requery_question(
@@ -118,9 +118,13 @@ class IntentMixin:
                                 self.io_output(f"\n{follow_up}")
                                 answer = (self.io_input() or "").strip()
                                 if answer:
-                                    self.preference_memory.remember(f"Answer to '{follow_up}': {answer}")
                                     query = f"{query} {answer}"
                                     self.io_output(f"✓ '{query}'(으)로 검색합니다.")
+                    # Persist structured memory for searches
+                    if self.ai_memory_enabled:
+                        guessed_category = self.preference_memory.guess_category(query)
+                        self.state.current_category = guessed_category
+                        self.preference_memory.log_search(query, category=guessed_category)
 
                     await self._perform_search(query)
                     await self._select_from_search_results()
@@ -159,6 +163,12 @@ class IntentMixin:
                         self.state.page_offset = len(self.state.search_results)
                         self.state.current_sort_option = sort_type  # 정렬 옵션 저장
                         self.io_output(f"{sort_type} 정렬이 완료되었습니다. 요약을 알려드릴게요.")
+                        if self.ai_memory_enabled:
+                            self.preference_memory.log_sort(
+                                sort_type,
+                                query=self.state.current_search_query,
+                                category=self.state.current_category,
+                            )
                         if hasattr(self, '_output_results_summary'):
                             await self._output_results_summary(self.state.search_results)
                     else:
@@ -382,6 +392,12 @@ class IntentMixin:
         ### TODO
         self.io_output(f"\n {answer}")
         self.state.add_message("assistant", answer)
+        if self.ai_memory_enabled:
+            self.preference_memory.log_product_question(
+                question,
+                product_name=self.state.current_product_name,
+                category=self.state.current_category,
+            )
 
     async def _handle_add_to_cart(self, intent_result: Dict = None):
         """Handle when user explicitly wants to add to cart."""
@@ -405,6 +421,12 @@ class IntentMixin:
             self.state.add_message("assistant", result.message)
             ### TODO
             self.io_output("\n 다른 상품을 더 찾아보시겠어요? (검색어 입력 또는 장바구니로 이동 또는 종료)")
+            if self.ai_memory_enabled:
+                self.preference_memory.log_add_to_cart(
+                    self.state.current_product_name,
+                    quantity=quantity,
+                    category=self.state.current_category,
+                )
         else:
             self.io_output(f"\n❌ {result.error}")
             self.state.add_message("assistant", result.error)
@@ -465,6 +487,10 @@ class IntentMixin:
             )
 
             self.io_output(f"💡 검색어: '{search_query}'")
+            if self.ai_memory_enabled:
+                guessed_category = self.preference_memory.guess_category(search_query)
+                self.state.current_category = guessed_category
+                self.preference_memory.log_search(search_query, category=guessed_category)
             await self._perform_search(search_query)
             await self._select_from_search_results()
             logger.info("Search triggered with query='%s'", search_query)
@@ -512,6 +538,10 @@ class IntentMixin:
         )
 
         self.io_output(f"💡 검색어: '{search_query}'")
+        if self.ai_memory_enabled:
+            guessed_category = self.preference_memory.guess_category(search_query)
+            self.state.current_category = guessed_category
+            self.preference_memory.log_search(search_query, category=guessed_category)
         await self._perform_search(search_query)
         await self._select_from_search_results()
         logger.info("Search triggered from clarification with query='%s'", search_query)

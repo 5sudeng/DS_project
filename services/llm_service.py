@@ -6,6 +6,7 @@ import base64
 import json
 import logging
 import os
+from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
@@ -16,47 +17,99 @@ from config.settings import PROMPTS
 logger = logging.getLogger(__name__)
 
 class PreferenceMemory:
-    """Preference + identity storage with file-backed memory."""
+    """Structured preference + identity storage backed by memory.json."""
 
-    def __init__(self, memory_path: str = "memory.txt", identity_path: str = "identity.txt"):
-        self._notes: List[str] = []
+    CATEGORIES: List[str] = [
+        "패션의류/잡화",
+        "뷰티",
+        "출산/유아동",
+        "식품",
+        "주방용품",
+        "생활용품",
+        "홈인테리어",
+        "가전디지털",
+        "스포츠/레저",
+        "자동차용품",
+        "도서/음반/DVD",
+        "완구/취미",
+        "문구/오피스",
+        "반려동물용품",
+        "헬스/건강식품",
+    ]
+    OTHER_CATEGORY = "기타"
+
+    _CATEGORY_KEYWORDS: Dict[str, List[str]] = {
+        "패션의류/잡화": ["셔츠", "바지", "신발", "가방", "모자", "코트", "자켓", "패션", "스니커"],
+        "뷰티": ["화장품", "스킨", "로션", "립", "마스카라", "아이섀도", "향수", "클렌징"],
+        "출산/유아동": ["기저귀", "분유", "유아", "아기", "출산", "젖병", "보행기"],
+        "식품": ["라면", "과자", "커피", "식품", "음료", "간식", "냉동", "밀키트"],
+        "주방용품": ["프라이팬", "냄비", "칼", "도마", "식기", "주방", "에어프라이어 용기"],
+        "생활용품": ["세제", "휴지", "수건", "생활", "청소", "방향제"],
+        "홈인테리어": ["침구", "커튼", "러그", "소파", "인테리어", "쿠션", "조명"],
+        "가전디지털": ["노트북", "스마트폰", "가전", "디지털", "TV", "이어폰", "카메라"],
+        "스포츠/레저": ["자전거", "캠핑", "등산", "운동", "요가", "트레이닝", "라켓"],
+        "자동차용품": ["차량", "자동차", "타이어", "대시보드", "차량용", "블랙박스"],
+        "도서/음반/DVD": ["도서", "책", "소설", "DVD", "블루레이", "음반"],
+        "완구/취미": ["레고", "퍼즐", "피규어", "토이", "완구", "취미"],
+        "문구/오피스": ["볼펜", "노트", "프린터", "문구", "사무", "오피스"],
+        "반려동물용품": ["강아지", "고양이", "사료", "간식", "반려동물", "캣타워"],
+        "헬스/건강식품": ["영양제", "비타민", "단백질", "건강", "헬스", "프로틴"],
+    }
+
+    def __init__(self, memory_path: str = "memory.json", identity_path: str = "identity.txt"):
         self.memory_path = Path(memory_path)
         self.identity_path = Path(identity_path)
         self.identity: Optional[str] = None
+        self._data: Dict[str, List[Dict[str, Any]]] = {cat: [] for cat in self.CATEGORIES}
+        self._data[self.OTHER_CATEGORY] = []
         self._load_files()
 
     # ---------------- File helpers ----------------
     def _load_files(self):
         if self.memory_path.is_file():
             try:
-                lines = self.memory_path.read_text(encoding="utf-8").splitlines()
-                self._notes.extend([ln.strip() for ln in lines if ln.strip()])
+                loaded = json.loads(self.memory_path.read_text(encoding="utf-8"))
+                categories = loaded.get("categories", {})
+                for cat, events in categories.items():
+                    self._data.setdefault(cat, []).extend(events)
             except Exception:
-                pass
+                logger.warning("Failed to load memory.json; starting fresh.")
+                self._data = {cat: [] for cat in self.CATEGORIES}
+                self._data[self.OTHER_CATEGORY] = []
+        else:
+            # Optional legacy migration from memory.txt
+            legacy_txt = Path("memory.txt")
+            migrated = False
+            if legacy_txt.is_file():
+                try:
+                    lines = [ln.strip() for ln in legacy_txt.read_text(encoding="utf-8").splitlines() if ln.strip()]
+                    for ln in lines:
+                        self._record_event("legacy_note", {"text": ln}, self.OTHER_CATEGORY)
+                    migrated = True
+                except Exception:
+                    logger.warning("Failed to migrate legacy memory.txt", exc_info=True)
+            # Initialize empty structure
+            if not migrated:
+                self._data = {cat: [] for cat in self.CATEGORIES}
+                self._data[self.OTHER_CATEGORY] = []
+
         if self.identity_path.is_file():
             try:
                 self.identity = self.identity_path.read_text(encoding="utf-8").strip() or None
             except Exception:
                 self.identity = None
 
-    def append_event(self, text: str) -> None:
-        if not text:
-            return
-        text = text.strip()
-        self._notes.append(text)
+    def _save(self) -> None:
+        payload = {"categories": self._data}
         try:
-            with self.memory_path.open("a", encoding="utf-8") as f:
-                f.write(text + "\n")
+            self.memory_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
         except Exception:
-            pass
+            logger.warning("Failed to persist memory.json", exc_info=True)
 
     def clear_memory(self, clear_identity: bool = False) -> None:
-        self._notes.clear()
-        try:
-            if self.memory_path.exists():
-                self.memory_path.write_text("", encoding="utf-8")
-        except Exception:
-            pass
+        self._data = {cat: [] for cat in self.CATEGORIES}
+        self._data[self.OTHER_CATEGORY] = []
+        self._save()
         if clear_identity:
             self.identity = None
             try:
@@ -72,27 +125,117 @@ class PreferenceMemory:
         except Exception:
             pass
 
-    # ---------------- Query helpers ----------------
-    def remember(self, note: str) -> None:
-        self.append_event(note)
+    # ---------------- Category helpers ----------------
+    def _normalize_category(self, category: Optional[str]) -> str:
+        if not category:
+            return self.OTHER_CATEGORY
+        for cat in self.CATEGORIES:
+            if category.strip().lower() == cat.lower():
+                return cat
+        return self.OTHER_CATEGORY
 
+    def guess_category(self, text: Optional[str]) -> str:
+        if not text:
+            return self.OTHER_CATEGORY
+        lower = text.lower()
+        for cat, keywords in self._CATEGORY_KEYWORDS.items():
+            if any(kw in lower for kw in keywords):
+                return cat
+        return self.OTHER_CATEGORY
+
+    # ---------------- Event helpers ----------------
+    def _record_event(self, event_type: str, detail: Dict[str, Any], category: Optional[str] = None) -> None:
+        category = self._normalize_category(category)
+        event = {
+            "type": event_type,
+            "detail": detail,
+            "ts": datetime.utcnow().isoformat() + "Z",
+        }
+        self._data.setdefault(category, []).append(event)
+        self._save()
+
+    def log_search(self, query: str, category: Optional[str] = None) -> None:
+        if not query:
+            return
+        cat = category or self.guess_category(query)
+        self._record_event("search", {"query": query}, cat)
+
+    def log_sort(self, sort_option: str, *, query: Optional[str] = None, category: Optional[str] = None) -> None:
+        if not sort_option:
+            return
+        cat = category or self.guess_category(query or sort_option)
+        self._record_event("sort", {"sort_option": sort_option, "query": query}, cat)
+
+    def log_related_keyword(self, keyword: str, *, base_query: Optional[str] = None, category: Optional[str] = None) -> None:
+        if not keyword:
+            return
+        cat = category or self.guess_category(keyword or base_query)
+        self._record_event("related_keyword", {"keyword": keyword, "base_query": base_query}, cat)
+
+    def log_product_question(self, question: str, *, product_name: Optional[str] = None, category: Optional[str] = None) -> None:
+        if not question:
+            return
+        cat = category or self.guess_category(product_name or question)
+        self._record_event("product_question", {"question": question, "product": product_name}, cat)
+
+    def log_add_to_cart(self, product_name: Optional[str], *, quantity: int = 1, category: Optional[str] = None) -> None:
+        cat = category or self.guess_category(product_name)
+        self._record_event("add_to_cart", {"product": product_name, "quantity": quantity}, cat)
+
+    # ---------------- Query helpers ----------------
     def summary(self, max_items: int = 5) -> str:
-        if not self._notes:
+        recent = self._recent_events(max_items)
+        if not recent:
             return ""
-        recent = self._notes[-max_items:]
-        bullets = "\n".join(f"- {item}" for item in recent if item)
+        bullets = "\n".join(f"- [{item['category']}] {item['text']}" for item in recent)
         return bullets
 
     def has_preferences(self) -> bool:
-        return bool(self._notes)
+        return any(events for events in self._data.values())
 
     def as_list(self) -> List[str]:
-        return list(self._notes)
+        return [entry["text"] for entry in self._recent_events(200)]
 
     def memory_log(self, max_lines: int = 50) -> str:
-        if not self._notes:
+        recent = self._recent_events(max_lines)
+        if not recent:
             return ""
-        return "\n".join(self._notes[-max_lines:])
+        return "\n".join(f"[{item['category']}] {item['text']}" for item in recent)
+
+    # ---------------- Formatting helpers ----------------
+    def _recent_events(self, limit: int) -> List[Dict[str, str]]:
+        flattened: List[Dict[str, Any]] = []
+        for category, events in self._data.items():
+            for ev in events:
+                text = self._format_event(ev)
+                flattened.append(
+                    {
+                        "category": category,
+                        "text": text,
+                        "ts": ev.get("ts", ""),
+                    }
+                )
+        flattened.sort(key=lambda x: x.get("ts", ""), reverse=True)
+        return flattened[:limit]
+
+    def _format_event(self, event: Dict[str, Any]) -> str:
+        etype = event.get("type")
+        detail = event.get("detail", {})
+        if etype == "search":
+            return f"검색어: {detail.get('query')}"
+        if etype == "sort":
+            return f"정렬: {detail.get('sort_option')} (검색어: {detail.get('query')})"
+        if etype == "related_keyword":
+            base = detail.get("base_query")
+            return f"연관검색어 선택: {detail.get('keyword')}" + (f" (기준: {base})" if base else "")
+        if etype == "product_question":
+            product = detail.get("product")
+            return f"상품 질문: {detail.get('question')}" + (f" (상품: {product})" if product else "")
+        if etype == "add_to_cart":
+            return f"장바구니 담기: {detail.get('product')} x{detail.get('quantity', 1)}"
+        if etype == "legacy_note":
+            return f"이전 메모: {detail.get('text')}"
+        return f"{etype}: {detail}"
 
 class ShoppingLLMService:
     """LLM wrapper for shopping assistant tasks."""
