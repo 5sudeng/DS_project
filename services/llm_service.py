@@ -202,6 +202,20 @@ class PreferenceMemory:
             return ""
         return "\n".join(f"[{item['category']}] {item['text']}" for item in recent)
 
+    def memory_log_for_category(self, category: str, max_lines: int = 50) -> str:
+        cat = self._normalize_category(category)
+        events = self._data.get(cat, [])
+        if not events:
+            return ""
+        formatted = []
+        for ev in sorted(events, key=lambda e: e.get("ts", ""), reverse=True)[:max_lines]:
+            formatted.append(self._format_event(ev))
+        return "\n".join(formatted)
+
+    def has_category_history(self, category: str) -> bool:
+        cat = self._normalize_category(category)
+        return bool(self._data.get(cat))
+
     # ---------------- Formatting helpers ----------------
     def _recent_events(self, limit: int) -> List[Dict[str, str]]:
         flattened: List[Dict[str, Any]] = []
@@ -573,16 +587,28 @@ class ShoppingLLMService:
             {
               "query": "<augmented or original>",
               "augmented": bool,
-              "rationale": "<why it was changed>"
+              "rationale": "<why it was changed>",
+              "actions": [
+                  {"action": "apply_sort", "sort_type": "..."} |
+                  {"action": "apply_shipping", "shipping_option": "..."}
+              ]
             }
         """
+        # Only consider augmentation when we have history for the inferred category
+        category = preference_memory.guess_category(raw_query)
+        if not preference_memory.has_category_history(category):
+            return {"query": raw_query, "augmented": False, "rationale": "no_category_history", "actions": []}
+
         pref_summary = preference_memory.summary()
-        memory_log = preference_memory.memory_log()
+        memory_log = preference_memory.memory_log_for_category(category)
         identity = preference_memory.identity or ""
         system_prompt = """당신은 사용자의 과거 선호도를 기억하는 쇼핑 비서입니다.
-사용자 질문이 모호하면, 기억된 선호도를 반영해 검색어를 보강하세요.
-- 선호도가 없거나, 현재 질문이 충분히 구체적이면 그대로 둡니다.
+사용자 질문이 모호할 때만, 그리고 해당 카테고리에 대한 기억이 있을 때만 검색어를 보강하세요.
+- 질문이 이미 구체적이면 그대로 둡니다.
 - 가격 민감, 브랜드, 색상, 배송 조건 등 과거 맥락을 반영합니다.
+- 정렬/배송 선호가 분명하면 actions 배열에 apply_sort 또는 apply_shipping을 추가하세요.
+  * sort_type은 쿠팡랭킹순, 낮은가격순, 높은가격순, 판매량순, 최신순 중 하나
+  * shipping_option은 배송비포함 또는 배송비제외 중 하나
 JSON으로만 응답하세요."""
 
         history_tail = "\n".join([f"{m['role']}: {m['content']}" for m in conversation_history[-4:]])
@@ -592,7 +618,7 @@ JSON으로만 응답하세요."""
 저장된 선호:
 {pref_summary or "없음"}
 
-메모리 로그:
+카테고리({category}) 로그:
 {memory_log or "없음"}
 
 쇼핑 성향(Identity):
@@ -604,7 +630,11 @@ JSON으로만 응답하세요."""
 {{
   "query": "<검색어>",
   "augmented": true/false,
-  "rationale": "<보강한 이유 또는 그대로 둔 이유>"
+  "rationale": "<보강한 이유 또는 그대로 둔 이유>",
+  "actions": [
+    {{"action": "apply_sort", "sort_type": "낮은가격순"}},
+    {{"action": "apply_shipping", "shipping_option": "배송비포함"}}
+  ]
 }}"""
 
         try:
@@ -620,7 +650,7 @@ JSON으로만 응답하세요."""
             return json.loads(response.choices[0].message.content)
         except Exception as e:
             logger.error("Query augmentation failed: %s", e)
-            return {"query": raw_query, "augmented": False, "rationale": "error"}
+            return {"query": raw_query, "augmented": False, "rationale": "error", "actions": []}
 
     def generate_requery_question(
         self,
@@ -630,14 +660,18 @@ JSON으로만 응답하세요."""
     ) -> str:
         """
         Ask a clarifying follow-up when we still lack context.
+        Handles both (a) vague/unsupported augmentation cases and (b) dissatisfaction loops.
         """
         system_prompt = """당신은 쇼핑 도우미입니다.
-사용자 요청이 모호하고, 저장된 선호만으로는 충분하지 않을 때 추가 질문을 한 문장으로 하세요.
-가격/브랜드/색상/스타일/배송 조건 등 핵심 한두 가지만 물어보세요.
-정보가 충분하면 빈 문자열로 응답하세요."""
+다음 지침을 따르세요:
+- 입력이 이미 구체적이면 빈 문자열을 반환하세요.
+- 과거 기록이 부족하거나 보강할 근거가 없으면, 검색 정확도를 높일 한 가지 핵심만 물어보세요 (가격/브랜드/색상/배송 등).
+- 대화가 '마음에 안 듦/다른 상품 찾기' 맥락이면, 무엇이 불만인지 또는 개선이 필요한 옵션을 한 문장으로 물어보세요.
+- 질문은 한 문장, 한국어, 예/아니오 질문은 피하고 구체 항목을 요청하세요."""
 
+        category = preference_memory.guess_category(raw_query)
         pref_summary = preference_memory.summary()
-        memory_log = preference_memory.memory_log()
+        memory_log = preference_memory.memory_log_for_category(category) or preference_memory.memory_log()
         identity = preference_memory.identity or ""
         history_tail = "\n".join([f"{m['role']}: {m['content']}" for m in conversation_history[-3:]])
         user_prompt = f"""최근 대화:
@@ -651,6 +685,8 @@ JSON으로만 응답하세요."""
 
 쇼핑 성향(Identity):
 {identity or "미정"}
+
+추론된 카테고리: {category}
 
 사용자 요청: "{raw_query}"
 
