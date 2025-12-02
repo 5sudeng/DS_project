@@ -9,6 +9,57 @@ logger = logging.getLogger(__name__)
 class SearchMixin:
     """Mixin for handling product search."""
 
+    async def _output_results_summary(self, results):
+        """Generate and output a concise LLM summary for given results.
+
+        This replaces raw list output. Always called after any result change:
+        initial search, next/prev items, page navigation, sort, shipping filter.
+        """
+        if not results:
+            return
+        # Generate summary via LLM (runs in thread to avoid blocking event loop)
+        try:
+            summary = await asyncio.to_thread(self.llm.summarize_search_results, results)
+        except Exception as e:
+            logger.error("Failed to summarize results: %s", e)
+            self.io_output("요약 생성에 실패했습니다. 번호를 말씀해 선택하거나 '다음상품'이라 말씀해주세요.")
+            return
+
+        # Console print raw (may include emoji markers)
+        self.console_print(f"\n{summary}\n")
+        # Voice friendly cleanup
+        if self.output_mode in ("voice", "both") and self.io:
+            import re as _re
+            clean = summary.replace("\n", ". ")
+            # Keep Korean, word chars, common punctuation; replace others with space
+            clean = _re.sub(r'[^\w\s,.;:%\d가-힣()_-]', ' ', clean)
+            clean = _re.sub(r'\s+', ' ', clean).strip()
+            for chunk in [c.strip() for c in clean.split('.') if c.strip()]:
+                try:
+                    self.io.speak(chunk)
+                except Exception as e:
+                    logger.error("TTS summary chunk failed: %s", e)
+                    break
+
+        # Navigation guidance (voice + text)
+        should_show_guidance = not self.state.guidance_shown_for_page
+        if should_show_guidance:
+            guidance_parts = []
+            guidance_parts.append("상품을 선택하시려면 번호를 말씀해주세요.")
+            if self.state.page_offset < len(self.state.all_search_results):
+                guidance_parts.append("다음 상품을 더 보시려면 다음상품이라고 말씀해주세요.")
+            guidance_parts.append("다른 페이지로 이동하시려면 페이지라고 말씀해주세요.")
+            guidance_parts.append("다른 검색을 하시려면 검색이라고 말씀해주세요.")
+            guidance_text = " ".join(guidance_parts)
+            self.io_output(guidance_text)
+            if self.output_mode in ("voice", "both") and self.io:
+                try:
+                    self.io.speak(guidance_text)
+                except Exception:
+                    pass
+            # Mark shown for this page
+            self.state.guidance_shown_for_page = True
+
     async def _start_with_search(self):
         """Start with a product search."""
         self.io_output("검색어를 입력하세요: ")
@@ -22,109 +73,72 @@ class SearchMixin:
         await self._select_from_search_results()
 
     async def _perform_search(self, query: str):
-        """Perform a product search."""
+        """Perform a product search (initial query)."""
         logger.info("Performing search query='%s'", query)
-        ### status
-        self.io_output(f"\n 검색 중: '{query}'")
-        
+        self.io_output(f"\n검색 중: '{query}'")
+        self.state.current_search_query = query
+        self.state.current_page = 1
+        self.state.page_offset = 0
+        self.state.guidance_shown_for_page = False
+
         try:
-            # 페이지 내 최대 36개 상품만 가져오기
             result = await self.search_agent.search(query, max_results=36)
-            
-            # Handle warnings
-            for warning in result.warnings:
-                self.console_print(f"⚠️  {warning}")
-            
-            if not result.success:
-                self.io_output(f"검색에 실패했습니다. {result.error}. 다른 검색어로 다시 시도해주세요.")
-                self.state.clear_search_results()
-                logger.error("Search failed for query='%s': %s", query, result.error)
-                return
-            
-            # Convert SearchResultType back to SearchResult for compatibility
-            from services.search_service import SearchResult
-            converted_results = [
-                SearchResult(
-                    rank=r.index,
-                    title=r.title,
-                    price=r.price,
-                    url=r.url,
-                    rating=r.rating
-                ) for r in result.results
-            ]
-            
-            # 상태 초기화 (새 검색)
-            self.state.current_search_query = query
-            self.state.current_page = 1
-            self.state.page_offset = 0
-            self.state.all_search_results = converted_results
-            self.state.current_sort_option = None
-            self.state.current_shipping_filter = None
-            
-            total_count = result.total_count or len(converted_results)
-            self.io_output(f"검색이 완료되었습니다. 총 {total_count}개의 상품을 찾았습니다.")
-
-            if not converted_results:
-                self.io_output("검색 결과가 없습니다. 다른 검색어로 다시 시도해주세요. 예를 들어, 더 간단한 단어나 브랜드 이름으로 검색해보세요.")
-                logger.info("No results returned for query='%s'", query)
-            
-            # 첫 배치를 표시 (results_per_page개)
-            first_batch = converted_results[:self.state.results_per_page]
-            self.state.search_results = first_batch
-            self.state.page_offset = len(first_batch)
-
         except Exception as e:
-            self.io_output(f"검색 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.")
-            self.state.clear_search_results()
-            logger.exception("Search failed for query='%s': %s", query, e)
-
-    async def _select_from_search_results(self):
-        """Display search results and ask user to select."""
-        if not self.state.search_results:
+            logger.exception("Search execution failed: %s", e)
+            self.io_output(f"검색 중 오류가 발생했습니다: {e}")
             return
 
-        logger.info("Displaying %d search results", len(self.state.search_results))
-        
-        # 첫 배치 표시
-        lines = [f"검색 결과 (페이지 {self.state.current_page}):\n"]
-        for idx, result in enumerate(self.state.search_results, 1):
-            lines.append(f"{idx}. {result.title}")
-            lines.append(f"   가격: {result.price}")
-            if result.rating:
-                lines.append(f"   평점: {result.rating}")
-            lines.append("")
-        
-        self.console_print("\n".join(lines))
+        for w in result.warnings:
+            self.io_output(f"⚠️ {w}")
 
-        # Generate and display summary
-        self.console_print("검색 결과 요약을 생성 중입니다...")
-        summary = await asyncio.to_thread(self.llm.summarize_search_results, self.state.search_results)
-        
-        # Print to console with emojis
-        self.console_print(f"\n{summary}\n")
-        
-        # Speak without emojis (for better TTS)
-        if self.output_mode in ("voice", "both") and self.io:
-            # Remove emojis and special markers for TTS
-            # Replace newlines with period for pauses
-            clean_summary = summary.replace("\n", ". ")
-            # Remove characters that are NOT word chars, whitespace, comma, dot, or Korean
-            clean_summary = re.sub(r'[^\w\s,.\d가-힣]', ' ', clean_summary)
-            # Collapse multiple spaces
-            clean_summary = re.sub(r'\s+', ' ', clean_summary).strip()
-            
-            logger.info("TTS Text: %s", clean_summary)
-            try:
-                # Speak chunk by chunk to avoid issues with long text
-                chunks = [c.strip() for c in clean_summary.split('.') if c.strip()]
-                for chunk in chunks:
-                    self.io.speak(chunk)
-            except Exception as e:
-                logger.error("TTS failed: %s", e)
-                self.console_print(f"⚠️  음성 출력 오류: {e}")
+        if not result.success:
+            self.io_output(f"❌ 검색 실패: {result.error}")
+            return
 
-        ### TODO
-        self.io_output(f"원하는 상품의 번호를 입력하세요 (1번 부터 {len(self.state.search_results)}번까지):")
+        from services.search_service import SearchResult
+        converted = [
+            SearchResult(
+                rank=r.index,
+                title=r.title,
+                price=r.price,
+                url=r.url,
+                rating=r.rating
+            ) for r in result.results
+        ]
+        self.state.all_search_results = converted
+        first_batch = converted[:self.state.results_per_page]
+        self.state.search_results = first_batch
+        self.state.page_offset = len(first_batch)
+
+        await self._output_results_summary(first_batch)
+        self.io_output(f"원하는 상품 번호를 말씀해주세요 (1번부터 {len(first_batch)}번까지).")
+
+    async def _select_from_search_results(self):
+        """Guide user to select a result by number and load product.
+
+        This method is referenced by IntentMixin. It listens for a numeric
+        selection (1..len(self.state.search_results)) and loads that product.
+        If the input is a non-number intent like '다음상품', it delegates back
+        to the intent handler for natural language processing.
+        """
+        if not self.state.search_results:
+            self.io_output("현재 선택 가능한 상품이 없습니다. 먼저 검색을 진행해주세요.")
+            return
+
+        self.io_output("번호를 말씀하시거나, '다음상품', '이전', '페이지', '검색' 중 하나를 말씀해주세요.")
+        user_response = (self.io_input() or "").strip()
+        if not user_response:
+            return
+        # Try to parse a number like "1", "1번"
+        import re as _re
+        m = _re.search(r"^(\d+)(번)?$", user_response)
+        if m:
+            idx = int(m.group(1))
+            await self._select_search_result(idx)
+            return
+        # Delegate non-numeric intents
+        if hasattr(self, '_handle_user_input'):
+            await self._handle_user_input(user_response)
 
     async def _select_search_result(self, selection: int):
         """Handle user's selection from search results."""
@@ -197,39 +211,29 @@ class SearchMixin:
         remaining_items = self.state.all_search_results[page_start:page_end]
 
         if remaining_items:
-            # There are more items in current page
             display_items = remaining_items
             self.state.search_results = display_items
-
-            # Display items with 1-N numbering
-            lines = [f"페이지 {self.state.current_page}의 다음 상품들:\n"]
-            for idx, result in enumerate(display_items, 1):
-                lines.append(f"{idx}. {result.title}")
-                lines.append(f"   가격: {result.price}")
-                if result.rating:
-                    lines.append(f"   평점: {result.rating}")
-                lines.append("")
-
-            self.io_output("\n".join(lines))
+            await self._output_results_summary(display_items)
             self.state.page_offset = next_offset
-
-            # Ask if user likes any of these items
-            self.io_output("이 중에 마음에 드는 상품이 있으신가요?")
-            # Check navigation options
-            has_previous = page_start > 0
-            has_next = page_end < len(self.state.all_search_results)
-
-            print_lines = [f"상품 번호를 입력하세요 (1번에서 {len(display_items)}번까지), 또는:"]
-            if has_previous:
-                print_lines.append("   '이전' → 이전 상품 보기")
-            if has_next:
-                print_lines.append("   '다음상품' → 다음 상품 보기")
-            print_lines.append("   '페이지' → 다른 페이지로 이동")
-            print_lines.append("   '검색' → 새로운 상품 검색")
-            self.io_output("\n".join(print_lines))
+            # Show options only once per page to reduce repetition
+            if not self.state.guidance_shown_for_page:
+                self.io_output("이 중에 마음에 드는 상품이 있으신가요?")
+                has_previous = page_start > 0
+                has_next = page_end < len(self.state.all_search_results)
+                navigation_lines = [f"상품 번호를 입력하세요 (1번에서 {len(display_items)}번까지), 또는:"]
+                if has_previous:
+                    navigation_lines.append("   '이전' → 이전 상품 보기")
+                if has_next:
+                    navigation_lines.append("   '다음상품' → 다음 상품 보기")
+                navigation_lines.append("   '페이지' → 다른 페이지로 이동")
+                navigation_lines.append("   '검색' → 새로운 상품 검색")
+                self.io_output("\n".join(navigation_lines))
+                self.state.guidance_shown_for_page = True
         else:
             # No more items in current page
             self.io_output(f"\n✅ 페이지 {self.state.current_page}의 모든 상품을 확인했습니다.")
+            # Reset guidance flag so we can show action guidance once
+            self.state.guidance_shown_for_page = False
             await self._ask_page_navigation()
 
     async def _show_prev_results(self, count: int = 3):
@@ -261,15 +265,7 @@ class SearchMixin:
             display_items = previous_items
             self.state.search_results = display_items
 
-            lines = [f"페이지 {self.state.current_page}의 이전 상품들:\n"]
-            for idx, result in enumerate(display_items, 1):
-                lines.append(f"{idx}. {result.title}")
-                lines.append(f"   가격: {result.price}")
-                if result.rating:
-                    lines.append(f"   평점: {result.rating}")
-                lines.append("")
-
-            self.io_output("\n".join(lines))
+            await self._output_results_summary(display_items)
             # Update offset to point to end of previous batch (for consistent navigation)
             self.state.page_offset = previous_end
             # Check navigation options
@@ -335,44 +331,26 @@ class SearchMixin:
             # 상태 업데이트
             self.state.all_search_results = converted_results
             self.state.page_offset = 0
+            self.state.guidance_shown_for_page = False
             
             # 첫 배치 표시
             first_batch = self.state.all_search_results[:self.state.results_per_page]
             self.state.search_results = first_batch
             self.state.page_offset = len(first_batch)
+            self.state.guidance_shown_for_page = False
 
             # Display first batch
-            self._display_current_results()
+            await self._display_current_results()
 
         except Exception as e:
             logger.exception("Error loading page %d: %s", self.state.current_page, e)
             self.io_output(f"\n❌ 페이지를 불러오는 중 오류 발생: {e}")
 
-    def _display_current_results(self):
+    async def _display_current_results(self):
         """Display current search results with navigation options."""
         if not self.state.search_results:
             return
-        
-        lines = [f"검색 결과 (페이지 {self.state.current_page}):\n"]
-        for idx, result in enumerate(self.state.search_results, 1):
-            lines.append(f"{idx}. {result.title}")
-            lines.append(f"   가격: {result.price}")
-            if result.rating:
-                lines.append(f"   평점: {result.rating}")
-            lines.append("")
-        self.console_print("\n".join(lines))
-
-        # Ask if user likes any of these items
-        print_lines = ["\n이 중에 마음에 드는 상품이 있으신가요?"]
-        print_lines.append(f"상품 번호를 입력하세요 (1번에서 {len(self.state.search_results)}번까지), 또는:")
-        
-        if self.state.page_offset < len(self.state.all_search_results):
-            print_lines.append("   '다음상품' → 다음 {0}개 상품 보기".format(self.state.results_per_page))
-        
-        print_lines.append("   '페이지' → 다른 페이지로 이동")
-        print_lines.append("   '검색' → 새로운 상품 검색")
-        
-        self.io_output("\n".join(print_lines))
+        await self._output_results_summary(self.state.search_results)
 
     async def _handle_related_keywords(self):
         """Show related keywords."""
