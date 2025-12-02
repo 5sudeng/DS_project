@@ -68,6 +68,10 @@ class SearchMixin:
             self.io_output("검색어가 입력되지 않았습니다. 다시 검색어를 말씀해주세요.")
             await self._get_initial_product()
             return
+        if getattr(self, "ai_memory_enabled", False):
+            guessed_category = self.preference_memory.guess_category(query)
+            self.state.current_category = guessed_category
+            self.preference_memory.log_search(query, category=guessed_category)
 
         await self._perform_search(query)
         await self._select_from_search_results()
@@ -77,6 +81,8 @@ class SearchMixin:
         logger.info("Performing search query='%s'", query)
         self.io_output(f"\n검색 중: '{query}'")
         self.state.current_search_query = query
+        pref_mem = getattr(self, "preference_memory", None)
+        self.state.current_category = pref_mem.guess_category(query) if pref_mem else None
         self.state.current_page = 1
         self.state.page_offset = 0
         self.state.guidance_shown_for_page = False
@@ -379,12 +385,28 @@ class SearchMixin:
             if 1 <= idx <= len(keywords):
                 selected = keywords[idx-1]['title']
                 self.io_output(f"✓ '{selected}'(으)로 검색합니다.")
+                if getattr(self, "ai_memory_enabled", False):
+                    guessed_category = self.preference_memory.guess_category(selected)
+                    self.state.current_category = guessed_category
+                    self.preference_memory.log_related_keyword(
+                        selected,
+                        base_query=self.state.current_search_query,
+                        category=guessed_category,
+                    )
                 await self._perform_search(selected)
                 await self._select_from_search_results()
                 return
 
         # Otherwise treat as text
         self.io_output(f"✓ '{keyword}'(으)로 검색합니다.")
+        if getattr(self, "ai_memory_enabled", False):
+            guessed_category = self.preference_memory.guess_category(keyword)
+            self.state.current_category = guessed_category
+            self.preference_memory.log_related_keyword(
+                keyword,
+                base_query=self.state.current_search_query,
+                category=guessed_category,
+            )
         await self._perform_search(keyword)
         await self._select_from_search_results()
 

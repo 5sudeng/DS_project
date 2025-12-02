@@ -70,6 +70,8 @@ class BrowserMixin:
             # Update state
             self.state.current_url = current_url
             self.state.current_product_name = product_name
+            if getattr(self, "preference_memory", None):
+                self.state.current_category = self.preference_memory.guess_category(product_name)
             logger.info("Product ready current_url=%s product_name=%s", current_url, product_name)
             
             # Step 3: Collect structured data
