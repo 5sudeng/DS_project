@@ -660,18 +660,14 @@ JSON으로만 응답하세요."""
     ) -> str:
         """
         Ask a clarifying follow-up when we still lack context.
-        Handles both (a) vague/unsupported augmentation cases and (b) dissatisfaction loops.
         """
         system_prompt = """당신은 쇼핑 도우미입니다.
-다음 지침을 따르세요:
-- 입력이 이미 구체적이면 빈 문자열을 반환하세요.
-- 과거 기록이 부족하거나 보강할 근거가 없으면, 검색 정확도를 높일 한 가지 핵심만 물어보세요 (가격/브랜드/색상/배송 등).
-- 대화가 '마음에 안 듦/다른 상품 찾기' 맥락이면, 무엇이 불만인지 또는 개선이 필요한 옵션을 한 문장으로 물어보세요.
-- 질문은 한 문장, 한국어, 예/아니오 질문은 피하고 구체 항목을 요청하세요."""
+사용자 요청이 모호하고, 저장된 선호만으로는 충분하지 않을 때 추가 질문을 한 문장으로 하세요.
+가격/브랜드/색상/스타일/배송 조건 등 핵심 한두 가지만 물어보세요.
+정보가 충분하면 빈 문자열로 응답하세요."""
 
-        category = preference_memory.guess_category(raw_query)
         pref_summary = preference_memory.summary()
-        memory_log = preference_memory.memory_log_for_category(category) or preference_memory.memory_log()
+        memory_log = preference_memory.memory_log()
         identity = preference_memory.identity or ""
         history_tail = "\n".join([f"{m['role']}: {m['content']}" for m in conversation_history[-3:]])
         user_prompt = f"""최근 대화:
@@ -685,8 +681,6 @@ JSON으로만 응답하세요."""
 
 쇼핑 성향(Identity):
 {identity or "미정"}
-
-추론된 카테고리: {category}
 
 사용자 요청: "{raw_query}"
 
