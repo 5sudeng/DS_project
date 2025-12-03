@@ -25,7 +25,7 @@ class IntentMixin:
         self.io_output("AI 메모리(선호 반영/재질문) 기능을 켤까요? (예/아니오): ")
         choice = (self.io_input() or "").strip().lower()
         
-        if choice in ["예", "y", "yes", "네", "ㅇㅇ"]:
+        if choice in ["예", "y", "yes", "네", "ㅇㅇ",'어']:
             self.ai_memory_enabled = True
             self.io_output("AI 메모리를 활성화했습니다. 이제 당신의 취향을 기억합니다!")
             

@@ -85,7 +85,6 @@ class SearchMixin:
         self.state.current_category = pref_mem.guess_category(query) if pref_mem else None
         self.state.current_page = 1
         self.state.page_offset = 0
-        self.state.guidance_shown_for_page = False
 
         try:
             result = await self.search_agent.search(query, max_results=36)
@@ -239,7 +238,7 @@ class SearchMixin:
             # No more items in current page
             self.io_output(f"\n✅ 페이지 {self.state.current_page}의 모든 상품을 확인했습니다.")
             # Reset guidance flag so we can show action guidance once
-            self.state.guidance_shown_for_page = False
+            # self.state.guidance_shown_for_page = False
             await self._ask_page_navigation()
 
     async def _show_prev_results(self, count: int = 3):
@@ -337,13 +336,13 @@ class SearchMixin:
             # 상태 업데이트
             self.state.all_search_results = converted_results
             self.state.page_offset = 0
-            self.state.guidance_shown_for_page = False
+            # self.state.guidance_shown_for_page = False
             
             # 첫 배치 표시
             first_batch = self.state.all_search_results[:self.state.results_per_page]
             self.state.search_results = first_batch
             self.state.page_offset = len(first_batch)
-            self.state.guidance_shown_for_page = False
+            # self.state.guidance_shown_for_page = False
 
             # Display first batch
             await self._display_current_results()
