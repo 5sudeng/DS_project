@@ -83,19 +83,11 @@ class OCRProcessor:
         self.delay = delay
 
     def process_product_images(self, product_id: str, data_dir: str, only_btf: bool = True) -> List[Dict[str, Any]]:
-        """Process images for a specific product."""
+        """Process images for a specific product in parallel."""
         product_dir = os.path.join(data_dir, product_id)
-        # In the new structure, images might be in run_dir/btf/images or similar.
-        # The previous logic assumed data_dir/product_id/images.
-        # Let's support the path passed from artifacts.py which seems to be run_dir.
-        # In artifacts.py: ctx.btf_images_dir = run_dir / "btf" / "images"
-        
-        # If data_dir is passed as run_dir, we need to find where images are.
-        # Let's try to find the images directory dynamically or assume the standard structure.
         
         # Standard structure from artifacts.py:
         # run_dir/btf/images
-        
         images_dir = os.path.join(data_dir, "btf", "images")
         if not os.path.exists(images_dir):
             # Fallback to old structure if needed or check direct path
@@ -111,7 +103,6 @@ class OCRProcessor:
             all_image_files.extend(glob.glob(os.path.join(images_dir, ext)))
         
         if not all_image_files:
-            
             logger.warning("  ⚠️  No image files found in %s", images_dir)
             return []
         
@@ -131,30 +122,56 @@ class OCRProcessor:
         success_count = 0
         fail_count = 0
         
-        for image_path in tqdm(image_files, desc="  Processing OCR (OpenAI)"):
-            result = self.ocr.extract_text(image_path)
+        # Parallel processing
+        import concurrent.futures
+        
+        logger.info("  🚀 Starting parallel OCR processing (workers=3)")
+        with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
+            # Create a future for each image
+            future_to_image = {executor.submit(self.ocr.extract_text, image_path): image_path for image_path in image_files}
             
-            if result['success']:
-                success_count += 1
-                results.append({
-                    'image_path': image_path,
-                    'image_name': Path(image_path).name,
-                    'ocr_text': result['full_text'],
-                    'ocr_texts': result['texts'],
-                    'success': True
-                })
-            else:
-                fail_count += 1
-                results.append({
-                    'image_path': image_path,
-                    'image_name': Path(image_path).name,
-                    'ocr_text': '',
-                    'ocr_texts': [],
-                    'success': False,
-                    'error': result['error']
-                })
-            
-            time.sleep(self.delay)
+            # Use tqdm to track progress as futures complete
+            for future in tqdm(concurrent.futures.as_completed(future_to_image), total=len(image_files), desc="  Processing OCR (OpenAI)"):
+                image_path = future_to_image[future]
+                try:
+                    result = future.result()
+                    
+                    if result['success']:
+                        success_count += 1
+                        results.append({
+                            'image_path': image_path,
+                            'image_name': Path(image_path).name,
+                            'ocr_text': result['full_text'],
+                            'ocr_texts': result['texts'],
+                            'success': True
+                        })
+                    else:
+                        fail_count += 1
+                        results.append({
+                            'image_path': image_path,
+                            'image_name': Path(image_path).name,
+                            'ocr_text': '',
+                            'ocr_texts': [],
+                            'success': False,
+                            'error': result['error']
+                        })
+                except Exception as exc:
+                    logger.error(f"Image processing generated an exception: {exc}")
+                    fail_count += 1
+                    results.append({
+                        'image_path': image_path,
+                        'image_name': Path(image_path).name,
+                        'ocr_text': '',
+                        'ocr_texts': [],
+                        'success': False,
+                        'error': str(exc)
+                    })
+                
+                # Small delay to avoid rate limits even with parallelism
+                time.sleep(self.delay / 3.0)
+        
+        # Sort results by filename to maintain order
+        results.sort(key=lambda x: x['image_name'])
         
         logger.info("  ✅ Success: %d, ❌ Failed: %d", success_count, fail_count)
         return results
