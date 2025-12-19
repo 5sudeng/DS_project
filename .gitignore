@@ -5,3 +5,4 @@ cookie.txt
 __pycache__/
 outputs/scenario_runs/
 .secret
+openai_voice_env.txt
