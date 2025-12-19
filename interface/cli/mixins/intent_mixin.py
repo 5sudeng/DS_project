@@ -2,6 +2,7 @@
 
 import logging
 import asyncio
+import json
 from typing import Dict, List, Any
 
 from services.llm_service import PreferenceMemory
@@ -44,6 +45,11 @@ class IntentMixin:
         result = self.llm.map_command_to_actions(user_input)
         actions = result.get("actions", [])
         notes = result.get("notes", "")
+
+        self.console_print(
+            "[debug] mapped actions: "
+            + json.dumps(actions, ensure_ascii=False, separators=(",", ":"))
+        )
         
         if notes:
             logger.info("Action mapping notes: %s", notes)

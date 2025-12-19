@@ -518,6 +518,7 @@ class SearchService:
                 "div.srp_deliveryFeeToggle__6HXTR button",
                 "button[data-testid='delivery-fee-toggle']",
                 "div[class*='deliveryFeeToggle'] button",
+                
             ]
             
             for selector in selectors_to_check:

@@ -131,19 +131,19 @@ class SearchMixin:
             return
 
         self.io_output("번호를 말씀하시거나, '다음상품', '이전', '페이지', '검색' 중 하나를 말씀해주세요.")
-        user_response = (self.io_input() or "").strip()
-        if not user_response:
-            return
-        # Try to parse a number like "1", "1번"
-        import re as _re
-        m = _re.search(r"^(\d+)(번)?$", user_response)
-        if m:
-            idx = int(m.group(1))
-            await self._select_search_result(idx)
-            return
-        # Delegate non-numeric intents
-        if hasattr(self, '_handle_user_input'):
-            await self._handle_user_input(user_response)
+        # user_response = (self.io_input() or "").strip()
+        # if not user_response:
+        #     return
+        # # Try to parse a number like "1", "1번"
+        # import re as _re
+        # m = _re.search(r"^(\d+)(번)?$", user_response)
+        # if m:
+        #     idx = int(m.group(1))
+        #     await self._select_search_result(idx)
+        #     return
+        # # Delegate non-numeric intents
+        # if hasattr(self, '_handle_user_input'):
+        #     await self._handle_user_input(user_response)
 
     async def _select_search_result(self, selection: int):
         """Handle user's selection from search results."""
