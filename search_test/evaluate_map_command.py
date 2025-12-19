@@ -10,10 +10,6 @@ import sys
 import time
 from typing import Any, Dict, List, Optional, Tuple
 
-PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-if PROJECT_ROOT not in sys.path:
-    sys.path.insert(0, PROJECT_ROOT)
-
 from services.llm_service import ShoppingLLMService
 
 
@@ -122,35 +118,11 @@ def ratio(numerator: int, denominator: int) -> float:
     return (numerator / denominator) if denominator else 0.0
 
 
-def _load_api_key_from_file(path: Optional[str]) -> Optional[str]:
-    if not path:
-        return None
-    try:
-        with open(path, "r", encoding="utf-8") as f:
-            return f.read().strip() or None
-    except FileNotFoundError:
-        return None
-
-
-def _mask_api_key(api_key: str) -> str:
-    if len(api_key) <= 8:
-        return "*" * len(api_key)
-    return f"{api_key[:4]}...{api_key[-4:]}"
-
-
 def run_eval(args: argparse.Namespace) -> int:
-    api_key = (
-        args.api_key
-        or os.getenv("OPENAI_API_KEY")
-        or _load_api_key_from_file(args.api_key_file)
-    )
+    api_key = args.api_key or os.getenv("OPENAI_API_KEY")
     if not api_key:
-        print(
-            "Missing OPENAI_API_KEY. Set env, use --api-key, or --api-key-file.",
-            file=sys.stderr,
-        )
+        print("Missing OPENAI_API_KEY. Set env or use --api-key.", file=sys.stderr)
         return 1
-    print(f"API key loaded: {_mask_api_key(api_key)}")
 
     service = ShoppingLLMService(api_key=api_key, model=args.model)
     cases = load_cases(args.test_file)
@@ -243,11 +215,6 @@ def build_parser() -> argparse.ArgumentParser:
         help="OpenAI model name",
     )
     parser.add_argument("--api-key", default=None, help="OpenAI API key")
-    parser.add_argument(
-        "--api-key-file",
-        default=".secret",
-        help="Path to a file containing the OpenAI API key",
-    )
     parser.add_argument("--limit", type=int, default=None, help="Limit number of cases")
     parser.add_argument("--shuffle", action="store_true", help="Shuffle test cases")
     parser.add_argument("--seed", type=int, default=0, help="Random seed for shuffle")
