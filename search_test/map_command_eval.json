@@ -1,0 +1,4146 @@
+{
+  "summary": {
+    "total_cases": 100,
+    "exact_match_rate": 0.88,
+    "action_accuracy": 0.9086538461538461,
+    "param_accuracy": 0.907103825136612,
+    "by_difficulty": {
+      "H": {
+        "cases": 20,
+        "exact_match_rate": 0.85,
+        "action_accuracy": 0.9770114942528736,
+        "param_accuracy": 0.9868421052631579
+      },
+      "M": {
+        "cases": 40,
+        "exact_match_rate": 0.775,
+        "action_accuracy": 0.7901234567901234,
+        "param_accuracy": 0.8
+      },
+      "E": {
+        "cases": 40,
+        "exact_match_rate": 1.0,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0
+      }
+    }
+  },
+  "results": [
+    {
+      "id": 1,
+      "difficulty": "H",
+      "user_utterance": "쿠팡 열고 무선 이어폰 찾아서 판매량순으로 정렬한 다음 3개 읽어줘.",
+      "expected_actions": [
+        {
+          "action": "open_url",
+          "url": "https://www.coupang.com"
+        },
+        {
+          "action": "search_page",
+          "query": "무선 이어폰"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "판매량순"
+        },
+        {
+          "action": "read_results",
+          "top_n": 3
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "open_url",
+          "url": "https://www.coupang.com"
+        },
+        {
+          "action": "search_page",
+          "query": "무선 이어폰"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "판매량순"
+        },
+        {
+          "action": "read_results",
+          "top_n": 3
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 4,
+        "length_predicted": 4,
+        "action_matches": 4,
+        "action_total": 4,
+        "param_matches": 4,
+        "param_total": 4
+      },
+      "mismatches": [],
+      "llm_notes": "사용자가 쿠팡을 열고 무선 이어폰을 검색한 후 판매량순으로 정렬하고 상위 3개 결과를 읽어달라고 요청함."
+    },
+    {
+      "id": 2,
+      "difficulty": "H",
+      "user_utterance": "로봇청소기 검색하고 배송비 포함으로 걸고 평점순으로 정렬해서 상위 5개 요약해줘.",
+      "expected_actions": [
+        {
+          "action": "search_page",
+          "query": "로봇청소기"
+        },
+        {
+          "action": "apply_shipping",
+          "shipping_option": "배송비포함"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "평점순"
+        },
+        {
+          "action": "summarize_products",
+          "top_n": 5
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "search_page",
+          "query": "로봇청소기"
+        },
+        {
+          "action": "apply_shipping",
+          "shipping_option": "배송비포함"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "평점순"
+        },
+        {
+          "action": "summarize_products",
+          "top_n": 5
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 4,
+        "length_predicted": 4,
+        "action_matches": 4,
+        "action_total": 4,
+        "param_matches": 4,
+        "param_total": 4
+      },
+      "mismatches": [],
+      "llm_notes": "로봇청소기를 검색하고 배송비 포함 필터를 적용한 후 평점순으로 정렬하여 상위 5개 상품을 요약하는 명령을 수행함."
+    },
+    {
+      "id": 3,
+      "difficulty": "H",
+      "user_utterance": "아이폰 15 케이스 찾아보고 연관 검색어도 보여줘. 그중에 '맥세이프'로 다시 검색해서 낮은가격순으로 3개 보여줘.",
+      "expected_actions": [
+        {
+          "action": "search_page",
+          "query": "아이폰 15 케이스"
+        },
+        {
+          "action": "show_related_keywords"
+        },
+        {
+          "action": "select_related_keyword",
+          "keyword": "맥세이프"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "낮은가격순"
+        },
+        {
+          "action": "read_results",
+          "top_n": 3
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "search_page",
+          "query": "아이폰 15 케이스"
+        },
+        {
+          "action": "show_related_keywords"
+        },
+        {
+          "action": "select_related_keyword",
+          "keyword": "맥세이프"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "낮은가격순"
+        },
+        {
+          "action": "read_results",
+          "top_n": 3
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 5,
+        "length_predicted": 5,
+        "action_matches": 5,
+        "action_total": 5,
+        "param_matches": 4,
+        "param_total": 4
+      },
+      "mismatches": [],
+      "llm_notes": "아이폰 15 케이스를 검색한 후 연관 검색어를 보여주고, '맥세이프'로 다시 검색하여 낮은 가격 순으로 3개 상품을 보여주기 위해 필요한 액션을 순서대로 나열함."
+    },
+    {
+      "id": 4,
+      "difficulty": "H",
+      "user_utterance": "게이밍 마우스 검색해서 랭킹순으로 정렬하고 3개 읽어준 다음, 다음 상품 3개도 더 보여줘.",
+      "expected_actions": [
+        {
+          "action": "search_page",
+          "query": "게이밍 마우스"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "랭킹순"
+        },
+        {
+          "action": "read_results",
+          "top_n": 3
+        },
+        {
+          "action": "next_items",
+          "count": 3
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "search_page",
+          "query": "게이밍 마우스"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "랭킹순"
+        },
+        {
+          "action": "read_results",
+          "top_n": 3
+        },
+        {
+          "action": "next_items",
+          "count": 3
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 4,
+        "length_predicted": 4,
+        "action_matches": 4,
+        "action_total": 4,
+        "param_matches": 4,
+        "param_total": 4
+      },
+      "mismatches": [],
+      "llm_notes": "사용자가 게이밍 마우스를 검색하고 랭킹순으로 정렬한 후, 상위 3개 상품을 읽어달라고 요청했으며, 이후 다음 3개 상품을 보여달라고 함."
+    },
+    {
+      "id": 5,
+      "difficulty": "H",
+      "user_utterance": "전기포트 검색하고 최신순으로 정렬한 다음 2페이지로 가서 3개 읽어줘.",
+      "expected_actions": [
+        {
+          "action": "search_page",
+          "query": "전기포트"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "최신순"
+        },
+        {
+          "action": "goto_page",
+          "page_num": 2
+        },
+        {
+          "action": "read_results",
+          "top_n": 3
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "search_page",
+          "query": "전기포트"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "최신순"
+        },
+        {
+          "action": "goto_page",
+          "page_num": 2
+        },
+        {
+          "action": "read_results",
+          "top_n": 3
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 4,
+        "length_predicted": 4,
+        "action_matches": 4,
+        "action_total": 4,
+        "param_matches": 4,
+        "param_total": 4
+      },
+      "mismatches": [],
+      "llm_notes": "전기포트를 검색하고 최신순으로 정렬한 후 2페이지로 이동하여 상위 3개 결과를 읽어달라는 요청에 따라 액션을 구성했습니다."
+    },
+    {
+      "id": 6,
+      "difficulty": "H",
+      "user_utterance": "캠핑 의자 검색해서 높은가격순으로 정렬하고 3개 읽어줘. 그리고 다음 페이지로도 넘어가줘.",
+      "expected_actions": [
+        {
+          "action": "search_page",
+          "query": "캠핑 의자"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "높은가격순"
+        },
+        {
+          "action": "read_results",
+          "top_n": 3
+        },
+        {
+          "action": "next_page"
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "search_page",
+          "query": "캠핑 의자"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "높은가격순"
+        },
+        {
+          "action": "read_results",
+          "top_n": 3
+        },
+        {
+          "action": "next_page"
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 4,
+        "length_predicted": 4,
+        "action_matches": 4,
+        "action_total": 4,
+        "param_matches": 3,
+        "param_total": 3
+      },
+      "mismatches": [],
+      "llm_notes": "사용자가 캠핑 의자를 검색하고 높은 가격 순으로 정렬한 후, 상위 3개 결과를 읽고 다음 페이지로 이동하고자 하였음."
+    },
+    {
+      "id": 7,
+      "difficulty": "H",
+      "user_utterance": "커피머신 검색해서 판매량순으로 정렬하고 첫번째 상품 들어가서 장바구니에 1개 담아줘.",
+      "expected_actions": [
+        {
+          "action": "search_page",
+          "query": "커피머신"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "판매량순"
+        },
+        {
+          "action": "select_product",
+          "index": 1
+        },
+        {
+          "action": "add_to_cart",
+          "quantity": 1
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "search_page",
+          "query": "커피머신"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "판매량순"
+        },
+        {
+          "action": "select_product",
+          "index": 1
+        },
+        {
+          "action": "add_to_cart",
+          "quantity": 1
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 4,
+        "length_predicted": 4,
+        "action_matches": 4,
+        "action_total": 4,
+        "param_matches": 4,
+        "param_total": 4
+      },
+      "mismatches": [],
+      "llm_notes": "커피머신을 검색하고 판매량순으로 정렬한 후 첫번째 상품을 선택하여 장바구니에 1개 담는 명령을 수행함."
+    },
+    {
+      "id": 8,
+      "difficulty": "H",
+      "user_utterance": "노트북 거치대 검색해서 평점순으로 정렬하고 2번 상품 들어가서 이거 재질이 뭐야? 라고 물어봐.",
+      "expected_actions": [
+        {
+          "action": "search_page",
+          "query": "노트북 거치대"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "평점순"
+        },
+        {
+          "action": "select_product",
+          "index": 2
+        },
+        {
+          "action": "question",
+          "query": "이거 재질이 뭐야?"
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "search_page",
+          "query": "노트북 거치대"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "평점순"
+        },
+        {
+          "action": "select_product",
+          "index": 2
+        },
+        {
+          "action": "question",
+          "query": "이거 재질이 뭐야?"
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 4,
+        "length_predicted": 4,
+        "action_matches": 4,
+        "action_total": 4,
+        "param_matches": 4,
+        "param_total": 4
+      },
+      "mismatches": [],
+      "llm_notes": "사용자가 노트북 거치대를 검색하고 평점순으로 정렬한 후, 2번 상품을 선택하여 재질에 대한 질문을 하도록 구성함."
+    },
+    {
+      "id": 9,
+      "difficulty": "H",
+      "user_utterance": "공기청정기 검색하고 배송비 제외로 설정해. 그리고 정렬 방법 뭐 있는지 보여준 다음 판매량순으로 정렬해서 3개 읽어줘.",
+      "expected_actions": [
+        {
+          "action": "search_page",
+          "query": "공기청정기"
+        },
+        {
+          "action": "apply_shipping",
+          "shipping_option": "배송비제외"
+        },
+        {
+          "action": "show_sort_options"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "판매량순"
+        },
+        {
+          "action": "read_results",
+          "top_n": 3
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "search_page",
+          "query": "공기청정기"
+        },
+        {
+          "action": "apply_shipping",
+          "shipping_option": "배송비제외"
+        },
+        {
+          "action": "show_sort_options"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "판매량순"
+        },
+        {
+          "action": "read_results",
+          "top_n": 3
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 5,
+        "length_predicted": 5,
+        "action_matches": 5,
+        "action_total": 5,
+        "param_matches": 4,
+        "param_total": 4
+      },
+      "mismatches": [],
+      "llm_notes": "사용자가 공기청정기를 검색하고 배송비 제외 설정 후, 정렬 방법을 확인하고 판매량순으로 정렬하여 상위 3개 결과를 읽어달라고 요청함."
+    },
+    {
+      "id": 10,
+      "difficulty": "H",
+      "user_utterance": "쿠팡 들어가서 생수 검색해줘. 정렬 옵션도 먼저 보여주고, 낮은가격순으로 정렬해서 상위 5개 요약해줘.",
+      "expected_actions": [
+        {
+          "action": "open_url",
+          "url": "https://www.coupang.com"
+        },
+        {
+          "action": "search_page",
+          "query": "생수"
+        },
+        {
+          "action": "show_sort_options"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "낮은가격순"
+        },
+        {
+          "action": "summarize_products",
+          "top_n": 5
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "open_url",
+          "url": "https://www.coupang.com"
+        },
+        {
+          "action": "search_page",
+          "query": "생수"
+        },
+        {
+          "action": "show_sort_options"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "낮은가격순"
+        },
+        {
+          "action": "summarize_products",
+          "top_n": 5
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 5,
+        "length_predicted": 5,
+        "action_matches": 5,
+        "action_total": 5,
+        "param_matches": 4,
+        "param_total": 4
+      },
+      "mismatches": [],
+      "llm_notes": "사용자가 쿠팡에 들어가서 생수 검색 후 정렬 옵션을 보고, 낮은 가격 순으로 정렬한 후 상위 5개 상품을 요약해달라고 요청함."
+    },
+    {
+      "id": 11,
+      "difficulty": "H",
+      "user_utterance": "헤어드라이기 검색해서 랭킹순으로 정렬하고 3개 읽어준 다음 다음 거 보여줬다가 아까 거 다시 보여줘.",
+      "expected_actions": [
+        {
+          "action": "search_page",
+          "query": "헤어드라이기"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "랭킹순"
+        },
+        {
+          "action": "read_results",
+          "top_n": 3
+        },
+        {
+          "action": "next_items",
+          "count": 3
+        },
+        {
+          "action": "prev_items",
+          "count": 3
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "search_page",
+          "query": "헤어드라이기"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "랭킹순"
+        },
+        {
+          "action": "read_results",
+          "top_n": 3
+        },
+        {
+          "action": "next_items",
+          "count": 3
+        },
+        {
+          "action": "prev_items",
+          "count": 3
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 5,
+        "length_predicted": 5,
+        "action_matches": 5,
+        "action_total": 5,
+        "param_matches": 5,
+        "param_total": 5
+      },
+      "mismatches": [],
+      "llm_notes": "헤어드라이기를 검색하고 랭킹순으로 정렬한 후 상위 3개를 읽어주고, 다음 상품 3개를 보여준 뒤 이전 상품 3개를 다시 보여주는 순서입니다."
+    },
+    {
+      "id": 12,
+      "difficulty": "H",
+      "user_utterance": "러닝화 검색하고 3페이지로 이동한 다음 평점순으로 정렬해서 3번 상품 들어가서 장바구니에 2개 넣어줘.",
+      "expected_actions": [
+        {
+          "action": "search_page",
+          "query": "러닝화"
+        },
+        {
+          "action": "goto_page",
+          "page_num": 3
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "평점순"
+        },
+        {
+          "action": "select_product",
+          "index": 3
+        },
+        {
+          "action": "add_to_cart",
+          "quantity": 2
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "search_page",
+          "query": "러닝화"
+        },
+        {
+          "action": "goto_page",
+          "page_num": 3
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "평점순"
+        },
+        {
+          "action": "select_product",
+          "index": 3
+        },
+        {
+          "action": "add_to_cart",
+          "quantity": 2
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 5,
+        "length_predicted": 5,
+        "action_matches": 5,
+        "action_total": 5,
+        "param_matches": 5,
+        "param_total": 5
+      },
+      "mismatches": [],
+      "llm_notes": "사용자가 요청한 순서대로 러닝화 검색 후 3페이지로 이동하고, 평점순으로 정렬한 뒤 3번 상품을 선택하여 장바구니에 2개 담는 액션을 생성했습니다."
+    },
+    {
+      "id": 13,
+      "difficulty": "H",
+      "user_utterance": "블루투스 스피커 검색해서 최신순으로 정렬하고 5개 읽어줘. 그리고 첫번째 상품으로 들어가줘.",
+      "expected_actions": [
+        {
+          "action": "search_page",
+          "query": "블루투스 스피커"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "최신순"
+        },
+        {
+          "action": "read_results",
+          "top_n": 5
+        },
+        {
+          "action": "select_product",
+          "index": 1
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "search_page",
+          "query": "블루투스 스피커"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "최신순"
+        },
+        {
+          "action": "read_results",
+          "top_n": 5
+        },
+        {
+          "action": "select_product",
+          "index": 1
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 4,
+        "length_predicted": 4,
+        "action_matches": 4,
+        "action_total": 4,
+        "param_matches": 4,
+        "param_total": 4
+      },
+      "mismatches": [],
+      "llm_notes": "사용자가 블루투스 스피커를 검색하고 최신순으로 정렬한 후, 상위 5개 결과를 읽고 첫번째 상품을 선택하도록 요청함."
+    },
+    {
+      "id": 14,
+      "difficulty": "H",
+      "user_utterance": "비타민D 검색하고 배송비 포함으로 걸고 2페이지로 가서 판매량순으로 정렬한 다음 3개 요약해줘.",
+      "expected_actions": [
+        {
+          "action": "search_page",
+          "query": "비타민D"
+        },
+        {
+          "action": "apply_shipping",
+          "shipping_option": "배송비포함"
+        },
+        {
+          "action": "goto_page",
+          "page_num": 2
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "판매량순"
+        },
+        {
+          "action": "summarize_products",
+          "top_n": 3
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "search_page",
+          "query": "비타민D"
+        },
+        {
+          "action": "apply_shipping",
+          "shipping_option": "배송비포함"
+        },
+        {
+          "action": "goto_page",
+          "page_num": 2
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "판매량순"
+        },
+        {
+          "action": "summarize_products",
+          "top_n": 3
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 5,
+        "length_predicted": 5,
+        "action_matches": 5,
+        "action_total": 5,
+        "param_matches": 5,
+        "param_total": 5
+      },
+      "mismatches": [],
+      "llm_notes": "비타민D 검색 후 배송비 포함 필터 적용, 2페이지로 이동 후 판매량순 정렬, 상위 3개 상품 요약 요청"
+    },
+    {
+      "id": 15,
+      "difficulty": "H",
+      "user_utterance": "전자책 리더기 검색해서 상위 3개 요약해주고, 두번째 상품 들어가서 배터리 얼마나 가는지 물어봐.",
+      "expected_actions": [
+        {
+          "action": "search_page",
+          "query": "전자책 리더기"
+        },
+        {
+          "action": "summarize_products",
+          "top_n": 3
+        },
+        {
+          "action": "select_product",
+          "index": 2
+        },
+        {
+          "action": "question",
+          "query": "배터리 얼마나 가는지"
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "search_page",
+          "query": "전자책 리더기"
+        },
+        {
+          "action": "summarize_products",
+          "top_n": 3
+        },
+        {
+          "action": "select_product",
+          "index": 2
+        },
+        {
+          "action": "question",
+          "query": "배터리 얼마나 가는지 물어봐?"
+        }
+      ],
+      "metrics": {
+        "exact_match": false,
+        "action_accuracy": 1.0,
+        "param_accuracy": 0.75,
+        "length_expected": 4,
+        "length_predicted": 4,
+        "action_matches": 4,
+        "action_total": 4,
+        "param_matches": 3,
+        "param_total": 4
+      },
+      "mismatches": [
+        {
+          "index": 3,
+          "expected": {
+            "action": "question",
+            "query": "배터리 얼마나 가는지"
+          },
+          "predicted": {
+            "action": "question",
+            "query": "배터리 얼마나 가는지 물어봐?"
+          },
+          "action_match": true,
+          "param_mismatches": {
+            "query": {
+              "expected": "배터리 얼마나 가는지",
+              "predicted": "배터리 얼마나 가는지 물어봐?"
+            }
+          }
+        }
+      ],
+      "llm_notes": "전자책 리더기를 검색한 후 상위 3개 상품을 요약하고, 두번째 상품에 대해 배터리 지속 시간에 대한 질문을 함."
+    },
+    {
+      "id": 16,
+      "difficulty": "H",
+      "user_utterance": "쿠팡 열고 가습기 검색해. 지금 페이지를 요약해준 다음 종료해줘.",
+      "expected_actions": [
+        {
+          "action": "open_url",
+          "url": "https://www.coupang.com"
+        },
+        {
+          "action": "search_page",
+          "query": "가습기"
+        },
+        {
+          "action": "summarize_page"
+        },
+        {
+          "action": "exit"
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "open_url",
+          "url": "https://www.coupang.com"
+        },
+        {
+          "action": "search_page",
+          "query": "가습기"
+        },
+        {
+          "action": "summarize_page"
+        },
+        {
+          "action": "exit"
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 4,
+        "length_predicted": 4,
+        "action_matches": 4,
+        "action_total": 4,
+        "param_matches": 2,
+        "param_total": 2
+      },
+      "mismatches": [],
+      "llm_notes": "사용자가 쿠팡을 열고 가습기를 검색한 후 현재 페이지를 요약하고 종료하길 원함."
+    },
+    {
+      "id": 17,
+      "difficulty": "H",
+      "user_utterance": "무선 키보드 검색하고 연관 검색어 보여줘. 그중에 '저소음'으로 바꿔서 검색하고 3개 읽어준 다음 다음 페이지로 가줘.",
+      "expected_actions": [
+        {
+          "action": "search_page",
+          "query": "무선 키보드"
+        },
+        {
+          "action": "show_related_keywords"
+        },
+        {
+          "action": "select_related_keyword",
+          "keyword": "저소음"
+        },
+        {
+          "action": "read_results",
+          "top_n": 3
+        },
+        {
+          "action": "next_page"
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "search_page",
+          "query": "무선 키보드"
+        },
+        {
+          "action": "show_related_keywords"
+        },
+        {
+          "action": "select_related_keyword",
+          "keyword": "저소음"
+        },
+        {
+          "action": "read_results",
+          "top_n": 3
+        },
+        {
+          "action": "next_page"
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 5,
+        "length_predicted": 5,
+        "action_matches": 5,
+        "action_total": 5,
+        "param_matches": 3,
+        "param_total": 3
+      },
+      "mismatches": [],
+      "llm_notes": "사용자가 무선 키보드를 검색하고, 연관 검색어를 확인한 뒤 저소음으로 검색하여 결과를 읽고 다음 페이지로 이동하는 순서로 구성했습니다."
+    },
+    {
+      "id": 18,
+      "difficulty": "H",
+      "user_utterance": "침대 프레임 검색하고 페이지 바꿔줘. 거기서 평점순으로 정렬해서 3개 요약해줘.",
+      "expected_actions": [
+        {
+          "action": "search_page",
+          "query": "침대 프레임"
+        },
+        {
+          "action": "goto_page"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "평점순"
+        },
+        {
+          "action": "summarize_products",
+          "top_n": 3
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "search_page",
+          "query": "침대 프레임"
+        },
+        {
+          "action": "next_page"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "평점순"
+        },
+        {
+          "action": "summarize_products",
+          "top_n": 3
+        }
+      ],
+      "metrics": {
+        "exact_match": false,
+        "action_accuracy": 0.75,
+        "param_accuracy": 1.0,
+        "length_expected": 4,
+        "length_predicted": 4,
+        "action_matches": 3,
+        "action_total": 4,
+        "param_matches": 3,
+        "param_total": 3
+      },
+      "mismatches": [
+        {
+          "index": 1,
+          "expected": {
+            "action": "goto_page"
+          },
+          "predicted": {
+            "action": "next_page"
+          },
+          "action_match": false,
+          "param_mismatches": {}
+        }
+      ],
+      "llm_notes": "사용자가 침대 프레임을 검색한 후 다음 페이지로 이동하고, 평점순으로 정렬한 뒤 상위 3개 상품을 요약하도록 요청함."
+    },
+    {
+      "id": 19,
+      "difficulty": "H",
+      "user_utterance": "에어프라이어 검색해서 판매량순으로 정렬하고 1번 상품 장바구니에 2개 담아준 다음 장바구니로 이동해줘.",
+      "expected_actions": [
+        {
+          "action": "search_page",
+          "query": "에어프라이어"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "판매량순"
+        },
+        {
+          "action": "select_product",
+          "index": 1
+        },
+        {
+          "action": "add_to_cart",
+          "quantity": 2
+        },
+        {
+          "action": "navigate_to_cart"
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "search_page",
+          "query": "에어프라이어"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "판매량순"
+        },
+        {
+          "action": "select_product",
+          "index": 1
+        },
+        {
+          "action": "add_to_cart",
+          "quantity": 2
+        },
+        {
+          "action": "navigate_to_cart"
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 5,
+        "length_predicted": 5,
+        "action_matches": 5,
+        "action_total": 5,
+        "param_matches": 4,
+        "param_total": 4
+      },
+      "mismatches": [],
+      "llm_notes": "에어프라이어를 검색하고 판매량순으로 정렬한 후 첫번째 상품을 장바구니에 2개 담고 장바구니로 이동하는 일련의 과정입니다."
+    },
+    {
+      "id": 20,
+      "difficulty": "H",
+      "user_utterance": "이 링크로 바로 들어가서 장바구니에 1개 넣고 페이지 요약도 해줘: https://www.coupang.com/vp/products/1234567890",
+      "expected_actions": [
+        {
+          "action": "select_product",
+          "url": "https://www.coupang.com/vp/products/1234567890"
+        },
+        {
+          "action": "add_to_cart",
+          "quantity": 1
+        },
+        {
+          "action": "summarize_page"
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "open_url",
+          "url": "https://www.coupang.com/vp/products/1234567890"
+        },
+        {
+          "action": "add_to_cart",
+          "quantity": 1
+        },
+        {
+          "action": "summarize_page"
+        }
+      ],
+      "metrics": {
+        "exact_match": false,
+        "action_accuracy": 0.6666666666666666,
+        "param_accuracy": 1.0,
+        "length_expected": 3,
+        "length_predicted": 3,
+        "action_matches": 2,
+        "action_total": 3,
+        "param_matches": 2,
+        "param_total": 2
+      },
+      "mismatches": [
+        {
+          "index": 0,
+          "expected": {
+            "action": "select_product",
+            "url": "https://www.coupang.com/vp/products/1234567890"
+          },
+          "predicted": {
+            "action": "open_url",
+            "url": "https://www.coupang.com/vp/products/1234567890"
+          },
+          "action_match": false,
+          "param_mismatches": {}
+        }
+      ],
+      "llm_notes": "사용자가 제공한 링크로 이동한 후, 장바구니에 1개 추가하고 페이지를 요약하는 요청을 수행함."
+    },
+    {
+      "id": 21,
+      "difficulty": "M",
+      "user_utterance": "가습기 검색해서 판매량순으로 정렬해줘",
+      "expected_actions": [
+        {
+          "action": "search_page",
+          "query": "가습기"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "판매량순"
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "search_page",
+          "query": "가습기"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "판매량순"
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 2,
+        "length_predicted": 2,
+        "action_matches": 2,
+        "action_total": 2,
+        "param_matches": 2,
+        "param_total": 2
+      },
+      "mismatches": [],
+      "llm_notes": "가습기를 검색한 후 판매량순으로 정렬하기 위해 두 개의 액션을 순서대로 실행합니다."
+    },
+    {
+      "id": 22,
+      "difficulty": "M",
+      "user_utterance": "기저귀 배송비 포함으로 검색해줘",
+      "expected_actions": [
+        {
+          "action": "search_page",
+          "query": "기저귀"
+        },
+        {
+          "action": "apply_shipping",
+          "shipping_option": "배송비포함"
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "search_page",
+          "query": "기저귀"
+        },
+        {
+          "action": "apply_shipping",
+          "shipping_option": "배송비포함"
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 2,
+        "length_predicted": 2,
+        "action_matches": 2,
+        "action_total": 2,
+        "param_matches": 2,
+        "param_total": 2
+      },
+      "mismatches": [],
+      "llm_notes": "기저귀를 검색한 후 배송비 포함 필터를 적용함"
+    },
+    {
+      "id": 23,
+      "difficulty": "M",
+      "user_utterance": "로봇청소기 평점순으로 정렬해줘",
+      "expected_actions": [
+        {
+          "action": "search_page",
+          "query": "로봇청소기"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "평점순"
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "search_page",
+          "query": "로봇청소기"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "평점순"
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 2,
+        "length_predicted": 2,
+        "action_matches": 2,
+        "action_total": 2,
+        "param_matches": 2,
+        "param_total": 2
+      },
+      "mismatches": [],
+      "llm_notes": "로봇청소기를 검색한 후 평점순으로 정렬하기 위해 두 개의 액션을 순서대로 실행합니다."
+    },
+    {
+      "id": 24,
+      "difficulty": "M",
+      "user_utterance": "비데 최신순으로 정렬해서 보고 싶어",
+      "expected_actions": [
+        {
+          "action": "search_page",
+          "query": "비데"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "최신순"
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "apply_sort",
+          "sort_type": "최신순"
+        },
+        {
+          "action": "read_results",
+          "top_n": 3
+        }
+      ],
+      "metrics": {
+        "exact_match": false,
+        "action_accuracy": 0.0,
+        "param_accuracy": 0.0,
+        "length_expected": 2,
+        "length_predicted": 2,
+        "action_matches": 0,
+        "action_total": 2,
+        "param_matches": 0,
+        "param_total": 2
+      },
+      "mismatches": [
+        {
+          "index": 0,
+          "expected": {
+            "action": "search_page",
+            "query": "비데"
+          },
+          "predicted": {
+            "action": "apply_sort",
+            "sort_type": "최신순"
+          },
+          "action_match": false,
+          "param_mismatches": {
+            "query": {
+              "expected": "비데",
+              "predicted": null
+            }
+          }
+        },
+        {
+          "index": 1,
+          "expected": {
+            "action": "apply_sort",
+            "sort_type": "최신순"
+          },
+          "predicted": {
+            "action": "read_results",
+            "top_n": 3
+          },
+          "action_match": false,
+          "param_mismatches": {
+            "sort_type": {
+              "expected": "최신순",
+              "predicted": null
+            }
+          }
+        }
+      ],
+      "llm_notes": "사용자가 비데를 최신순으로 정렬하여 상위 3개를 보고 싶다고 요청함."
+    },
+    {
+      "id": 25,
+      "difficulty": "M",
+      "user_utterance": "전동칫솔 낮은가격순으로 정렬해줘",
+      "expected_actions": [
+        {
+          "action": "search_page",
+          "query": "전동칫솔"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "낮은가격순"
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "search_page",
+          "query": "전동칫솔"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "낮은가격순"
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 2,
+        "length_predicted": 2,
+        "action_matches": 2,
+        "action_total": 2,
+        "param_matches": 2,
+        "param_total": 2
+      },
+      "mismatches": [],
+      "llm_notes": "전동칫솔을 검색한 후 낮은 가격 순으로 정렬하기 위해 두 개의 액션을 순서대로 실행함."
+    },
+    {
+      "id": 26,
+      "difficulty": "M",
+      "user_utterance": "보조배터리 높은가격순으로 정렬해줘",
+      "expected_actions": [
+        {
+          "action": "search_page",
+          "query": "보조배터리"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "높은가격순"
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "search_page",
+          "query": "보조배터리"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "높은가격순"
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 2,
+        "length_predicted": 2,
+        "action_matches": 2,
+        "action_total": 2,
+        "param_matches": 2,
+        "param_total": 2
+      },
+      "mismatches": [],
+      "llm_notes": "보조배터리를 검색한 후 높은 가격 순으로 정렬하기 위해 두 개의 액션을 순서대로 실행함."
+    },
+    {
+      "id": 27,
+      "difficulty": "M",
+      "user_utterance": "무선 키보드 랭킹순으로 정렬해줘",
+      "expected_actions": [
+        {
+          "action": "search_page",
+          "query": "무선 키보드"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "랭킹순"
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "search_page",
+          "query": "무선 키보드"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "랭킹순"
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 2,
+        "length_predicted": 2,
+        "action_matches": 2,
+        "action_total": 2,
+        "param_matches": 2,
+        "param_total": 2
+      },
+      "mismatches": [],
+      "llm_notes": "무선 키보드에 대한 검색 후 랭킹순으로 정렬 요청"
+    },
+    {
+      "id": 28,
+      "difficulty": "M",
+      "user_utterance": "디퓨저 배송비 제외로 보고 싶어",
+      "expected_actions": [
+        {
+          "action": "search_page",
+          "query": "디퓨저"
+        },
+        {
+          "action": "apply_shipping",
+          "shipping_option": "배송비제외"
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "search_page",
+          "query": "디퓨저"
+        },
+        {
+          "action": "apply_shipping",
+          "shipping_option": "배송비제외"
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 2,
+        "length_predicted": 2,
+        "action_matches": 2,
+        "action_total": 2,
+        "param_matches": 2,
+        "param_total": 2
+      },
+      "mismatches": [],
+      "llm_notes": "디퓨저를 검색한 후 배송비 제외 필터를 적용"
+    },
+    {
+      "id": 29,
+      "difficulty": "M",
+      "user_utterance": "모니터 판매량순으로 정렬해줘",
+      "expected_actions": [
+        {
+          "action": "search_page",
+          "query": "모니터"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "판매량순"
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "search_page",
+          "query": "모니터"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "판매량순"
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 2,
+        "length_predicted": 2,
+        "action_matches": 2,
+        "action_total": 2,
+        "param_matches": 2,
+        "param_total": 2
+      },
+      "mismatches": [],
+      "llm_notes": "모니터를 검색한 후 판매량순으로 정렬하기 위해 검색 명령과 정렬 명령을 순서대로 실행함."
+    },
+    {
+      "id": 30,
+      "difficulty": "M",
+      "user_utterance": "마스크 배송비 포함으로 걸어줘",
+      "expected_actions": [
+        {
+          "action": "search_page",
+          "query": "마스크"
+        },
+        {
+          "action": "apply_shipping",
+          "shipping_option": "배송비포함"
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "search_page",
+          "query": "마스크"
+        },
+        {
+          "action": "apply_shipping",
+          "shipping_option": "배송비포함"
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 2,
+        "length_predicted": 2,
+        "action_matches": 2,
+        "action_total": 2,
+        "param_matches": 2,
+        "param_total": 2
+      },
+      "mismatches": [],
+      "llm_notes": "마스크를 검색하고 배송비 포함 옵션을 적용하기 위해 두 개의 액션을 순서대로 실행함."
+    },
+    {
+      "id": 31,
+      "difficulty": "M",
+      "user_utterance": "선풍기 평점순으로 정렬해줘",
+      "expected_actions": [
+        {
+          "action": "search_page",
+          "query": "선풍기"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "평점순"
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "search_page",
+          "query": "선풍기"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "평점순"
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 2,
+        "length_predicted": 2,
+        "action_matches": 2,
+        "action_total": 2,
+        "param_matches": 2,
+        "param_total": 2
+      },
+      "mismatches": [],
+      "llm_notes": "선풍기를 검색한 후 평점순으로 정렬하기 위해 검색 액션을 먼저 추가했습니다."
+    },
+    {
+      "id": 32,
+      "difficulty": "M",
+      "user_utterance": "침대 프레임 낮은가격순으로 정렬해줘",
+      "expected_actions": [
+        {
+          "action": "search_page",
+          "query": "침대 프레임"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "낮은가격순"
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "search_page",
+          "query": "침대 프레임"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "낮은가격순"
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 2,
+        "length_predicted": 2,
+        "action_matches": 2,
+        "action_total": 2,
+        "param_matches": 2,
+        "param_total": 2
+      },
+      "mismatches": [],
+      "llm_notes": "침대 프레임을 검색한 후 낮은 가격 순으로 정렬하기 위해 두 개의 액션을 포함했습니다."
+    },
+    {
+      "id": 33,
+      "difficulty": "M",
+      "user_utterance": "캔들 배송비 제외로 검색해줘",
+      "expected_actions": [
+        {
+          "action": "search_page",
+          "query": "캔들"
+        },
+        {
+          "action": "apply_shipping",
+          "shipping_option": "배송비제외"
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "search_page",
+          "query": "캔들"
+        },
+        {
+          "action": "apply_shipping",
+          "shipping_option": "배송비제외"
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 2,
+        "length_predicted": 2,
+        "action_matches": 2,
+        "action_total": 2,
+        "param_matches": 2,
+        "param_total": 2
+      },
+      "mismatches": [],
+      "llm_notes": "캔들에 대한 검색을 수행한 후 배송비 제외 필터를 적용하기 위해 두 개의 액션을 순서대로 실행함."
+    },
+    {
+      "id": 34,
+      "difficulty": "M",
+      "user_utterance": "공기청정기 최신순으로 정렬해줘",
+      "expected_actions": [
+        {
+          "action": "search_page",
+          "query": "공기청정기"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "최신순"
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "search_page",
+          "query": "공기청정기"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "최신순"
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 2,
+        "length_predicted": 2,
+        "action_matches": 2,
+        "action_total": 2,
+        "param_matches": 2,
+        "param_total": 2
+      },
+      "mismatches": [],
+      "llm_notes": "공기청정기를 검색한 후 최신순으로 정렬하기 위해 검색 후 정렬 액션을 추가했습니다."
+    },
+    {
+      "id": 35,
+      "difficulty": "M",
+      "user_utterance": "핸드크림 랭킹순으로 정렬해서 보고 싶어",
+      "expected_actions": [
+        {
+          "action": "search_page",
+          "query": "핸드크림"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "랭킹순"
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "search_page",
+          "query": "핸드크림"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "랭킹순"
+        },
+        {
+          "action": "read_results",
+          "top_n": 10
+        }
+      ],
+      "metrics": {
+        "exact_match": false,
+        "action_accuracy": 0.6666666666666666,
+        "param_accuracy": 1.0,
+        "length_expected": 2,
+        "length_predicted": 3,
+        "action_matches": 2,
+        "action_total": 3,
+        "param_matches": 2,
+        "param_total": 2
+      },
+      "mismatches": [
+        {
+          "index": 2,
+          "expected": null,
+          "predicted": {
+            "action": "read_results",
+            "top_n": 10
+          },
+          "action_match": false,
+          "param_mismatches": {}
+        }
+      ],
+      "llm_notes": "핸드크림을 검색한 후 랭킹순으로 정렬하고 상위 10개 결과를 읽어줌"
+    },
+    {
+      "id": 36,
+      "difficulty": "M",
+      "user_utterance": "샴푸 판매량순으로 정렬해줘",
+      "expected_actions": [
+        {
+          "action": "search_page",
+          "query": "샴푸"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "판매량순"
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "search_page",
+          "query": "샴푸"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "판매량순"
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 2,
+        "length_predicted": 2,
+        "action_matches": 2,
+        "action_total": 2,
+        "param_matches": 2,
+        "param_total": 2
+      },
+      "mismatches": [],
+      "llm_notes": "샴푸를 검색한 후 판매량순으로 정렬하기 위해 검색을 먼저 수행함."
+    },
+    {
+      "id": 37,
+      "difficulty": "M",
+      "user_utterance": "초콜릿 배송비 포함으로만 보고 싶어",
+      "expected_actions": [
+        {
+          "action": "search_page",
+          "query": "초콜릿"
+        },
+        {
+          "action": "apply_shipping",
+          "shipping_option": "배송비포함"
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "apply_shipping",
+          "shipping_option": "배송비포함"
+        }
+      ],
+      "metrics": {
+        "exact_match": false,
+        "action_accuracy": 0.0,
+        "param_accuracy": 0.0,
+        "length_expected": 2,
+        "length_predicted": 1,
+        "action_matches": 0,
+        "action_total": 2,
+        "param_matches": 0,
+        "param_total": 2
+      },
+      "mismatches": [
+        {
+          "index": 0,
+          "expected": {
+            "action": "search_page",
+            "query": "초콜릿"
+          },
+          "predicted": {
+            "action": "apply_shipping",
+            "shipping_option": "배송비포함"
+          },
+          "action_match": false,
+          "param_mismatches": {
+            "query": {
+              "expected": "초콜릿",
+              "predicted": null
+            }
+          }
+        },
+        {
+          "index": 1,
+          "expected": {
+            "action": "apply_shipping",
+            "shipping_option": "배송비포함"
+          },
+          "predicted": null,
+          "action_match": false,
+          "param_mismatches": {
+            "shipping_option": {
+              "expected": "배송비포함",
+              "predicted": null
+            }
+          }
+        }
+      ],
+      "llm_notes": "사용자가 초콜릿에 대한 검색 결과에서 배송비 포함 상품만 보고 싶다고 요청함."
+    },
+    {
+      "id": 38,
+      "difficulty": "M",
+      "user_utterance": "두유 높은가격순 정렬해줘",
+      "expected_actions": [
+        {
+          "action": "search_page",
+          "query": "두유"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "높은가격순"
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "search_page",
+          "query": "두유"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "높은가격순"
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 2,
+        "length_predicted": 2,
+        "action_matches": 2,
+        "action_total": 2,
+        "param_matches": 2,
+        "param_total": 2
+      },
+      "mismatches": [],
+      "llm_notes": "두유를 검색한 후 높은 가격 순으로 정렬하는 명령을 수행함."
+    },
+    {
+      "id": 39,
+      "difficulty": "M",
+      "user_utterance": "요가매트 낮은가격순으로 정렬해줘",
+      "expected_actions": [
+        {
+          "action": "search_page",
+          "query": "요가매트"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "낮은가격순"
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "search_page",
+          "query": "요가매트"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "낮은가격순"
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 2,
+        "length_predicted": 2,
+        "action_matches": 2,
+        "action_total": 2,
+        "param_matches": 2,
+        "param_total": 2
+      },
+      "mismatches": [],
+      "llm_notes": "요가매트를 검색한 후 낮은 가격 순으로 정렬하기 위해 두 개의 액션을 순서대로 실행함."
+    },
+    {
+      "id": 40,
+      "difficulty": "M",
+      "user_utterance": "후라이팬 배송비 제외로 보고 싶어",
+      "expected_actions": [
+        {
+          "action": "search_page",
+          "query": "후라이팬"
+        },
+        {
+          "action": "apply_shipping",
+          "shipping_option": "배송비제외"
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "search_page",
+          "query": "후라이팬"
+        },
+        {
+          "action": "apply_shipping",
+          "shipping_option": "배송비제외"
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 2,
+        "length_predicted": 2,
+        "action_matches": 2,
+        "action_total": 2,
+        "param_matches": 2,
+        "param_total": 2
+      },
+      "mismatches": [],
+      "llm_notes": "후라이팬을 검색한 후 배송비 제외 필터를 적용하기 위해 두 개의 액션을 순서대로 실행함."
+    },
+    {
+      "id": 41,
+      "difficulty": "M",
+      "user_utterance": "핸디형 선풍기 최신순으로 정렬해줘",
+      "expected_actions": [
+        {
+          "action": "search_page",
+          "query": "핸디형 선풍기"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "최신순"
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "search_page",
+          "query": "핸디형 선풍기"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "최신순"
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 2,
+        "length_predicted": 2,
+        "action_matches": 2,
+        "action_total": 2,
+        "param_matches": 2,
+        "param_total": 2
+      },
+      "mismatches": [],
+      "llm_notes": "핸디형 선풍기를 검색한 후 최신순으로 정렬하기 위해 두 개의 액션을 순서대로 실행함."
+    },
+    {
+      "id": 42,
+      "difficulty": "M",
+      "user_utterance": "원두커피 평점순 정렬해줘",
+      "expected_actions": [
+        {
+          "action": "search_page",
+          "query": "원두커피"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "평점순"
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "apply_sort",
+          "sort_type": "평점순"
+        }
+      ],
+      "metrics": {
+        "exact_match": false,
+        "action_accuracy": 0.0,
+        "param_accuracy": 0.0,
+        "length_expected": 2,
+        "length_predicted": 1,
+        "action_matches": 0,
+        "action_total": 2,
+        "param_matches": 0,
+        "param_total": 2
+      },
+      "mismatches": [
+        {
+          "index": 0,
+          "expected": {
+            "action": "search_page",
+            "query": "원두커피"
+          },
+          "predicted": {
+            "action": "apply_sort",
+            "sort_type": "평점순"
+          },
+          "action_match": false,
+          "param_mismatches": {
+            "query": {
+              "expected": "원두커피",
+              "predicted": null
+            }
+          }
+        },
+        {
+          "index": 1,
+          "expected": {
+            "action": "apply_sort",
+            "sort_type": "평점순"
+          },
+          "predicted": null,
+          "action_match": false,
+          "param_mismatches": {
+            "sort_type": {
+              "expected": "평점순",
+              "predicted": null
+            }
+          }
+        }
+      ],
+      "llm_notes": "사용자가 원두커피를 평점순으로 정렬하길 원함."
+    },
+    {
+      "id": 43,
+      "difficulty": "M",
+      "user_utterance": "라면 랭킹순으로 정렬해줘",
+      "expected_actions": [
+        {
+          "action": "search_page",
+          "query": "라면"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "랭킹순"
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "search_page",
+          "query": "라면"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "랭킹순"
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 2,
+        "length_predicted": 2,
+        "action_matches": 2,
+        "action_total": 2,
+        "param_matches": 2,
+        "param_total": 2
+      },
+      "mismatches": [],
+      "llm_notes": "먼저 '라면'을 검색한 후, 검색 결과를 랭킹순으로 정렬하는 명령입니다."
+    },
+    {
+      "id": 44,
+      "difficulty": "M",
+      "user_utterance": "인덕션 배송비 포함으로 검색해줘",
+      "expected_actions": [
+        {
+          "action": "search_page",
+          "query": "인덕션"
+        },
+        {
+          "action": "apply_shipping",
+          "shipping_option": "배송비포함"
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "search_page",
+          "query": "인덕션"
+        },
+        {
+          "action": "apply_shipping",
+          "shipping_option": "배송비포함"
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 2,
+        "length_predicted": 2,
+        "action_matches": 2,
+        "action_total": 2,
+        "param_matches": 2,
+        "param_total": 2
+      },
+      "mismatches": [],
+      "llm_notes": "인덕션을 검색하고 배송비 포함 옵션을 적용하기 위해 두 개의 액션을 순서대로 실행함."
+    },
+    {
+      "id": 45,
+      "difficulty": "M",
+      "user_utterance": "캣타워 판매량순으로 정렬해줘",
+      "expected_actions": [
+        {
+          "action": "search_page",
+          "query": "캣타워"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "판매량순"
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "search_page",
+          "query": "캣타워"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "판매량순"
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 2,
+        "length_predicted": 2,
+        "action_matches": 2,
+        "action_total": 2,
+        "param_matches": 2,
+        "param_total": 2
+      },
+      "mismatches": [],
+      "llm_notes": "먼저 '캣타워'를 검색한 후 판매량순으로 정렬합니다."
+    },
+    {
+      "id": 46,
+      "difficulty": "M",
+      "user_utterance": "강아지 사료 배송비 제외로만 볼래",
+      "expected_actions": [
+        {
+          "action": "search_page",
+          "query": "강아지 사료"
+        },
+        {
+          "action": "apply_shipping",
+          "shipping_option": "배송비제외"
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "apply_shipping",
+          "shipping_option": "배송비제외"
+        }
+      ],
+      "metrics": {
+        "exact_match": false,
+        "action_accuracy": 0.0,
+        "param_accuracy": 0.0,
+        "length_expected": 2,
+        "length_predicted": 1,
+        "action_matches": 0,
+        "action_total": 2,
+        "param_matches": 0,
+        "param_total": 2
+      },
+      "mismatches": [
+        {
+          "index": 0,
+          "expected": {
+            "action": "search_page",
+            "query": "강아지 사료"
+          },
+          "predicted": {
+            "action": "apply_shipping",
+            "shipping_option": "배송비제외"
+          },
+          "action_match": false,
+          "param_mismatches": {
+            "query": {
+              "expected": "강아지 사료",
+              "predicted": null
+            }
+          }
+        },
+        {
+          "index": 1,
+          "expected": {
+            "action": "apply_shipping",
+            "shipping_option": "배송비제외"
+          },
+          "predicted": null,
+          "action_match": false,
+          "param_mismatches": {
+            "shipping_option": {
+              "expected": "배송비제외",
+              "predicted": null
+            }
+          }
+        }
+      ],
+      "llm_notes": "사용자가 강아지 사료를 검색한 후 배송비 제외 옵션을 적용하고자 하였으므로 해당 액션을 추가하였습니다."
+    },
+    {
+      "id": 47,
+      "difficulty": "M",
+      "user_utterance": "립밤 낮은가격순 정렬해줘",
+      "expected_actions": [
+        {
+          "action": "search_page",
+          "query": "립밤"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "낮은가격순"
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "search_page",
+          "query": "립밤"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "낮은가격순"
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 2,
+        "length_predicted": 2,
+        "action_matches": 2,
+        "action_total": 2,
+        "param_matches": 2,
+        "param_total": 2
+      },
+      "mismatches": [],
+      "llm_notes": "립밤을 검색한 후 낮은 가격 순으로 정렬하기 위해 두 개의 액션을 순서대로 실행함."
+    },
+    {
+      "id": 48,
+      "difficulty": "M",
+      "user_utterance": "텀블러 높은가격순으로 정렬해줘",
+      "expected_actions": [
+        {
+          "action": "search_page",
+          "query": "텀블러"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "높은가격순"
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "search_page",
+          "query": "텀블러"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "높은가격순"
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 2,
+        "length_predicted": 2,
+        "action_matches": 2,
+        "action_total": 2,
+        "param_matches": 2,
+        "param_total": 2
+      },
+      "mismatches": [],
+      "llm_notes": "텀블러를 검색한 후 높은 가격 순으로 정렬하기 위해 두 개의 액션을 순서대로 실행함."
+    },
+    {
+      "id": 49,
+      "difficulty": "M",
+      "user_utterance": "제습기 평점순으로 정렬해줘",
+      "expected_actions": [
+        {
+          "action": "search_page",
+          "query": "제습기"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "평점순"
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "search_page",
+          "query": "제습기"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "평점순"
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 2,
+        "length_predicted": 2,
+        "action_matches": 2,
+        "action_total": 2,
+        "param_matches": 2,
+        "param_total": 2
+      },
+      "mismatches": [],
+      "llm_notes": "제습기를 검색한 후 평점순으로 정렬하기 위해 검색 액션을 먼저 수행함."
+    },
+    {
+      "id": 50,
+      "difficulty": "M",
+      "user_utterance": "커튼 배송비 포함으로 보고 싶어",
+      "expected_actions": [
+        {
+          "action": "search_page",
+          "query": "커튼"
+        },
+        {
+          "action": "apply_shipping",
+          "shipping_option": "배송비포함"
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "apply_shipping",
+          "shipping_option": "배송비포함"
+        }
+      ],
+      "metrics": {
+        "exact_match": false,
+        "action_accuracy": 0.0,
+        "param_accuracy": 0.0,
+        "length_expected": 2,
+        "length_predicted": 1,
+        "action_matches": 0,
+        "action_total": 2,
+        "param_matches": 0,
+        "param_total": 2
+      },
+      "mismatches": [
+        {
+          "index": 0,
+          "expected": {
+            "action": "search_page",
+            "query": "커튼"
+          },
+          "predicted": {
+            "action": "apply_shipping",
+            "shipping_option": "배송비포함"
+          },
+          "action_match": false,
+          "param_mismatches": {
+            "query": {
+              "expected": "커튼",
+              "predicted": null
+            }
+          }
+        },
+        {
+          "index": 1,
+          "expected": {
+            "action": "apply_shipping",
+            "shipping_option": "배송비포함"
+          },
+          "predicted": null,
+          "action_match": false,
+          "param_mismatches": {
+            "shipping_option": {
+              "expected": "배송비포함",
+              "predicted": null
+            }
+          }
+        }
+      ],
+      "llm_notes": "사용자가 커튼을 검색한 후 배송비 포함 옵션을 적용하고자 하는 의도로 해석됨."
+    },
+    {
+      "id": 51,
+      "difficulty": "M",
+      "user_utterance": "침구세트 최신순으로 정렬해줘",
+      "expected_actions": [
+        {
+          "action": "search_page",
+          "query": "침구세트"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "최신순"
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "search_page",
+          "query": "침구세트"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "최신순"
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 2,
+        "length_predicted": 2,
+        "action_matches": 2,
+        "action_total": 2,
+        "param_matches": 2,
+        "param_total": 2
+      },
+      "mismatches": [],
+      "llm_notes": "침구세트를 검색한 후 최신순으로 정렬하기 위해 두 개의 액션을 순서대로 실행함."
+    },
+    {
+      "id": 52,
+      "difficulty": "M",
+      "user_utterance": "식기세척기 랭킹순 정렬해줘",
+      "expected_actions": [
+        {
+          "action": "search_page",
+          "query": "식기세척기"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "랭킹순"
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "search_page",
+          "query": "식기세척기"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "랭킹순"
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 2,
+        "length_predicted": 2,
+        "action_matches": 2,
+        "action_total": 2,
+        "param_matches": 2,
+        "param_total": 2
+      },
+      "mismatches": [],
+      "llm_notes": "식기세척기에 대한 검색 후 랭킹순으로 정렬하는 명령을 수행함."
+    },
+    {
+      "id": 53,
+      "difficulty": "M",
+      "user_utterance": "프로틴바 배송비 제외로 검색해줘",
+      "expected_actions": [
+        {
+          "action": "search_page",
+          "query": "프로틴바"
+        },
+        {
+          "action": "apply_shipping",
+          "shipping_option": "배송비제외"
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "search_page",
+          "query": "프로틴바"
+        },
+        {
+          "action": "apply_shipping",
+          "shipping_option": "배송비제외"
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 2,
+        "length_predicted": 2,
+        "action_matches": 2,
+        "action_total": 2,
+        "param_matches": 2,
+        "param_total": 2
+      },
+      "mismatches": [],
+      "llm_notes": "프로틴바를 검색한 후 배송비 제외 필터를 적용함"
+    },
+    {
+      "id": 54,
+      "difficulty": "M",
+      "user_utterance": "세탁세제 판매량순 정렬해줘",
+      "expected_actions": [
+        {
+          "action": "search_page",
+          "query": "세탁세제"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "판매량순"
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "search_page",
+          "query": "세탁세제"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "판매량순"
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 2,
+        "length_predicted": 2,
+        "action_matches": 2,
+        "action_total": 2,
+        "param_matches": 2,
+        "param_total": 2
+      },
+      "mismatches": [],
+      "llm_notes": "세탁세제를 검색한 후 판매량순으로 정렬하기 위해서 검색 액션과 정렬 액션을 순서대로 실행함."
+    },
+    {
+      "id": 55,
+      "difficulty": "M",
+      "user_utterance": "블루투스 스피커 낮은가격순으로 정렬해줘",
+      "expected_actions": [
+        {
+          "action": "search_page",
+          "query": "블루투스 스피커"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "낮은가격순"
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "search_page",
+          "query": "블루투스 스피커"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "낮은가격순"
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 2,
+        "length_predicted": 2,
+        "action_matches": 2,
+        "action_total": 2,
+        "param_matches": 2,
+        "param_total": 2
+      },
+      "mismatches": [],
+      "llm_notes": "블루투스 스피커를 검색한 후 낮은 가격 순으로 정렬하기 위해 두 가지 액션을 순서대로 실행함."
+    },
+    {
+      "id": 56,
+      "difficulty": "M",
+      "user_utterance": "게이밍 의자 배송비 포함으로만 보고 싶어",
+      "expected_actions": [
+        {
+          "action": "search_page",
+          "query": "게이밍 의자"
+        },
+        {
+          "action": "apply_shipping",
+          "shipping_option": "배송비포함"
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "apply_shipping",
+          "shipping_option": "배송비포함"
+        }
+      ],
+      "metrics": {
+        "exact_match": false,
+        "action_accuracy": 0.0,
+        "param_accuracy": 0.0,
+        "length_expected": 2,
+        "length_predicted": 1,
+        "action_matches": 0,
+        "action_total": 2,
+        "param_matches": 0,
+        "param_total": 2
+      },
+      "mismatches": [
+        {
+          "index": 0,
+          "expected": {
+            "action": "search_page",
+            "query": "게이밍 의자"
+          },
+          "predicted": {
+            "action": "apply_shipping",
+            "shipping_option": "배송비포함"
+          },
+          "action_match": false,
+          "param_mismatches": {
+            "query": {
+              "expected": "게이밍 의자",
+              "predicted": null
+            }
+          }
+        },
+        {
+          "index": 1,
+          "expected": {
+            "action": "apply_shipping",
+            "shipping_option": "배송비포함"
+          },
+          "predicted": null,
+          "action_match": false,
+          "param_mismatches": {
+            "shipping_option": {
+              "expected": "배송비포함",
+              "predicted": null
+            }
+          }
+        }
+      ],
+      "llm_notes": "사용자가 배송비 포함 옵션으로 필터링을 원함."
+    },
+    {
+      "id": 57,
+      "difficulty": "M",
+      "user_utterance": "헤드폰 평점순 정렬해줘",
+      "expected_actions": [
+        {
+          "action": "search_page",
+          "query": "헤드폰"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "평점순"
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "apply_sort",
+          "sort_type": "평점순"
+        }
+      ],
+      "metrics": {
+        "exact_match": false,
+        "action_accuracy": 0.0,
+        "param_accuracy": 0.0,
+        "length_expected": 2,
+        "length_predicted": 1,
+        "action_matches": 0,
+        "action_total": 2,
+        "param_matches": 0,
+        "param_total": 2
+      },
+      "mismatches": [
+        {
+          "index": 0,
+          "expected": {
+            "action": "search_page",
+            "query": "헤드폰"
+          },
+          "predicted": {
+            "action": "apply_sort",
+            "sort_type": "평점순"
+          },
+          "action_match": false,
+          "param_mismatches": {
+            "query": {
+              "expected": "헤드폰",
+              "predicted": null
+            }
+          }
+        },
+        {
+          "index": 1,
+          "expected": {
+            "action": "apply_sort",
+            "sort_type": "평점순"
+          },
+          "predicted": null,
+          "action_match": false,
+          "param_mismatches": {
+            "sort_type": {
+              "expected": "평점순",
+              "predicted": null
+            }
+          }
+        }
+      ],
+      "llm_notes": "사용자가 헤드폰을 평점순으로 정렬하길 원함."
+    },
+    {
+      "id": 58,
+      "difficulty": "M",
+      "user_utterance": "토너 패드 최신순으로 정렬해줘",
+      "expected_actions": [
+        {
+          "action": "search_page",
+          "query": "토너 패드"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "최신순"
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "apply_sort",
+          "sort_type": "최신순"
+        }
+      ],
+      "metrics": {
+        "exact_match": false,
+        "action_accuracy": 0.0,
+        "param_accuracy": 0.0,
+        "length_expected": 2,
+        "length_predicted": 1,
+        "action_matches": 0,
+        "action_total": 2,
+        "param_matches": 0,
+        "param_total": 2
+      },
+      "mismatches": [
+        {
+          "index": 0,
+          "expected": {
+            "action": "search_page",
+            "query": "토너 패드"
+          },
+          "predicted": {
+            "action": "apply_sort",
+            "sort_type": "최신순"
+          },
+          "action_match": false,
+          "param_mismatches": {
+            "query": {
+              "expected": "토너 패드",
+              "predicted": null
+            }
+          }
+        },
+        {
+          "index": 1,
+          "expected": {
+            "action": "apply_sort",
+            "sort_type": "최신순"
+          },
+          "predicted": null,
+          "action_match": false,
+          "param_mismatches": {
+            "sort_type": {
+              "expected": "최신순",
+              "predicted": null
+            }
+          }
+        }
+      ],
+      "llm_notes": "사용자가 '토너 패드'를 최신순으로 정렬해달라고 요청함."
+    },
+    {
+      "id": 59,
+      "difficulty": "M",
+      "user_utterance": "전자레인지 랭킹순으로 정렬해줘",
+      "expected_actions": [
+        {
+          "action": "search_page",
+          "query": "전자레인지"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "랭킹순"
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "search_page",
+          "query": "전자레인지"
+        },
+        {
+          "action": "apply_sort",
+          "sort_type": "랭킹순"
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 2,
+        "length_predicted": 2,
+        "action_matches": 2,
+        "action_total": 2,
+        "param_matches": 2,
+        "param_total": 2
+      },
+      "mismatches": [],
+      "llm_notes": "전자레인지 검색 후 랭킹순으로 정렬하기 위해 검색을 먼저 수행함."
+    },
+    {
+      "id": 60,
+      "difficulty": "M",
+      "user_utterance": "생리대 배송비 제외로 걸어줘",
+      "expected_actions": [
+        {
+          "action": "search_page",
+          "query": "생리대"
+        },
+        {
+          "action": "apply_shipping",
+          "shipping_option": "배송비제외"
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "search_page",
+          "query": "생리대"
+        },
+        {
+          "action": "apply_shipping",
+          "shipping_option": "배송비제외"
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 2,
+        "length_predicted": 2,
+        "action_matches": 2,
+        "action_total": 2,
+        "param_matches": 2,
+        "param_total": 2
+      },
+      "mismatches": [],
+      "llm_notes": "생리대를 검색한 후 배송비 제외 필터를 적용하기 위해 두 가지 액션을 순서대로 실행함."
+    },
+    {
+      "id": 61,
+      "difficulty": "E",
+      "user_utterance": "쿠팡 열어줘",
+      "expected_actions": [
+        {
+          "action": "open_url",
+          "url": "https://www.coupang.com"
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "open_url",
+          "url": "https://www.coupang.com"
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 1,
+        "length_predicted": 1,
+        "action_matches": 1,
+        "action_total": 1,
+        "param_matches": 1,
+        "param_total": 1
+      },
+      "mismatches": [],
+      "llm_notes": "사용자가 쿠팡 웹사이트를 열어달라고 요청했습니다."
+    },
+    {
+      "id": 62,
+      "difficulty": "E",
+      "user_utterance": "무선 청소기 찾아줘",
+      "expected_actions": [
+        {
+          "action": "search_page",
+          "query": "무선 청소기"
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "search_page",
+          "query": "무선 청소기"
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 1,
+        "length_predicted": 1,
+        "action_matches": 1,
+        "action_total": 1,
+        "param_matches": 1,
+        "param_total": 1
+      },
+      "mismatches": [],
+      "llm_notes": "사용자가 무선 청소기를 찾고자 하여 검색어를 입력함."
+    },
+    {
+      "id": 63,
+      "difficulty": "E",
+      "user_utterance": "이 상품 원산지가 어디야?",
+      "expected_actions": [
+        {
+          "action": "question",
+          "query": "이 상품 원산지가 어디야?"
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "question",
+          "query": "이 상품 원산지가 어디야?"
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 1,
+        "length_predicted": 1,
+        "action_matches": 1,
+        "action_total": 1,
+        "param_matches": 1,
+        "param_total": 1
+      },
+      "mismatches": [],
+      "llm_notes": "사용자가 상품의 원산지에 대한 질문을 하였으므로, 질문 액션을 사용함."
+    },
+    {
+      "id": 64,
+      "difficulty": "E",
+      "user_utterance": "정렬 옵션 뭐 있는지 알려줘",
+      "expected_actions": [
+        {
+          "action": "show_sort_options"
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "show_sort_options"
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 1,
+        "length_predicted": 1,
+        "action_matches": 1,
+        "action_total": 1,
+        "param_matches": 0,
+        "param_total": 0
+      },
+      "mismatches": [],
+      "llm_notes": "사용자가 정렬 옵션을 알고 싶어 하므로, 사용 가능한 정렬 옵션 목록을 보여주는 액션을 추가했습니다."
+    },
+    {
+      "id": 65,
+      "difficulty": "E",
+      "user_utterance": "연관 검색어 보여줘",
+      "expected_actions": [
+        {
+          "action": "show_related_keywords"
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "show_related_keywords"
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 1,
+        "length_predicted": 1,
+        "action_matches": 1,
+        "action_total": 1,
+        "param_matches": 0,
+        "param_total": 0
+      },
+      "mismatches": [],
+      "llm_notes": "사용자가 연관 검색어를 요청함"
+    },
+    {
+      "id": 66,
+      "difficulty": "E",
+      "user_utterance": "첫번째 연관 검색어로 검색해줘",
+      "expected_actions": [
+        {
+          "action": "select_related_keyword",
+          "keyword": "첫번째 연관 검색어"
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "select_related_keyword",
+          "keyword": "첫번째 연관 검색어"
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 1,
+        "length_predicted": 1,
+        "action_matches": 1,
+        "action_total": 1,
+        "param_matches": 1,
+        "param_total": 1
+      },
+      "mismatches": [],
+      "llm_notes": "사용자가 첫번째 연관 검색어로 검색하길 원함"
+    },
+    {
+      "id": 67,
+      "difficulty": "E",
+      "user_utterance": "상위 3개만 읽어줘",
+      "expected_actions": [
+        {
+          "action": "read_results",
+          "top_n": 3
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "read_results",
+          "top_n": 3
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 1,
+        "length_predicted": 1,
+        "action_matches": 1,
+        "action_total": 1,
+        "param_matches": 1,
+        "param_total": 1
+      },
+      "mismatches": [],
+      "llm_notes": "사용자가 상위 3개의 검색 결과를 읽어달라고 요청했습니다."
+    },
+    {
+      "id": 68,
+      "difficulty": "E",
+      "user_utterance": "다음 거 보여줘",
+      "expected_actions": [
+        {
+          "action": "next_items",
+          "count": 3
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "next_items",
+          "count": 3
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 1,
+        "length_predicted": 1,
+        "action_matches": 1,
+        "action_total": 1,
+        "param_matches": 1,
+        "param_total": 1
+      },
+      "mismatches": [],
+      "llm_notes": "사용자가 현재 페이지 내에서 다음 상품들을 보고 싶어하기 때문에 next_items 액션을 선택했습니다."
+    },
+    {
+      "id": 69,
+      "difficulty": "E",
+      "user_utterance": "이전 거 다시 보여줘",
+      "expected_actions": [
+        {
+          "action": "prev_items",
+          "count": 3
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "prev_items",
+          "count": 3
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 1,
+        "length_predicted": 1,
+        "action_matches": 1,
+        "action_total": 1,
+        "param_matches": 1,
+        "param_total": 1
+      },
+      "mismatches": [],
+      "llm_notes": "사용자가 이전에 본 상품을 다시 보여달라고 요청함."
+    },
+    {
+      "id": 70,
+      "difficulty": "E",
+      "user_utterance": "다음 페이지로 넘어가줘",
+      "expected_actions": [
+        {
+          "action": "next_page"
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "next_page"
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 1,
+        "length_predicted": 1,
+        "action_matches": 1,
+        "action_total": 1,
+        "param_matches": 0,
+        "param_total": 0
+      },
+      "mismatches": [],
+      "llm_notes": "사용자가 다음 페이지로 이동하길 원함"
+    },
+    {
+      "id": 71,
+      "difficulty": "E",
+      "user_utterance": "이전 페이지로 가줘",
+      "expected_actions": [
+        {
+          "action": "prev_page"
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "prev_page"
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 1,
+        "length_predicted": 1,
+        "action_matches": 1,
+        "action_total": 1,
+        "param_matches": 0,
+        "param_total": 0
+      },
+      "mismatches": [],
+      "llm_notes": "사용자가 이전 페이지로 이동하고자 했기 때문에 prev_page 액션을 선택했습니다."
+    },
+    {
+      "id": 72,
+      "difficulty": "E",
+      "user_utterance": "페이지 바꿔줘",
+      "expected_actions": [
+        {
+          "action": "goto_page"
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "goto_page",
+          "page_num": 2
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 1,
+        "length_predicted": 1,
+        "action_matches": 1,
+        "action_total": 1,
+        "param_matches": 0,
+        "param_total": 0
+      },
+      "mismatches": [],
+      "llm_notes": "사용자가 '페이지 바꿔줘'라고 요청했으므로 다음 페이지로 이동하는 것으로 해석했습니다."
+    },
+    {
+      "id": 73,
+      "difficulty": "E",
+      "user_utterance": "3페이지로 이동해줘",
+      "expected_actions": [
+        {
+          "action": "goto_page",
+          "page_num": 3
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "goto_page",
+          "page_num": 3
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 1,
+        "length_predicted": 1,
+        "action_matches": 1,
+        "action_total": 1,
+        "param_matches": 1,
+        "param_total": 1
+      },
+      "mismatches": [],
+      "llm_notes": "사용자가 특정 페이지로 직접 이동하길 원함"
+    },
+    {
+      "id": 74,
+      "difficulty": "E",
+      "user_utterance": "2 페이지",
+      "expected_actions": [
+        {
+          "action": "goto_page",
+          "page_num": 2
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "goto_page",
+          "page_num": 2
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 1,
+        "length_predicted": 1,
+        "action_matches": 1,
+        "action_total": 1,
+        "param_matches": 1,
+        "param_total": 1
+      },
+      "mismatches": [],
+      "llm_notes": "사용자가 특정 페이지로 이동하고자 하였으므로 goto_page 액션을 사용했습니다."
+    },
+    {
+      "id": 75,
+      "difficulty": "E",
+      "user_utterance": "첫번째 상품 들어가줘",
+      "expected_actions": [
+        {
+          "action": "select_product",
+          "index": 1
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "select_product",
+          "index": 1
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 1,
+        "length_predicted": 1,
+        "action_matches": 1,
+        "action_total": 1,
+        "param_matches": 1,
+        "param_total": 1
+      },
+      "mismatches": [],
+      "llm_notes": "사용자가 첫번째 상품을 선택하라고 요청함."
+    },
+    {
+      "id": 76,
+      "difficulty": "E",
+      "user_utterance": "3번 상품 보여줘",
+      "expected_actions": [
+        {
+          "action": "select_product",
+          "index": 3
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "select_product",
+          "index": 3
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 1,
+        "length_predicted": 1,
+        "action_matches": 1,
+        "action_total": 1,
+        "param_matches": 1,
+        "param_total": 1
+      },
+      "mismatches": [],
+      "llm_notes": "사용자가 3번 상품을 선택하라고 요청했습니다."
+    },
+    {
+      "id": 77,
+      "difficulty": "E",
+      "user_utterance": "장바구니에 1개 넣어줘",
+      "expected_actions": [
+        {
+          "action": "add_to_cart",
+          "quantity": 1
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "add_to_cart",
+          "quantity": 1
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 1,
+        "length_predicted": 1,
+        "action_matches": 1,
+        "action_total": 1,
+        "param_matches": 1,
+        "param_total": 1
+      },
+      "mismatches": [],
+      "llm_notes": "사용자가 장바구니에 1개의 상품을 담고 싶어함"
+    },
+    {
+      "id": 78,
+      "difficulty": "E",
+      "user_utterance": "장바구니로 이동해줘",
+      "expected_actions": [
+        {
+          "action": "navigate_to_cart"
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "navigate_to_cart"
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 1,
+        "length_predicted": 1,
+        "action_matches": 1,
+        "action_total": 1,
+        "param_matches": 0,
+        "param_total": 0
+      },
+      "mismatches": [],
+      "llm_notes": "사용자가 장바구니로 이동하길 원함."
+    },
+    {
+      "id": 79,
+      "difficulty": "E",
+      "user_utterance": "지금 페이지 요약해줘",
+      "expected_actions": [
+        {
+          "action": "summarize_page"
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "summarize_page"
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 1,
+        "length_predicted": 1,
+        "action_matches": 1,
+        "action_total": 1,
+        "param_matches": 0,
+        "param_total": 0
+      },
+      "mismatches": [],
+      "llm_notes": "사용자가 현재 페이지의 내용을 요약해달라고 요청했습니다."
+    },
+    {
+      "id": 80,
+      "difficulty": "E",
+      "user_utterance": "검색 결과 5개 요약해줘",
+      "expected_actions": [
+        {
+          "action": "summarize_products",
+          "top_n": 5
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "summarize_products",
+          "top_n": 5
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 1,
+        "length_predicted": 1,
+        "action_matches": 1,
+        "action_total": 1,
+        "param_matches": 1,
+        "param_total": 1
+      },
+      "mismatches": [],
+      "llm_notes": "사용자가 요청한 검색 결과의 요약을 5개 항목으로 제공하기 위해 'summarize_products' 액션을 사용했습니다."
+    },
+    {
+      "id": 81,
+      "difficulty": "E",
+      "user_utterance": "종료",
+      "expected_actions": [
+        {
+          "action": "exit"
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "exit"
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 1,
+        "length_predicted": 1,
+        "action_matches": 1,
+        "action_total": 1,
+        "param_matches": 0,
+        "param_total": 0
+      },
+      "mismatches": [],
+      "llm_notes": "사용자가 종료 명령을 요청함."
+    },
+    {
+      "id": 82,
+      "difficulty": "E",
+      "user_utterance": "맥북 충전기 검색해줘",
+      "expected_actions": [
+        {
+          "action": "search_page",
+          "query": "맥북 충전기"
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "search_page",
+          "query": "맥북 충전기"
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 1,
+        "length_predicted": 1,
+        "action_matches": 1,
+        "action_total": 1,
+        "param_matches": 1,
+        "param_total": 1
+      },
+      "mismatches": [],
+      "llm_notes": "사용자가 맥북 충전기를 찾고자 하여 검색 명령을 실행함."
+    },
+    {
+      "id": 83,
+      "difficulty": "E",
+      "user_utterance": "블루투스 이어폰 검색",
+      "expected_actions": [
+        {
+          "action": "search_page",
+          "query": "블루투스 이어폰"
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "search_page",
+          "query": "블루투스 이어폰"
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 1,
+        "length_predicted": 1,
+        "action_matches": 1,
+        "action_total": 1,
+        "param_matches": 1,
+        "param_total": 1
+      },
+      "mismatches": [],
+      "llm_notes": "사용자가 블루투스 이어폰을 검색하길 원함"
+    },
+    {
+      "id": 84,
+      "difficulty": "E",
+      "user_utterance": "이거 AS 기간이 어떻게 돼?",
+      "expected_actions": [
+        {
+          "action": "question",
+          "query": "이거 AS 기간이 어떻게 돼?"
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "question",
+          "query": "이거 AS 기간이 어떻게 돼?"
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 1,
+        "length_predicted": 1,
+        "action_matches": 1,
+        "action_total": 1,
+        "param_matches": 1,
+        "param_total": 1
+      },
+      "mismatches": [],
+      "llm_notes": "사용자가 상품에 대한 AS 기간을 질문하였으므로 해당 질문을 실행하는 액션을 추가함."
+    },
+    {
+      "id": 85,
+      "difficulty": "E",
+      "user_utterance": "이거 색상 옵션 뭐 있어?",
+      "expected_actions": [
+        {
+          "action": "question",
+          "query": "이거 색상 옵션 뭐 있어?"
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "question",
+          "query": "이거 색상 옵션 뭐 있어?"
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 1,
+        "length_predicted": 1,
+        "action_matches": 1,
+        "action_total": 1,
+        "param_matches": 1,
+        "param_total": 1
+      },
+      "mismatches": [],
+      "llm_notes": "사용자가 상품의 색상 옵션에 대한 질문을 하였으므로, 질문 액션으로 변환하였습니다."
+    },
+    {
+      "id": 86,
+      "difficulty": "E",
+      "user_utterance": "이 제품 용량이 몇 ml야?",
+      "expected_actions": [
+        {
+          "action": "question",
+          "query": "이 제품 용량이 몇 ml야?"
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "question",
+          "query": "이 제품 용량이 몇 ml야?"
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 1,
+        "length_predicted": 1,
+        "action_matches": 1,
+        "action_total": 1,
+        "param_matches": 1,
+        "param_total": 1
+      },
+      "mismatches": [],
+      "llm_notes": "사용자가 특정 제품에 대한 질문을 하였으므로, 질문 액션을 사용함."
+    },
+    {
+      "id": 87,
+      "difficulty": "E",
+      "user_utterance": "다음 장",
+      "expected_actions": [
+        {
+          "action": "next_page"
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "next_page"
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 1,
+        "length_predicted": 1,
+        "action_matches": 1,
+        "action_total": 1,
+        "param_matches": 0,
+        "param_total": 0
+      },
+      "mismatches": [],
+      "llm_notes": "사용자가 '다음 장'이라고 명령하여 다음 검색 결과 페이지로 이동 요청"
+    },
+    {
+      "id": 88,
+      "difficulty": "E",
+      "user_utterance": "페이지 뒤로",
+      "expected_actions": [
+        {
+          "action": "prev_page"
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "prev_page"
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 1,
+        "length_predicted": 1,
+        "action_matches": 1,
+        "action_total": 1,
+        "param_matches": 0,
+        "param_total": 0
+      },
+      "mismatches": [],
+      "llm_notes": "사용자가 이전 페이지로 이동하고자 하였음."
+    },
+    {
+      "id": 89,
+      "difficulty": "E",
+      "user_utterance": "넘어가줘",
+      "expected_actions": [
+        {
+          "action": "next_page"
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "next_page"
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 1,
+        "length_predicted": 1,
+        "action_matches": 1,
+        "action_total": 1,
+        "param_matches": 0,
+        "param_total": 0
+      },
+      "mismatches": [],
+      "llm_notes": "사용자가 '넘어가줘'라고 요청하여 다음 페이지로 이동하는 액션을 선택했습니다."
+    },
+    {
+      "id": 90,
+      "difficulty": "E",
+      "user_utterance": "2번 들어가줘",
+      "expected_actions": [
+        {
+          "action": "select_product",
+          "index": 2
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "select_product",
+          "index": 2
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 1,
+        "length_predicted": 1,
+        "action_matches": 1,
+        "action_total": 1,
+        "param_matches": 1,
+        "param_total": 1
+      },
+      "mismatches": [],
+      "llm_notes": "사용자가 2번 상품을 선택하라는 명령을 하였음."
+    },
+    {
+      "id": 91,
+      "difficulty": "E",
+      "user_utterance": "검색 결과 더 보여줘",
+      "expected_actions": [
+        {
+          "action": "next_items",
+          "count": 3
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "next_items",
+          "count": 3
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 1,
+        "length_predicted": 1,
+        "action_matches": 1,
+        "action_total": 1,
+        "param_matches": 1,
+        "param_total": 1
+      },
+      "mismatches": [],
+      "llm_notes": "사용자가 '더 보여줘'라고 요청하여 현재 페이지 내에서 다음 상품들을 보여주는 액션으로 변환했습니다."
+    },
+    {
+      "id": 92,
+      "difficulty": "E",
+      "user_utterance": "아까 거 보여줘",
+      "expected_actions": [
+        {
+          "action": "prev_items",
+          "count": 3
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "prev_items",
+          "count": 3
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 1,
+        "length_predicted": 1,
+        "action_matches": 1,
+        "action_total": 1,
+        "param_matches": 1,
+        "param_total": 1
+      },
+      "mismatches": [],
+      "llm_notes": "사용자가 이전에 본 상품을 요청했으므로 이전 상품을 보여주도록 설정했습니다."
+    },
+    {
+      "id": 93,
+      "difficulty": "E",
+      "user_utterance": "5페이지",
+      "expected_actions": [
+        {
+          "action": "goto_page",
+          "page_num": 5
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "goto_page",
+          "page_num": 5
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 1,
+        "length_predicted": 1,
+        "action_matches": 1,
+        "action_total": 1,
+        "param_matches": 1,
+        "param_total": 1
+      },
+      "mismatches": [],
+      "llm_notes": "사용자가 특정 페이지로 직접 이동하길 원함."
+    },
+    {
+      "id": 94,
+      "difficulty": "E",
+      "user_utterance": "페이지 2",
+      "expected_actions": [
+        {
+          "action": "goto_page",
+          "page_num": 2
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "goto_page",
+          "page_num": 2
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 1,
+        "length_predicted": 1,
+        "action_matches": 1,
+        "action_total": 1,
+        "param_matches": 1,
+        "param_total": 1
+      },
+      "mismatches": [],
+      "llm_notes": "사용자가 특정 페이지로 이동하길 원함."
+    },
+    {
+      "id": 95,
+      "difficulty": "E",
+      "user_utterance": "정렬 어떻게 해?",
+      "expected_actions": [
+        {
+          "action": "show_sort_options"
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "show_sort_options"
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 1,
+        "length_predicted": 1,
+        "action_matches": 1,
+        "action_total": 1,
+        "param_matches": 0,
+        "param_total": 0
+      },
+      "mismatches": [],
+      "llm_notes": "사용자가 정렬 방법에 대한 정보를 요청했으므로 사용 가능한 정렬 옵션 목록을 보여줍니다."
+    },
+    {
+      "id": 96,
+      "difficulty": "E",
+      "user_utterance": "연관 검색어 뭐 있어?",
+      "expected_actions": [
+        {
+          "action": "show_related_keywords"
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "show_related_keywords"
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 1,
+        "length_predicted": 1,
+        "action_matches": 1,
+        "action_total": 1,
+        "param_matches": 0,
+        "param_total": 0
+      },
+      "mismatches": [],
+      "llm_notes": "사용자가 연관 검색어를 요청했으므로 관련 검색어 목록을 보여주는 액션을 추가했습니다."
+    },
+    {
+      "id": 97,
+      "difficulty": "E",
+      "user_utterance": "지금 페이지에서 상위 10개 읽어줘",
+      "expected_actions": [
+        {
+          "action": "read_results",
+          "top_n": 10
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "read_results",
+          "top_n": 10
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 1,
+        "length_predicted": 1,
+        "action_matches": 1,
+        "action_total": 1,
+        "param_matches": 1,
+        "param_total": 1
+      },
+      "mismatches": [],
+      "llm_notes": "사용자가 현재 페이지에서 상위 10개의 검색 결과를 읽어달라고 요청함."
+    },
+    {
+      "id": 98,
+      "difficulty": "E",
+      "user_utterance": "장바구니에 3개 담아줘",
+      "expected_actions": [
+        {
+          "action": "add_to_cart",
+          "quantity": 3
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "add_to_cart",
+          "quantity": 3
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 1,
+        "length_predicted": 1,
+        "action_matches": 1,
+        "action_total": 1,
+        "param_matches": 1,
+        "param_total": 1
+      },
+      "mismatches": [],
+      "llm_notes": "사용자가 장바구니에 3개 담아달라고 요청했습니다."
+    },
+    {
+      "id": 99,
+      "difficulty": "E",
+      "user_utterance": "이 상품 배송 언제 와?",
+      "expected_actions": [
+        {
+          "action": "question",
+          "query": "이 상품 배송 언제 와?"
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "question",
+          "query": "이 상품 배송 언제 와?"
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 1,
+        "length_predicted": 1,
+        "action_matches": 1,
+        "action_total": 1,
+        "param_matches": 1,
+        "param_total": 1
+      },
+      "mismatches": [],
+      "llm_notes": "사용자가 상품에 대한 배송 관련 질문을 하였으므로 질문 액션으로 변환."
+    },
+    {
+      "id": 100,
+      "difficulty": "E",
+      "user_utterance": "현재 결과 3개만 요약해줘",
+      "expected_actions": [
+        {
+          "action": "summarize_products",
+          "top_n": 3
+        }
+      ],
+      "predicted_actions": [
+        {
+          "action": "summarize_products",
+          "top_n": 3
+        }
+      ],
+      "metrics": {
+        "exact_match": true,
+        "action_accuracy": 1.0,
+        "param_accuracy": 1.0,
+        "length_expected": 1,
+        "length_predicted": 1,
+        "action_matches": 1,
+        "action_total": 1,
+        "param_matches": 1,
+        "param_total": 1
+      },
+      "mismatches": [],
+      "llm_notes": "사용자가 현재 검색 결과의 상위 3개 상품을 요약해달라고 요청함."
+    }
+  ]
+}

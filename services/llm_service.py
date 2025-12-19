@@ -796,11 +796,11 @@ JSON으로만 응답하세요."""
                 image_paths.append(local_path)
         return image_paths
 
-    def summarize_search_results(self, results: List[Any]) -> str:
+    def summarize_products(self, results: List[Any]) -> str:
         """
         Summarize the top search results.
         """
-        system_prompt = PROMPTS["summarize_search_results"]
+        system_prompt = PROMPTS["summarize_products"]
         
         # Format results for the prompt
         lines = []
@@ -829,3 +829,30 @@ JSON으로만 응답하세요."""
         except Exception as e:
             logger.error("Failed to summarize search results: %s", e)
             return "검색 결과 요약을 생성하지 못했습니다."
+
+    def summarize_page(self, html: str, *, url: Optional[str] = None, language: str = "ko") -> str:
+        """Summarize a rendered page HTML into a concise overview."""
+        system_prompt = PROMPTS["summarize_page"]
+        # Trim extremely long HTML to keep prompt size reasonable
+        max_len = 12000
+        snippet = html[:max_len]
+        user_prompt = f"""페이지 URL: {url or '알 수 없음'}
+
+HTML:
+{snippet}
+
+요약을 {language}로 작성하세요."""
+        try:
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_prompt},
+                ],
+                temperature=0.3,
+                max_tokens=300,
+            )
+            return response.choices[0].message.content.strip()
+        except Exception as e:
+            logger.error("Failed to summarize page: %s", e)
+            return "페이지 요약을 생성하지 못했습니다."

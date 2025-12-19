@@ -19,7 +19,7 @@ class SearchMixin:
             return
         # Generate summary via LLM (runs in thread to avoid blocking event loop)
         try:
-            summary = await asyncio.to_thread(self.llm.summarize_search_results, results)
+            summary = await asyncio.to_thread(self.llm.summarize_products, results)
         except Exception as e:
             logger.error("Failed to summarize results: %s", e)
             self.io_output("요약 생성에 실패했습니다. 번호를 말씀해 선택하거나 '다음상품'이라 말씀해주세요.")

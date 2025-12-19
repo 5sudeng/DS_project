@@ -70,7 +70,8 @@ JSON 형식으로 응답하세요:
 - question: 상품에 대한 질문 (query)
 - add_to_cart: 장바구니 담기 (quantity)
 - navigate_to_cart: 장바구니 이동
-- summarize: 현재 결과/상품 요약 (top_n)
+- summarize_products: 현재 검색 결과 상품 요약 (top_n)
+- summarize_page: 현재 페이지 HTML을 요약
 - exit: 종료
 
 🔍 중요: 다음 상품(within-page) vs 다음 페이지(page change) vs 상품 선택 구분:
@@ -93,13 +94,6 @@ JSON 형식으로 응답하세요:
 - "페이지 넘겨줘" → [{"action":"next_page"}]
 - "이전 페이지로 가줘" → [{"action":"prev_page"}]
 - "페이지 뒤로 가줘" → [{"action":"prev_page"}]
-- "페이지 바꿔줘" → [{"action":"goto_page"}]
-- "다른 페이지 보여줘" → [{"action":"goto_page"}]
-- "3페이지로 이동해줘" → [{"action":"goto_page","page_num":3}]
-- "5페이지" → [{"action":"goto_page","page_num":5}]
-- "2번 페이지로" → [{"action":"goto_page","page_num":2}]
-- "2 페이지로 가줘" → [{"action":"goto_page","page_num":2}]
-- "2 페이지" → [{"action":"goto_page","page_num":2}]
 - "페이지 2" → [{"action":"goto_page","page_num":2}]
 - "2번 상품 들어가줘" → [{"action":"select_product","index":2}]
 - "3번째 상품 보여줘" → [{"action":"select_product","index":3}]
@@ -112,7 +106,7 @@ JSON 형식으로 응답하세요:
 - "정렬 어떻게 해?" → [{"action":"show_sort_options"}]
 - "이거 칼로리가 얼마야?" → [{"action":"question","query":"이거 칼로리가 얼마야?"}]
 - "장바구니에 2개 넣어줘" → [{"action":"add_to_cart","quantity":2}]
-
+- "지금 페이지를 요약해줘" → [{"action":"summarize_page"}]
 출력 형식:
 {
   "actions": [
@@ -152,7 +146,7 @@ JSON만 응답한다.""",
         "주어진 참고 정보만 활용해 사실에 근거한 답변을 제공하고, "
         "추측이나 미확인 정보는 언급하지 않는다."
     ),
-    "summarize_search_results": """당신은 쇼핑 도우미입니다.
+    "summarize_products": """당신은 쇼핑 도우미입니다.
 사용자가 검색한 상품 목록(상위 3개)을 보고 요약 및 추천을 제공하세요.
 
 입력 데이터:
@@ -168,4 +162,10 @@ JSON만 응답한다.""",
 💡 추천: (추천 이유 간략하게 한문장으로 )"
 
 위와 같이 간결하게 요약해 주세요.""",
+    "summarize_page": """너는 쿠팡 페이지의 HTML을 받아 한 문단 내외로 핵심만 요약하는 도우미다.
+요약 지침:
+- 페이지 URL이 주어지면 맥락을 짧게 언급 (예: "제품 상세", "검색 결과", "리뷰 페이지" 등).
+- 주요 헤드라인/상품명/가격대/프로모션/배송 관련 안내가 있으면 포함.
+- 불필요한 스크립트/메뉴/푸터/로그인 배너 등은 무시.
+- 한국어로 3~5문장 이내로 작성.""",
 }

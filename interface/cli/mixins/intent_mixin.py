@@ -1,6 +1,7 @@
 """Mixin for intent classification and handling."""
 
 import logging
+import asyncio
 from typing import Dict, List, Any
 
 from services.llm_service import PreferenceMemory
@@ -102,7 +103,7 @@ class IntentMixin:
                             if rationale:
                                 self.io_output(f"(보강 이유: {rationale})")
                             consent = (self.io_input() or "").strip().lower()
-                            if consent in ["y", "yes", "예", "네", "ㅇ", "ㅇㅇ"]:
+                            if consent in ["y", "yes", "예", "네", "ㅇ", "ㅇㅇ", "어", "ok"]:
                                 query = augmented_query
                                 self.io_output(f"✓ 보강된 검색어로 진행합니다: '{query}'")
                                 post_search_actions = augmented_result.get("actions", []) or []
@@ -338,9 +339,11 @@ class IntentMixin:
             elif act == "navigate_to_cart":
                 await self._handle_navigate_to_cart()
             
-            elif act == "summarize":
+            elif act in ("summarize_products", "summarize"):
                 top_n = action.get("top_n", 3)
-                await self._summarize_search_results(top_n)
+                await self._summarize_products(top_n)
+            elif act == "summarize_page":
+                await self._summarize_current_page()
             
             elif act == "exit":
                 self.io_output("\n 쇼핑을 종료합니다. 감사합니다!")
@@ -362,29 +365,34 @@ class IntentMixin:
         
         message = "\n".join(lines)
         self.io_output(message)
-    async def _summarize_search_results(self, top_n: int):
-        """Summarize the search results using LLM."""
+    async def _summarize_products(self, top_n: int):
+        """Summarize current search results using LLM."""
         if not self.state.search_results:
             self.io_output("❌ 요약할 검색 결과가 없습니다.")
             return
 
         self.io_output(f"\n🧠 상위 {top_n}개 상품을 분석하고 있습니다...")
-        
-        # Prepare context for LLM
         items = self.state.search_results[:top_n]
-        items_text = "\n".join([
-            f"{i+1}. {item.title} (가격: {item.price}, 평점: {item.rating or '없음'})"
-            for i, item in enumerate(items)
-        ])
-        
         try:
-            # Display items as summary
-            self.io_output(f"\n[검색 결과 요약]\n{items_text}")
-            self.io_output("\n(상세한 AI 요약 기능은 준비 중입니다)")
-            
+            summary = await asyncio.to_thread(self.llm.summarize_products, items)
+            self.io_output(f"\n{summary}")
         except Exception as e:
             logger.error("Failed to summarize results: %s", e)
             self.io_output("⚠️ 요약 정보를 생성하지 못했습니다.")
+
+    async def _summarize_current_page(self):
+        """Summarize the currently loaded page HTML."""
+        if not getattr(self, "page", None):
+            self.io_output("❌ 브라우저 페이지가 없습니다.")
+            return
+        try:
+            self.io_output("🧠 페이지 내용을 요약하고 있습니다...")
+            html = await self.page.content()
+            summary = await asyncio.to_thread(self.llm.summarize_page, html, url=self.page.url)
+            self.io_output(f"\n{summary}")
+        except Exception as e:
+            logger.error("Failed to summarize current page: %s", e)
+            self.io_output("⚠️ 페이지 요약을 생성하지 못했습니다.")
 
     async def _handle_question(self, question: str):
         """Handle user question about the product."""
@@ -506,11 +514,17 @@ class IntentMixin:
                 self.state.current_product_name,
                 artifact_summary=self.artifact_summary,
             )
-            ### TODO
             self.io_output(f"\n {clarification_msg}")
             self.state.add_message("assistant", clarification_msg)
-            self.state.waiting_for_clarification = True
-            logger.info("Asked user for clarification regarding dissatisfaction.")
+            user_response = (self.io_input() or "").strip()
+            if not user_response:
+                self.state.waiting_for_clarification = True
+                logger.info("Awaiting user clarification regarding dissatisfaction.")
+                return
+
+            self.state.add_message("user", user_response)
+            await self._handle_clarification_response(user_response)
+            logger.info("Handled user clarification regarding dissatisfaction.")
 
     async def _handle_clarification_response(self, user_input: str):
         """Handle user's response to clarification question."""
