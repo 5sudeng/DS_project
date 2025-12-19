@@ -687,19 +687,24 @@ class SearchService:
                 return None
             
             # Extract title
-            title_elem = item.locator("a.name, div.name, dd.descriptions-inner").first
-            title = await title_elem.inner_text() if await title_elem.count() > 0 else "제목 없음"
+            title_elem = item.locator("div[class*='productName'], a.name, div.name, dd.descriptions-inner").first
+            if await title_elem.count() > 0:
+                title = await title_elem.inner_text()
+            else:
+                title = "제목 없음"
+                logger.debug(f"Title element not found for item {rank}")
+
             title = title.strip()
             
             # 제목이 너무 짧거나 없으면 스킵 (광고/배너일 가능성)
             if len(title) < 3 or title == "제목 없음":
-                logger.debug(f"Skipping item with invalid title: {title}")
+                logger.debug(f"Skipping item {rank} with invalid title: '{title}'")
                 return None
             
             # 제목에서도 광고/특가 키워드 체크
             title_lower = title.lower()
             if any(keyword in title_lower for keyword in ["특가진행중", "광고", "ad"]):
-                logger.debug(f"Skipping item with ad keyword in title: {title}")
+                logger.debug(f"Skipping item {rank} with ad keyword in title: {title}")
                 return None
 
             # Extract URL
@@ -710,28 +715,33 @@ class SearchService:
             
             # URL 검증: 실제 상품 URL인지 확인
             if not url or not ("/vp/products/" in url or "/products/" in url):
-                logger.debug(f"Skipping item with invalid URL: {url}")
+                logger.debug(f"Skipping item {rank} with invalid URL: {url}")
                 return None
                 
             if url and not url.startswith("http"):
                 url = f"https://www.coupang.com{url}"
 
             # Extract price
-            price_elem = item.locator("div.custom-oos, strong.price-value, em.sale, span.price").first
-            price = await price_elem.inner_text() if await price_elem.count() > 0 else "가격 정보 없음"
+            price_elem = item.locator("div[class*='priceArea'] div[class*='custom-oos'], div.custom-oos, strong.price-value, em.sale, span.price").first
+            if await price_elem.count() > 0:
+                price = await price_elem.inner_text()
+            else:
+                price = "가격 정보 없음"
+                logger.debug(f"Price element not found for item {rank}: {title}")
+
             price = price.strip()
             
             # 가격이 없으면 스킵
             if price == "가격 정보 없음":
-                logger.debug(f"Skipping item without price: {title}")
+                logger.debug(f"Skipping item {rank} without price: {title}")
                 return None
 
             # Extract rating (optional)
-            rating_elem = item.locator("em.rating, span.rating-star").first
+            rating_elem = item.locator("div[class*='productRating'] div[class*='star'], em.rating, span.rating-star").first
             rating = await rating_elem.inner_text() if await rating_elem.count() > 0 else None
 
             # Extract review count (optional)
-            review_elem = item.locator("span.rating-total-count, em.rating-total-count").first
+            review_elem = item.locator("span[class*='ratingCount'], span.rating-total-count, em.rating-total-count").first
             review_count = await review_elem.inner_text() if await review_elem.count() > 0 else None
 
             return SearchResult(

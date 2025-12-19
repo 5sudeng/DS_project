@@ -58,6 +58,8 @@ SELECTORS: Dict[str, Sequence[str]] = {
     ),
     "product_item": (
         # 실제 검색 결과만 선택 (광고, 추천, 특가 제외)
+        "ul#product-list > li:not(:has-text('AD')):not(:has-text('광고')):not(:has-text('특가진행중'))",
+        "ul#product-list > li",
         "ul.search-product-list > li.search-product:not(:has-text('AD')):not(:has-text('광고')):not(:has-text('특가진행중'))",
         "ul.search-product-list > li.search-product",  # 메인 검색 결과 리스트
         "div.search-product-wrap-list > li.search-product",
