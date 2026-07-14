@@ -280,6 +280,7 @@ Disable headless mode during debugging to see what's happening in the browser.
 
 ### No Search Results
 Open browser visually to inspect CSS selectors.
+If the DOM structure of Coupang changes, update `config/selectors.py` and `services/search_service.py` accordingly.
 
 ## License
 This project is intended for research and educational use only.
