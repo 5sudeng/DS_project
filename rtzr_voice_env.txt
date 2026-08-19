@@ -1,0 +1,4 @@
+# RTZR voice configuration
+RTZR_CLIENT_ID=MZdY1Ll2VlnN2OahP7h1
+RTZR_CLIENT_SECRET=Fiey1zKUa5bw3IuOwUj0eoyyiEE8bYkDIhbe_PFf
+STT_MODEL=somers1

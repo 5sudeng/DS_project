@@ -11,4 +11,4 @@ if [ ! -f "$PYTHON_EXEC" ]; then
 fi
 
 echo "Using Python: $PYTHON_EXEC"
-"$PYTHON_EXEC" main.py --cookie-file=cookie.txt "$@"
+"$PYTHON_EXEC" main.py --cookie-file=cookie.txt --keyboard-voice "$@"

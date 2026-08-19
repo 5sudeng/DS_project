@@ -9,6 +9,7 @@ import sys
 import argparse
 from pathlib import Path
 from interface.cli import ShoppingCLI
+from interface.cli.mixins.io_mixin import IOMixin
 
 async def main():
     """Entry point."""
@@ -26,6 +27,7 @@ async def main():
         default=0.5,
         help="OCR API 호출 사이 대기 시간(초)",
     )
+    IOMixin.add_io_arguments(parser)
 
     args = parser.parse_args()
 
@@ -49,13 +51,16 @@ async def main():
         api_key=api_key,
         run_dir=args.run_dir,
         ocr_delay=args.ocr_delay,
+        input_mode=args.input_mode,
+        output_mode=args.output_mode,
+        keyboard_voice=args.keyboard_voice,
+        stt_backend=args.stt_backend,
     )
 
-    await cli.run()
+    try:
+        await cli.run()
+    except KeyboardInterrupt:
+        cli.io_output("\n👋 종료합니다.")
 
 if __name__ == "__main__":
-    try:
-        asyncio.run(main())
-    except KeyboardInterrupt:
-        ### TODO
-        print("\n👋 종료합니다.")
+    asyncio.run(main())

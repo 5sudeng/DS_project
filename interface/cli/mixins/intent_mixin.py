@@ -1,89 +1,426 @@
 """Mixin for intent classification and handling."""
 
 import logging
-from typing import Dict
+import asyncio
+import json
+from typing import Dict, List, Any
+
+from services.llm_service import PreferenceMemory
 
 logger = logging.getLogger(__name__)
 
 class IntentMixin:
     """Mixin for handling user intent."""
+    
+    def __init__(self):
+        # Initialize preference memory if not already done by parent/other mixins
+        if not hasattr(self, 'preference_memory'):
+            self.preference_memory = PreferenceMemory()
+        if not hasattr(self, 'ai_memory_enabled'):
+            self.ai_memory_enabled = False
+            
+    async def _ask_ai_memory_preference(self):
+        """Ask user whether to enable AI memory (preferences/augment/re-query)."""
+        if self.ai_memory_enabled:
+            return
+        
+        self.io_output("AI 메모리(선호 반영/재질문) 기능을 켤까요? (예/아니오): ")
+        choice = (self.io_input() or "").strip().lower()
+        
+        if choice in ["예", "y", "yes", "네", "ㅇㅇ",'어']:
+            self.ai_memory_enabled = True
+            self.io_output("AI 메모리를 활성화했습니다. 이제 당신의 취향을 기억합니다!")
+            
+            # Load identity if exists
+            if self.preference_memory.identity:
+                self.io_output(f"기억된 쇼핑 성향: {self.preference_memory.identity}")
+        else:
+            self.io_output("AI 메모리를 비활성화한 채로 진행합니다.")
 
     async def _handle_user_input(self, user_input: str) -> bool:
-        """Handle user input based on current state. Returns False if conversation should end."""
+        """Handle user input by mapping to actions and executing them."""
         logger.info("Handling user input: %s", user_input)
 
-        # If waiting for clarification about dissatisfaction
-        if self.state.waiting_for_clarification:
-            logger.info("Awaiting clarification; routing response.")
-            await self._handle_clarification_response(user_input)
+        # 2. Map command to actions using LLM (자연어 처리)
+        result = self.llm.map_command_to_actions(user_input)
+        actions = result.get("actions", [])
+        notes = result.get("notes", "")
+
+        self.console_print(
+            "[debug] mapped actions: "
+            + json.dumps(actions, ensure_ascii=False, separators=(",", ":"))
+        )
+        
+        if notes:
+            logger.info("Action mapping notes: %s", notes)
+            
+        if not actions:
+            # Fallback to simple conversation or error message
+            response = "죄송합니다. 명령을 이해하지 못했습니다. 다시 말씀해주시겠어요?"
+            self.io_output(f" {response}")
+            self.state.add_message("assistant", response)
             return True
 
-        # Check if user is selecting from search results
-        if self.state.search_results:
-            if user_input.isdigit():
-                logger.info("User selecting search result index=%s", user_input)
-                await self._select_search_result(int(user_input))
-                return True
-
-        # Use LLM to classify intent
-        intent_result = self.llm.classify_intent(
-            user_input,
-            self.state.conversation_history,
-            self.state.current_product_name,
-            artifact_summary=self.artifact_summary,
-        )
-        ### status
-        print(f"\n[의도 파악: {intent_result['intent']} (신뢰도: {intent_result['confidence']:.2f})]")
-        logger.info(
-            "Intent classification result intent=%s confidence=%.2f",
-            intent_result["intent"],
-            intent_result["confidence"],
-        )
-
-        intent = intent_result["intent"]
-
-        if intent == "question":
-            await self._handle_question(user_input)
-        elif intent == "add_to_cart":
-            await self._handle_add_to_cart(intent_result)
-        elif intent == "navigate_to_cart":
-            await self._handle_navigate_to_cart()
-        elif intent == "satisfied":
-            await self._handle_satisfied()
-        elif intent == "dissatisfied":
-            await self._handle_dissatisfied(intent_result)
-        elif intent == "exit":
-            ### TODO
-            print("\n👋 쇼핑을 종료합니다. 감사합니다!")
-            return False
-        else:
-            response = intent_result.get("response_suggestion", "죄송합니다. 잘 이해하지 못했습니다. 다시 말씀해주시겠어요?")
-            ### TODO
-            print(f"\n🤖 {response}")
-            self.state.add_message("assistant", response)
-
-        # Check if we should suggest adding to cart (unless already adding to cart or exiting)
-        if intent not in ["add_to_cart", "navigate_to_cart", "exit"] and intent_result.get("suggest_purchase"):
-            await self._suggest_add_to_cart()
-            
+        # Execute actions
+        await self._execute_actions(actions)
+        
+        # Check if any action was 'exit'
+        for action in actions:
+            if action.get("action") == "exit":
+                # Update identity on exit if enabled
+                if self.ai_memory_enabled:
+                    new_identity = self.llm.infer_shopping_identity(self.preference_memory)
+                    if new_identity:
+                        self.preference_memory.save_identity(new_identity)
+                        logger.info("Updated shopping identity: %s", new_identity)
+                return False
+                
         return True
+
+    async def _execute_actions(self, actions: List[Dict[str, Any]]):
+        """Execute ordered actions produced by LLM mapping."""
+        for action in actions:
+            act = action.get("action")
+            logger.info("Executing action: %s", act)
+            
+            if act == "open_url":
+                url = action.get("url")
+                if url:
+                    self.io_output(f"{url}로 이동합니다...")
+                    await self.page.goto(url, wait_until="domcontentloaded", timeout=25000)
+                    self.state.current_url = self.page.url
+                    self.io_output("페이지에 접속했습니다.")
+            
+            elif act == "search_page":
+                query = action.get("query")
+                if query:
+                    post_search_actions = []
+                    # Augment query if memory enabled
+                    if self.ai_memory_enabled:
+                        augmented_result = self.llm.augment_user_query(
+                            query, 
+                            self.preference_memory, 
+                            self.state.conversation_history
+                        )
+                        augmented_query = augmented_result.get("query", query)
+                        if augmented_result.get("augmented") and augmented_query != query:
+                            rationale = augmented_result.get("rationale", "")
+                            self.io_output(f"'{query}'을(를) 찾고 계신데 '{augmented_query}'로 검색해볼까요?")
+                            if rationale:
+                                self.io_output(f"(보강 이유: {rationale})")
+                            consent = (self.io_input() or "").strip().lower()
+                            if consent in ["y", "yes", "예", "네", "ㅇ", "ㅇㅇ", "어", "ok"]:
+                                query = augmented_query
+                                self.io_output(f"✓ 보강된 검색어로 진행합니다: '{query}'")
+                                post_search_actions = augmented_result.get("actions", []) or []
+                            else:
+                                self.io_output("기존 검색어로 진행합니다.")
+                            
+                            # Check if we need more info (Re-query)
+                            follow_up = self.llm.generate_requery_question(
+                                query,
+                                self.preference_memory,
+                                self.state.conversation_history
+                            )
+                            
+                            if follow_up:
+                                self.io_output(f"\n{follow_up}")
+                                answer = (self.io_input() or "").strip()
+                                if answer:
+                                    query = f"{query} {answer}"
+                                    self.io_output(f"✓ '{query}'(으)로 검색합니다.")
+                    # Persist structured memory for searches
+                    if self.ai_memory_enabled:
+                        guessed_category = self.preference_memory.guess_category(query)
+                        self.state.current_category = guessed_category
+                        self.preference_memory.log_search(query, category=guessed_category)
+
+                    await self._perform_search(query)
+                    await self._select_from_search_results()
+                    if post_search_actions:
+                        await self._execute_actions(post_search_actions)
+            
+            elif act == "select_product":
+                index = action.get("index")
+                url = action.get("url")
+                if index:
+                    await self._select_search_result(int(index))
+                elif url:
+                    await self._load_product(url)
+            
+            elif act == "apply_sort":
+                sort_type = action.get("sort_type")
+                if sort_type:
+                    self.io_output(f"'{sort_type}' 정렬을 적용합니다. 잠시만 기다려 주세요.")
+                    result = await self.search_agent.apply_sort(sort_type)
+                    
+                    for warning in result.warnings:
+                        self.console_print(f"  {warning}")
+                        
+                    if result.success:
+                        # Update state with new results and save sort option
+                        from services.search_service import SearchResult
+                        converted_results = [
+                            SearchResult(
+                                rank=r.index,
+                                title=r.title,
+                                price=r.price,
+                                url=r.url,
+                                rating=r.rating
+                            ) for r in result.results
+                        ]
+                        self.state.all_search_results = converted_results
+                        self.state.search_results = converted_results[:self.state.results_per_page]
+                        self.state.page_offset = len(self.state.search_results)
+                        self.state.current_sort_option = sort_type  # 정렬 옵션 저장
+                        self.io_output(f"{sort_type} 정렬이 완료되었습니다. 요약을 알려드릴게요.")
+                        if self.ai_memory_enabled:
+                            self.preference_memory.log_sort(
+                                sort_type,
+                                query=self.state.current_search_query,
+                                category=self.state.current_category,
+                            )
+                        if hasattr(self, '_output_results_summary'):
+                            await self._output_results_summary(self.state.search_results)
+                    else:
+                        self.io_output(f"정렬 적용 실패: {result.error}")
+            
+            elif act == "apply_shipping":
+                option = action.get("shipping_option")
+                if option:
+                    self.io_output(f"'{option}' 필터를 적용합니다. 잠시만 기다려 주세요.")
+                    result = await self.search_agent.apply_shipping_filter(option)
+                    
+                    for warning in result.warnings:
+                        self.console_print(f"⚠️  {warning}")
+                        
+                    if result.success:
+                        # Update state with new results and save shipping filter
+                        from services.search_service import SearchResult
+                        converted_results = [
+                            SearchResult(
+                                rank=r.index,
+                                title=r.title,
+                                price=r.price,
+                                url=r.url,
+                                rating=r.rating
+                            ) for r in result.results
+                        ]
+                        self.state.all_search_results = converted_results
+                        self.state.search_results = converted_results[:self.state.results_per_page]
+                        self.state.page_offset = len(self.state.search_results)
+                        self.state.current_shipping_filter = option  # 배송비 필터 저장
+                        self.io_output(f"'{option}' 필터가 적용되었습니다. 요약을 알려드릴게요.")
+                        if hasattr(self, '_output_results_summary'):
+                            await self._output_results_summary(self.state.search_results)
+                    else:
+                        self.io_output(f"배송비 필터 적용 실패: {result.error}")
+            
+            elif act == "read_results":
+                top_n = action.get("top_n", 3)
+                await self._read_search_results(top_n)
+            
+            elif act == "next_items":
+                count = action.get("count", 3)
+                await self._show_next_results(count)
+            
+            elif act == "prev_items":
+                count = action.get("count", 3)
+                await self._show_prev_results(count)
+            
+            elif act == "next_page":
+                if not self.state.current_search_query:
+                    self.io_output("진행 중인 검색이 없습니다. 먼저 상품을 검색해주세요.")
+                else:
+                    self.io_output(f"다음 페이지로 이동하고 있습니다. 잠시만 기다려 주세요.")
+                    # 실제 쿠팡 다음 페이지 이동
+                    result = await self.search_agent.go_to_next_page()
+                    if result.success:
+                        self.state.current_page += 1
+                        self.state.page_offset = 0
+                        
+                        # Convert results
+                        from services.search_service import SearchResult
+                        converted_results = [
+                            SearchResult(
+                                rank=r.index,
+                                title=r.title,
+                                price=r.price,
+                                url=r.url,
+                                rating=r.rating
+                            ) for r in result.results
+                        ]
+                        
+                        self.state.all_search_results = converted_results
+                        first_batch = converted_results[:self.state.results_per_page]
+                        self.state.search_results = first_batch
+                        self.state.page_offset = len(first_batch)
+                        
+                        self.io_output(f"{self.state.current_page}페이지로 이동했습니다. 요약을 알려드릴게요.")
+                        # Display results
+                        await self._display_current_results()
+                    else:
+                        self.io_output(f"페이지 이동에 실패했습니다. {result.error}")
+
+            elif act == "prev_page":
+                if not self.state.current_search_query:
+                    self.io_output("진행 중인 검색이 없습니다. 먼저 상품을 검색해주세요.")
+                elif self.state.current_page > 1:
+                    self.io_output(f"이전 페이지로 이동하고 있습니다. 잠시만 기다려 주세요.")
+                    # 실제 쿠팡 이전 페이지 이동
+                    result = await self.search_agent.go_to_prev_page()
+                    if result.success:
+                        self.state.current_page -= 1
+                        self.state.page_offset = 0
+                        
+                        # Convert results
+                        from services.search_service import SearchResult
+                        converted_results = [
+                            SearchResult(
+                                rank=r.index,
+                                title=r.title,
+                                price=r.price,
+                                url=r.url,
+                                rating=r.rating
+                            ) for r in result.results
+                        ]
+                        
+                        self.state.all_search_results = converted_results
+                        first_batch = converted_results[:self.state.results_per_page]
+                        self.state.search_results = first_batch
+                        self.state.page_offset = len(first_batch)
+                        
+                        self.io_output(f"{self.state.current_page}페이지로 이동했습니다. 요약을 알려드릴게요.")
+                        # Display results
+                        await self._display_current_results()
+                    else:
+                        self.io_output(f"페이지 이동에 실패했습니다. {result.error}")
+                else:
+                    self.io_output("현재 첫 번째 페이지입니다. 이전 페이지가 없습니다.")
+
+            elif act == "goto_page":
+                page_num = action.get("page_num")
+                if page_num:
+                    if not self.state.current_search_query:
+                        self.io_output("진행 중인 검색이 없습니다. 먼저 상품을 검색해주세요.")
+                    elif int(page_num) < 1:
+                        self.io_output("1 이상의 페이지 번호를 입력해주세요.")
+                    else:
+                        self.io_output(f"{page_num}페이지로 이동하고 있습니다. 잠시만 기다려 주세요.")
+                        self.state.current_page = int(page_num)
+                        self.state.page_offset = 0
+                        await self._load_current_page()
+            
+            elif act == "show_sort_options":
+                # 정렬 옵션 안내
+                sort_options = [
+                    "쿠팡랭킹순 - 쿠팡에서 추천하는 순서대로 정렬합니다",
+                    "낮은가격순 - 가격이 낮은 상품부터 보여줍니다",
+                    "높은가격순 - 가격이 높은 상품부터 보여줍니다",
+                    "판매량순 - 많이 팔린 상품부터 보여줍니다",
+                    "최신순 - 최근에 등록된 상품부터 보여줍니다",
+                    "평점순 - 평점이 높은 상품부터 보여줍니다"
+                ]
+                message = "사용 가능한 정렬 방법은 다음과 같습니다. " + ", ".join([opt.split(" - ")[0] for opt in sort_options])
+                message += ". 예를 들어 낮은가격순으로 정렬해줘, 또는 판매량 많은 순으로 라고 말씀해주세요."
+                self.io_output(message)
+            
+            elif act == "show_related_keywords":
+                await self._handle_related_keywords()
+            
+            elif act == "select_related_keyword":
+                keyword = action.get("keyword")
+                if keyword:
+                    await self._select_related_keyword(keyword)
+            
+            elif act == "question":
+                query = action.get("query")
+                if query:
+                    await self._handle_question(query)
+            
+            elif act == "add_to_cart":
+                quantity = action.get("quantity", 1)
+                await self._handle_add_to_cart({"quantity": quantity})
+            
+            elif act == "navigate_to_cart":
+                await self._handle_navigate_to_cart()
+            
+            elif act in ("summarize_products", "summarize"):
+                top_n = action.get("top_n", 3)
+                await self._summarize_products(top_n)
+            elif act == "summarize_page":
+                await self._summarize_current_page()
+            
+            elif act == "exit":
+                self.io_output("\n 쇼핑을 종료합니다. 감사합니다!")
+
+    async def _read_search_results(self, top_n: int):
+        """Read out the top N search results."""
+        if not self.state.search_results:
+            self.io_output(" 읽어드릴 검색 결과가 없습니다.")
+            return
+
+        items = self.state.search_results[:top_n]
+        lines = [f"\n상위 {len(items)}개 상품:"]
+        for idx, res in enumerate(items, 1):
+            lines.append(f"{idx}. {res.title}")
+            lines.append(f"   가격: {res.price}")
+            if res.rating:
+                lines.append(f"   평점: {res.rating}")
+            lines.append("")
+        
+        message = "\n".join(lines)
+        self.io_output(message)
+    async def _summarize_products(self, top_n: int):
+        """Summarize current search results using LLM."""
+        if not self.state.search_results:
+            self.io_output("❌ 요약할 검색 결과가 없습니다.")
+            return
+
+        self.io_output(f"\n🧠 상위 {top_n}개 상품을 분석하고 있습니다...")
+        items = self.state.search_results[:top_n]
+        try:
+            summary = await asyncio.to_thread(self.llm.summarize_products, items)
+            self.io_output(f"\n{summary}")
+        except Exception as e:
+            logger.error("Failed to summarize results: %s", e)
+            self.io_output("⚠️ 요약 정보를 생성하지 못했습니다.")
+
+    async def _summarize_current_page(self):
+        """Summarize the currently loaded page HTML."""
+        if not getattr(self, "page", None):
+            self.io_output("❌ 브라우저 페이지가 없습니다.")
+            return
+        try:
+            self.io_output("🧠 페이지 내용을 요약하고 있습니다...")
+            html = await self.page.content()
+            summary = await asyncio.to_thread(self.llm.summarize_page, html, url=self.page.url)
+            self.io_output(f"\n{summary}")
+        except Exception as e:
+            logger.error("Failed to summarize current page: %s", e)
+            self.io_output("⚠️ 페이지 요약을 생성하지 못했습니다.")
 
     async def _handle_question(self, question: str):
         """Handle user question about the product."""
         ### TODO
-        print("\n⏳ 질문에 답변하는 중...")
+        self.io_output("\n질문에 답변하는 중...")
         logger.info("Processing question intent: %s", question)
 
         answer = await self.product_agent.answer_user_question(question)
         ### TODO
-        print(f"\n🤖 {answer}")
-
+        self.io_output(f"\n {answer}")
         self.state.add_message("assistant", answer)
+        if self.ai_memory_enabled:
+            self.preference_memory.log_product_question(
+                question,
+                product_name=self.state.current_product_name,
+                category=self.state.current_category,
+            )
 
     async def _handle_add_to_cart(self, intent_result: Dict = None):
         """Handle when user explicitly wants to add to cart."""
         ### TODO
-        print("\n⏳ 장바구니에 담는 중...")
+        self.io_output("\n 장바구니에 담는 중...")
         logger.info("Processing add_to_cart intent")
 
         quantity = 1
@@ -91,21 +428,46 @@ class IntentMixin:
             quantity = intent_result.get("quantity", 1)
 
         result = await self.product_agent.add_product_to_cart(quantity=quantity)
-        ### TODO
-        print(f"\n🤖 {result}")
-        self.state.add_message("assistant", result)
-
-        ### TODO
-        print("\n💡 다른 상품을 더 찾아보시겠어요? (검색어 입력 또는 'exit'로 종료)")
+        
+        # Handle warnings
+        for warning in result.warnings:
+            self.console_print(f"⚠️  {warning}")
+        
+        if result.success:
+            ### TODO
+            self.io_output(f"\n {result.message}")
+            self.state.add_message("assistant", result.message)
+            ### TODO
+            self.io_output("\n 다른 상품을 더 찾아보시겠어요? (검색어 입력 또는 장바구니로 이동 또는 종료)")
+            if self.ai_memory_enabled:
+                self.preference_memory.log_add_to_cart(
+                    self.state.current_product_name,
+                    quantity=quantity,
+                    category=self.state.current_category,
+                )
+        else:
+            self.io_output(f"\n❌ {result.error}")
+            self.state.add_message("assistant", result.error)
 
     async def _handle_navigate_to_cart(self):
         """Handle when user wants to navigate to cart page."""
-        print("\n⏳ 장바구니 페이지로 이동 중...")
+        ### status
+        self.console_print("\n 장바구니 페이지로 이동 중...")
         logger.info("Processing navigate_to_cart intent")
 
         result = await self.product_agent.navigate_to_cart()
-        print(f"\n🤖 {result}")
-        self.state.add_message("assistant", result)
+        
+        # Handle warnings
+        for warning in result.warnings:
+            self.console_print(f"⚠️  {warning}")
+        
+        if result.success:
+            ### TODO
+            self.io_output(f"\n {result.message}")
+            self.state.add_message("assistant", result.message)
+        else:
+            self.io_output(f"\n❌ {result.error}")
+            self.state.add_message("assistant", result.error)
 
     async def _handle_satisfied(self):
         """Handle when user expresses satisfaction but not explicit buy command."""
@@ -113,7 +475,7 @@ class IntentMixin:
         
         response = "마음에 드신다니 다행이네요! 더 궁금한 점이 있으신가요?"
         ### TODO
-        print(f"\n🤖 {response}")
+        self.io_output(f"\n {response}")
         self.state.add_message("assistant", response)
 
     async def _handle_dissatisfied(self, intent_result: Dict):
@@ -129,9 +491,9 @@ class IntentMixin:
             keywords = intent_result.get("keywords", [])
 
             ### TODO
-            print(f"\n🔍 이해했습니다: {reason}")
+            self.io_output(f"\n 이해했습니다: {reason}")
             ### TODO
-            print("새로운 상품을 찾아보겠습니다...")
+            self.io_output("새로운 상품을 찾아보겠습니다...")
 
             # Generate search query using LLM
             search_query = self.llm.generate_search_query(
@@ -142,8 +504,11 @@ class IntentMixin:
                 artifact_summary=self.artifact_summary,
             )
 
-            ### TODO
-            print(f"💡 검색어: '{search_query}'")
+            self.io_output(f"💡 검색어: '{search_query}'")
+            if self.ai_memory_enabled:
+                guessed_category = self.preference_memory.guess_category(search_query)
+                self.state.current_category = guessed_category
+                self.preference_memory.log_search(search_query, category=guessed_category)
             await self._perform_search(search_query)
             await self._select_from_search_results()
             logger.info("Search triggered with query='%s'", search_query)
@@ -155,11 +520,17 @@ class IntentMixin:
                 self.state.current_product_name,
                 artifact_summary=self.artifact_summary,
             )
-            ### TODO
-            print(f"\n🤖 {clarification_msg}")
+            self.io_output(f"\n {clarification_msg}")
             self.state.add_message("assistant", clarification_msg)
-            self.state.waiting_for_clarification = True
-            logger.info("Asked user for clarification regarding dissatisfaction.")
+            user_response = (self.io_input() or "").strip()
+            if not user_response:
+                self.state.waiting_for_clarification = True
+                logger.info("Awaiting user clarification regarding dissatisfaction.")
+                return
+
+            self.state.add_message("user", user_response)
+            await self._handle_clarification_response(user_response)
+            logger.info("Handled user clarification regarding dissatisfaction.")
 
     async def _handle_clarification_response(self, user_input: str):
         """Handle user's response to clarification question."""
@@ -178,9 +549,9 @@ class IntentMixin:
         keywords = intent_result.get("keywords", [])
 
         ### TODO
-        print(f"\n🔍 알겠습니다: {reason}")
+        self.io_output(f"\n 알겠습니다: {reason}")
         ### TODO
-        print("새로운 상품을 찾아보겠습니다...")
+        self.io_output("새로운 상품을 찾아보겠습니다...")
 
         search_query = self.llm.generate_search_query(
             self.state.current_product_name,
@@ -190,8 +561,11 @@ class IntentMixin:
             artifact_summary=self.artifact_summary,
         )
 
-        ### TODO
-        print(f"💡 검색어: '{search_query}'")
+        self.io_output(f"💡 검색어: '{search_query}'")
+        if self.ai_memory_enabled:
+            guessed_category = self.preference_memory.guess_category(search_query)
+            self.state.current_category = guessed_category
+            self.preference_memory.log_search(search_query, category=guessed_category)
         await self._perform_search(search_query)
         await self._select_from_search_results()
         logger.info("Search triggered from clarification with query='%s'", search_query)
@@ -199,6 +573,5 @@ class IntentMixin:
     async def _suggest_add_to_cart(self):
         """Suggest adding the product to cart."""
         suggestion = "\n\n💡 이 상품이 마음에 드시나요? 장바구니에 담아드릴까요? (예/아니오)"
-        ### TODO
-        print(suggestion)
+        self.io_output(suggestion)
         self.state.add_message("assistant", suggestion)

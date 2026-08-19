@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+from pathlib import Path
 from typing import Any, Dict, Optional
 
 from playwright.async_api import Browser, Page, async_playwright
@@ -23,11 +24,12 @@ from services.llm_service import ShoppingLLMService
 from interface.cli.mixins.browser_mixin import BrowserMixin
 from interface.cli.mixins.search_mixin import SearchMixin
 from interface.cli.mixins.intent_mixin import IntentMixin
+from interface.cli.mixins.io_mixin import IOMixin
 
 logger = logging.getLogger(__name__)
 
 
-class ShoppingCLI(BrowserMixin, SearchMixin, IntentMixin):
+class ShoppingCLI(BrowserMixin, SearchMixin, IntentMixin, IOMixin):
     """Interactive CLI for shopping with AI assistance."""
 
     def __init__(
@@ -37,18 +39,38 @@ class ShoppingCLI(BrowserMixin, SearchMixin, IntentMixin):
         api_key: Optional[str] = None,
         run_dir: Optional[str] = None,
         ocr_delay: float = 0.5,
+        input_mode: str = "voice",
+        output_mode: str = "both",
+        keyboard_voice: bool = False,
+        stt_backend: str = "rtzr",
     ):
         self.headless = headless
         self.run_dir = run_dir
         self.state = ConversationState()
         self.api_key = api_key
         self.llm = ShoppingLLMService(api_key=api_key)
+        
+        # Initialize Mixins
+        IntentMixin.__init__(self)
+        IOMixin.__init__(
+            self,
+            input_mode=input_mode,
+            output_mode=output_mode,
+            keyboard_voice=keyboard_voice,
+            voice_backend=stt_backend,
+        )
 
         # Playwright objects (initialized in run())
         self.browser: Optional[Browser] = None
         self.page: Optional[Page] = None
         self.product_agent: Optional[BrowserService] = None
         self.search_agent: Optional[SearchService] = None
+
+        # Auto-detect cookie.txt if not specified
+        if cookie_file is None and Path("cookie.txt").exists():
+            logger.info("No cookie file specified, found 'cookie.txt' in current directory. Using it.")
+            cookie_file = "cookie.txt"
+
         self.cookie_text: Optional[str] = load_cookie_text(cookie_file)
         self.cookie_header_value: Optional[str] = build_cookie_header(self.cookie_text)
         self.cookie_records = parse_cookie_records(self.cookie_text)
@@ -62,12 +84,14 @@ class ShoppingCLI(BrowserMixin, SearchMixin, IntentMixin):
 
     async def run(self):
         """Main entry point for the interactive CLI."""
+        self.setup_io_patching()
+        
         ### status
-        print("=" * 60)
+        self.console_print("=" * 60)
         ### TODO
-        print("🛍️  쿠팡 쇼핑 도우미에 오신 것을 환영합니다!")
+        self.io_output("쿠팡 쇼핑 도우미에 오신 것을 환영합니다!")
         ### status
-        print("=" * 60)
+        self.console_print("=" * 60)
         logger.info("InteractiveShoppingCLI started (headless=%s, run_dir=%s)", self.headless, self.run_dir)
 
         async with async_playwright() as playwright:
@@ -83,11 +107,9 @@ class ShoppingCLI(BrowserMixin, SearchMixin, IntentMixin):
             self.page = session.page
 
             if session.applied_cookie_count:
-                ### status
-                print(f"✓ {session.applied_cookie_count}개의 쿠키 로드됨 (봇 방어 쿠키 포함)")
+                self.console_print(f"{session.applied_cookie_count}개의 쿠키 로드됨 (봇 방어 쿠키 포함)")
             elif self.cookie_text:
-                ### status
-                print("⚠️  쿠키 파일을 읽었지만 적용 가능한 쿠키를 찾지 못했습니다.")
+                self.io_output("쿠키 파일을 읽었지만 적용 가능한 쿠키를 찾지 못했습니다.")
 
             self.product_agent = BrowserService(
                 self.page,
@@ -100,19 +122,19 @@ class ShoppingCLI(BrowserMixin, SearchMixin, IntentMixin):
                 await self._conversation_loop()
             except KeyboardInterrupt:
                 ### TODO
-                print("\n\n👋 쇼핑을 종료합니다. 감사합니다!")
+                self.io_output("\n\n쇼핑을 종료합니다. 감사합니다!")
             finally:
                 await self.browser.close()
 
     async def _conversation_loop(self):
         """Main conversation loop."""
-        # Step 1: Get initial product URL
-        await self._get_initial_product()
+        # Step 0: Ask for AI memory preference
+        await self._ask_ai_memory_preference()
 
-        # Step 2: Conversation loop
+        # Step 1: Conversation loop
         while True:
-            ### voiceinput
-            user_input = input("\n💬 > ").strip()
+            self.io_output("무엇을 도와드릴까요?")
+            user_input = (self.io_input() or "").strip()
 
             if not user_input:
                 continue
@@ -125,6 +147,6 @@ class ShoppingCLI(BrowserMixin, SearchMixin, IntentMixin):
                     break
             except Exception as e:
                 ### TODO
-                print(f"\n❌ 오류가 발생했습니다: {e}")
+                self.io_output(f"\n오류가 발생했습니다: {e}")
                 ### TODO
-                print("다시 시도해주세요.")
+                self.io_output("다시 시도해주세요.")

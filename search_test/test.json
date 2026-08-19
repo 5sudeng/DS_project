@@ -1,0 +1,1133 @@
+{
+  "test_cases": [
+    {
+      "id": 1,
+      "difficulty": "H",
+      "user_utterance": "쿠팡 열고 무선 이어폰 찾아서 판매량순으로 정렬한 다음 3개 읽어줘.",
+      "expected": {
+        "actions": [
+          { "action": "open_url", "url": "https://www.coupang.com" },
+          { "action": "search_page", "query": "무선 이어폰" },
+          { "action": "apply_sort", "sort_type": "판매량순" },
+          { "action": "read_results", "top_n": 3 }
+        ],
+        "notes": "사이트 이동→검색→정렬→상위 N개 읽기"
+      }
+    },
+    {
+      "id": 2,
+      "difficulty": "H",
+      "user_utterance": "로봇청소기 검색하고 배송비 포함으로 걸고 평점순으로 정렬해서 상위 5개 요약해줘.",
+      "expected": {
+        "actions": [
+          { "action": "search_page", "query": "로봇청소기" },
+          { "action": "apply_shipping", "shipping_option": "배송비포함" },
+          { "action": "apply_sort", "sort_type": "평점순" },
+          { "action": "summarize_products", "top_n": 5 }
+        ],
+        "notes": "검색→배송필터→정렬→상위 N개 요약"
+      }
+    },
+    {
+      "id": 3,
+      "difficulty": "H",
+      "user_utterance": "아이폰 15 케이스 찾아보고 연관 검색어도 보여줘. 그중에 '맥세이프'로 다시 검색해서 낮은가격순으로 3개 보여줘.",
+      "expected": {
+        "actions": [
+          { "action": "search_page", "query": "아이폰 15 케이스" },
+          { "action": "show_related_keywords" },
+          { "action": "select_related_keyword", "keyword": "맥세이프" },
+          { "action": "apply_sort", "sort_type": "낮은가격순" },
+          { "action": "read_results", "top_n": 3 }
+        ],
+        "notes": "검색→연관어 확인→연관어로 재검색→정렬→읽기"
+      }
+    },
+    {
+      "id": 4,
+      "difficulty": "H",
+      "user_utterance": "게이밍 마우스 검색해서 랭킹순으로 정렬하고 3개 읽어준 다음, 다음 상품 3개도 더 보여줘.",
+      "expected": {
+        "actions": [
+          { "action": "search_page", "query": "게이밍 마우스" },
+          { "action": "apply_sort", "sort_type": "랭킹순" },
+          { "action": "read_results", "top_n": 3 },
+          { "action": "next_items", "count": 3 }
+        ],
+        "notes": "‘다음 상품’은 페이지 이동이 아니라 next_items"
+      }
+    },
+    {
+      "id": 5,
+      "difficulty": "H",
+      "user_utterance": "전기포트 검색하고 최신순으로 정렬한 다음 2페이지로 가서 3개 읽어줘.",
+      "expected": {
+        "actions": [
+          { "action": "search_page", "query": "전기포트" },
+          { "action": "apply_sort", "sort_type": "최신순" },
+          { "action": "goto_page", "page_num": 2 },
+          { "action": "read_results", "top_n": 3 }
+        ],
+        "notes": "정렬 후 특정 페이지 이동(goto_page)→읽기"
+      }
+    },
+    {
+      "id": 6,
+      "difficulty": "H",
+      "user_utterance": "캠핑 의자 검색해서 높은가격순으로 정렬하고 3개 읽어줘. 그리고 다음 페이지로도 넘어가줘.",
+      "expected": {
+        "actions": [
+          { "action": "search_page", "query": "캠핑 의자" },
+          { "action": "apply_sort", "sort_type": "높은가격순" },
+          { "action": "read_results", "top_n": 3 },
+          { "action": "next_page" }
+        ],
+        "notes": "읽기 후 next_page(페이지 전환)"
+      }
+    },
+    {
+      "id": 7,
+      "difficulty": "H",
+      "user_utterance": "커피머신 검색해서 판매량순으로 정렬하고 첫번째 상품 들어가서 장바구니에 1개 담아줘.",
+      "expected": {
+        "actions": [
+          { "action": "search_page", "query": "커피머신" },
+          { "action": "apply_sort", "sort_type": "판매량순" },
+          { "action": "select_product", "index": 1 },
+          { "action": "add_to_cart", "quantity": 1 }
+        ],
+        "notes": "정렬 후 특정 상품 선택→장바구니 담기"
+      }
+    },
+    {
+      "id": 8,
+      "difficulty": "H",
+      "user_utterance": "노트북 거치대 검색해서 평점순으로 정렬하고 2번 상품 들어가서 이거 재질이 뭐야? 라고 물어봐.",
+      "expected": {
+        "actions": [
+          { "action": "search_page", "query": "노트북 거치대" },
+          { "action": "apply_sort", "sort_type": "평점순" },
+          { "action": "select_product", "index": 2 },
+          { "action": "question", "query": "이거 재질이 뭐야?" }
+        ],
+        "notes": "상품 상세 진입 후 question으로 스펙 질의"
+      }
+    },
+    {
+      "id": 9,
+      "difficulty": "H",
+      "user_utterance": "공기청정기 검색하고 배송비 제외로 설정해. 그리고 정렬 방법 뭐 있는지 보여준 다음 판매량순으로 정렬해서 3개 읽어줘.",
+      "expected": {
+        "actions": [
+          { "action": "search_page", "query": "공기청정기" },
+          { "action": "apply_shipping", "shipping_option": "배송비제외" },
+          { "action": "show_sort_options" },
+          { "action": "apply_sort", "sort_type": "판매량순" },
+          { "action": "read_results", "top_n": 3 }
+        ],
+        "notes": "배송필터→정렬옵션 조회→정렬 적용→읽기"
+      }
+    },
+    {
+      "id": 10,
+      "difficulty": "H",
+      "user_utterance": "쿠팡 들어가서 생수 검색해줘. 정렬 옵션도 먼저 보여주고, 낮은가격순으로 정렬해서 상위 5개 요약해줘.",
+      "expected": {
+        "actions": [
+          { "action": "open_url", "url": "https://www.coupang.com" },
+          { "action": "search_page", "query": "생수" },
+          { "action": "show_sort_options" },
+          { "action": "apply_sort", "sort_type": "낮은가격순" },
+          { "action": "summarize_products", "top_n": 5 }
+        ],
+        "notes": "사이트 이동 포함 + 정렬옵션 확인 후 요약"
+      }
+    },
+    {
+      "id": 11,
+      "difficulty": "H",
+      "user_utterance": "헤어드라이기 검색해서 랭킹순으로 정렬하고 3개 읽어준 다음 다음 거 보여줬다가 아까 거 다시 보여줘.",
+      "expected": {
+        "actions": [
+          { "action": "search_page", "query": "헤어드라이기" },
+          { "action": "apply_sort", "sort_type": "랭킹순" },
+          { "action": "read_results", "top_n": 3 },
+          { "action": "next_items", "count": 3 },
+          { "action": "prev_items", "count": 3 }
+        ],
+        "notes": "within-page next_items 후 prev_items로 되돌림"
+      }
+    },
+    {
+      "id": 12,
+      "difficulty": "H",
+      "user_utterance": "러닝화 검색하고 3페이지로 이동한 다음 평점순으로 정렬해서 3번 상품 들어가서 장바구니에 2개 넣어줘.",
+      "expected": {
+        "actions": [
+          { "action": "search_page", "query": "러닝화" },
+          { "action": "goto_page", "page_num": 3 },
+          { "action": "apply_sort", "sort_type": "평점순" },
+          { "action": "select_product", "index": 3 },
+          { "action": "add_to_cart", "quantity": 2 }
+        ],
+        "notes": "페이지 이동+정렬+상품 선택+수량 담기"
+      }
+    },
+    {
+      "id": 13,
+      "difficulty": "H",
+      "user_utterance": "블루투스 스피커 검색해서 최신순으로 정렬하고 5개 읽어줘. 그리고 첫번째 상품으로 들어가줘.",
+      "expected": {
+        "actions": [
+          { "action": "search_page", "query": "블루투스 스피커" },
+          { "action": "apply_sort", "sort_type": "최신순" },
+          { "action": "read_results", "top_n": 5 },
+          { "action": "select_product", "index": 1 }
+        ],
+        "notes": "읽기 후 특정 상품 선택"
+      }
+    },
+    {
+      "id": 14,
+      "difficulty": "H",
+      "user_utterance": "비타민D 검색하고 배송비 포함으로 걸고 2페이지로 가서 판매량순으로 정렬한 다음 3개 요약해줘.",
+      "expected": {
+        "actions": [
+          { "action": "search_page", "query": "비타민D" },
+          { "action": "apply_shipping", "shipping_option": "배송비포함" },
+          { "action": "goto_page", "page_num": 2 },
+          { "action": "apply_sort", "sort_type": "판매량순" },
+          { "action": "summarize_products", "top_n": 3 }
+        ],
+        "notes": "배송필터+페이지 이동+정렬+요약"
+      }
+    },
+    {
+      "id": 15,
+      "difficulty": "H",
+      "user_utterance": "전자책 리더기 검색해서 상위 3개 요약해주고, 두번째 상품 들어가서 배터리 얼마나 가는지 물어봐.",
+      "expected": {
+        "actions": [
+          { "action": "search_page", "query": "전자책 리더기" },
+          { "action": "summarize_products", "top_n": 3 },
+          { "action": "select_product", "index": 2 },
+          { "action": "question", "query": "배터리 얼마나 가는지" }
+        ],
+        "notes": "요약 후 특정 상품 상세 질문"
+      }
+    },
+    {
+      "id": 16,
+      "difficulty": "H",
+      "user_utterance": "쿠팡 열고 가습기 검색해. 지금 페이지를 요약해준 다음 종료해줘.",
+      "expected": {
+        "actions": [
+          { "action": "open_url", "url": "https://www.coupang.com" },
+          { "action": "search_page", "query": "가습기" },
+          { "action": "summarize_page" },
+          { "action": "exit" }
+        ],
+        "notes": "검색 후 현재 페이지 요약→종료"
+      }
+    },
+    {
+      "id": 17,
+      "difficulty": "H",
+      "user_utterance": "무선 키보드 검색하고 연관 검색어 보여줘. 그중에 '저소음'으로 바꿔서 검색하고 3개 읽어준 다음 다음 페이지로 가줘.",
+      "expected": {
+        "actions": [
+          { "action": "search_page", "query": "무선 키보드" },
+          { "action": "show_related_keywords" },
+          { "action": "select_related_keyword", "keyword": "저소음" },
+          { "action": "read_results", "top_n": 3 },
+          { "action": "next_page" }
+        ],
+        "notes": "연관어 재검색→읽기→next_page"
+      }
+    },
+    {
+      "id": 18,
+      "difficulty": "H",
+      "user_utterance": "침대 프레임 검색하고 페이지 바꿔줘. 거기서 평점순으로 정렬해서 3개 요약해줘.",
+      "expected": {
+        "actions": [
+          { "action": "search_page", "query": "침대 프레임" },
+          { "action": "goto_page" },
+          { "action": "apply_sort", "sort_type": "평점순" },
+          { "action": "summarize_products", "top_n": 3 }
+        ],
+        "notes": "페이지 번호 미지정→goto_page만 출력(유도) 후 정렬/요약"
+      }
+    },
+    {
+      "id": 19,
+      "difficulty": "H",
+      "user_utterance": "에어프라이어 검색해서 판매량순으로 정렬하고 1번 상품 장바구니에 2개 담아준 다음 장바구니로 이동해줘.",
+      "expected": {
+        "actions": [
+          { "action": "search_page", "query": "에어프라이어" },
+          { "action": "apply_sort", "sort_type": "판매량순" },
+          { "action": "select_product", "index": 1 },
+          { "action": "add_to_cart", "quantity": 2 },
+          { "action": "navigate_to_cart" }
+        ],
+        "notes": "상품 담기 후 장바구니로 이동"
+      }
+    },
+    {
+      "id": 20,
+      "difficulty": "H",
+      "user_utterance": "이 링크로 바로 들어가서 장바구니에 1개 넣고 페이지 요약도 해줘: https://www.coupang.com/vp/products/1234567890",
+      "expected": {
+        "actions": [
+          { "action": "select_product", "url": "https://www.coupang.com/vp/products/1234567890" },
+          { "action": "add_to_cart", "quantity": 1 },
+          { "action": "summarize_page" }
+        ],
+        "notes": "URL 직접 진입(select_product url)→담기→페이지 요약"
+      }
+    },
+
+    {
+      "id": 21,
+      "difficulty": "M",
+      "user_utterance": "가습기 검색해서 판매량순으로 정렬해줘",
+      "expected": {
+        "actions": [
+          { "action": "search_page", "query": "가습기" },
+          { "action": "apply_sort", "sort_type": "판매량순" }
+        ],
+        "notes": "검색+정렬"
+      }
+    },
+    {
+      "id": 22,
+      "difficulty": "M",
+      "user_utterance": "기저귀 배송비 포함으로 검색해줘",
+      "expected": {
+        "actions": [
+          { "action": "search_page", "query": "기저귀" },
+          { "action": "apply_shipping", "shipping_option": "배송비포함" }
+        ],
+        "notes": "검색+배송필터"
+      }
+    },
+    {
+      "id": 23,
+      "difficulty": "M",
+      "user_utterance": "로봇청소기 평점순으로 정렬해줘",
+      "expected": {
+        "actions": [
+          { "action": "search_page", "query": "로봇청소기" },
+          { "action": "apply_sort", "sort_type": "평점순" }
+        ],
+        "notes": "검색+정렬"
+      }
+    },
+    {
+      "id": 24,
+      "difficulty": "M",
+      "user_utterance": "비데 최신순으로 정렬해서 보고 싶어",
+      "expected": {
+        "actions": [
+          { "action": "search_page", "query": "비데" },
+          { "action": "apply_sort", "sort_type": "최신순" }
+        ],
+        "notes": "검색+정렬"
+      }
+    },
+    {
+      "id": 25,
+      "difficulty": "M",
+      "user_utterance": "전동칫솔 낮은가격순으로 정렬해줘",
+      "expected": {
+        "actions": [
+          { "action": "search_page", "query": "전동칫솔" },
+          { "action": "apply_sort", "sort_type": "낮은가격순" }
+        ],
+        "notes": "검색+정렬"
+      }
+    },
+    {
+      "id": 26,
+      "difficulty": "M",
+      "user_utterance": "보조배터리 높은가격순으로 정렬해줘",
+      "expected": {
+        "actions": [
+          { "action": "search_page", "query": "보조배터리" },
+          { "action": "apply_sort", "sort_type": "높은가격순" }
+        ],
+        "notes": "검색+정렬"
+      }
+    },
+    {
+      "id": 27,
+      "difficulty": "M",
+      "user_utterance": "무선 키보드 랭킹순으로 정렬해줘",
+      "expected": {
+        "actions": [
+          { "action": "search_page", "query": "무선 키보드" },
+          { "action": "apply_sort", "sort_type": "랭킹순" }
+        ],
+        "notes": "검색+정렬"
+      }
+    },
+    {
+      "id": 28,
+      "difficulty": "M",
+      "user_utterance": "디퓨저 배송비 제외로 보고 싶어",
+      "expected": {
+        "actions": [
+          { "action": "search_page", "query": "디퓨저" },
+          { "action": "apply_shipping", "shipping_option": "배송비제외" }
+        ],
+        "notes": "검색+배송필터"
+      }
+    },
+    {
+      "id": 29,
+      "difficulty": "M",
+      "user_utterance": "모니터 판매량순으로 정렬해줘",
+      "expected": {
+        "actions": [
+          { "action": "search_page", "query": "모니터" },
+          { "action": "apply_sort", "sort_type": "판매량순" }
+        ],
+        "notes": "검색+정렬"
+      }
+    },
+    {
+      "id": 30,
+      "difficulty": "M",
+      "user_utterance": "마스크 배송비 포함으로 걸어줘",
+      "expected": {
+        "actions": [
+          { "action": "search_page", "query": "마스크" },
+          { "action": "apply_shipping", "shipping_option": "배송비포함" }
+        ],
+        "notes": "검색+배송필터"
+      }
+    },
+    {
+      "id": 31,
+      "difficulty": "M",
+      "user_utterance": "선풍기 평점순으로 정렬해줘",
+      "expected": {
+        "actions": [
+          { "action": "search_page", "query": "선풍기" },
+          { "action": "apply_sort", "sort_type": "평점순" }
+        ],
+        "notes": "검색+정렬"
+      }
+    },
+    {
+      "id": 32,
+      "difficulty": "M",
+      "user_utterance": "침대 프레임 낮은가격순으로 정렬해줘",
+      "expected": {
+        "actions": [
+          { "action": "search_page", "query": "침대 프레임" },
+          { "action": "apply_sort", "sort_type": "낮은가격순" }
+        ],
+        "notes": "검색+정렬"
+      }
+    },
+    {
+      "id": 33,
+      "difficulty": "M",
+      "user_utterance": "캔들 배송비 제외로 검색해줘",
+      "expected": {
+        "actions": [
+          { "action": "search_page", "query": "캔들" },
+          { "action": "apply_shipping", "shipping_option": "배송비제외" }
+        ],
+        "notes": "검색+배송필터"
+      }
+    },
+    {
+      "id": 34,
+      "difficulty": "M",
+      "user_utterance": "공기청정기 최신순으로 정렬해줘",
+      "expected": {
+        "actions": [
+          { "action": "search_page", "query": "공기청정기" },
+          { "action": "apply_sort", "sort_type": "최신순" }
+        ],
+        "notes": "검색+정렬"
+      }
+    },
+    {
+      "id": 35,
+      "difficulty": "M",
+      "user_utterance": "핸드크림 랭킹순으로 정렬해서 보고 싶어",
+      "expected": {
+        "actions": [
+          { "action": "search_page", "query": "핸드크림" },
+          { "action": "apply_sort", "sort_type": "랭킹순" }
+        ],
+        "notes": "검색+정렬"
+      }
+    },
+    {
+      "id": 36,
+      "difficulty": "M",
+      "user_utterance": "샴푸 판매량순으로 정렬해줘",
+      "expected": {
+        "actions": [
+          { "action": "search_page", "query": "샴푸" },
+          { "action": "apply_sort", "sort_type": "판매량순" }
+        ],
+        "notes": "검색+정렬"
+      }
+    },
+    {
+      "id": 37,
+      "difficulty": "M",
+      "user_utterance": "초콜릿 배송비 포함으로만 보고 싶어",
+      "expected": {
+        "actions": [
+          { "action": "search_page", "query": "초콜릿" },
+          { "action": "apply_shipping", "shipping_option": "배송비포함" }
+        ],
+        "notes": "검색+배송필터"
+      }
+    },
+    {
+      "id": 38,
+      "difficulty": "M",
+      "user_utterance": "두유 높은가격순 정렬해줘",
+      "expected": {
+        "actions": [
+          { "action": "search_page", "query": "두유" },
+          { "action": "apply_sort", "sort_type": "높은가격순" }
+        ],
+        "notes": "검색+정렬"
+      }
+    },
+    {
+      "id": 39,
+      "difficulty": "M",
+      "user_utterance": "요가매트 낮은가격순으로 정렬해줘",
+      "expected": {
+        "actions": [
+          { "action": "search_page", "query": "요가매트" },
+          { "action": "apply_sort", "sort_type": "낮은가격순" }
+        ],
+        "notes": "검색+정렬"
+      }
+    },
+    {
+      "id": 40,
+      "difficulty": "M",
+      "user_utterance": "후라이팬 배송비 제외로 보고 싶어",
+      "expected": {
+        "actions": [
+          { "action": "search_page", "query": "후라이팬" },
+          { "action": "apply_shipping", "shipping_option": "배송비제외" }
+        ],
+        "notes": "검색+배송필터"
+      }
+    },
+    {
+      "id": 41,
+      "difficulty": "M",
+      "user_utterance": "핸디형 선풍기 최신순으로 정렬해줘",
+      "expected": {
+        "actions": [
+          { "action": "search_page", "query": "핸디형 선풍기" },
+          { "action": "apply_sort", "sort_type": "최신순" }
+        ],
+        "notes": "검색+정렬"
+      }
+    },
+    {
+      "id": 42,
+      "difficulty": "M",
+      "user_utterance": "원두커피 평점순 정렬해줘",
+      "expected": {
+        "actions": [
+          { "action": "search_page", "query": "원두커피" },
+          { "action": "apply_sort", "sort_type": "평점순" }
+        ],
+        "notes": "검색+정렬"
+      }
+    },
+    {
+      "id": 43,
+      "difficulty": "M",
+      "user_utterance": "라면 랭킹순으로 정렬해줘",
+      "expected": {
+        "actions": [
+          { "action": "search_page", "query": "라면" },
+          { "action": "apply_sort", "sort_type": "랭킹순" }
+        ],
+        "notes": "검색+정렬"
+      }
+    },
+    {
+      "id": 44,
+      "difficulty": "M",
+      "user_utterance": "인덕션 배송비 포함으로 검색해줘",
+      "expected": {
+        "actions": [
+          { "action": "search_page", "query": "인덕션" },
+          { "action": "apply_shipping", "shipping_option": "배송비포함" }
+        ],
+        "notes": "검색+배송필터"
+      }
+    },
+    {
+      "id": 45,
+      "difficulty": "M",
+      "user_utterance": "캣타워 판매량순으로 정렬해줘",
+      "expected": {
+        "actions": [
+          { "action": "search_page", "query": "캣타워" },
+          { "action": "apply_sort", "sort_type": "판매량순" }
+        ],
+        "notes": "검색+정렬"
+      }
+    },
+    {
+      "id": 46,
+      "difficulty": "M",
+      "user_utterance": "강아지 사료 배송비 제외로만 볼래",
+      "expected": {
+        "actions": [
+          { "action": "search_page", "query": "강아지 사료" },
+          { "action": "apply_shipping", "shipping_option": "배송비제외" }
+        ],
+        "notes": "검색+배송필터"
+      }
+    },
+    {
+      "id": 47,
+      "difficulty": "M",
+      "user_utterance": "립밤 낮은가격순 정렬해줘",
+      "expected": {
+        "actions": [
+          { "action": "search_page", "query": "립밤" },
+          { "action": "apply_sort", "sort_type": "낮은가격순" }
+        ],
+        "notes": "검색+정렬"
+      }
+    },
+    {
+      "id": 48,
+      "difficulty": "M",
+      "user_utterance": "텀블러 높은가격순으로 정렬해줘",
+      "expected": {
+        "actions": [
+          { "action": "search_page", "query": "텀블러" },
+          { "action": "apply_sort", "sort_type": "높은가격순" }
+        ],
+        "notes": "검색+정렬"
+      }
+    },
+    {
+      "id": 49,
+      "difficulty": "M",
+      "user_utterance": "제습기 평점순으로 정렬해줘",
+      "expected": {
+        "actions": [
+          { "action": "search_page", "query": "제습기" },
+          { "action": "apply_sort", "sort_type": "평점순" }
+        ],
+        "notes": "검색+정렬"
+      }
+    },
+    {
+      "id": 50,
+      "difficulty": "M",
+      "user_utterance": "커튼 배송비 포함으로 보고 싶어",
+      "expected": {
+        "actions": [
+          { "action": "search_page", "query": "커튼" },
+          { "action": "apply_shipping", "shipping_option": "배송비포함" }
+        ],
+        "notes": "검색+배송필터"
+      }
+    },
+    {
+      "id": 51,
+      "difficulty": "M",
+      "user_utterance": "침구세트 최신순으로 정렬해줘",
+      "expected": {
+        "actions": [
+          { "action": "search_page", "query": "침구세트" },
+          { "action": "apply_sort", "sort_type": "최신순" }
+        ],
+        "notes": "검색+정렬"
+      }
+    },
+    {
+      "id": 52,
+      "difficulty": "M",
+      "user_utterance": "식기세척기 랭킹순 정렬해줘",
+      "expected": {
+        "actions": [
+          { "action": "search_page", "query": "식기세척기" },
+          { "action": "apply_sort", "sort_type": "랭킹순" }
+        ],
+        "notes": "검색+정렬"
+      }
+    },
+    {
+      "id": 53,
+      "difficulty": "M",
+      "user_utterance": "프로틴바 배송비 제외로 검색해줘",
+      "expected": {
+        "actions": [
+          { "action": "search_page", "query": "프로틴바" },
+          { "action": "apply_shipping", "shipping_option": "배송비제외" }
+        ],
+        "notes": "검색+배송필터"
+      }
+    },
+    {
+      "id": 54,
+      "difficulty": "M",
+      "user_utterance": "세탁세제 판매량순 정렬해줘",
+      "expected": {
+        "actions": [
+          { "action": "search_page", "query": "세탁세제" },
+          { "action": "apply_sort", "sort_type": "판매량순" }
+        ],
+        "notes": "검색+정렬"
+      }
+    },
+    {
+      "id": 55,
+      "difficulty": "M",
+      "user_utterance": "블루투스 스피커 낮은가격순으로 정렬해줘",
+      "expected": {
+        "actions": [
+          { "action": "search_page", "query": "블루투스 스피커" },
+          { "action": "apply_sort", "sort_type": "낮은가격순" }
+        ],
+        "notes": "검색+정렬"
+      }
+    },
+    {
+      "id": 56,
+      "difficulty": "M",
+      "user_utterance": "게이밍 의자 배송비 포함으로만 보고 싶어",
+      "expected": {
+        "actions": [
+          { "action": "search_page", "query": "게이밍 의자" },
+          { "action": "apply_shipping", "shipping_option": "배송비포함" }
+        ],
+        "notes": "검색+배송필터"
+      }
+    },
+    {
+      "id": 57,
+      "difficulty": "M",
+      "user_utterance": "헤드폰 평점순 정렬해줘",
+      "expected": {
+        "actions": [
+          { "action": "search_page", "query": "헤드폰" },
+          { "action": "apply_sort", "sort_type": "평점순" }
+        ],
+        "notes": "검색+정렬"
+      }
+    },
+    {
+      "id": 58,
+      "difficulty": "M",
+      "user_utterance": "토너 패드 최신순으로 정렬해줘",
+      "expected": {
+        "actions": [
+          { "action": "search_page", "query": "토너 패드" },
+          { "action": "apply_sort", "sort_type": "최신순" }
+        ],
+        "notes": "검색+정렬"
+      }
+    },
+    {
+      "id": 59,
+      "difficulty": "M",
+      "user_utterance": "전자레인지 랭킹순으로 정렬해줘",
+      "expected": {
+        "actions": [
+          { "action": "search_page", "query": "전자레인지" },
+          { "action": "apply_sort", "sort_type": "랭킹순" }
+        ],
+        "notes": "검색+정렬"
+      }
+    },
+    {
+      "id": 60,
+      "difficulty": "M",
+      "user_utterance": "생리대 배송비 제외로 걸어줘",
+      "expected": {
+        "actions": [
+          { "action": "search_page", "query": "생리대" },
+          { "action": "apply_shipping", "shipping_option": "배송비제외" }
+        ],
+        "notes": "검색+배송필터"
+      }
+    },
+
+    {
+      "id": 61,
+      "difficulty": "E",
+      "user_utterance": "쿠팡 열어줘",
+      "expected": {
+        "actions": [{ "action": "open_url", "url": "https://www.coupang.com" }],
+        "notes": "사이트 열기"
+      }
+    },
+    {
+      "id": 62,
+      "difficulty": "E",
+      "user_utterance": "무선 청소기 찾아줘",
+      "expected": {
+        "actions": [{ "action": "search_page", "query": "무선 청소기" }],
+        "notes": "단순 검색"
+      }
+    },
+    {
+      "id": 63,
+      "difficulty": "E",
+      "user_utterance": "이 상품 원산지가 어디야?",
+      "expected": {
+        "actions": [{ "action": "question", "query": "이 상품 원산지가 어디야?" }],
+        "notes": "현재 상품 상세 질문"
+      }
+    },
+    {
+      "id": 64,
+      "difficulty": "E",
+      "user_utterance": "정렬 옵션 뭐 있는지 알려줘",
+      "expected": {
+        "actions": [{ "action": "show_sort_options" }],
+        "notes": "정렬 옵션 목록 요청"
+      }
+    },
+    {
+      "id": 65,
+      "difficulty": "E",
+      "user_utterance": "연관 검색어 보여줘",
+      "expected": {
+        "actions": [{ "action": "show_related_keywords" }],
+        "notes": "연관 검색어 목록 요청"
+      }
+    },
+    {
+      "id": 66,
+      "difficulty": "E",
+      "user_utterance": "첫번째 연관 검색어로 검색해줘",
+      "expected": {
+        "actions": [{ "action": "select_related_keyword", "keyword": "첫번째 연관 검색어" }],
+        "notes": "연관 검색어 선택(재검색 트리거)"
+      }
+    },
+    {
+      "id": 67,
+      "difficulty": "E",
+      "user_utterance": "상위 3개만 읽어줘",
+      "expected": {
+        "actions": [{ "action": "read_results", "top_n": 3 }],
+        "notes": "현재 검색 결과 상위 N개 읽기"
+      }
+    },
+    {
+      "id": 68,
+      "difficulty": "E",
+      "user_utterance": "다음 거 보여줘",
+      "expected": {
+        "actions": [{ "action": "next_items", "count": 3 }],
+        "notes": "현재 페이지 내 다음 상품들"
+      }
+    },
+    {
+      "id": 69,
+      "difficulty": "E",
+      "user_utterance": "이전 거 다시 보여줘",
+      "expected": {
+        "actions": [{ "action": "prev_items", "count": 3 }],
+        "notes": "현재 페이지 내 이전 상품들"
+      }
+    },
+    {
+      "id": 70,
+      "difficulty": "E",
+      "user_utterance": "다음 페이지로 넘어가줘",
+      "expected": {
+        "actions": [{ "action": "next_page" }],
+        "notes": "검색 결과 다음 페이지 이동"
+      }
+    },
+    {
+      "id": 71,
+      "difficulty": "E",
+      "user_utterance": "이전 페이지로 가줘",
+      "expected": {
+        "actions": [{ "action": "prev_page" }],
+        "notes": "검색 결과 이전 페이지 이동"
+      }
+    },
+    {
+      "id": 72,
+      "difficulty": "E",
+      "user_utterance": "페이지 바꿔줘",
+      "expected": {
+        "actions": [{ "action": "goto_page" }],
+        "notes": "페이지 번호 미지정이므로 goto_page로 유도"
+      }
+    },
+    {
+      "id": 73,
+      "difficulty": "E",
+      "user_utterance": "3페이지로 이동해줘",
+      "expected": {
+        "actions": [{ "action": "goto_page", "page_num": 3 }],
+        "notes": "특정 페이지로 직접 이동"
+      }
+    },
+    {
+      "id": 74,
+      "difficulty": "E",
+      "user_utterance": "2 페이지",
+      "expected": {
+        "actions": [{ "action": "goto_page", "page_num": 2 }],
+        "notes": "페이지 번호만 말하면 해당 페이지 이동"
+      }
+    },
+    {
+      "id": 75,
+      "difficulty": "E",
+      "user_utterance": "첫번째 상품 들어가줘",
+      "expected": {
+        "actions": [{ "action": "select_product", "index": 1 }],
+        "notes": "검색 결과 1번 상품 선택"
+      }
+    },
+    {
+      "id": 76,
+      "difficulty": "E",
+      "user_utterance": "3번 상품 보여줘",
+      "expected": {
+        "actions": [{ "action": "select_product", "index": 3 }],
+        "notes": "검색 결과 3번 상품 선택"
+      }
+    },
+    {
+      "id": 77,
+      "difficulty": "E",
+      "user_utterance": "장바구니에 1개 넣어줘",
+      "expected": {
+        "actions": [{ "action": "add_to_cart", "quantity": 1 }],
+        "notes": "현재 상품을 장바구니에 수량 지정"
+      }
+    },
+    {
+      "id": 78,
+      "difficulty": "E",
+      "user_utterance": "장바구니로 이동해줘",
+      "expected": {
+        "actions": [{ "action": "navigate_to_cart" }],
+        "notes": "장바구니 페이지 이동"
+      }
+    },
+    {
+      "id": 79,
+      "difficulty": "E",
+      "user_utterance": "지금 페이지 요약해줘",
+      "expected": {
+        "actions": [{ "action": "summarize_page" }],
+        "notes": "현재 페이지 HTML 요약"
+      }
+    },
+    {
+      "id": 80,
+      "difficulty": "E",
+      "user_utterance": "검색 결과 5개 요약해줘",
+      "expected": {
+        "actions": [{ "action": "summarize_products", "top_n": 5 }],
+        "notes": "현재 검색 결과 상위 N개 요약"
+      }
+    },
+    {
+      "id": 81,
+      "difficulty": "E",
+      "user_utterance": "종료",
+      "expected": {
+        "actions": [{ "action": "exit" }],
+        "notes": "프로그램 종료"
+      }
+    },
+    {
+      "id": 82,
+      "difficulty": "E",
+      "user_utterance": "맥북 충전기 검색해줘",
+      "expected": {
+        "actions": [{ "action": "search_page", "query": "맥북 충전기" }],
+        "notes": "단순 검색"
+      }
+    },
+    {
+      "id": 83,
+      "difficulty": "E",
+      "user_utterance": "블루투스 이어폰 검색",
+      "expected": {
+        "actions": [{ "action": "search_page", "query": "블루투스 이어폰" }],
+        "notes": "단순 검색"
+      }
+    },
+    {
+      "id": 84,
+      "difficulty": "E",
+      "user_utterance": "이거 AS 기간이 어떻게 돼?",
+      "expected": {
+        "actions": [{ "action": "question", "query": "이거 AS 기간이 어떻게 돼?" }],
+        "notes": "상품 상세 질문"
+      }
+    },
+    {
+      "id": 85,
+      "difficulty": "E",
+      "user_utterance": "이거 색상 옵션 뭐 있어?",
+      "expected": {
+        "actions": [{ "action": "question", "query": "이거 색상 옵션 뭐 있어?" }],
+        "notes": "상품 옵션 질문"
+      }
+    },
+    {
+      "id": 86,
+      "difficulty": "E",
+      "user_utterance": "이 제품 용량이 몇 ml야?",
+      "expected": {
+        "actions": [{ "action": "question", "query": "이 제품 용량이 몇 ml야?" }],
+        "notes": "상품 스펙 질문"
+      }
+    },
+    {
+      "id": 87,
+      "difficulty": "E",
+      "user_utterance": "다음 장",
+      "expected": {
+        "actions": [{ "action": "next_page" }],
+        "notes": "‘다음 장’=다음 페이지"
+      }
+    },
+    {
+      "id": 88,
+      "difficulty": "E",
+      "user_utterance": "페이지 뒤로",
+      "expected": {
+        "actions": [{ "action": "prev_page" }],
+        "notes": "‘뒤로’=이전 페이지"
+      }
+    },
+    {
+      "id": 89,
+      "difficulty": "E",
+      "user_utterance": "넘어가줘",
+      "expected": {
+        "actions": [{ "action": "next_page" }],
+        "notes": "모호하지만 일반적으로 다음 페이지로 해석"
+      }
+    },
+    {
+      "id": 90,
+      "difficulty": "E",
+      "user_utterance": "2번 들어가줘",
+      "expected": {
+        "actions": [{ "action": "select_product", "index": 2 }],
+        "notes": "검색 결과 2번 상품 선택"
+      }
+    },
+    {
+      "id": 91,
+      "difficulty": "E",
+      "user_utterance": "검색 결과 더 보여줘",
+      "expected": {
+        "actions": [{ "action": "next_items", "count": 3 }],
+        "notes": "현재 페이지 내 다음 상품들"
+      }
+    },
+    {
+      "id": 92,
+      "difficulty": "E",
+      "user_utterance": "아까 거 보여줘",
+      "expected": {
+        "actions": [{ "action": "prev_items", "count": 3 }],
+        "notes": "현재 페이지 내 이전 상품들"
+      }
+    },
+    {
+      "id": 93,
+      "difficulty": "E",
+      "user_utterance": "5페이지",
+      "expected": {
+        "actions": [{ "action": "goto_page", "page_num": 5 }],
+        "notes": "페이지 번호만 말하면 goto_page"
+      }
+    },
+    {
+      "id": 94,
+      "difficulty": "E",
+      "user_utterance": "페이지 2",
+      "expected": {
+        "actions": [{ "action": "goto_page", "page_num": 2 }],
+        "notes": "‘페이지 N’=goto_page"
+      }
+    },
+    {
+      "id": 95,
+      "difficulty": "E",
+      "user_utterance": "정렬 어떻게 해?",
+      "expected": {
+        "actions": [{ "action": "show_sort_options" }],
+        "notes": "정렬 옵션 요청으로 해석"
+      }
+    },
+    {
+      "id": 96,
+      "difficulty": "E",
+      "user_utterance": "연관 검색어 뭐 있어?",
+      "expected": {
+        "actions": [{ "action": "show_related_keywords" }],
+        "notes": "연관 검색어 목록 요청"
+      }
+    },
+    {
+      "id": 97,
+      "difficulty": "E",
+      "user_utterance": "지금 페이지에서 상위 10개 읽어줘",
+      "expected": {
+        "actions": [{ "action": "read_results", "top_n": 10 }],
+        "notes": "상위 N개 읽기(변수 N)"
+      }
+    },
+    {
+      "id": 98,
+      "difficulty": "E",
+      "user_utterance": "장바구니에 3개 담아줘",
+      "expected": {
+        "actions": [{ "action": "add_to_cart", "quantity": 3 }],
+        "notes": "수량 지정 담기"
+      }
+    },
+    {
+      "id": 99,
+      "difficulty": "E",
+      "user_utterance": "이 상품 배송 언제 와?",
+      "expected": {
+        "actions": [{ "action": "question", "query": "이 상품 배송 언제 와?" }],
+        "notes": "배송 관련 상품 질문"
+      }
+    },
+    {
+      "id": 100,
+      "difficulty": "E",
+      "user_utterance": "현재 결과 3개만 요약해줘",
+      "expected": {
+        "actions": [{ "action": "summarize_products", "top_n": 3 }],
+        "notes": "현재 검색 결과 상위 N개 요약"
+      }
+    }
+  ]
+}

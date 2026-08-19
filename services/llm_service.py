@@ -6,6 +6,7 @@ import base64
 import json
 import logging
 import os
+from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
@@ -15,6 +16,240 @@ from config.settings import PROMPTS
 
 logger = logging.getLogger(__name__)
 
+class PreferenceMemory:
+    """Structured preference + identity storage backed by memory.json."""
+
+    CATEGORIES: List[str] = [
+        "패션의류/잡화",
+        "뷰티",
+        "출산/유아동",
+        "식품",
+        "주방용품",
+        "생활용품",
+        "홈인테리어",
+        "가전디지털",
+        "스포츠/레저",
+        "자동차용품",
+        "도서/음반/DVD",
+        "완구/취미",
+        "문구/오피스",
+        "반려동물용품",
+        "헬스/건강식품",
+    ]
+    OTHER_CATEGORY = "기타"
+
+    _CATEGORY_KEYWORDS: Dict[str, List[str]] = {
+        "패션의류/잡화": ["셔츠", "바지", "신발", "가방", "모자", "코트", "자켓", "패션", "스니커"],
+        "뷰티": ["화장품", "스킨", "로션", "립", "마스카라", "아이섀도", "향수", "클렌징"],
+        "출산/유아동": ["기저귀", "분유", "유아", "아기", "출산", "젖병", "보행기"],
+        "식품": ["라면", "과자", "커피", "식품", "음료", "간식", "냉동", "밀키트"],
+        "주방용품": ["프라이팬", "냄비", "칼", "도마", "식기", "주방", "에어프라이어 용기"],
+        "생활용품": ["세제", "휴지", "수건", "생활", "청소", "방향제"],
+        "홈인테리어": ["침구", "커튼", "러그", "소파", "인테리어", "쿠션", "조명"],
+        "가전디지털": ["노트북", "스마트폰", "가전", "디지털", "TV", "이어폰", "카메라"],
+        "스포츠/레저": ["자전거", "캠핑", "등산", "운동", "요가", "트레이닝", "라켓"],
+        "자동차용품": ["차량", "자동차", "타이어", "대시보드", "차량용", "블랙박스"],
+        "도서/음반/DVD": ["도서", "책", "소설", "DVD", "블루레이", "음반"],
+        "완구/취미": ["레고", "퍼즐", "피규어", "토이", "완구", "취미"],
+        "문구/오피스": ["볼펜", "노트", "프린터", "문구", "사무", "오피스"],
+        "반려동물용품": ["강아지", "고양이", "사료", "간식", "반려동물", "캣타워"],
+        "헬스/건강식품": ["영양제", "비타민", "단백질", "건강", "헬스", "프로틴"],
+    }
+
+    def __init__(self, memory_path: str = "memory.json", identity_path: str = "identity.txt"):
+        self.memory_path = Path(memory_path)
+        self.identity_path = Path(identity_path)
+        self.identity: Optional[str] = None
+        self._data: Dict[str, List[Dict[str, Any]]] = {cat: [] for cat in self.CATEGORIES}
+        self._data[self.OTHER_CATEGORY] = []
+        self._load_files()
+
+    # ---------------- File helpers ----------------
+    def _load_files(self):
+        if self.memory_path.is_file():
+            try:
+                loaded = json.loads(self.memory_path.read_text(encoding="utf-8"))
+                categories = loaded.get("categories", {})
+                for cat, events in categories.items():
+                    self._data.setdefault(cat, []).extend(events)
+            except Exception:
+                logger.warning("Failed to load memory.json; starting fresh.")
+                self._data = {cat: [] for cat in self.CATEGORIES}
+                self._data[self.OTHER_CATEGORY] = []
+        else:
+            # Optional legacy migration from memory.txt
+            legacy_txt = Path("memory.txt")
+            migrated = False
+            if legacy_txt.is_file():
+                try:
+                    lines = [ln.strip() for ln in legacy_txt.read_text(encoding="utf-8").splitlines() if ln.strip()]
+                    for ln in lines:
+                        self._record_event("legacy_note", {"text": ln}, self.OTHER_CATEGORY)
+                    migrated = True
+                except Exception:
+                    logger.warning("Failed to migrate legacy memory.txt", exc_info=True)
+            # Initialize empty structure
+            if not migrated:
+                self._data = {cat: [] for cat in self.CATEGORIES}
+                self._data[self.OTHER_CATEGORY] = []
+
+        if self.identity_path.is_file():
+            try:
+                self.identity = self.identity_path.read_text(encoding="utf-8").strip() or None
+            except Exception:
+                self.identity = None
+
+    def _save(self) -> None:
+        payload = {"categories": self._data}
+        try:
+            self.memory_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+        except Exception:
+            logger.warning("Failed to persist memory.json", exc_info=True)
+
+    def clear_memory(self, clear_identity: bool = False) -> None:
+        self._data = {cat: [] for cat in self.CATEGORIES}
+        self._data[self.OTHER_CATEGORY] = []
+        self._save()
+        if clear_identity:
+            self.identity = None
+            try:
+                if self.identity_path.exists():
+                    self.identity_path.write_text("", encoding="utf-8")
+            except Exception:
+                pass
+
+    def save_identity(self, identity: str) -> None:
+        self.identity = identity.strip() if identity else None
+        try:
+            self.identity_path.write_text(self.identity or "", encoding="utf-8")
+        except Exception:
+            pass
+
+    # ---------------- Category helpers ----------------
+    def _normalize_category(self, category: Optional[str]) -> str:
+        if not category:
+            return self.OTHER_CATEGORY
+        for cat in self.CATEGORIES:
+            if category.strip().lower() == cat.lower():
+                return cat
+        return self.OTHER_CATEGORY
+
+    def guess_category(self, text: Optional[str]) -> str:
+        if not text:
+            return self.OTHER_CATEGORY
+        lower = text.lower()
+        for cat, keywords in self._CATEGORY_KEYWORDS.items():
+            if any(kw in lower for kw in keywords):
+                return cat
+        return self.OTHER_CATEGORY
+
+    # ---------------- Event helpers ----------------
+    def _record_event(self, event_type: str, detail: Dict[str, Any], category: Optional[str] = None) -> None:
+        category = self._normalize_category(category)
+        event = {
+            "type": event_type,
+            "detail": detail,
+            "ts": datetime.utcnow().isoformat() + "Z",
+        }
+        self._data.setdefault(category, []).append(event)
+        self._save()
+
+    def log_search(self, query: str, category: Optional[str] = None) -> None:
+        if not query:
+            return
+        cat = category or self.guess_category(query)
+        self._record_event("search", {"query": query}, cat)
+
+    def log_sort(self, sort_option: str, *, query: Optional[str] = None, category: Optional[str] = None) -> None:
+        if not sort_option:
+            return
+        cat = category or self.guess_category(query or sort_option)
+        self._record_event("sort", {"sort_option": sort_option, "query": query}, cat)
+
+    def log_related_keyword(self, keyword: str, *, base_query: Optional[str] = None, category: Optional[str] = None) -> None:
+        if not keyword:
+            return
+        cat = category or self.guess_category(keyword or base_query)
+        self._record_event("related_keyword", {"keyword": keyword, "base_query": base_query}, cat)
+
+    def log_product_question(self, question: str, *, product_name: Optional[str] = None, category: Optional[str] = None) -> None:
+        if not question:
+            return
+        cat = category or self.guess_category(product_name or question)
+        self._record_event("product_question", {"question": question, "product": product_name}, cat)
+
+    def log_add_to_cart(self, product_name: Optional[str], *, quantity: int = 1, category: Optional[str] = None) -> None:
+        cat = category or self.guess_category(product_name)
+        self._record_event("add_to_cart", {"product": product_name, "quantity": quantity}, cat)
+
+    # ---------------- Query helpers ----------------
+    def summary(self, max_items: int = 5) -> str:
+        recent = self._recent_events(max_items)
+        if not recent:
+            return ""
+        bullets = "\n".join(f"- [{item['category']}] {item['text']}" for item in recent)
+        return bullets
+
+    def has_preferences(self) -> bool:
+        return any(events for events in self._data.values())
+
+    def as_list(self) -> List[str]:
+        return [entry["text"] for entry in self._recent_events(200)]
+
+    def memory_log(self, max_lines: int = 50) -> str:
+        recent = self._recent_events(max_lines)
+        if not recent:
+            return ""
+        return "\n".join(f"[{item['category']}] {item['text']}" for item in recent)
+
+    def memory_log_for_category(self, category: str, max_lines: int = 50) -> str:
+        cat = self._normalize_category(category)
+        events = self._data.get(cat, [])
+        if not events:
+            return ""
+        formatted = []
+        for ev in sorted(events, key=lambda e: e.get("ts", ""), reverse=True)[:max_lines]:
+            formatted.append(self._format_event(ev))
+        return "\n".join(formatted)
+
+    def has_category_history(self, category: str) -> bool:
+        cat = self._normalize_category(category)
+        return bool(self._data.get(cat))
+
+    # ---------------- Formatting helpers ----------------
+    def _recent_events(self, limit: int) -> List[Dict[str, str]]:
+        flattened: List[Dict[str, Any]] = []
+        for category, events in self._data.items():
+            for ev in events:
+                text = self._format_event(ev)
+                flattened.append(
+                    {
+                        "category": category,
+                        "text": text,
+                        "ts": ev.get("ts", ""),
+                    }
+                )
+        flattened.sort(key=lambda x: x.get("ts", ""), reverse=True)
+        return flattened[:limit]
+
+    def _format_event(self, event: Dict[str, Any]) -> str:
+        etype = event.get("type")
+        detail = event.get("detail", {})
+        if etype == "search":
+            return f"검색어: {detail.get('query')}"
+        if etype == "sort":
+            return f"정렬: {detail.get('sort_option')} (검색어: {detail.get('query')})"
+        if etype == "related_keyword":
+            base = detail.get("base_query")
+            return f"연관검색어 선택: {detail.get('keyword')}" + (f" (기준: {base})" if base else "")
+        if etype == "product_question":
+            product = detail.get("product")
+            return f"상품 질문: {detail.get('question')}" + (f" (상품: {product})" if product else "")
+        if etype == "add_to_cart":
+            return f"장바구니 담기: {detail.get('product')} x{detail.get('quantity', 1)}"
+        if etype == "legacy_note":
+            return f"이전 메모: {detail.get('text')}"
+        return f"{etype}: {detail}"
 
 class ShoppingLLMService:
     """LLM wrapper for shopping assistant tasks."""
@@ -317,6 +552,187 @@ class ShoppingLLMService:
         filtered = [s for s in scored if s.get("relevance_score", 0) > similarity_threshold]
         return filtered[:top_k]
 
+    def map_command_to_actions(self, command: str) -> Dict[str, Any]:
+        """
+        Map free-form voice command to an ordered list of actions.
+        """
+        system_prompt = PROMPTS["map_actions"]
+        user_prompt = f'사용자 명령: "{command}"\nJSON만 응답하세요.'
+
+        try:
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_prompt},
+                ],
+                temperature=0.3,
+                response_format={"type": "json_object"},
+            )
+            return json.loads(response.choices[0].message.content)
+        except Exception as e:
+            logger.error("Failed to map command to actions: %s", e)
+            return {"actions": [], "notes": "llm_error"}
+
+    def augment_user_query(
+        self,
+        raw_query: str,
+        preference_memory: PreferenceMemory,
+        conversation_history: List[Dict[str, str]],
+    ) -> Dict[str, Any]:
+        """
+        Augment a vague user query using stored preferences.
+
+        Returns:
+            {
+              "query": "<augmented or original>",
+              "augmented": bool,
+              "rationale": "<why it was changed>",
+              "actions": [
+                  {"action": "apply_sort", "sort_type": "..."} |
+                  {"action": "apply_shipping", "shipping_option": "..."}
+              ]
+            }
+        """
+        # Only consider augmentation when we have history for the inferred category
+        category = preference_memory.guess_category(raw_query)
+        if not preference_memory.has_category_history(category):
+            return {"query": raw_query, "augmented": False, "rationale": "no_category_history", "actions": []}
+
+        pref_summary = preference_memory.summary()
+        memory_log = preference_memory.memory_log_for_category(category)
+        identity = preference_memory.identity or ""
+        system_prompt = """당신은 사용자의 과거 선호도를 기억하는 쇼핑 비서입니다.
+사용자 질문이 모호할 때만, 그리고 해당 카테고리에 대한 기억이 있을 때만 검색어를 보강하세요.
+- 질문이 이미 구체적이면 그대로 둡니다.
+- 가격 민감, 브랜드, 색상, 배송 조건 등 과거 맥락을 반영합니다.
+- 정렬/배송 선호가 분명하면 actions 배열에 apply_sort 또는 apply_shipping을 추가하세요.
+  * sort_type은 쿠팡랭킹순, 낮은가격순, 높은가격순, 판매량순, 최신순 중 하나
+  * shipping_option은 배송비포함 또는 배송비제외 중 하나
+JSON으로만 응답하세요."""
+
+        history_tail = "\n".join([f"{m['role']}: {m['content']}" for m in conversation_history[-4:]])
+        user_prompt = f"""최근 대화:
+{history_tail or "없음"}
+
+저장된 선호:
+{pref_summary or "없음"}
+
+카테고리({category}) 로그:
+{memory_log or "없음"}
+
+쇼핑 성향(Identity):
+{identity or "미정"}
+
+사용자 요청: "{raw_query}"
+
+응답 형식:
+{{
+  "query": "<검색어>",
+  "augmented": true/false,
+  "rationale": "<보강한 이유 또는 그대로 둔 이유>",
+  "actions": [
+    {{"action": "apply_sort", "sort_type": "낮은가격순"}},
+    {{"action": "apply_shipping", "shipping_option": "배송비포함"}}
+  ]
+}}"""
+
+        try:
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_prompt},
+                ],
+                temperature=0.4,
+                response_format={"type": "json_object"},
+            )
+            return json.loads(response.choices[0].message.content)
+        except Exception as e:
+            logger.error("Query augmentation failed: %s", e)
+            return {"query": raw_query, "augmented": False, "rationale": "error", "actions": []}
+
+    def generate_requery_question(
+        self,
+        raw_query: str,
+        preference_memory: PreferenceMemory,
+        conversation_history: List[Dict[str, str]],
+    ) -> str:
+        """
+        Ask a clarifying follow-up when we still lack context.
+        """
+        system_prompt = """당신은 쇼핑 도우미입니다.
+사용자 요청이 모호하고, 저장된 선호만으로는 충분하지 않을 때 추가 질문을 한 문장으로 하세요.
+가격/브랜드/색상/스타일/배송 조건 등 핵심 한두 가지만 물어보세요.
+정보가 충분하면 빈 문자열로 응답하세요."""
+
+        pref_summary = preference_memory.summary()
+        memory_log = preference_memory.memory_log()
+        identity = preference_memory.identity or ""
+        history_tail = "\n".join([f"{m['role']}: {m['content']}" for m in conversation_history[-3:]])
+        user_prompt = f"""최근 대화:
+{history_tail or "없음"}
+
+저장된 선호:
+{pref_summary or "없음"}
+
+메모리 로그:
+{memory_log or "없음"}
+
+쇼핑 성향(Identity):
+{identity or "미정"}
+
+사용자 요청: "{raw_query}"
+
+추가 질문(필요 없으면 빈 문자열):"""
+
+        try:
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_prompt},
+                ],
+                temperature=0.6,
+            )
+            return response.choices[0].message.content.strip()
+        except Exception as e:
+            logger.error("Requery generation failed: %s", e)
+            return ""
+
+    def infer_shopping_identity(self, preference_memory: PreferenceMemory) -> Optional[str]:
+        """Infer user's shopping identity based on accumulated memory."""
+        memory_log = preference_memory.memory_log(max_lines=200)
+        if not memory_log:
+            return None
+        system_prompt = """너는 사용자의 쇼핑 행동 로그를 보고 쇼핑 성향(MBTI 스타일)을 4축으로 분류한다.
+축 정의:
+- 가격: 가성비형 | 가심비형
+- 속도: 로켓배송 고집형 | 배송 상관없음
+- 평가: 평점/리뷰 중시 | 주관적 선택
+- 충동성: 목표 구매만 | 여러 상품 즉흥 구매
+
+출력은 한 줄로 압축:
+"가격=가성비형; 속도=로켓배송; 평가=평점중시; 충동성=목표구매" 와 같이 요약.
+"""
+        user_prompt = f"""사용자 행동 로그:
+{memory_log}
+
+한 줄 요약으로 성향을 반환하세요."""
+        try:
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_prompt},
+                ],
+                temperature=0.2,
+            )
+            identity = response.choices[0].message.content.strip()
+            return identity
+        except Exception:
+            return None
+
     def _artifact_context_snippet(
         self,
         artifact_summary: Optional[Dict[str, Any]],
@@ -379,3 +795,64 @@ class ShoppingLLMService:
             if local_path and Path(local_path).exists():
                 image_paths.append(local_path)
         return image_paths
+
+    def summarize_products(self, results: List[Any]) -> str:
+        """
+        Summarize the top search results.
+        """
+        system_prompt = PROMPTS["summarize_products"]
+        
+        # Format results for the prompt
+        lines = []
+        for i, r in enumerate(results[:3], 1):
+            # Handle both object and dict
+            title = getattr(r, "title", None) or r.get("title", "제목 없음") if isinstance(r, dict) else getattr(r, "title", "제목 없음")
+            price = getattr(r, "price", None) or r.get("price", "가격 없음") if isinstance(r, dict) else getattr(r, "price", "가격 없음")
+            rating = getattr(r, "rating", None) or r.get("rating", "평점 없음") if isinstance(r, dict) else getattr(r, "rating", "평점 없음")
+            review_count = getattr(r, "review_count", None) or r.get("review_count", "리뷰 없음") if isinstance(r, dict) else getattr(r, "review_count", "리뷰 없음")
+            
+            lines.append(f"{i}. {title} | 가격: {price} | 평점: {rating} | 리뷰수: {review_count}")
+            
+        user_prompt = "검색 결과:\n" + "\n".join(lines)
+
+        try:
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_prompt},
+                ],
+                temperature=0.5,
+                max_tokens=400,
+            )
+            return response.choices[0].message.content.strip()
+        except Exception as e:
+            logger.error("Failed to summarize search results: %s", e)
+            return "검색 결과 요약을 생성하지 못했습니다."
+
+    def summarize_page(self, html: str, *, url: Optional[str] = None, language: str = "ko") -> str:
+        """Summarize a rendered page HTML into a concise overview."""
+        system_prompt = PROMPTS["summarize_page"]
+        # Trim extremely long HTML to keep prompt size reasonable
+        max_len = 12000
+        snippet = html[:max_len]
+        user_prompt = f"""페이지 URL: {url or '알 수 없음'}
+
+HTML:
+{snippet}
+
+요약을 {language}로 작성하세요."""
+        try:
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_prompt},
+                ],
+                temperature=0.3,
+                max_tokens=300,
+            )
+            return response.choices[0].message.content.strip()
+        except Exception as e:
+            logger.error("Failed to summarize page: %s", e)
+            return "페이지 요약을 생성하지 못했습니다."

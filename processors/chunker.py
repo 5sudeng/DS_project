@@ -221,9 +221,12 @@ class ContentChunker:
             return
 
         main_data = data[0]
+        if not main_data:
+            logger.warning("Quantity data is empty or None")
+            return
 
         # 1. 캐시 적립 혜택
-        cashback_list = main_data.get('cashBackSummary', {}).get('basicCashBackList', [])
+        cashback_list = (main_data.get('cashBackSummary') or {}).get('basicCashBackList', [])
         for i, item in enumerate(cashback_list):
             benefit = item.get('benefit', '')
             if benefit:
